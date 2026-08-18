@@ -1,7 +1,7 @@
 # iris technical decisions
 
 ## Stack decisions (pinned)
-- Node.js >=20 + TypeScript 5.9.2 strict ESM — modern runtime + deterministic tooling.
+- Node.js >=22.13 + TypeScript 5.9.2 strict ESM — modern runtime + deterministic tooling.
 - Ajv 8.17.1 — strict JSON Schema validation with explicit errors.
 - Vitest 3.2.4 + ESLint 9.34.0 + Prettier 3.6.2 — test and quality baseline.
 - CDN constants centralized in `src/cdn.ts` — one source of truth for vendoring/template loads.
@@ -38,7 +38,7 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 ## Decision log (append-only)
 | date | decision | why |
 |---|---|---|
-| 2026-08-18 | Start with Node20 + TS strict ESM and Ajv runtime validation | Meets spec constraints while keeping runtime deps minimal |
+| 2026-08-18 | Start with Node22.13 + TS strict ESM and Ajv runtime validation | Matches pnpm 11 requirements and keeps a modern runtime baseline |
 | 2026-08-18 | Centralize design tokens and base components under `iris/design` scaffold | Enables deterministic file:// rendering and easy vendor/offline mode |
 | 2026-08-18 | Enforce token literals through token-lint script in CI | Prevents style drift outside tokens.css |
 | 2026-08-18 | Keep OpenSpec milestone records under `openspec/changes/archive` | Dogfoods lifecycle traceability from day zero |
