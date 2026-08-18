@@ -1,9 +1,30 @@
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Ajv2020, type ErrorObject, type ValidateFunction } from 'ajv/dist/2020.js';
 
 const ajv = new Ajv2020({ allErrors: true, strict: true, validateFormats: false });
 
+function findSchemasRoot(): string {
+  let currentDir = path.dirname(fileURLToPath(import.meta.url));
+
+  while (true) {
+    const candidateRoot = path.join(currentDir, 'schemas');
+    if (existsSync(candidateRoot)) {
+      return currentDir;
+    }
+
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      throw new Error('Could not locate schemas directory');
+    }
+
+    currentDir = parentDir;
+  }
+}
+
+const schemasRoot = findSchemasRoot();
 const schemaNames = ['envelope', 'report', 'feature', 'bug', 'idea', 'plan'] as const;
 
 type SchemaName = (typeof schemaNames)[number];
@@ -11,7 +32,7 @@ type SchemaName = (typeof schemaNames)[number];
 const validators = new Map<SchemaName, ValidateFunction>();
 
 async function loadSchema(schemaName: SchemaName): Promise<object> {
-  const schemaPath = path.resolve(process.cwd(), `schemas/${schemaName}.schema.json`);
+  const schemaPath = path.join(schemasRoot, 'schemas', `${schemaName}.schema.json`);
   return JSON.parse(await readFile(schemaPath, 'utf8')) as object;
 }
 

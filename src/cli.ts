@@ -1,4 +1,5 @@
 import { parseArgs } from 'node:util';
+import { runDraftCommand } from './commands/draft.js';
 import { runInitCommand } from './commands/init.js';
 import { runRenderCommand } from './commands/render.js';
 import { IrisError } from './lib/errors.js';
@@ -43,7 +44,7 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
     return 0;
   }
 
-  const [command] = parsed.positionals;
+  const [command, id] = parsed.positionals;
 
   try {
     switch (command) {
@@ -58,6 +59,11 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
       case 'bug':
       case 'idea':
       case 'plan':
+        if (!id) {
+          throw new IrisError(1, `Missing id for command '${command}'`);
+        }
+        await runDraftCommand(cwd, command, id);
+        return 0;
       case 'promote':
       case 'sync':
       case 'adopt':
