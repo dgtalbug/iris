@@ -1,0 +1,8 @@
+project: iris-project
+theme: dark
+asset_base: cdn
+detected_tools:
+  openspec: false
+  gitnexus: false
+budgets:
+  text_words_per_block: 120
