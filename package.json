@@ -7,6 +7,14 @@
   "bin": {
     "iris": "./dist/src/index.js"
   },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=22.13.0"
   },
@@ -18,7 +26,10 @@
     "lint": "eslint .",
     "format": "prettier --check .",
     "token-lint": "node ./scripts/token-lint.mjs",
-    "prepare": "pnpm run build"
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "smoke:install": "node ./scripts/install-smoke.mjs",
+    "release:check": "npm run smoke:install"
   },
   "runtimeDependencyRationale": {
     "ajv": "JSON Schema validation for strict contract enforcement"

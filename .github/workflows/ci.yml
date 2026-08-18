@@ -24,3 +24,4 @@ jobs:
       - run: pnpm token-lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm smoke:install
