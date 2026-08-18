@@ -36,6 +36,7 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
     options: {
       help: { type: 'boolean', short: 'h' },
       json: { type: 'boolean' },
+      all: { type: 'boolean', short: 'a' },
     },
   });
 
@@ -52,7 +53,10 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         await runInitCommand(cwd);
         return 0;
       case 'render':
-        await runRenderCommand(cwd);
+        if (parsed.values.all && id) {
+          throw new IrisError(1, "Choose either '<id>' or '--all' for the render command");
+        }
+        await runRenderCommand(cwd, parsed.values.all ? undefined : id);
         return 0;
       case 'report':
       case 'feature':

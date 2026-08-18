@@ -248,8 +248,371 @@ setupCodeCards();
 setupCharts();
 `;
 
-export function dashboardHtml(projectName = 'iris project'): string {
-  return `<!doctype html>
+export type DashboardPage = {
+ id: string;
+ type: string;
+ title: string;
+ status: string;
+};
+
+function escapeHtml(value: string): string {
+ return value
+   .replace(/&/g, '&amp;')
+   .replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;')
+   .replace(/"/g, '&quot;')
+   .replace(/'/g, '&#039;');
+}
+
+function asObject(value: unknown): Record<string, unknown> {
+ return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+}
+
+function getText(value: unknown): string {
+ if (typeof value === 'string') return value;
+ if (value && typeof value === 'object' && 'md' in value && typeof value.md === 'string') return value.md;
+ return '';
+}
+
+function getStringList(value: unknown): string[] {
+ if (!Array.isArray(value)) return [];
+ return value.filter((item): item is string => typeof item === 'string');
+}
+
+function markdownToHtml(value: string): string {
+ const blocks = value
+   .split(/\n{2,}/)
+   .map((block) => block.trim())
+   .filter(Boolean);
+
+ if (blocks.length === 0) return '<p>Empty.</p>';
+
+ return blocks
+   .map((block) => {
+     const lines = block.split('\n').map((line) => line.trim());
+     if (lines.some((line) => /^[-*] /.test(line))) {
+       const items = lines
+         .filter((line) => /^[-*] /.test(line))
+         .map((line) => `<li>${escapeHtml(line.replace(/^[-*]\s*/, ''))}</li>`)
+         .join('');
+       return `<ul>${items}</ul>`;
+     }
+
+     return `<p>${escapeHtml(block).replace(/\n/g, '<br />')}</p>`;
+   })
+   .join('');
+}
+
+function renderMetricGrid(entries: Array<{ label: string; value: string }>): string {
+ if (entries.length === 0) return '';
+
+ const cards = entries
+   .map(
+     (entry) => `
+       <article class="surface metric-card">
+         <div style="font-size: var(--size-2); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;">${escapeHtml(entry.label)}</div>
+         <div style="margin-top: var(--space-2); font-size: var(--size-4); font-weight: var(--weight-bold);">${escapeHtml(entry.value)}</div>
+       </article>
+     `,
+   )
+   .join('');
+
+ return `<section class="metric-grid" style="margin-bottom: var(--space-4);">${cards}</section>`;
+}
+
+function renderSummaryBlock(title: string, text: string): string {
+ if (!text.trim()) return '';
+ return `
+   <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+     <h2>${escapeHtml(title)}</h2>
+     ${markdownToHtml(text)}
+   </article>
+ `;
+}
+
+function renderTimeline(events: unknown[]): string {
+ if (!Array.isArray(events) || events.length === 0) return '';
+
+ const items = events
+   .map((event) => {
+     const record = asObject(event);
+     const time = typeof record.t === 'string' ? record.t : 'n/a';
+     const title = typeof record.title === 'string' ? record.title : 'Event';
+     const level = typeof record.level === 'string' ? record.level : 'info';
+     return `
+       <div class="timeline-item ${escapeHtml(level)}" style="position: relative;">
+         <strong>${escapeHtml(time)}</strong>
+         <div>${escapeHtml(title)}</div>
+       </div>
+     `;
+   })
+   .join('');
+
+ return `
+   <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+     <h2>Timeline</h2>
+     <div class="timeline">${items}</div>
+   </article>
+ `;
+}
+
+function renderTaskTable(tasks: unknown[]): string {
+ if (!Array.isArray(tasks) || tasks.length === 0) return '';
+
+ const rows = tasks
+   .map((task) => {
+     const record = asObject(task);
+     const id = typeof record.id === 'string' ? record.id : 'n/a';
+     const title = typeof record.title === 'string' ? record.title : 'Untitled task';
+     const done = record.done === true;
+     return `<tr><td>${escapeHtml(id)}</td><td>${escapeHtml(title)}</td><td>${done ? 'done' : 'open'}</td></tr>`;
+   })
+   .join('');
+
+ return `
+   <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+     <h2>Tasks</h2>
+     <div class="table-wrap">
+       <table style="width: 100%; border-collapse: collapse;">
+         <thead>
+           <tr>
+             <th style="text-align: left; color: var(--text-3); padding-bottom: var(--space-2);">id</th>
+             <th style="text-align: left; color: var(--text-3); padding-bottom: var(--space-2);">title</th>
+             <th style="text-align: left; color: var(--text-3); padding-bottom: var(--space-2);">status</th>
+           </tr>
+         </thead>
+         <tbody>${rows}</tbody>
+       </table>
+     </div>
+   </article>
+ `;
+}
+
+function renderStepsList(steps: unknown[]): string {
+ if (!Array.isArray(steps) || steps.length === 0) return '';
+
+ const list = steps
+   .map((step) => {
+     const record = asObject(step);
+     const id = typeof record.id === 'string' ? record.id : 'n/a';
+     const title = typeof record.title === 'string' ? record.title : 'Untitled step';
+     const detail = typeof record.detail === 'string' ? record.detail : '';
+     return `
+       <li style="margin-bottom: var(--space-3);">
+         <div><strong>${escapeHtml(id)}</strong> · ${escapeHtml(title)}</div>
+         ${detail ? `<div style="color: var(--text-2); margin-top: var(--space-1);">${escapeHtml(detail)}</div>` : ''}
+       </li>
+     `;
+   })
+   .join('');
+
+ return `
+   <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+     <h2>Plan steps</h2>
+     <ol>${list}</ol>
+   </article>
+ `;
+}
+
+function renderGenericPage(contract: Record<string, unknown>): string {
+ const sections = asObject(contract.sections);
+ const sectionEntries = Object.entries(sections)
+   .map(([name, value]) => renderSummaryBlock(name.replace(/_/g, ' '), getText(value)))
+   .join('');
+
+ const id = typeof contract.id === 'string' ? contract.id : 'unknown';
+ const title = typeof contract.title === 'string' ? contract.title : id;
+ const status = typeof contract.status === 'string' ? contract.status : 'draft';
+ const type = typeof contract.type === 'string' ? contract.type : 'page';
+
+ return renderPageShell({
+   id,
+   title,
+   type,
+   status,
+   meta: [
+     { label: 'kind', value: type },
+     { label: 'status', value: status },
+     { label: 'updated', value: typeof contract.updated === 'string' ? contract.updated : 'n/a' },
+   ],
+   content: sectionEntries,
+ });
+}
+
+function renderPageShell({
+ id,
+ title,
+ type,
+ status,
+ meta,
+ content,
+}: {
+ id: string;
+ title: string;
+ type: string;
+ status: string;
+ meta: Array<{ label: string; value: string }>;
+ content: string;
+}): string {
+ const metaGrid = renderMetricGrid(meta);
+ return `<!doctype html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>${escapeHtml(title)} · iris</title>
+   <link rel="stylesheet" href="../../design/tokens.css" />
+   <link rel="stylesheet" href="../../design/components/base.css" />
+ </head>
+ <body>
+   <main class="page-shell">
+     <header class="header">
+       <div class="header-bar">
+         <div>
+           <div class="type-chip" style="margin-bottom: var(--space-2);">${escapeHtml(type)}</div>
+           <h1>${escapeHtml(title)}</h1>
+         </div>
+         <span class="status-chip">status: ${escapeHtml(status)}</span>
+       </div>
+       ${metaGrid}
+     </header>
+     ${content}
+     <footer class="footer">rendered from ${escapeHtml(id)} · offline deterministic template</footer>
+   </main>
+   <script type="module" src="../../design/components/base.js"></script>
+ </body>
+</html>`;
+}
+
+export function renderContractPage(contract: Record<string, unknown>): string {
+ const id = typeof contract.id === 'string' ? contract.id : 'unknown';
+ const title = typeof contract.title === 'string' ? contract.title : id;
+ const type = typeof contract.type === 'string' ? contract.type : 'page';
+ const status = typeof contract.status === 'string' ? contract.status : 'draft';
+ const sections = asObject(contract.sections);
+
+ switch (type) {
+   case 'report': {
+     const summary = getStringList(sections.summary);
+     const openItems = getText(sections.open_items);
+     const promotable = getStringList(sections.promotable_as);
+     const content = [
+       summary.length > 0 ? renderSummaryBlock('Summary', summary.map((item) => `- ${item}`).join('\n')) : '',
+       openItems ? renderSummaryBlock('Open items', openItems) : '',
+       promotable.length > 0 ? renderSummaryBlock('Promotable as', promotable.map((item) => `- ${item}`).join('\n')) : '',
+     ].join('');
+
+     return renderPageShell({
+       id,
+       title,
+       type,
+       status,
+       meta: [
+         { label: 'kind', value: type },
+         { label: 'status', value: status },
+         { label: 'promotions', value: promotable.join(', ') || 'none' },
+       ],
+       content,
+     });
+   }
+   case 'feature': {
+     const problem = getText(sections.problem);
+     const goal = getText(sections.goal);
+     const tasks = Array.isArray(sections.tasks) ? sections.tasks : [];
+     const content = [renderSummaryBlock('Problem', problem), renderSummaryBlock('Goal', goal), renderTaskTable(tasks)].join('');
+     return renderPageShell({
+       id,
+       title,
+       type,
+       status,
+       meta: [
+         { label: 'kind', value: type },
+         { label: 'status', value: status },
+         { label: 'tasks', value: String(Array.isArray(sections.tasks) ? sections.tasks.length : 0) },
+       ],
+       content,
+     });
+   }
+   case 'bug': {
+     const symptom = getText(sections.symptom);
+     const severity = typeof sections.severity === 'string' ? sections.severity : 'p2';
+     const timelineEvents = asObject(sections.timeline).events;
+     const timeline = Array.isArray(timelineEvents) ? timelineEvents : [];
+     const content = [renderSummaryBlock('Symptom', symptom), renderTimeline(timeline)].join('');
+     return renderPageShell({
+       id,
+       title,
+       type,
+       status,
+       meta: [
+         { label: 'kind', value: type },
+         { label: 'status', value: status },
+         { label: 'severity', value: severity },
+       ],
+       content,
+     });
+   }
+   case 'idea': {
+     const current = getText(sections.current_state);
+     const proposed = getText(sections.proposed);
+     const effortImpact = asObject(sections.effort_impact);
+     const effort = typeof effortImpact.effort === 'number' ? String(effortImpact.effort) : 'n/a';
+     const impact = typeof effortImpact.impact === 'number' ? String(effortImpact.impact) : 'n/a';
+     const content = [renderSummaryBlock('Current state', current), renderSummaryBlock('Proposed', proposed), renderMetricGrid([{ label: 'effort', value: effort }, { label: 'impact', value: impact }])].join('');
+     return renderPageShell({
+       id,
+       title,
+       type,
+       status,
+       meta: [
+         { label: 'kind', value: type },
+         { label: 'status', value: status },
+         { label: 'effort', value: effort },
+         { label: 'impact', value: impact },
+       ],
+       content,
+     });
+   }
+   case 'plan': {
+     const goal = getText(sections.goal);
+     const steps = Array.isArray(sections.steps) ? sections.steps : [];
+     const content = [renderSummaryBlock('Goal', goal), renderStepsList(steps)].join('');
+     return renderPageShell({
+       id,
+       title,
+       type,
+       status,
+       meta: [
+         { label: 'kind', value: type },
+         { label: 'status', value: status },
+         { label: 'steps', value: String(steps.length) },
+       ],
+       content,
+     });
+   }
+   default:
+     return renderGenericPage(contract);
+ }
+}
+
+export function dashboardHtml(projectName = 'iris project', pages: DashboardPage[] = []): string {
+ const cards =
+   pages.length === 0
+     ? '<article class="surface" style="padding: var(--space-4);"><h2>Page feed</h2><p style="color: var(--text-2);">No pages rendered yet.</p></article>'
+     : pages
+         .map(
+           (page) => `
+             <article class="surface" style="padding: var(--space-4);">
+               <div class="type-chip" style="margin-bottom: var(--space-2);">${escapeHtml(page.type)}</div>
+               <h2>${escapeHtml(page.title)}</h2>
+               <p style="color: var(--text-2); margin: 0;">id: ${escapeHtml(page.id)}</p>
+               <p style="color: var(--text-2); margin: var(--space-2) 0 0;">status: ${escapeHtml(page.status)}</p>
+             </article>
+           `,
+         )
+         .join('');
+
+ return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -267,31 +630,24 @@ export function dashboardHtml(projectName = 'iris project'): string {
         </div>
         <canvas class="dashboard-canvas" data-signature-canvas aria-label="signature field"></canvas>
       </header>
-
+ 
       <section class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
         <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
           <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">LIST</button>
           <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">BOARD</button>
         </div>
       </section>
-
+ 
       <section class="list" data-dashboard-list>
-        <article class="surface" style="padding: var(--space-4);">
-          <h2>Change feed</h2>
-          <p style="color: var(--text-2);">No iris activity yet.</p>
-        </article>
-        <article class="surface" style="padding: var(--space-4);">
-          <h2>Existing docs</h2>
-          <p style="color: var(--text-2);">No mirrors discovered.</p>
-        </article>
+        ${cards}
       </section>
-
+ 
       <section class="board" data-dashboard-board hidden>
         <article class="surface" style="padding: var(--space-4);"><h2>Proposed</h2><p>Empty.</p></article>
         <article class="surface" style="padding: var(--space-4);"><h2>Active</h2><p>Empty.</p></article>
         <article class="surface" style="padding: var(--space-4);"><h2>Archived</h2><p>Empty.</p></article>
       </section>
-
+ 
       <footer class="footer">Rendered for file:// use · stale state: fresh</footer>
     </main>
     <script type="module" src="./design/components/base.js"></script>
