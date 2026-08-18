@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Visual, versioned HTML docs for AI coding work.",
   "type": "module",
+  "packageManager": "pnpm@11.22.0",
   "bin": {
     "iris": "./dist/src/index.js"
   },
@@ -17,7 +18,7 @@
     "lint": "eslint .",
     "format": "prettier --check .",
     "token-lint": "node ./scripts/token-lint.mjs",
-    "prepare": "npm run build"
+    "prepare": "pnpm run build"
   },
   "runtimeDependencyRationale": {
     "ajv": "JSON Schema validation for strict contract enforcement"

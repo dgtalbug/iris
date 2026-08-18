@@ -1,17 +1,37 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { glob } from 'node:fs/promises';
 
 const hexOrRgbPattern = /(#[0-9a-fA-F]{3,8})|\brgba?\(/g;
-const allowed = new Set(['src/templates/design.ts']);
+const allowed = new Set([path.normalize('src/templates/design.ts')]);
+
+async function walk(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await walk(fullPath)));
+    } else if (entry.isFile()) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
 
 let failed = false;
 
-for await (const file of glob('src/**/*.{ts,js,css,html}')) {
+for (const file of await walk('src')) {
   const normalized = path.normalize(file);
   if (allowed.has(normalized)) {
     continue;
   }
+
+  if (!/\.(ts|js|css|html)$/.test(file)) {
+    continue;
+  }
+
   const content = await readFile(file, 'utf8');
   const matches = content.match(hexOrRgbPattern);
   if (matches) {

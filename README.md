@@ -5,7 +5,7 @@ Visual, versioned docs from your AI coding agents. Less prose, more pictures —
 ## Quickstart
 
 ```bash
-npm i
-npm run build
+pnpm install
+pnpm build
 node dist/src/index.js --help
 ```
