@@ -22,7 +22,7 @@ Reserved for M2/M3: derive host/org/repo from remote URL and emit commit-anchore
 Meaning-bearing only with reduced-motion fallback to static frame at frame zero.
 
 ## Distribution model
-Global npm + npx local init; no server, no telemetry, no network at render time.
+Global pnpm + local init; no server, no telemetry, no network at render time.
 
 ## License notes
 MIT at package level; vendored third-party assets retain upstream licenses in vendor directory.
