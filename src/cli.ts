@@ -1,13 +1,16 @@
 import { parseArgs } from 'node:util';
 import { runDraftCommand } from './commands/draft.js';
 import { runInitCommand } from './commands/init.js';
+import { runPublishCommand } from './commands/publish.js';
 import { runRenderCommand } from './commands/render.js';
+import { runReportFromSessionCommand } from './commands/report.js';
 import { IrisError } from './lib/errors.js';
 
 const ALL_COMMANDS = [
   'init',
   'render',
   'report',
+  'publish',
   'feature',
   'bug',
   'idea',
@@ -37,6 +40,8 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
       help: { type: 'boolean', short: 'h' },
       json: { type: 'boolean' },
       all: { type: 'boolean', short: 'a' },
+      'from-session': { type: 'string' },
+      output: { type: 'string', short: 'o' },
     },
   });
 
@@ -58,7 +63,14 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         }
         await runRenderCommand(cwd, parsed.values.all ? undefined : id);
         return 0;
+      case 'publish':
+        await runPublishCommand(cwd, id, parsed.values.output);
+        return 0;
       case 'report':
+        if (parsed.values['from-session']) {
+          await runReportFromSessionCommand(cwd, parsed.values['from-session'], id);
+          return 0;
+        }
       case 'feature':
       case 'bug':
       case 'idea':

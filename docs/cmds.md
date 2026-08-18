@@ -34,6 +34,24 @@
 - Example: `iris bug bug-cache-stampede`.
 - Surfaces: CLI + `/iris bug` style skills.
 
+## `iris report --from-session <path> [<id>]`
+- Synopsis: turn local agent session data into a report contract, render it, and keep the output in the page registry.
+- Flags: `--from-session`, `--json`.
+- Inputs: a JSON/Markdown/TXT session dump or a directory containing session artifacts.
+- Outputs: `iris/pages/<id>/data.json` plus rendered HTML for the report page.
+- Exit codes: 0/1/2.
+- Example: `iris report --from-session ./agent-session session-review`.
+- Surfaces: CLI + local session ingestion workflows.
+
+## `iris publish [<id>] [--output path]`
+- Synopsis: generate a portable standalone HTML artifact from a rendered page for offline sharing.
+- Flags: `--output`, `--json`.
+- Inputs: page id. If omitted, the first available page is published.
+- Outputs: a single-file static HTML artifact in `iris/archive` or the requested path.
+- Exit codes: 0/1/2.
+- Example: `iris publish bug-cache-stampede --output dist/published.html`.
+- Surfaces: CLI + local publish/export flows.
+
 ## `iris promote <report-id> <feature|bug|idea>`
 - Synopsis: remap report sections into promoted page and link both.
 - Flags: `--json`.

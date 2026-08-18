@@ -3,3 +3,9 @@ dist/
 coverage/
 .vscode/
 *.log
+
+.agents/*
+.claude/*
+.github/prompts/*
+.github/skills/*
+openspec/*
