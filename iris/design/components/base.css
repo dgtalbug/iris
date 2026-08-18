@@ -1,0 +1,30 @@
+
+.page-shell { max-width: 75rem; margin: 0 auto; padding: var(--space-5); }
+.surface { background: var(--surface-1); border: var(--border-1); border-radius: var(--radius-2); box-shadow: var(--elevation-1); }
+.header { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
+.header-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.type-chip { display: inline-flex; align-items: center; padding: var(--space-1) var(--space-2); border-radius: 999px; background: var(--surface-2); }
+.status-chip { color: var(--text-2); }
+.footer { margin-top: var(--space-6); color: var(--text-3); font-size: var(--size-2); }
+.tabs { display: flex; gap: var(--space-2); }
+.tab-button { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: var(--radius-1); padding: var(--space-2) var(--space-3); cursor: pointer; }
+.tab-button[aria-selected='true'] { color: var(--text-1); background: var(--surface-3); }
+.timeline { position: relative; margin-left: var(--space-4); border-left: var(--border-1); padding-left: var(--space-4); }
+.timeline-item { margin-bottom: var(--space-4); opacity: 0; transform: translateY(0.5rem); animation: timeline-in var(--duration-3) var(--easing) forwards; }
+.timeline-item.info::before,.timeline-item.warn::before,.timeline-item.error::before { content: ''; position: absolute; left: -0.41rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+.timeline-item.info::before { background: var(--info); }
+.timeline-item.warn::before { background: var(--warn); }
+.timeline-item.error::before { background: var(--danger); }
+.code-card { padding: var(--space-4); display: grid; gap: var(--space-2); }
+.code-toolbar { display: flex; justify-content: space-between; align-items: center; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--space-3); }
+.metric-card { padding: var(--space-3); }
+.table-wrap { overflow: auto; }
+.chart-wrap, .mermaid-wrap, .flow-wrap { min-height: 16rem; padding: var(--space-4); }
+.dashboard-canvas { width: 100%; height: 8rem; display: block; border-radius: var(--radius-2); background: var(--surface-2); }
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-3); }
+.list { display: grid; gap: var(--space-3); }
+@keyframes timeline-in { to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .timeline-item { animation: none; opacity: 1; transform: none; }
+}

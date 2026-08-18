@@ -1,0 +1,50 @@
+{
+  "name": "@dgtalbug/iris",
+  "version": "0.1.0",
+  "description": "Visual, versioned HTML docs for AI coding work.",
+  "type": "module",
+  "packageManager": "pnpm@11.22.0",
+  "bin": {
+    "iris": "./dist/src/index.js"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "token-lint": "node ./scripts/token-lint.mjs",
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "smoke:install": "node ./scripts/install-smoke.mjs",
+    "release:check": "npm run smoke:install"
+  },
+  "runtimeDependencyRationale": {
+    "ajv": "JSON Schema validation for strict contract enforcement"
+  },
+  "dependencies": {
+    "ajv": "8.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.4.0",
+    "@typescript-eslint/eslint-plugin": "8.41.0",
+    "@typescript-eslint/parser": "8.41.0",
+    "eslint": "9.34.0",
+    "prettier": "3.6.2",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  }
+}

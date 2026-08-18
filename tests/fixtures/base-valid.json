@@ -1,0 +1,17 @@
+{
+  "iris": "1",
+  "type": "bug",
+  "id": "bug-cache-stampede",
+  "title": "Cache stampede during warmup",
+  "status": "draft",
+  "agent": "copilot",
+  "created": "2026-08-18T00:00:00.000Z",
+  "updated": "2026-08-18T00:00:00.000Z",
+  "commit": "1234567890abcdef1234567890abcdef12345678",
+  "tags": ["cache"],
+  "sections": {
+    "symptom": { "md": "requests spike" },
+    "severity": "p1",
+    "timeline": { "events": [{ "t": "2026-08-18T00:00:00.000Z", "title": "alarm", "level": "warn" }] }
+  }
+}

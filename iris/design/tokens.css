@@ -1,0 +1,64 @@
+:root {
+  --bg: hsl(220 28% 10%);
+  --surface-1: hsl(220 24% 14%);
+  --surface-2: hsl(220 22% 18%);
+  --surface-3: hsl(220 20% 24%);
+  --text-1: hsl(210 24% 96%);
+  --text-2: hsl(214 16% 78%);
+  --text-3: hsl(214 12% 62%);
+  --accent: hsl(198 90% 57%);
+  --ok: hsl(146 63% 46%);
+  --warn: hsl(42 96% 56%);
+  --danger: hsl(356 83% 62%);
+  --info: hsl(204 89% 62%);
+  --chart-1: hsl(198 90% 57%);
+  --chart-2: hsl(276 70% 63%);
+  --chart-3: hsl(146 63% 46%);
+  --chart-4: hsl(42 96% 56%);
+  --chart-5: hsl(12 83% 65%);
+  --chart-6: hsl(324 75% 62%);
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --size-1: 0.75rem;
+  --size-2: 0.875rem;
+  --size-3: 1rem;
+  --size-4: 1.25rem;
+  --size-5: 1.5rem;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --radius-1: 0.375rem;
+  --radius-2: 0.5rem;
+  --radius-3: 0.75rem;
+  --border-1: 1px solid hsl(214 16% 32%);
+  --elevation-1: 0 0.25rem 0.75rem hsl(220 50% 3% / 0.25);
+  --duration-1: 120ms;
+  --duration-2: 220ms;
+  --duration-3: 320ms;
+  --easing: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+[data-theme='light'] {
+  --bg: hsl(210 20% 98%);
+  --surface-1: hsl(0 0% 100%);
+  --surface-2: hsl(210 22% 95%);
+  --surface-3: hsl(210 18% 90%);
+  --text-1: hsl(220 28% 12%);
+  --text-2: hsl(220 16% 26%);
+  --text-3: hsl(220 10% 42%);
+  --border-1: 1px solid hsl(210 12% 80%);
+  --elevation-1: 0 0.25rem 0.75rem hsl(220 26% 70% / 0.3);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text-1);
+}

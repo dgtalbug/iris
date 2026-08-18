@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "iris",
+    "type",
+    "id",
+    "title",
+    "status",
+    "agent",
+    "created",
+    "updated",
+    "commit",
+    "tags",
+    "sections"
+  ],
+  "properties": {
+    "iris": { "type": "string", "const": "1" },
+    "type": { "type": "string", "enum": ["report", "feature", "bug", "idea", "plan"] },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "title": { "type": "string", "maxLength": 80 },
+    "status": { "type": "string", "enum": ["draft", "active", "done", "archived"] },
+    "agent": { "type": "string", "enum": ["claude-code", "codex", "copilot", "other"] },
+    "created": { "type": "string", "format": "date-time" },
+    "updated": { "type": "string", "format": "date-time" },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "sections": { "type": "object" }
+  },
+  "additionalProperties": false
+}
