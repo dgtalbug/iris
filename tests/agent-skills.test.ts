@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { COMMAND_GROUPS, commandEntry } from '../src/lib/command-catalog.js';
+import { packageVersion } from '../src/lib/package-info.js';
 import {
   AGENT_SKILL_TARGETS,
   installAgentSurfaces,
@@ -78,7 +79,7 @@ describe('agent skill installation', () => {
     const current = await readFile(target, 'utf8');
     const customized = current
       .replace('<!-- IRIS:MANAGED:START', '<!-- user-prefix -->\n<!-- IRIS:MANAGED:START')
-      .replace('version=0.1.0', 'version=0.0.1')
+      .replace(`version=${packageVersion()}`, 'version=0.0.1')
       .replace(/\n$/, '\n<!-- user-suffix -->\n');
     await writeFile(target, customized);
 
@@ -87,7 +88,7 @@ describe('agent skill installation', () => {
     const updated = await readFile(target, 'utf8');
     expect(updated).toContain('<!-- user-prefix -->');
     expect(updated).toContain('<!-- user-suffix -->');
-    expect(updated).toContain('version=0.1.0');
+    expect(updated).toContain(`version=${packageVersion()}`);
   });
 
   it.each([
