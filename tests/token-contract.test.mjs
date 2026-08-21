@@ -12,7 +12,7 @@ describe('Aperture token contract', () => {
   });
 
   it('rejects a low-contrast text pair', () => {
-    const invalid = (tokenCss ?? '').replace('--accent-text: #93a8ff;', '--accent-text: #242a3b;');
+    const invalid = (tokenCss ?? '').replace('--accent-text: #a8bcff;', '--accent-text: #26314f;');
     expect(
       validateTokenContract(invalid).some((error) =>
         error.startsWith('dark contrast --accent-text on --bg is '),

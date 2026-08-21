@@ -2,6 +2,78 @@ export const PROJECT_DOC_NAMES = ['overview', 'hld', 'lld', 'erd', 'decisions'] 
 
 export const RETIRED_PROJECT_DOC_NAMES = ['commands'] as const;
 
+export type ProjectDocMeta = {
+  label: string;
+  icon: string;
+  purpose: string;
+  contains: string[];
+};
+
+/** What each managed project document is for, so its placeholder is useful rather than blank. */
+export const PROJECT_DOC_META: Record<string, ProjectDocMeta> = {
+  overview: {
+    label: 'Overview',
+    icon: 'doc-overview',
+    purpose: 'What this repository is, who it is for, and what it deliberately is not.',
+    contains: [
+      'The problem the project solves, in one paragraph',
+      'Scope and explicit non-goals',
+      'Where a newcomer should start reading',
+    ],
+  },
+  hld: {
+    label: 'HLD',
+    icon: 'doc-hld',
+    purpose: 'High-level design: the shape of the system and how its parts fit together.',
+    contains: [
+      'A component diagram in a `mermaid` fence',
+      'The boundary between subsystems and what crosses it',
+      'External dependencies and why each one is present',
+    ],
+  },
+  lld: {
+    label: 'LLD',
+    icon: 'doc-lld',
+    purpose: 'Low-level design: how a component actually works inside its boundary.',
+    contains: [
+      'Key modules, their responsibilities, and their invariants',
+      'Control flow for the paths that are easy to get wrong',
+      'Error handling and the states a reader would not guess',
+    ],
+  },
+  erd: {
+    label: 'ERD',
+    icon: 'doc-erd',
+    purpose: 'The data model: entities, their fields, and the relationships between them.',
+    contains: [
+      'An `erDiagram` mermaid fence',
+      'Field meanings that the name alone does not carry',
+      'Constraints, keys, and lifecycle of each record',
+    ],
+  },
+  decisions: {
+    label: 'Decisions',
+    icon: 'doc-decisions',
+    purpose: 'The decision log: what was chosen, when, and why the alternatives lost.',
+    contains: [
+      'One row per decision with a date and rationale',
+      'The alternatives considered and why they were rejected',
+      'Decisions that were later reversed, kept rather than deleted',
+    ],
+  },
+};
+
+export function projectDocMeta(name: string): ProjectDocMeta {
+  return (
+    PROJECT_DOC_META[name] ?? {
+      label: name,
+      icon: 'doc',
+      purpose: 'A project document.',
+      contains: [],
+    }
+  );
+}
+
 export const WORK_TYPES = ['report', 'feature', 'bug', 'idea', 'plan', 'research'] as const;
 
 export type DashboardPage = {

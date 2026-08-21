@@ -1,6 +1,13 @@
 import type { OpenSpecChange } from '../../lib/openspec-workspace.js';
 import { COMMAND_GROUPS, statusCounts } from '../../lib/command-catalog.js';
-import { apertureRing, escapeHtml, progressBar, statTile, type DashboardPage } from '../common.js';
+import {
+  apertureRing,
+  escapeHtml,
+  progressBar,
+  projectDocMeta,
+  statTile,
+  type DashboardPage,
+} from '../common.js';
 import { workListItem, workStatusCounts } from './work.js';
 import type { SpecCounts } from './spec.js';
 
@@ -67,7 +74,7 @@ export function overviewPageContent({
       : `<section class="surface project-strip">
           <span class="eyebrow">project docs</span>
           <nav class="project-links" aria-label="Project documents">
-            ${projectDocs.map((name) => `<a href="./project/${escapeHtml(name)}.html">${escapeHtml(name)}</a>`).join('\n            ')}
+            ${projectDocs.map((name) => `<a href="./project/${escapeHtml(name)}.html">${escapeHtml(projectDocMeta(name).label)}</a>`).join('\n            ')}
           </nav>
         </section>`;
 

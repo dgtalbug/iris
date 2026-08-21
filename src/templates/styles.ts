@@ -246,6 +246,10 @@ a.stat-tile:hover { border-color: var(--accent); }
 .status-partial { color: var(--warn); background: var(--warn-soft); }
 .status-stubbed { color: var(--text-3); }
 
+.doc-checklist { display: grid; gap: var(--space-2); margin: 0; padding-left: var(--space-5); color: var(--text-1); }
+.doc-checklist li::marker { color: var(--accent); }
+.card-body-pad p { margin: 0 0 var(--space-3); }
+.card-body-pad p:last-child { margin-bottom: 0; }
 .project-strip { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); flex-wrap: wrap; }
 .project-links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .project-links a { font-family: var(--font-mono); font-size: var(--size-2); text-decoration: none; color: var(--text-2); }

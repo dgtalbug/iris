@@ -1,4 +1,4 @@
-import { escapeHtml, PROJECT_DOC_NAMES } from './common.js';
+import { escapeHtml, projectDocMeta, PROJECT_DOC_NAMES } from './common.js';
 
 const ICONS: Record<string, string> = {
   overview: '<circle cx="12" cy="12" r="8" stroke-dasharray="30 10" />',
@@ -7,6 +7,15 @@ const ICONS: Record<string, string> = {
   research: '<circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" />',
   commands: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m7 10 3 2-3 2M12 15h5" />',
   doc: '<path d="M4 5h16v14H4zM4 9h16" />',
+  'doc-overview': '<circle cx="12" cy="12" r="9" /><path d="m15 9-2.2 4.8L8 16l2.2-4.8z" />',
+  'doc-hld':
+    '<rect x="9" y="3" width="6" height="5" rx="1" /><rect x="3" y="15" width="6" height="5" rx="1" /><rect x="15" y="15" width="6" height="5" rx="1" /><path d="M12 8v4M6 15v-3h12v3" />',
+  'doc-lld':
+    '<rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M3 10h6M13 9h5M13 13h5" />',
+  'doc-erd':
+    '<ellipse cx="7" cy="6" rx="4" ry="2" /><path d="M3 6v5c0 1.1 1.8 2 4 2s4-.9 4-2V6" /><rect x="14" y="13" width="7" height="7" rx="1" /><path d="M11 11h1a2 2 0 0 1 2 2v2" />',
+  'doc-decisions':
+    '<path d="M12 3v18" /><path d="M5 7h9l2.5 2.5L14 12H5z" /><path d="M19 15h-9l-2.5-2.5" />',
 };
 
 export type SectionId = 'overview' | 'work' | 'spec' | 'research' | 'commands';
@@ -79,14 +88,15 @@ export function renderSidebar(options: ShellOptions): string {
   ).join('');
 
   const docs = options.projectDocs
-    .map((name) =>
-      navItem({
+    .map((name) => {
+      const meta = projectDocMeta(name);
+      return navItem({
         href: `${prefix}project/${name}.html`,
-        label: name,
-        iconName: 'doc',
+        label: meta.label,
+        iconName: meta.icon,
         current: options.current === `project:${name}`,
-      }),
-    )
+      });
+    })
     .join('');
 
   const docsGroup =

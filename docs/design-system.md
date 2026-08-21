@@ -1,4 +1,4 @@
-# iris design system 3.0 — "Aperture / Electra"
+# iris design system 3.1 — "Aperture / Electra"
 
 > Implemented direction, updated 2026-08-21 for the multi-page workspace. Generated design output is owned by `src/templates/`: `tokens.ts`, `styles.ts`, `script.ts`, `shell.ts`, `common.ts`, and `pages/*.ts`, with `design.ts` as the import barrel.
 
@@ -68,7 +68,7 @@ All values live in `tokens.css`; `token-lint` continues to forbid literals elsew
 | `--nav-active-bg`   | `#6f8cff1f` | current section fill                                     |
 | `--nav-active-text` | `#c3cfff`   | current section label                                    |
 
-The interactive accent is electric indigo, not the earlier amber. Amber survives as `--type-plan`, where it encodes meaning; using it for chrome as well made every interactive element read as a plan badge. Indigo is the convention the tools this replaces already use for selection and focus, which is worth more here than novelty. The sidebar sits one step darker than the page so the content area reads as the lit surface.
+The palette was brightened in 3.1: grounds gained blue and the encoded spectrum gained saturation, so status and type read at a glance without the chrome getting louder. Every pair still clears 4.5:1 in both themes, which is what stops "brighter" from becoming "washed out". The interactive accent is electric indigo, not the earlier amber. Amber survives as `--type-plan`, where it encodes meaning; using it for chrome as well made every interactive element read as a plan badge. Indigo is the convention the tools this replaces already use for selection and focus, which is worth more here than novelty. The sidebar sits one step darker than the page so the content area reads as the lit surface.
 
 ### 4.2 Color — the spectrum (encoding only)
 
