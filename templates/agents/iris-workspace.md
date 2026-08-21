@@ -6,7 +6,7 @@ Use Iris to turn intentional agent work into local, versioned HTML that opens di
 
 Run `iris init` once after installing or upgrading the CLI. It creates or safely refreshes the local `iris/` workspace, installs this agent skill, and renders the dashboard. It does not copy or monitor `README.md` or `docs/**/*.md`.
 
-If the repository contains `openspec/`, initialization also builds the dashboard's `Spec` tab from the local OpenSpec filesystem. It reads canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task checkboxes without requiring the OpenSpec CLI.
+If the repository contains `openspec/`, initialization also builds the dashboard's `Spec` tab from the local OpenSpec filesystem. It reads canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task checkboxes without requiring the OpenSpec CLI. Markdown artifacts render as safe semantic HTML with exact escaped source available; YAML remains literal code.
 
 ## Content workflow
 

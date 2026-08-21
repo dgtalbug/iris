@@ -48,12 +48,15 @@
     "release:check": "pnpm lint && pnpm token-lint && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
   },
   "runtimeDependencyRationale": {
-    "ajv": "JSON Schema validation for strict contract enforcement"
+    "ajv": "JSON Schema validation for strict contract enforcement",
+    "markdown-it": "Generation-time semantic Markdown rendering with embedded HTML disabled"
   },
   "dependencies": {
-    "ajv": "8.18.0"
+    "ajv": "8.18.0",
+    "markdown-it": "15.0.0"
   },
   "devDependencies": {
+    "@types/markdown-it": "14.2.0",
     "@types/node": "24.4.0",
     "@typescript-eslint/eslint-plugin": "8.41.0",
     "@typescript-eslint/parser": "8.41.0",

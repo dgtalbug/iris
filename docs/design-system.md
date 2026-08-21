@@ -138,7 +138,7 @@ The `Spec` view uses this hierarchy:
 Overview → project/config context → canonical specs → active changes → archive
 ```
 
-Canonical, active, structured archive, legacy archive, incomplete, and invalid states always carry text or structural labels. Proposal, design, tasks, and delta specs use native disclosure controls with escaped source fallbacks. Long paths stay contained at 360 px; tab selection uses correct ARIA relationships and arrow/Home/End keyboard behavior. Motion is optional and becomes immediate under reduced-motion preferences.
+Canonical, active, structured archive, legacy archive, incomplete, and invalid states always carry text or structural labels. Proposal, design, tasks, delta specs, project identity, and legacy Markdown use native disclosures with semantic generated prose as the primary view and an exact escaped-source disclosure beneath it. YAML/config artifacts stay literal. Tables and code scroll within their component, long paths stay contained at 360 px, and hostile HTML, unsafe links, and image requests never become active markup. Tab selection uses correct ARIA relationships and arrow/Home/End keyboard behavior; motion is optional and becomes immediate under reduced-motion preferences.
 
 - **Briefing hero** is the "one shot": agent-first workspace guidance plus explicit content/render commands. The empty state points to an intentional page command and `iris render --all`; general repository documentation is not ingested.
 - **Health strip**: four stat tiles maximum. Numbers in display face; each tile links to its filtered view.

@@ -4,6 +4,7 @@ import type {
   OpenSpecSnapshot,
   OpenSpecSourceDocument,
 } from '../lib/openspec-workspace.js';
+import { renderSafeMarkdown } from '../lib/markdown.js';
 
 export const TOKENS_CSS = `:root {
   --bg: #0b0e14;
@@ -213,6 +214,29 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .spec-artifacts { display: grid; gap: var(--space-2); }
 .spec-artifact { border-top: var(--border-1); padding-top: var(--space-2); min-width: 0; }
 .spec-artifact summary { cursor: pointer; color: var(--text-1); font-weight: var(--weight-medium); }
+.spec-document { min-width: 0; color: var(--text-1); overflow-wrap: anywhere; }
+.spec-document > :first-child { margin-top: 0; }
+.spec-document > :last-child { margin-bottom: 0; }
+.spec-document h1, .spec-document h2, .spec-document h3, .spec-document h4, .spec-document h5, .spec-document h6 { margin: var(--space-4) 0 var(--space-2); line-height: var(--leading-tight); overflow-wrap: anywhere; }
+.spec-document h1 { font-size: var(--size-4); }
+.spec-document h2 { font-size: var(--size-3); }
+.spec-document h3, .spec-document h4, .spec-document h5, .spec-document h6 { font-size: var(--size-2); }
+.spec-document p, .spec-document ul, .spec-document ol, .spec-document blockquote, .spec-document pre, .spec-document table { margin: 0 0 var(--space-3); }
+.spec-document ul, .spec-document ol { padding-left: var(--space-5); }
+.spec-document li + li { margin-top: var(--space-1); }
+.spec-document .task-list-item { list-style: none; }
+.spec-document .task-checkbox { margin-left: calc(var(--space-5) * -1); accent-color: var(--accent); }
+.spec-document blockquote { margin-left: 0; padding-left: var(--space-3); border-left: calc(var(--space-1) / 2) solid var(--accent); color: var(--text-2); }
+.spec-document code, .spec-document pre { font-family: var(--font-mono); font-size: var(--size-1); }
+.spec-document :not(pre) > code { padding: var(--space-1); border-radius: var(--radius-1); background: var(--surface-2); color: var(--accent-text); }
+.spec-document pre { max-width: 100%; overflow: auto; padding: var(--space-3); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-2); }
+.spec-document table { display: block; max-width: 100%; overflow: auto; border-collapse: collapse; }
+.spec-document th, .spec-document td { padding: var(--space-2) var(--space-3); border: var(--border-1); text-align: left; }
+.spec-document th { background: var(--surface-2); }
+.spec-document a { overflow-wrap: anywhere; }
+.spec-image-reference { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); }
+.spec-source-details { margin-top: var(--space-3); }
+.spec-source-details > summary { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); }
 .spec-source { max-height: calc(var(--space-6) * 8); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: var(--space-3); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); }
 .spec-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .spec-warning { border-left: calc(var(--space-1) / 2) solid var(--warn); padding-left: var(--space-3); }
@@ -278,6 +302,7 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .page-shell { width: 100%; padding: 0; }
   .surface { box-shadow: none; break-inside: avoid; }
   a { color: inherit; text-decoration: underline; }
+  .spec-document pre, .spec-document table, .spec-source { max-height: none; overflow: visible; }
 }
 `;
 
@@ -860,10 +885,15 @@ function sourceDetails(label: string, document?: OpenSpecSourceDocument): string
     document.requirements.length > 0 ? `${document.requirements.length} requirements` : '',
     document.scenarios.length > 0 ? `${document.scenarios.length} scenarios` : '',
   ].filter(Boolean).join(' · ');
-  return `<details class="spec-artifact">
+  const isMarkdown = document.format ? document.format === 'markdown' : document.path.endsWith('.md');
+  const body = isMarkdown
+    ? `<div class="spec-document">${renderSafeMarkdown(document.raw)}</div>
+      <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>`
+    : `<pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>`;
+  return `<details class="spec-artifact" data-document-format="${isMarkdown ? 'markdown' : 'yaml'}">
     <summary>${escapeHtml(label)} · <span class="mono spec-path">${escapeHtml(document.path)}</span></summary>
     <div class="spec-meta"><span class="mono">${escapeHtml(summary || 'readable source')}</span><span>${operations}</span></div>
-    <pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>
+    ${body}
   </details>`;
 }
 

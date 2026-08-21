@@ -59,7 +59,7 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(await snapshotRaw(cwd)).toContain('changed by init');
   });
 
-  it('renders escaped structured, archived, legacy, context, and task evidence', async () => {
+  it('renders semantic Markdown, literal YAML, exact source, and inert hostile content', async () => {
     const cwd = await tempProject();
     const legacy = path.join(cwd, 'openspec', 'changes', 'archive', '2026-08-18-legacy.md');
     const malformed = path.join(cwd, 'openspec', 'specs', 'malformed', 'spec.md');
@@ -79,8 +79,29 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).toContain('1/2 tasks · 1 open');
     expect(dashboard).toContain('health-invalid');
     expect(dashboard).toContain('malformed-spec');
+    expect(dashboard).toContain('data-document-format="markdown"');
+    expect(dashboard).toContain('data-document-format="yaml"');
+    expect(dashboard).toContain('<div class="spec-document"><h2>Why</h2>');
+    expect(dashboard).toContain('<strong>active layout</strong>');
+    expect(dashboard).toContain('href="./design.md" rel="noopener noreferrer"');
+    expect(dashboard).toContain('<blockquote>');
+    expect(dashboard).toContain('class="task-list-item"');
+    expect(dashboard).toContain('disabled checked aria-label="completed task"');
+    expect(dashboard).toContain('<table>');
+    expect(dashboard).toContain('<pre><code class="language-ts">');
+    expect(dashboard).toContain('<summary>Exact source</summary>');
+    expect(dashboard).toContain('- [x] completed task evidence');
+    expect(dashboard).toContain('schema: spec-driven');
+    expect(dashboard).toContain('Image: remote tracker (https://example.com/tracker.png)');
     expect(dashboard).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
     expect(dashboard).not.toContain('<script>globalThis.pwned=true</script>');
+    expect(dashboard).not.toContain('<script data-attack="script">');
+    expect(dashboard).not.toContain('<iframe ');
+    expect(dashboard).not.toContain('<style>body');
+    expect(dashboard).not.toContain('<img ');
+    expect(dashboard).not.toContain('href="javascript:');
+    expect(dashboard).not.toContain('href="data:');
+    expect(dashboard).not.toContain('src="https://example.com');
   });
 
   it('generates accessible offline tabs and responsive reduced-motion styles', async () => {
@@ -106,6 +127,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
     expect(css).toContain('@media (max-width: 40rem)');
     expect(css).toMatch(/spec-grid\s*\{\s*grid-template-columns:\s*minmax\(0, 1fr\)/);
+    expect(css).toContain('.spec-document table');
+    expect(css).toContain('.spec-document pre');
+    expect(css).toContain('.spec-source-details');
+    expect(css).toMatch(/@media print[\s\S]*\.spec-document pre/);
   });
 
   it('renders distinct absent and empty OpenSpec states', async () => {
