@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026-08-21-openspec-spec-browser · iris</title>
+    <link rel="stylesheet" href="../../../design/tokens.css" />
+    <link rel="stylesheet" href="../../../design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="../../../index.html">
+        <svg class="aperture-glyph tp-plan" viewBox="0 0 24 24" role="img" aria-label="iris" style="width: 1.5rem; height: 1.5rem"><circle cx="12" cy="12" r="8" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="../../../index.html" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" stroke-dasharray="30 10" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../../work.html" title="Work"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="7" rx="1" /></svg><span>Work</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../spec.html" aria-current="page" title="Spec"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6z" /><path d="M9 12h6M9 16h6M15 3v4h4" /></svg><span>Spec</span><em class="nav-count">0</em></a></li><li><a class="nav-item" href="../../../research.html" title="Research"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg><span>Research</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../commands.html" title="Commands"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m7 10 3 2-3 2M12 15h5" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="../../../project/overview.html" title="overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>overview</span></a></li><li><a class="nav-item" href="../../../project/hld.html" title="hld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>hld</span></a></li><li><a class="nav-item" href="../../../project/lld.html" title="lld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>lld</span></a></li><li><a class="nav-item" href="../../../project/erd.html" title="erd"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>erd</span></a></li><li><a class="nav-item" href="../../../project/decisions.html" title="decisions"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="button menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections">&#9776;</button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../../spec.html">Spec</a><span aria-hidden="true">/</span><b>2026-08-21-openspec-spec-browser</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">theme <kbd>t</kbd></button>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <span class="eyebrow">archived change</span>
+        <h1>2026-08-21-openspec-spec-browser</h1>
+        <div class="doc-meta" style="margin-top: var(--space-2)">
+          <span class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser</span>
+          <span class="pill">complete</span>
+          <span class="status-chip health-valid">valid</span>
+        </div>
+      </div>
+      <div class="page-head-actions"><a class="button" href="../../../spec.html">&larr; Spec index</a></div>
+    </div>
+
+    <section class="strip" aria-label="change summary">
+      <div class="surface stat-tile"><span class="stat-value">25</span><span class="stat-label">tasks complete</span></div>
+      <div class="surface stat-tile"><span class="stat-value">0</span><span class="stat-label">tasks open</span></div>
+      <div class="surface stat-tile"><span class="stat-value">2</span><span class="stat-label">delta specs</span></div>
+    </section>
+
+    <div class="surface card-body-pad"><div class="progress" role="img" aria-label="2026-08-21-openspec-spec-browser: 25 of 25 tasks complete"><span style="width: 100%"></span></div><p class="work-meta" style="margin: var(--space-2) 0 0">25/25 tasks complete · 0 open</p></div>
+
+    <div class="doc-layout">
+      <div class="spec-stack"><section class="surface doc-body" id="proposal-artifact">
+        <div class="spec-card-header">
+          <h2>Proposal</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/proposal.md</p>
+
+        <h2 id="proposal-why">Why</h2>
+<p>Iris can render intentional work pages, but its dashboard does not expose the repository's actual OpenSpec workspace. Agents and maintainers need an offline, deterministic view of canonical specs and change progress without running OpenSpec, ingesting general documentation, or introducing background synchronization.</p>
+<h2 id="proposal-what-changes">What Changes</h2>
+<ul>
+<li>Add a top-level dashboard tab labelled <code>Spec</code> that summarizes canonical specs, active changes, archived changes, project/config context, artifact availability, delta specs, and real Markdown task progress.</li>
+<li>Parse the <code>openspec/</code> filesystem directly during <code>iris init</code> and <code>iris render --all</code>; keep single-page renders focused on page output and avoid a new refresh command because the existing explicit full-render flow has a clear user-facing purpose.</li>
+<li>Support the repository's structured active/archive layouts and legacy archived Markdown while preserving nested capability paths and representing invalid, incomplete, or unknown layouts with escaped source and path-specific warnings.</li>
+<li>Extend the Aperture dashboard hierarchy with accessible Work/Spec top-level navigation that remains deterministic, token-only, keyboard-operable, theme-safe, reduced-motion-safe, responsive at 360 px, and functional from <code>file://</code> without network requests or runtime modules.</li>
+<li>Add bounded, symlink-safe filesystem traversal and fixture coverage for every observed layout plus nested capabilities and all delta-operation headings.</li>
+<li>Regenerate Iris dogfood only through the CLI and update the user/technical/design documentation for the new surface and refresh contract.</li>
+</ul>
+<h2 id="proposal-capabilities">Capabilities</h2>
+<h3 id="proposal-new-capabilities">New Capabilities</h3>
+<ul>
+<li><code>openspec-spec-browser</code>: Deterministic parsing, normalization, refresh, fallback, and offline visualization of a repository's complete OpenSpec workspace.</li>
+</ul>
+<h3 id="proposal-modified-capabilities">Modified Capabilities</h3>
+<ul>
+<li><code>aperture-design-system</code>: Extend the dashboard interaction and responsive hierarchy with a top-level accessible <code>Spec</code> tab while retaining the existing Work experience.</li>
+</ul>
+<h2 id="proposal-impact">Impact</h2>
+<ul>
+<li>Affects initialization and full-render orchestration, dashboard view data, generated HTML/CSS/classic-script behavior, tests/fixtures, dogfood output, and project documentation.</li>
+<li>Adds no runtime dependency on OpenSpec, no server, no framework, no network request, no watcher, and no new content-ingestion command.</li>
+<li>OpenSpec files remain repository-owned inputs; Iris writes only its generated <code>iris/</code> output.</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Why
+
+Iris can render intentional work pages, but its dashboard does not expose the repository&#039;s actual OpenSpec workspace. Agents and maintainers need an offline, deterministic view of canonical specs and change progress without running OpenSpec, ingesting general documentation, or introducing background synchronization.
+
+## What Changes
+
+- Add a top-level dashboard tab labelled `Spec` that summarizes canonical specs, active changes, archived changes, project/config context, artifact availability, delta specs, and real Markdown task progress.
+- Parse the `openspec/` filesystem directly during `iris init` and `iris render --all`; keep single-page renders focused on page output and avoid a new refresh command because the existing explicit full-render flow has a clear user-facing purpose.
+- Support the repository&#039;s structured active/archive layouts and legacy archived Markdown while preserving nested capability paths and representing invalid, incomplete, or unknown layouts with escaped source and path-specific warnings.
+- Extend the Aperture dashboard hierarchy with accessible Work/Spec top-level navigation that remains deterministic, token-only, keyboard-operable, theme-safe, reduced-motion-safe, responsive at 360 px, and functional from `file://` without network requests or runtime modules.
+- Add bounded, symlink-safe filesystem traversal and fixture coverage for every observed layout plus nested capabilities and all delta-operation headings.
+- Regenerate Iris dogfood only through the CLI and update the user/technical/design documentation for the new surface and refresh contract.
+
+## Capabilities
+
+### New Capabilities
+
+- `openspec-spec-browser`: Deterministic parsing, normalization, refresh, fallback, and offline visualization of a repository&#039;s complete OpenSpec workspace.
+
+### Modified Capabilities
+
+- `aperture-design-system`: Extend the dashboard interaction and responsive hierarchy with a top-level accessible `Spec` tab while retaining the existing Work experience.
+
+## Impact
+
+- Affects initialization and full-render orchestration, dashboard view data, generated HTML/CSS/classic-script behavior, tests/fixtures, dogfood output, and project documentation.
+- Adds no runtime dependency on OpenSpec, no server, no framework, no network request, no watcher, and no new content-ingestion command.
+- OpenSpec files remain repository-owned inputs; Iris writes only its generated `iris/` output.
+</code></pre></details>
+      </section><section class="surface doc-body" id="design-artifact">
+        <div class="spec-card-header">
+          <h2>Design</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/design.md</p>
+
+        <h2 id="design-context">Context</h2>
+<p>See <code>proposal.md</code> for motivation and the two delta specs for observable behavior. The current renderer rebuilds <code>iris/index.html</code> after page operations from page registry data, but it has no durable generated representation of OpenSpec. A single-page render, archive, report, or update may refresh the dashboard even though Phase 2 permits OpenSpec filesystem reads only during explicit workspace refreshes.</p>
+<p>The repository currently proves four forms: canonical <code>specs/**/spec.md</code>, structured active change directories, structured archive directories, and legacy archived single Markdown files. Current capability paths are flat and current delta files primarily use <code>ADDED Requirements</code>; nested paths and the other delta operations need contract fixtures rather than claims of observed use.</p>
+<h2 id="design-goals-non-goals">Goals / Non-Goals</h2>
+<p><strong>Goals:</strong></p>
+<ul>
+<li>Define one versioned normalized snapshot shared by parsing, rendering, and tests.</li>
+<li>Keep filesystem reads deterministic, bounded, confined, symlink-safe, and tolerant of isolated failures.</li>
+<li>Preserve the exact repository-relative identity of every supported OpenSpec record.</li>
+<li>Make Work and Spec peer dashboard views without regressing file-based navigation or accessibility.</li>
+<li>Make refresh ownership explicit so unrelated page operations reuse the last generated Spec snapshot.</li>
+</ul>
+<p><strong>Non-Goals:</strong></p>
+<ul>
+<li>Semantic validation equivalent to <code>openspec validate</code> or use of private OpenSpec APIs.</li>
+<li>A full Markdown engine, editable spec UI, search index, watcher, server, or dedicated refresh command.</li>
+<li>Mermaid, charts, browser rendering, or general repository-document ingestion.</li>
+</ul>
+<h2 id="design-decisions">Decisions</h2>
+<h3 id="design-1-persist-a-generated-iris-spec-json-snapshot">1. Persist a generated <code>iris/spec.json</code> snapshot</h3>
+<p>Add a versioned derived snapshot below <code>iris/</code> rather than re-reading <code>openspec/</code> every time the dashboard is regenerated. <code>iris init</code> and an explicit full render (<code>iris render --all</code>, plus the existing compatible bare <code>iris render</code> form) parse and atomically replace the snapshot before rendering the dashboard. Single-page render, report, archive, and update paths load the existing snapshot without touching OpenSpec. A missing snapshot normalizes to an undetected/empty view until the next authorized refresh.</p>
+<p>This keeps the refresh contract observable and testable. Re-parsing inside the dashboard renderer was rejected because that renderer is called by operations that are not OpenSpec refresh actions. Extracting state back out of old HTML was rejected because generated markup is an output, not a data store.</p>
+<p>The snapshot shape is deliberately UI-neutral:</p>
+<pre><code class="language-ts">type OpenSpecSnapshot = {
+  version: 1;
+  detected: boolean;
+  generated_at: null;
+  context: { project?: SourceDocument; config?: SourceDocument };
+  canonical_specs: CapabilityRecord[];
+  active_changes: ChangeRecord[];
+  archived_changes: ChangeRecord[];
+  legacy_archives: SourceDocument[];
+  warnings: ParseWarning[];
+};
+
+type ChangeRecord = {
+  name: string;
+  path: string;
+  lifecycle: 'active' | 'archived';
+  layout: 'structured' | 'legacy';
+  artifacts: { proposal?: SourceDocument; design?: SourceDocument; tasks?: TaskDocument };
+  delta_specs: CapabilityRecord[];
+  completeness: 'complete' | 'incomplete' | 'unknown';
+  health: 'valid' | 'warning' | 'invalid';
+};
+</code></pre>
+<p><code>generated_at</code> stays <code>null</code>; timestamps would make unchanged renders nondeterministic. Arrays and warnings sort by normalized repository-relative path. Lifecycle, completeness, task progress, and parser health are never collapsed into one status.</p>
+<h3 id="design-2-traverse-only-a-documented-allowlist-with-hard-resource-bo">2. Traverse only a documented allowlist with hard resource bounds</h3>
+<p>Implement a framework-free parser module that begins at the lexical and real <code>openspec/</code> root, uses <code>lstat</code>, refuses symlinks at every visited component, and never follows entries outside that root. It recognizes only:</p>
+<ul>
+<li><code>config.yaml</code> and <code>project.md</code>;</li>
+<li><code>specs/**/spec.md</code> with the full relative capability path;</li>
+<li><code>changes/&lt;name&gt;/.openspec.yaml</code>, <code>proposal.md</code>, <code>design.md</code>, <code>tasks.md</code>, and <code>specs/**/spec.md</code>;</li>
+<li>the same structured files below <code>changes/archive/&lt;dated-name&gt;/</code>;</li>
+<li>top-level <code>changes/archive/*.md</code> as legacy records.</li>
+</ul>
+<p>Traversal is sorted and capped by named constants for depth, supported file count, and bytes per file. The implementation will start with depth 16, 1,000 supported files, and 1 MiB per file; hitting a bound yields a warning and preserves records already read. Unrecognized files remain untouched and are not treated as general documentation.</p>
+<p>Recursive convenience APIs and glob libraries were rejected: neither provides the required per-component symlink checks and bounded failure reporting as clearly as a small explicit walker.</p>
+<h3 id="design-3-use-a-conservative-line-parser-not-a-markdown-runtime">3. Use a conservative line parser, not a Markdown runtime</h3>
+<p>Parse only structural evidence Iris needs: headings, requirement/scenario headings, delta section labels, artifact presence, and task list items. A fence state machine excludes checkbox-like lines inside backtick or tilde fences. Supported task markers are Markdown list items with <code>[ ]</code>, <code>[x]</code>, or <code>[X]</code>; directory names and archive location never affect counts.</p>
+<p>Every source document retains its bounded raw text for a readable fallback. The renderer escapes text and attribute values before inserting them into templates. It may turn recognized structures into semantic HTML, but it never passes raw source through as HTML and never evaluates YAML, Markdown, scripts, links, or code fences. YAML is displayed as escaped source and used only for simple presence/context labels; OpenSpec semantic validity remains outside Iris's claim.</p>
+<p>Adding a Markdown package was rejected because the required view is structural, not a general documentation renderer, and plugin/sanitizer policy would add dependency and execution surface for little benefit.</p>
+<h3 id="design-4-recover-per-path-and-make-unknowns-visible">4. Recover per path and make unknowns visible</h3>
+<p>Parsing returns records plus warnings instead of throwing for content problems. Missing expected artifacts make a structured change incomplete. Malformed headings, unreadable files, unsafe paths, bounds, and unsupported layouts attach stable warning codes and repository-relative paths. If raw text was read safely, the UI exposes it in an escaped <code>&lt;pre&gt;</code> disclosure. A failure to read one file cannot remove other valid records.</p>
+<p>Only inability to write the CLI-owned snapshot/dashboard remains a command-level error. This separates untrusted input quality from Iris output integrity.</p>
+<h3 id="design-5-add-peer-work-spec-tab-panels-to-the-generated-dashboard">5. Add peer Work/Spec tab panels to the generated dashboard</h3>
+<p>Extend <code>dashboardHtml</code> to accept the normalized snapshot and render:</p>
+<pre><code class="language-text">Work | Spec
+       Overview: canonical, active, archived, open/completed tasks, warnings
+       Canonical specs
+       Active changes: proposal, design, tasks, delta specs
+       Archive: structured changes, then legacy Markdown
+</code></pre>
+<p>Within Spec, native headings, lists, links/anchors, and <code>&lt;details&gt;</code> disclosures provide most navigation without JavaScript. The existing classic deferred script owns only tab selection, roving keyboard focus, filter focus, and theme state. Work and Spec use <code>role=&quot;tablist&quot;</code>, <code>role=&quot;tab&quot;</code>, and linked <code>tabpanel</code> elements; List/Board remains nested inside Work with unique control ids. Color is paired with lifecycle labels, warning text/icons, and section position.</p>
+<p>Spec styles extend the existing generated token/component strings and introduce no literal outside <code>TOKENS_CSS</code>. Long paths and source blocks wrap or scroll inside their component without causing page-level overflow at 360 px. Reduced motion disables view transitions while retaining immediate state changes.</p>
+<p>A separate <code>iris/spec.html</code> was rejected because the user contract calls for a top-level dashboard tab and a second entry point would fragment navigation and offline integrity checks.</p>
+<h3 id="design-6-verify-with-real-layout-copies-plus-synthetic-contract-fix">6. Verify with real-layout copies plus synthetic contract fixtures</h3>
+<p>Create temporary-repository fixtures for every observed layout: project/config, canonical specs, both current structured active states, structured archives, and legacy archive Markdown. Add synthetic fixtures for nested capabilities; ADDED, MODIFIED, REMOVED, and RENAMED sections; fenced fake checkboxes; absent/empty workspaces; partial/malformed changes; unsafe symlinks; oversized/deep/excess entries; unreadable paths where portable; and executable-looking source.</p>
+<p>Parser tests assert normalized values and deterministic ordering. Orchestration tests prove only init/full render refresh the snapshot. Template/navigation tests assert escaping, unique ARIA relationships, keyboard behavior contracts, both themes, reduced-motion CSS, 360 px containment hooks, classic deferred scripts, and no remote URL. Dogfood is regenerated through the built CLI and checked by the existing HTML/link gate.</p>
+<h2 id="design-risks-trade-offs">Risks / Trade-offs</h2>
+<ul>
+<li>[OpenSpec formats evolve beyond the recognized subset] → retain escaped source, stable unknown-layout warnings, and path identity so the dashboard degrades honestly.</li>
+<li>[Large workspaces make initialization slow or output huge] → enforce explicit bounds, skip only excess inputs, and report what was omitted.</li>
+<li>[Persisted snapshots become stale after manual spec edits] → label refresh behavior in the UI/docs and refresh only on <code>init</code> or a full render as specified.</li>
+<li>[Nested tab behavior creates duplicate ids or confusing focus] → namespace Work/Spec and List/Board controls and cover ARIA/keyboard behavior in generated HTML tests.</li>
+<li>[Platform filesystem permissions differ] → keep portable parser fixtures primary and conditionally test permission-specific failures where the platform supports them.</li>
+<li>[Raw fallback text enlarges <code>iris/index.html</code>] → bound every source file and total file count; prefer collapsed disclosures and deterministic truncation warnings if the aggregate render budget is reached.</li>
+</ul>
+<h2 id="design-migration-plan">Migration Plan</h2>
+<ol>
+<li>Add the parser, normalized model, atomic snapshot writer/loader, and fixtures without changing dashboard output.</li>
+<li>Wire snapshot refresh to init and full-render entry points while other render callers reuse the stored snapshot.</li>
+<li>Add Work/Spec information architecture, safe artifact rendering, and classic-script accessibility behavior.</li>
+<li>Update documentation and regenerate <code>iris/spec.json</code> plus <code>iris/index.html</code> through the built CLI.</li>
+<li>Verify the delta requirements, sync canonical specs, archive the change, and run the complete repository/install gate.</li>
+</ol>
+<p>Rollback removes the parser/snapshot integration and regenerates <code>iris/</code> with the prior CLI. <code>openspec/</code> is read-only throughout, so no source migration or recovery is required.</p>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Context
+
+See `proposal.md` for motivation and the two delta specs for observable behavior. The current renderer rebuilds `iris/index.html` after page operations from page registry data, but it has no durable generated representation of OpenSpec. A single-page render, archive, report, or update may refresh the dashboard even though Phase 2 permits OpenSpec filesystem reads only during explicit workspace refreshes.
+
+The repository currently proves four forms: canonical `specs/**/spec.md`, structured active change directories, structured archive directories, and legacy archived single Markdown files. Current capability paths are flat and current delta files primarily use `ADDED Requirements`; nested paths and the other delta operations need contract fixtures rather than claims of observed use.
+
+## Goals / Non-Goals
+
+**Goals:**
+
+- Define one versioned normalized snapshot shared by parsing, rendering, and tests.
+- Keep filesystem reads deterministic, bounded, confined, symlink-safe, and tolerant of isolated failures.
+- Preserve the exact repository-relative identity of every supported OpenSpec record.
+- Make Work and Spec peer dashboard views without regressing file-based navigation or accessibility.
+- Make refresh ownership explicit so unrelated page operations reuse the last generated Spec snapshot.
+
+**Non-Goals:**
+
+- Semantic validation equivalent to `openspec validate` or use of private OpenSpec APIs.
+- A full Markdown engine, editable spec UI, search index, watcher, server, or dedicated refresh command.
+- Mermaid, charts, browser rendering, or general repository-document ingestion.
+
+## Decisions
+
+### 1. Persist a generated `iris/spec.json` snapshot
+
+Add a versioned derived snapshot below `iris/` rather than re-reading `openspec/` every time the dashboard is regenerated. `iris init` and an explicit full render (`iris render --all`, plus the existing compatible bare `iris render` form) parse and atomically replace the snapshot before rendering the dashboard. Single-page render, report, archive, and update paths load the existing snapshot without touching OpenSpec. A missing snapshot normalizes to an undetected/empty view until the next authorized refresh.
+
+This keeps the refresh contract observable and testable. Re-parsing inside the dashboard renderer was rejected because that renderer is called by operations that are not OpenSpec refresh actions. Extracting state back out of old HTML was rejected because generated markup is an output, not a data store.
+
+The snapshot shape is deliberately UI-neutral:
+
+```ts
+type OpenSpecSnapshot = {
+  version: 1;
+  detected: boolean;
+  generated_at: null;
+  context: { project?: SourceDocument; config?: SourceDocument };
+  canonical_specs: CapabilityRecord[];
+  active_changes: ChangeRecord[];
+  archived_changes: ChangeRecord[];
+  legacy_archives: SourceDocument[];
+  warnings: ParseWarning[];
+};
+
+type ChangeRecord = {
+  name: string;
+  path: string;
+  lifecycle: &#039;active&#039; | &#039;archived&#039;;
+  layout: &#039;structured&#039; | &#039;legacy&#039;;
+  artifacts: { proposal?: SourceDocument; design?: SourceDocument; tasks?: TaskDocument };
+  delta_specs: CapabilityRecord[];
+  completeness: &#039;complete&#039; | &#039;incomplete&#039; | &#039;unknown&#039;;
+  health: &#039;valid&#039; | &#039;warning&#039; | &#039;invalid&#039;;
+};
+```
+
+`generated_at` stays `null`; timestamps would make unchanged renders nondeterministic. Arrays and warnings sort by normalized repository-relative path. Lifecycle, completeness, task progress, and parser health are never collapsed into one status.
+
+### 2. Traverse only a documented allowlist with hard resource bounds
+
+Implement a framework-free parser module that begins at the lexical and real `openspec/` root, uses `lstat`, refuses symlinks at every visited component, and never follows entries outside that root. It recognizes only:
+
+- `config.yaml` and `project.md`;
+- `specs/**/spec.md` with the full relative capability path;
+- `changes/&lt;name&gt;/.openspec.yaml`, `proposal.md`, `design.md`, `tasks.md`, and `specs/**/spec.md`;
+- the same structured files below `changes/archive/&lt;dated-name&gt;/`;
+- top-level `changes/archive/*.md` as legacy records.
+
+Traversal is sorted and capped by named constants for depth, supported file count, and bytes per file. The implementation will start with depth 16, 1,000 supported files, and 1 MiB per file; hitting a bound yields a warning and preserves records already read. Unrecognized files remain untouched and are not treated as general documentation.
+
+Recursive convenience APIs and glob libraries were rejected: neither provides the required per-component symlink checks and bounded failure reporting as clearly as a small explicit walker.
+
+### 3. Use a conservative line parser, not a Markdown runtime
+
+Parse only structural evidence Iris needs: headings, requirement/scenario headings, delta section labels, artifact presence, and task list items. A fence state machine excludes checkbox-like lines inside backtick or tilde fences. Supported task markers are Markdown list items with `[ ]`, `[x]`, or `[X]`; directory names and archive location never affect counts.
+
+Every source document retains its bounded raw text for a readable fallback. The renderer escapes text and attribute values before inserting them into templates. It may turn recognized structures into semantic HTML, but it never passes raw source through as HTML and never evaluates YAML, Markdown, scripts, links, or code fences. YAML is displayed as escaped source and used only for simple presence/context labels; OpenSpec semantic validity remains outside Iris&#039;s claim.
+
+Adding a Markdown package was rejected because the required view is structural, not a general documentation renderer, and plugin/sanitizer policy would add dependency and execution surface for little benefit.
+
+### 4. Recover per path and make unknowns visible
+
+Parsing returns records plus warnings instead of throwing for content problems. Missing expected artifacts make a structured change incomplete. Malformed headings, unreadable files, unsafe paths, bounds, and unsupported layouts attach stable warning codes and repository-relative paths. If raw text was read safely, the UI exposes it in an escaped `&lt;pre&gt;` disclosure. A failure to read one file cannot remove other valid records.
+
+Only inability to write the CLI-owned snapshot/dashboard remains a command-level error. This separates untrusted input quality from Iris output integrity.
+
+### 5. Add peer Work/Spec tab panels to the generated dashboard
+
+Extend `dashboardHtml` to accept the normalized snapshot and render:
+
+```text
+Work | Spec
+       Overview: canonical, active, archived, open/completed tasks, warnings
+       Canonical specs
+       Active changes: proposal, design, tasks, delta specs
+       Archive: structured changes, then legacy Markdown
+```
+
+Within Spec, native headings, lists, links/anchors, and `&lt;details&gt;` disclosures provide most navigation without JavaScript. The existing classic deferred script owns only tab selection, roving keyboard focus, filter focus, and theme state. Work and Spec use `role=&quot;tablist&quot;`, `role=&quot;tab&quot;`, and linked `tabpanel` elements; List/Board remains nested inside Work with unique control ids. Color is paired with lifecycle labels, warning text/icons, and section position.
+
+Spec styles extend the existing generated token/component strings and introduce no literal outside `TOKENS_CSS`. Long paths and source blocks wrap or scroll inside their component without causing page-level overflow at 360 px. Reduced motion disables view transitions while retaining immediate state changes.
+
+A separate `iris/spec.html` was rejected because the user contract calls for a top-level dashboard tab and a second entry point would fragment navigation and offline integrity checks.
+
+### 6. Verify with real-layout copies plus synthetic contract fixtures
+
+Create temporary-repository fixtures for every observed layout: project/config, canonical specs, both current structured active states, structured archives, and legacy archive Markdown. Add synthetic fixtures for nested capabilities; ADDED, MODIFIED, REMOVED, and RENAMED sections; fenced fake checkboxes; absent/empty workspaces; partial/malformed changes; unsafe symlinks; oversized/deep/excess entries; unreadable paths where portable; and executable-looking source.
+
+Parser tests assert normalized values and deterministic ordering. Orchestration tests prove only init/full render refresh the snapshot. Template/navigation tests assert escaping, unique ARIA relationships, keyboard behavior contracts, both themes, reduced-motion CSS, 360 px containment hooks, classic deferred scripts, and no remote URL. Dogfood is regenerated through the built CLI and checked by the existing HTML/link gate.
+
+## Risks / Trade-offs
+
+- [OpenSpec formats evolve beyond the recognized subset] → retain escaped source, stable unknown-layout warnings, and path identity so the dashboard degrades honestly.
+- [Large workspaces make initialization slow or output huge] → enforce explicit bounds, skip only excess inputs, and report what was omitted.
+- [Persisted snapshots become stale after manual spec edits] → label refresh behavior in the UI/docs and refresh only on `init` or a full render as specified.
+- [Nested tab behavior creates duplicate ids or confusing focus] → namespace Work/Spec and List/Board controls and cover ARIA/keyboard behavior in generated HTML tests.
+- [Platform filesystem permissions differ] → keep portable parser fixtures primary and conditionally test permission-specific failures where the platform supports them.
+- [Raw fallback text enlarges `iris/index.html`] → bound every source file and total file count; prefer collapsed disclosures and deterministic truncation warnings if the aggregate render budget is reached.
+
+## Migration Plan
+
+1. Add the parser, normalized model, atomic snapshot writer/loader, and fixtures without changing dashboard output.
+2. Wire snapshot refresh to init and full-render entry points while other render callers reuse the stored snapshot.
+3. Add Work/Spec information architecture, safe artifact rendering, and classic-script accessibility behavior.
+4. Update documentation and regenerate `iris/spec.json` plus `iris/index.html` through the built CLI.
+5. Verify the delta requirements, sync canonical specs, archive the change, and run the complete repository/install gate.
+
+Rollback removes the parser/snapshot integration and regenerates `iris/` with the prior CLI. `openspec/` is read-only throughout, so no source migration or recovery is required.
+</code></pre></details>
+      </section><section class="surface doc-body" id="tasks-artifact">
+        <div class="spec-card-header">
+          <h2>Tasks</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/tasks.md</p>
+
+        <h2 id="tasks-1-build-the-normalized-openspec-parser">1. Build the normalized OpenSpec parser</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.1 Define the versioned snapshot, source-document, capability, change, task-progress, artifact-completeness, lifecycle, health, and warning types with deterministic empty defaults.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.2 Implement sorted allowlisted discovery for project/config, canonical specs, structured active/archive changes, change-local specs, and legacy archive Markdown while preserving nested capability paths.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.3 Add per-component confinement and symlink refusal plus explicit depth, supported-file-count, per-file-size, and aggregate-output bounds with stable path-specific warnings.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.4 Implement conservative line parsing for headings, requirements, scenarios, delta operations, and Markdown task checkboxes while excluding fenced examples.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.5 Preserve bounded raw source for fallback rendering and isolate malformed, unreadable, unknown, or partial inputs without losing valid sibling records.</li>
+</ul>
+<h2 id="tasks-2-persist-and-orchestrate-explicit-snapshots">2. Persist and orchestrate explicit snapshots</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.1 Add deterministic atomic write/load handling for the CLI-owned <code>iris/spec.json</code> snapshot without timestamps or OpenSpec runtime dependencies.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.2 Refresh the snapshot during <code>iris init</code> before dashboard generation and represent missing or empty <code>openspec/</code> distinctly.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.3 Refresh the snapshot for explicit full renders, including <code>iris render --all</code> and the compatible bare full-render form, before rebuilding the dashboard.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.4 Make single-page render, report, archive, and update paths reuse the stored snapshot without reading <code>openspec/</code>.</li>
+</ul>
+<h2 id="tasks-3-implement-the-work-and-spec-information-architecture">3. Implement the Work and Spec information architecture</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.1 Extend dashboard view data and templates with peer Work/<code>Spec</code> tab panels and unique nested List/Board control identities.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.2 Render Spec overview counts, canonical specs, active changes with proposal/design/tasks/delta specs, structured archives, and legacy archives in deterministic order.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.3 Render lifecycle, completeness, task progress, and parser health with independent textual/structural indicators and command-specific absent, empty, malformed, and partial states.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.4 Escape every source and attribute value, expose readable fallback source in bounded disclosures, and prove executable-looking content cannot become active markup.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.5 Extend the token-owned Aperture CSS and classic deferred script for tab semantics, roving keyboard focus, visible focus, theme parity, reduced-motion fallback, long-path handling, and 360 px responsiveness.</li>
+</ul>
+<h2 id="tasks-4-cover-real-and-adversarial-filesystem-layouts">4. Cover real and adversarial filesystem layouts</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.1 Add fixtures matching every repository-observed OpenSpec layout: project/config, canonical specs, structured active changes, structured archives, and legacy archived Markdown.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.2 Add synthetic contract fixtures for nested capability paths and ADDED, MODIFIED, REMOVED, and RENAMED delta sections without presenting them as repository-observed formats.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.3 Add parser tests for deterministic ordering, artifact availability, independent status dimensions, real checkbox totals, fenced fake checkboxes, malformed Markdown, and partial changes.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.4 Add safety tests for symlinks, traversal/confinement, depth/count/size bounds, isolated filesystem failures where portable, raw-source escaping, and no content execution.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.5 Add orchestration tests proving init/full render refresh snapshots while single-page render, report, archive, and update preserve the prior snapshot with no implicit OpenSpec read.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 4.6 Extend generated-HTML tests for Work/Spec navigation, ARIA relationships, keyboard contracts, both themes, reduced motion, classic deferred scripts, zero remote requests, 360 px layout hooks, and <code>file://</code> link integrity.</li>
+</ul>
+<h2 id="tasks-5-document-and-dogfood-the-spec-browser">5. Document and dogfood the Spec browser</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 5.1 Update <code>README.md</code>, <code>docs/cmds.md</code>, <code>docs/tech.md</code>, <code>docs/design-system.md</code>, <code>docs/status.md</code>, and the installed <code>iris-workspace</code> skill for supported layouts, fallback limits, explicit refresh behavior, and OpenSpec CLI independence.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 5.2 Build the CLI and regenerate this repository's <code>iris/spec.json</code>, managed assets, and dashboard through <code>iris init</code> and <code>iris render --all</code> without hand-editing generated output.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 5.3 Inspect the generated diff and run HTML/link integrity checks to confirm readable Spec navigation, retained Work behavior, and no unexpected repository-document ingestion.</li>
+</ul>
+<h2 id="tasks-6-complete-lifecycle-verification">6. Complete lifecycle verification</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 6.1 Run lint, token lint, typecheck, the full Vitest suite, HTML integrity, and packed-install smoke as the complete repository gate.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 6.2 Run strict OpenSpec validation and the verification workflow, reconcile every requirement and scenario with code/test evidence, and leave no incomplete task before spec sync and archive.</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## 1. Build the normalized OpenSpec parser
+
+- [x] 1.1 Define the versioned snapshot, source-document, capability, change, task-progress, artifact-completeness, lifecycle, health, and warning types with deterministic empty defaults.
+- [x] 1.2 Implement sorted allowlisted discovery for project/config, canonical specs, structured active/archive changes, change-local specs, and legacy archive Markdown while preserving nested capability paths.
+- [x] 1.3 Add per-component confinement and symlink refusal plus explicit depth, supported-file-count, per-file-size, and aggregate-output bounds with stable path-specific warnings.
+- [x] 1.4 Implement conservative line parsing for headings, requirements, scenarios, delta operations, and Markdown task checkboxes while excluding fenced examples.
+- [x] 1.5 Preserve bounded raw source for fallback rendering and isolate malformed, unreadable, unknown, or partial inputs without losing valid sibling records.
+
+## 2. Persist and orchestrate explicit snapshots
+
+- [x] 2.1 Add deterministic atomic write/load handling for the CLI-owned `iris/spec.json` snapshot without timestamps or OpenSpec runtime dependencies.
+- [x] 2.2 Refresh the snapshot during `iris init` before dashboard generation and represent missing or empty `openspec/` distinctly.
+- [x] 2.3 Refresh the snapshot for explicit full renders, including `iris render --all` and the compatible bare full-render form, before rebuilding the dashboard.
+- [x] 2.4 Make single-page render, report, archive, and update paths reuse the stored snapshot without reading `openspec/`.
+
+## 3. Implement the Work and Spec information architecture
+
+- [x] 3.1 Extend dashboard view data and templates with peer Work/`Spec` tab panels and unique nested List/Board control identities.
+- [x] 3.2 Render Spec overview counts, canonical specs, active changes with proposal/design/tasks/delta specs, structured archives, and legacy archives in deterministic order.
+- [x] 3.3 Render lifecycle, completeness, task progress, and parser health with independent textual/structural indicators and command-specific absent, empty, malformed, and partial states.
+- [x] 3.4 Escape every source and attribute value, expose readable fallback source in bounded disclosures, and prove executable-looking content cannot become active markup.
+- [x] 3.5 Extend the token-owned Aperture CSS and classic deferred script for tab semantics, roving keyboard focus, visible focus, theme parity, reduced-motion fallback, long-path handling, and 360 px responsiveness.
+
+## 4. Cover real and adversarial filesystem layouts
+
+- [x] 4.1 Add fixtures matching every repository-observed OpenSpec layout: project/config, canonical specs, structured active changes, structured archives, and legacy archived Markdown.
+- [x] 4.2 Add synthetic contract fixtures for nested capability paths and ADDED, MODIFIED, REMOVED, and RENAMED delta sections without presenting them as repository-observed formats.
+- [x] 4.3 Add parser tests for deterministic ordering, artifact availability, independent status dimensions, real checkbox totals, fenced fake checkboxes, malformed Markdown, and partial changes.
+- [x] 4.4 Add safety tests for symlinks, traversal/confinement, depth/count/size bounds, isolated filesystem failures where portable, raw-source escaping, and no content execution.
+- [x] 4.5 Add orchestration tests proving init/full render refresh snapshots while single-page render, report, archive, and update preserve the prior snapshot with no implicit OpenSpec read.
+- [x] 4.6 Extend generated-HTML tests for Work/Spec navigation, ARIA relationships, keyboard contracts, both themes, reduced motion, classic deferred scripts, zero remote requests, 360 px layout hooks, and `file://` link integrity.
+
+## 5. Document and dogfood the Spec browser
+
+- [x] 5.1 Update `README.md`, `docs/cmds.md`, `docs/tech.md`, `docs/design-system.md`, `docs/status.md`, and the installed `iris-workspace` skill for supported layouts, fallback limits, explicit refresh behavior, and OpenSpec CLI independence.
+- [x] 5.2 Build the CLI and regenerate this repository&#039;s `iris/spec.json`, managed assets, and dashboard through `iris init` and `iris render --all` without hand-editing generated output.
+- [x] 5.3 Inspect the generated diff and run HTML/link integrity checks to confirm readable Spec navigation, retained Work behavior, and no unexpected repository-document ingestion.
+
+## 6. Complete lifecycle verification
+
+- [x] 6.1 Run lint, token lint, typecheck, the full Vitest suite, HTML integrity, and packed-install smoke as the complete repository gate.
+- [x] 6.2 Run strict OpenSpec validation and the verification workflow, reconcile every requirement and scenario with code/test evidence, and leave no incomplete task before spec sync and archive.
+</code></pre></details>
+      </section><section class="surface doc-body" id="manifest-artifact">
+          <h2>Manifest</h2>
+          <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/.openspec.yaml</p>
+          <pre class="spec-source"><code>schema: spec-driven
+created: 2026-08-21
+</code></pre>
+        </section><section class="surface doc-body" id="delta-aperture-design-system-artifact">
+        <div class="spec-card-header">
+          <h2>Delta spec · aperture-design-system</h2>
+          <span class="spec-meta"><span class="pill">MODIFIED</span></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/specs/aperture-design-system/spec.md</p>
+
+        <h2 id="delta-aperture-design-system-modified-requirements">MODIFIED Requirements</h2>
+<h3 id="delta-aperture-design-system-requirement-newcomer-first-dashboard-hierarchy">Requirement: newcomer-first dashboard hierarchy</h3>
+<p>The generated dashboard MUST provide top-level Work and <code>Spec</code> views, preserve the Work view's briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.</p>
+<h4 id="delta-aperture-design-system-scenario-repository-has-no-generated-work-pages">Scenario: repository has no generated work pages</h4>
+<ul>
+<li><strong>WHEN</strong> a newcomer opens the dashboard from <code>file://</code></li>
+<li><strong>THEN</strong> the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request</li>
+</ul>
+<h4 id="delta-aperture-design-system-scenario-user-opens-the-spec-view">Scenario: user opens the Spec view</h4>
+<ul>
+<li><strong>WHEN</strong> a user activates the top-level tab labelled <code>Spec</code></li>
+<li><strong>THEN</strong> the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available</li>
+</ul>
+<h4 id="delta-aperture-design-system-scenario-state-is-communicated-in-the-spec-view">Scenario: state is communicated in the Spec view</h4>
+<ul>
+<li><strong>WHEN</strong> canonical, active, archived, legacy, incomplete, or invalid records are displayed</li>
+<li><strong>THEN</strong> each state MUST have a textual or structural indicator in addition to any color encoding</li>
+</ul>
+<h3 id="delta-aperture-design-system-requirement-deterministic-responsive-interaction">Requirement: deterministic responsive interaction</h3>
+<p>The generated dashboard MUST retain classic deferred-script interactions for top-level view selection, filtering, theme switching, and keyboard navigation and MUST remain operable at a 360 px viewport.</p>
+<h4 id="delta-aperture-design-system-scenario-keyboard-navigation-is-used">Scenario: keyboard navigation is used</h4>
+<ul>
+<li><strong>WHEN</strong> the user presses <code>/</code> or <code>t</code> outside an editable field</li>
+<li><strong>THEN</strong> <code>/</code> MUST focus the relevant visible filter and <code>t</code> MUST toggle the theme without loading external assets</li>
+</ul>
+<h4 id="delta-aperture-design-system-scenario-top-level-tabs-are-keyboard-operated">Scenario: top-level tabs are keyboard operated</h4>
+<ul>
+<li><strong>WHEN</strong> focus is on the Work/Spec tablist and the user presses supported arrow, Home, or End keys</li>
+<li><strong>THEN</strong> focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics</li>
+</ul>
+<h4 id="delta-aperture-design-system-scenario-narrow-viewport-is-used">Scenario: narrow viewport is used</h4>
+<ul>
+<li><strong>WHEN</strong> the dashboard viewport is 360 px wide</li>
+<li><strong>THEN</strong> the Work and Spec views, their navigation, summaries, artifact content, warnings, and source fallbacks MUST remain readable without horizontal page overflow</li>
+</ul>
+<h4 id="delta-aperture-design-system-scenario-reduced-motion-is-requested">Scenario: reduced motion is requested</h4>
+<ul>
+<li><strong>WHEN</strong> the user enables reduced-motion preferences</li>
+<li><strong>THEN</strong> switching views and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## MODIFIED Requirements
+
+### Requirement: newcomer-first dashboard hierarchy
+The generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view&#039;s briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.
+
+#### Scenario: repository has no generated work pages
+- **WHEN** a newcomer opens the dashboard from `file://`
+- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request
+
+#### Scenario: user opens the Spec view
+- **WHEN** a user activates the top-level tab labelled `Spec`
+- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available
+
+#### Scenario: state is communicated in the Spec view
+- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed
+- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding
+
+### Requirement: deterministic responsive interaction
+The generated dashboard MUST retain classic deferred-script interactions for top-level view selection, filtering, theme switching, and keyboard navigation and MUST remain operable at a 360 px viewport.
+
+#### Scenario: keyboard navigation is used
+- **WHEN** the user presses `/` or `t` outside an editable field
+- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets
+
+#### Scenario: top-level tabs are keyboard operated
+- **WHEN** focus is on the Work/Spec tablist and the user presses supported arrow, Home, or End keys
+- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics
+
+#### Scenario: narrow viewport is used
+- **WHEN** the dashboard viewport is 360 px wide
+- **THEN** the Work and Spec views, their navigation, summaries, artifact content, warnings, and source fallbacks MUST remain readable without horizontal page overflow
+
+#### Scenario: reduced motion is requested
+- **WHEN** the user enables reduced-motion preferences
+- **THEN** switching views and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss
+</code></pre></details>
+      </section><section class="surface doc-body" id="delta-openspec-spec-browser-artifact">
+        <div class="spec-card-header">
+          <h2>Delta spec · openspec-spec-browser</h2>
+          <span class="spec-meta"><span class="pill">ADDED</span></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-openspec-spec-browser/specs/openspec-spec-browser/spec.md</p>
+
+        <h2 id="delta-openspec-spec-browser-purpose">Purpose</h2>
+<p>Provide a deterministic, offline dashboard view of the repository's complete OpenSpec filesystem so users and agents can inspect specifications, change artifacts, and real task progress without running OpenSpec.</p>
+<h2 id="delta-openspec-spec-browser-added-requirements">ADDED Requirements</h2>
+<h3 id="delta-openspec-spec-browser-requirement-explicit-openspec-workspace-snapshots">Requirement: explicit OpenSpec workspace snapshots</h3>
+<p>The system MUST detect and read the repository's <code>openspec/</code> workspace during <code>iris init</code> and <code>iris render --all</code>, and MUST NOT introduce implicit synchronization, background monitoring, or a separate refresh command for the same operation.</p>
+<h4 id="delta-openspec-spec-browser-scenario-repository-is-initialized-with-openspec">Scenario: repository is initialized with OpenSpec</h4>
+<ul>
+<li><strong>WHEN</strong> a user runs <code>iris init</code> in a repository containing <code>openspec/</code></li>
+<li><strong>THEN</strong> the generated dashboard MUST contain a snapshot of that workspace from the files read during initialization</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-user-explicitly-refreshes-all-output">Scenario: user explicitly refreshes all output</h4>
+<ul>
+<li><strong>WHEN</strong> a user runs <code>iris render --all</code> after OpenSpec files change</li>
+<li><strong>THEN</strong> the dashboard MUST re-read the current OpenSpec filesystem and replace the previous generated snapshot</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-user-renders-one-work-page">Scenario: user renders one work page</h4>
+<ul>
+<li><strong>WHEN</strong> a user runs <code>iris render &lt;id&gt;</code></li>
+<li><strong>THEN</strong> the system MUST render that page without treating the operation as an OpenSpec workspace refresh</li>
+</ul>
+<h3 id="delta-openspec-spec-browser-requirement-complete-normalized-workspace-view">Requirement: complete normalized workspace view</h3>
+<p>The system MUST represent canonical specs, active changes, structured archived changes, legacy archived Markdown, project/config context, proposal, design, tasks, and change-local delta specs while keeping canonical, active, archived, legacy, invalid, and incomplete states distinct.</p>
+<h4 id="delta-openspec-spec-browser-scenario-repository-contains-current-structured-layouts">Scenario: repository contains current structured layouts</h4>
+<ul>
+<li><strong>WHEN</strong> canonical specs and structured active or archived changes are present</li>
+<li><strong>THEN</strong> the Spec view MUST preserve their repository-relative identities, lifecycle state, artifact availability, requirements, scenarios, and delta-operation labels</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-capability-path-is-nested">Scenario: capability path is nested</h4>
+<ul>
+<li><strong>WHEN</strong> a canonical or change-local spec exists below a nested capability path</li>
+<li><strong>THEN</strong> the Spec view MUST preserve and display the complete capability path without flattening ambiguous names</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-archive-contains-a-legacy-markdown-record">Scenario: archive contains a legacy Markdown record</h4>
+<ul>
+<li><strong>WHEN</strong> <code>openspec/changes/archive/</code> contains an archived single Markdown file rather than a structured change directory</li>
+<li><strong>THEN</strong> the Spec view MUST identify it as legacy archive content and keep it separate from structured archived changes</li>
+</ul>
+<h3 id="delta-openspec-spec-browser-requirement-evidence-based-task-and-artifact-status">Requirement: evidence-based task and artifact status</h3>
+<p>The system MUST derive task totals only from actual Markdown task checkboxes and MUST keep task progress, artifact completeness, lifecycle state, and parser health as independent dimensions.</p>
+<h4 id="delta-openspec-spec-browser-scenario-tasks-contain-checked-and-unchecked-items">Scenario: tasks contain checked and unchecked items</h4>
+<ul>
+<li><strong>WHEN</strong> a structured change has task list items using supported Markdown checkbox syntax outside fenced code</li>
+<li><strong>THEN</strong> the Spec view MUST report completed, open, and total task counts from those items without inferring completion from the directory name or archive location</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-change-is-partially-complete">Scenario: change is partially complete</h4>
+<ul>
+<li><strong>WHEN</strong> a change is missing an expected artifact or contains open tasks</li>
+<li><strong>THEN</strong> the Spec view MUST label the available evidence and incompleteness without presenting the change as invalid or complete by assumption</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-checkbox-like-text-appears-in-a-code-fence">Scenario: checkbox-like text appears in a code fence</h4>
+<ul>
+<li><strong>WHEN</strong> an artifact contains checkbox syntax inside fenced source examples</li>
+<li><strong>THEN</strong> that text MUST NOT contribute to task progress</li>
+</ul>
+<h3 id="delta-openspec-spec-browser-requirement-safe-bounded-filesystem-parsing">Requirement: safe bounded filesystem parsing</h3>
+<p>The system MUST parse OpenSpec as untrusted local content using deterministic sorted traversal, repository confinement, bounded input, and symlink refusal, and MUST never execute file content.</p>
+<h4 id="delta-openspec-spec-browser-scenario-content-contains-active-markup-or-script-text">Scenario: content contains active markup or script text</h4>
+<ul>
+<li><strong>WHEN</strong> an OpenSpec file contains HTML, script text, or other executable-looking content</li>
+<li><strong>THEN</strong> every rendered representation MUST escape the content so opening the dashboard cannot execute it</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-path-is-unsafe-or-input-exceeds-a-bound">Scenario: path is unsafe or input exceeds a bound</h4>
+<ul>
+<li><strong>WHEN</strong> traversal encounters a symlink, path escape, unsupported file location, excessive depth, excessive file count, or oversized file</li>
+<li><strong>THEN</strong> the parser MUST skip the unsafe input, retain the rest of the workspace, and expose a path-specific actionable warning</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-filesystem-entry-cannot-be-read">Scenario: filesystem entry cannot be read</h4>
+<ul>
+<li><strong>WHEN</strong> one OpenSpec file or directory produces a filesystem error</li>
+<li><strong>THEN</strong> the parser MUST preserve successfully read entries and report the isolated failure rather than crashing the entire dashboard refresh</li>
+</ul>
+<h3 id="delta-openspec-spec-browser-requirement-graceful-unknown-and-empty-states">Requirement: graceful unknown and empty states</h3>
+<p>The system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces.</p>
+<h4 id="delta-openspec-spec-browser-scenario-repository-has-no-openspec-directory">Scenario: repository has no OpenSpec directory</h4>
+<ul>
+<li><strong>WHEN</strong> the dashboard snapshot is generated without an <code>openspec/</code> directory</li>
+<li><strong>THEN</strong> the Spec tab MUST explain that no OpenSpec workspace was detected without suggesting general-document ingestion</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-openspec-workspace-is-empty">Scenario: OpenSpec workspace is empty</h4>
+<ul>
+<li><strong>WHEN</strong> <code>openspec/</code> exists but contains no supported project, spec, or change records</li>
+<li><strong>THEN</strong> the Spec tab MUST show a distinct empty-workspace state</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-artifact-is-malformed-or-unknown">Scenario: artifact is malformed or unknown</h4>
+<ul>
+<li><strong>WHEN</strong> a recognized path contains malformed Markdown or an unsupported layout</li>
+<li><strong>THEN</strong> the Spec tab MUST render escaped readable source when available, identify the affected path, and show an actionable warning without hiding other valid records</li>
+</ul>
+<h3 id="delta-openspec-spec-browser-requirement-offline-runtime-independence">Requirement: offline runtime independence</h3>
+<p>The system MUST generate and operate the Spec view without requiring the OpenSpec CLI, a server, network access, runtime ES modules, telemetry, or general project-document ingestion.</p>
+<h4 id="delta-openspec-spec-browser-scenario-dashboard-opens-directly-from-disk">Scenario: dashboard opens directly from disk</h4>
+<ul>
+<li><strong>WHEN</strong> a user opens <code>iris/index.html</code> through <code>file://</code> after generation</li>
+<li><strong>THEN</strong> the Spec view MUST remain navigable and readable using only local generated assets and classic deferred scripts with zero network requests</li>
+</ul>
+<h4 id="delta-openspec-spec-browser-scenario-openspec-executable-is-unavailable">Scenario: OpenSpec executable is unavailable</h4>
+<ul>
+<li><strong>WHEN</strong> Iris initializes or renders in a repository whose <code>openspec/</code> files exist but no OpenSpec CLI is installed</li>
+<li><strong>THEN</strong> the filesystem snapshot and Spec view MUST still be generated successfully</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Purpose
+
+Provide a deterministic, offline dashboard view of the repository&#039;s complete OpenSpec filesystem so users and agents can inspect specifications, change artifacts, and real task progress without running OpenSpec.
+
+## ADDED Requirements
+
+### Requirement: explicit OpenSpec workspace snapshots
+The system MUST detect and read the repository&#039;s `openspec/` workspace during `iris init` and `iris render --all`, and MUST NOT introduce implicit synchronization, background monitoring, or a separate refresh command for the same operation.
+
+#### Scenario: repository is initialized with OpenSpec
+- **WHEN** a user runs `iris init` in a repository containing `openspec/`
+- **THEN** the generated dashboard MUST contain a snapshot of that workspace from the files read during initialization
+
+#### Scenario: user explicitly refreshes all output
+- **WHEN** a user runs `iris render --all` after OpenSpec files change
+- **THEN** the dashboard MUST re-read the current OpenSpec filesystem and replace the previous generated snapshot
+
+#### Scenario: user renders one work page
+- **WHEN** a user runs `iris render &lt;id&gt;`
+- **THEN** the system MUST render that page without treating the operation as an OpenSpec workspace refresh
+
+### Requirement: complete normalized workspace view
+The system MUST represent canonical specs, active changes, structured archived changes, legacy archived Markdown, project/config context, proposal, design, tasks, and change-local delta specs while keeping canonical, active, archived, legacy, invalid, and incomplete states distinct.
+
+#### Scenario: repository contains current structured layouts
+- **WHEN** canonical specs and structured active or archived changes are present
+- **THEN** the Spec view MUST preserve their repository-relative identities, lifecycle state, artifact availability, requirements, scenarios, and delta-operation labels
+
+#### Scenario: capability path is nested
+- **WHEN** a canonical or change-local spec exists below a nested capability path
+- **THEN** the Spec view MUST preserve and display the complete capability path without flattening ambiguous names
+
+#### Scenario: archive contains a legacy Markdown record
+- **WHEN** `openspec/changes/archive/` contains an archived single Markdown file rather than a structured change directory
+- **THEN** the Spec view MUST identify it as legacy archive content and keep it separate from structured archived changes
+
+### Requirement: evidence-based task and artifact status
+The system MUST derive task totals only from actual Markdown task checkboxes and MUST keep task progress, artifact completeness, lifecycle state, and parser health as independent dimensions.
+
+#### Scenario: tasks contain checked and unchecked items
+- **WHEN** a structured change has task list items using supported Markdown checkbox syntax outside fenced code
+- **THEN** the Spec view MUST report completed, open, and total task counts from those items without inferring completion from the directory name or archive location
+
+#### Scenario: change is partially complete
+- **WHEN** a change is missing an expected artifact or contains open tasks
+- **THEN** the Spec view MUST label the available evidence and incompleteness without presenting the change as invalid or complete by assumption
+
+#### Scenario: checkbox-like text appears in a code fence
+- **WHEN** an artifact contains checkbox syntax inside fenced source examples
+- **THEN** that text MUST NOT contribute to task progress
+
+### Requirement: safe bounded filesystem parsing
+The system MUST parse OpenSpec as untrusted local content using deterministic sorted traversal, repository confinement, bounded input, and symlink refusal, and MUST never execute file content.
+
+#### Scenario: content contains active markup or script text
+- **WHEN** an OpenSpec file contains HTML, script text, or other executable-looking content
+- **THEN** every rendered representation MUST escape the content so opening the dashboard cannot execute it
+
+#### Scenario: path is unsafe or input exceeds a bound
+- **WHEN** traversal encounters a symlink, path escape, unsupported file location, excessive depth, excessive file count, or oversized file
+- **THEN** the parser MUST skip the unsafe input, retain the rest of the workspace, and expose a path-specific actionable warning
+
+#### Scenario: filesystem entry cannot be read
+- **WHEN** one OpenSpec file or directory produces a filesystem error
+- **THEN** the parser MUST preserve successfully read entries and report the isolated failure rather than crashing the entire dashboard refresh
+
+### Requirement: graceful unknown and empty states
+The system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces.
+
+#### Scenario: repository has no OpenSpec directory
+- **WHEN** the dashboard snapshot is generated without an `openspec/` directory
+- **THEN** the Spec tab MUST explain that no OpenSpec workspace was detected without suggesting general-document ingestion
+
+#### Scenario: OpenSpec workspace is empty
+- **WHEN** `openspec/` exists but contains no supported project, spec, or change records
+- **THEN** the Spec tab MUST show a distinct empty-workspace state
+
+#### Scenario: artifact is malformed or unknown
+- **WHEN** a recognized path contains malformed Markdown or an unsupported layout
+- **THEN** the Spec tab MUST render escaped readable source when available, identify the affected path, and show an actionable warning without hiding other valid records
+
+### Requirement: offline runtime independence
+The system MUST generate and operate the Spec view without requiring the OpenSpec CLI, a server, network access, runtime ES modules, telemetry, or general project-document ingestion.
+
+#### Scenario: dashboard opens directly from disk
+- **WHEN** a user opens `iris/index.html` through `file://` after generation
+- **THEN** the Spec view MUST remain navigable and readable using only local generated assets and classic deferred scripts with zero network requests
+
+#### Scenario: OpenSpec executable is unavailable
+- **WHEN** Iris initializes or renders in a repository whose `openspec/` files exist but no OpenSpec CLI is installed
+- **THEN** the filesystem snapshot and Spec view MUST still be generated successfully
+</code></pre></details>
+      </section></div>
+      <aside class="surface doc-toc" aria-label="On this page"><span class="eyebrow">on this page</span><ol><li class="toc-2"><a href="#proposal-artifact">Proposal</a></li><li class="toc-2"><a href="#proposal-why">Why</a></li><li class="toc-2"><a href="#proposal-what-changes">What Changes</a></li><li class="toc-2"><a href="#proposal-capabilities">Capabilities</a></li><li class="toc-3"><a href="#proposal-new-capabilities">New Capabilities</a></li><li class="toc-3"><a href="#proposal-modified-capabilities">Modified Capabilities</a></li><li class="toc-2"><a href="#proposal-impact">Impact</a></li><li class="toc-2"><a href="#design-artifact">Design</a></li><li class="toc-2"><a href="#design-context">Context</a></li><li class="toc-2"><a href="#design-goals-non-goals">Goals / Non-Goals</a></li><li class="toc-2"><a href="#design-decisions">Decisions</a></li><li class="toc-3"><a href="#design-1-persist-a-generated-iris-spec-json-snapshot">1. Persist a generated `iris/spec.json` snapshot</a></li><li class="toc-3"><a href="#design-2-traverse-only-a-documented-allowlist-with-hard-resource-bo">2. Traverse only a documented allowlist with hard resource bounds</a></li><li class="toc-3"><a href="#design-3-use-a-conservative-line-parser-not-a-markdown-runtime">3. Use a conservative line parser, not a Markdown runtime</a></li><li class="toc-3"><a href="#design-4-recover-per-path-and-make-unknowns-visible">4. Recover per path and make unknowns visible</a></li><li class="toc-3"><a href="#design-5-add-peer-work-spec-tab-panels-to-the-generated-dashboard">5. Add peer Work/Spec tab panels to the generated dashboard</a></li><li class="toc-3"><a href="#design-6-verify-with-real-layout-copies-plus-synthetic-contract-fix">6. Verify with real-layout copies plus synthetic contract fixtures</a></li><li class="toc-2"><a href="#design-risks-trade-offs">Risks / Trade-offs</a></li><li class="toc-2"><a href="#design-migration-plan">Migration Plan</a></li><li class="toc-2"><a href="#tasks-artifact">Tasks</a></li><li class="toc-2"><a href="#tasks-1-build-the-normalized-openspec-parser">1. Build the normalized OpenSpec parser</a></li><li class="toc-2"><a href="#tasks-2-persist-and-orchestrate-explicit-snapshots">2. Persist and orchestrate explicit snapshots</a></li><li class="toc-2"><a href="#tasks-3-implement-the-work-and-spec-information-architecture">3. Implement the Work and Spec information architecture</a></li><li class="toc-2"><a href="#tasks-4-cover-real-and-adversarial-filesystem-layouts">4. Cover real and adversarial filesystem layouts</a></li><li class="toc-2"><a href="#tasks-5-document-and-dogfood-the-spec-browser">5. Document and dogfood the Spec browser</a></li><li class="toc-2"><a href="#tasks-6-complete-lifecycle-verification">6. Complete lifecycle verification</a></li><li class="toc-2"><a href="#manifest-artifact">Manifest</a></li><li class="toc-2"><a href="#delta-aperture-design-system-artifact">Delta spec · aperture-design-system</a></li><li class="toc-2"><a href="#delta-aperture-design-system-modified-requirements">MODIFIED Requirements</a></li><li class="toc-3"><a href="#delta-aperture-design-system-requirement-newcomer-first-dashboard-hierarchy">Requirement: newcomer-first dashboard hierarchy</a></li><li class="toc-3"><a href="#delta-aperture-design-system-requirement-deterministic-responsive-interaction">Requirement: deterministic responsive interaction</a></li><li class="toc-2"><a href="#delta-openspec-spec-browser-artifact">Delta spec · openspec-spec-browser</a></li><li class="toc-2"><a href="#delta-openspec-spec-browser-purpose">Purpose</a></li><li class="toc-2"><a href="#delta-openspec-spec-browser-added-requirements">ADDED Requirements</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-explicit-openspec-workspace-snapshots">Requirement: explicit OpenSpec workspace snapshots</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-complete-normalized-workspace-view">Requirement: complete normalized workspace view</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-evidence-based-task-and-artifact-status">Requirement: evidence-based task and artifact status</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-safe-bounded-filesystem-parsing">Requirement: safe bounded filesystem parsing</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-graceful-unknown-and-empty-states">Requirement: graceful unknown and empty states</a></li><li class="toc-3"><a href="#delta-openspec-spec-browser-requirement-offline-runtime-independence">Requirement: offline runtime independence</a></li></ol></aside>
+    </div>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="../../../design/vendor/mermaid.min.js"></script>
+    <script defer src="../../../design/components/base.js"></script>
+  </body>
+</html>

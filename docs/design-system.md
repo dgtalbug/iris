@@ -49,27 +49,26 @@ All values live in `tokens.css`; `token-lint` continues to forbid literals elsew
 
 ### 4.1 Color — dark (default)
 
-| Token              | Value     | Role                                                     |
-| ------------------ | --------- | -------------------------------------------------------- |
-| `--bg`             | `#0e1117` | chamber — page ground                                    |
-| `--surface-1`      | `#151923` | ground glass — cards, panels                             |
-| `--surface-2`      | `#1b2030` | raised — table headers, inputs, code                      |
-| `--surface-3`      | `#242a3b` | top elevation — menus, hover                              |
-| `--line-1`         | `#2a3143` | hairline borders                                          |
-| `--text-1`         | `#e7eaf2` | primary text                                              |
-| `--text-2`         | `#a4adc2` | secondary text                                            |
-| `--text-3`         | `#7a8399` | captions, metadata                                        |
-| `--accent`         | `#6f8cff` | interactive chrome — focus, selected tab, primary button  |
-| `--accent-text`    | `#93a8ff` | contrast-safe linked text                                 |
-| `--accent-soft`    | `#6f8cff1f` | selected tab fill, blockquote ground                    |
-| `--accent-ink`     | `#0b0e14` | text on accent                                            |
-| `--nav-bg`         | `#0a0d13` | sidebar ground, one step below the page                   |
-| `--nav-text`       | `#a4adc2` | sidebar entries                                           |
-| `--nav-active-bg`  | `#6f8cff1f` | current section fill                                    |
-| `--nav-active-text`| `#c3cfff` | current section label                                     |
+| Token               | Value       | Role                                                     |
+| ------------------- | ----------- | -------------------------------------------------------- |
+| `--bg`              | `#0e1117`   | chamber — page ground                                    |
+| `--surface-1`       | `#151923`   | ground glass — cards, panels                             |
+| `--surface-2`       | `#1b2030`   | raised — table headers, inputs, code                     |
+| `--surface-3`       | `#242a3b`   | top elevation — menus, hover                             |
+| `--line-1`          | `#2a3143`   | hairline borders                                         |
+| `--text-1`          | `#e7eaf2`   | primary text                                             |
+| `--text-2`          | `#a4adc2`   | secondary text                                           |
+| `--text-3`          | `#7a8399`   | captions, metadata                                       |
+| `--accent`          | `#6f8cff`   | interactive chrome — focus, selected tab, primary button |
+| `--accent-text`     | `#93a8ff`   | contrast-safe linked text                                |
+| `--accent-soft`     | `#6f8cff1f` | selected tab fill, blockquote ground                     |
+| `--accent-ink`      | `#0b0e14`   | text on accent                                           |
+| `--nav-bg`          | `#0a0d13`   | sidebar ground, one step below the page                  |
+| `--nav-text`        | `#a4adc2`   | sidebar entries                                          |
+| `--nav-active-bg`   | `#6f8cff1f` | current section fill                                     |
+| `--nav-active-text` | `#c3cfff`   | current section label                                    |
 
 The interactive accent is electric indigo, not the earlier amber. Amber survives as `--type-plan`, where it encodes meaning; using it for chrome as well made every interactive element read as a plan badge. Indigo is the convention the tools this replaces already use for selection and focus, which is worth more here than novelty. The sidebar sits one step darker than the page so the content area reads as the lit surface.
-
 
 ### 4.2 Color — the spectrum (encoding only)
 
@@ -133,16 +132,17 @@ The workspace is a set of static pages behind one shared shell, not a single scr
 └───────────────┴──────────────────────────────────────────────────┘
 ```
 
-| Page             | Owns                                                                                       |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| `index.html`     | Overview: briefing hero + aperture ring, four section tiles, recent work, spec movement with task progress, architecture pane, project-docs strip |
-| `work.html`      | Dense List / Table / Kanban browser over one projection, shared filter, detail drawer        |
-| `spec.html`      | OpenSpec overview counts, project context, canonical specs, active changes, archive, warnings |
-| `research.html`  | Markdown research index with status, tags, evidence, and parser warnings                     |
-| `commands.html`  | Every catalog command grouped by purpose with an explicit status chip                        |
-| `pages/<id>/`    | One contract page per record, same shell                                                     |
-| `research/<id>/` | One research document per record: header from front matter, table of contents, safe body     |
-| `project/*.html` | Managed overview, HLD, LLD, ERD, decisions placeholders                                      |
+| Page                | Owns                                                                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html`        | Overview: briefing hero + aperture ring, four section tiles, recent work, spec movement with task progress, architecture pane, project-docs strip |
+| `work.html`         | Dense List / Table / Kanban browser over one projection, shared filter, detail drawer                                                             |
+| `spec.html`         | OpenSpec index: overview counts, compact tables for canonical specs, active changes, and archive, project context, warnings — no artifact bodies  |
+| `spec/**/page.html` | One detail page per canonical spec, change, and legacy archive: header, counts, requirement table of contents, rendered artifacts, exact source   |
+| `research.html`     | Markdown research index with status, tags, evidence, and parser warnings                                                                          |
+| `commands.html`     | Every catalog command grouped by purpose with an explicit status chip                                                                             |
+| `pages/<id>/`       | One contract page per record, same shell                                                                                                          |
+| `research/<id>/`    | One research document per record: header from front matter, table of contents, safe body                                                          |
+| `project/*.html`    | Managed overview, HLD, LLD, ERD, decisions placeholders                                                                                           |
 
 The Overview **summarizes and links**; it never embeds another section's content. That is what keeps `index.html` around 13 KB while the Spec page carries the full OpenSpec snapshot.
 
@@ -168,13 +168,13 @@ Tokens-only styling, one class per component, no utility soup — `base.css` sta
 
 | Component                              | Notes                                                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------- |
-| `sidebar` / `nav-item`                 | workspace shell: sections, project docs, current marking, collapsed rail        |
-| `topbar` / `crumbs`                    | breadcrumb, filter slot, theme toggle; stripped from published artifacts        |
-| `page-head`                            | eyebrow, H1, one-line description, optional actions — opens every section page  |
-| `progress`                             | task-completion bar for OpenSpec changes; label carried by `aria-label`         |
-| `command-card`                         | one catalog command: name, status chip, synopsis, usage, flags                  |
-| `doc-layout` / `doc-toc` / `doc-body`  | research document with sticky table of contents; stacks below 48 rem            |
-| `aperture`                             | ring (overview) and glyph (cards/pages); SVG, segments driven by rendered data  |
+| `sidebar` / `nav-item`                 | workspace shell: sections, project docs, current marking, collapsed rail         |
+| `topbar` / `crumbs`                    | breadcrumb, filter slot, theme toggle; stripped from published artifacts         |
+| `page-head`                            | eyebrow, H1, one-line description, optional actions — opens every section page   |
+| `progress`                             | task-completion bar for OpenSpec changes; label carried by `aria-label`          |
+| `command-card`                         | one catalog command: name, status chip, synopsis, usage, flags                   |
+| `doc-layout` / `doc-toc` / `doc-body`  | research document with sticky table of contents; stacks below 48 rem             |
+| `aperture`                             | ring (overview) and glyph (cards/pages); SVG, segments driven by rendered data   |
 | `stat-tile`                            | display-face number, caption label, optional delta arrow, links to filtered view |
 | `work-row` / `work-table` / `kanban`   | three compact peer representations over one honest Work projection               |
 | `work-drawer`                          | modal right-side preview, full-screen at 360 px, with full-page escape hatch     |

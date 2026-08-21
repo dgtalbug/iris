@@ -6,6 +6,14 @@ import { renderShell, type NavCounts } from './shell.js';
 import { commandsPageContent } from './pages/commands.js';
 import { overviewPageContent } from './pages/overview.js';
 import { EMPTY_OPENSPEC_SNAPSHOT, specCounts, specPageContent } from './pages/spec.js';
+import {
+  capabilityDetailContent,
+  changeDetailContent,
+  legacyDetailContent,
+  legacyDetailSlug,
+  specDetailDepth,
+  specDetailPath,
+} from './pages/spec-detail.js';
 import { researchDocumentContent, researchPageContent } from './pages/research.js';
 import { workFilterInput, workPageContent } from './pages/work.js';
 import type { WorkspaceContext } from './pages/contract-page.js';
@@ -157,6 +165,69 @@ export function researchDocumentHtml(model: WorkspaceModel, item: ResearchItem):
   });
 }
 
+/** Relative path inside `iris/` to generated HTML for every Spec detail page. */
+export function renderSpecDetailPages(model: WorkspaceModel): Record<string, string> {
+  const pages: Record<string, string> = {};
+  const shellFor = (relativePath: string, title: string, crumbLabel: string, content: string) => {
+    const depth = specDetailDepth(relativePath);
+    const back = `${'../'.repeat(depth)}spec.html`;
+    return renderShell({
+      current: 'spec',
+      depth,
+      title,
+      projectName: model.projectName,
+      theme: model.theme,
+      counts: navCounts(model),
+      projectDocs: model.projectDocs,
+      crumbs: [
+        { label: 'iris', href: `${'../'.repeat(depth)}index.html` },
+        { label: 'Spec', href: back },
+        { label: crumbLabel },
+      ],
+      content,
+      mermaid: true,
+    });
+  };
+
+  for (const capability of model.openSpec.canonical_specs) {
+    const relativePath = specDetailPath('capability', capability.capability);
+    if (!relativePath) continue;
+    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
+    pages[relativePath] = shellFor(
+      relativePath,
+      capability.capability,
+      capability.capability,
+      capabilityDetailContent(capability, 'canonical spec', back),
+    );
+  }
+
+  for (const change of [...model.openSpec.active_changes, ...model.openSpec.archived_changes]) {
+    const relativePath = specDetailPath('change', change.name);
+    if (!relativePath) continue;
+    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
+    pages[relativePath] = shellFor(
+      relativePath,
+      change.name,
+      change.name,
+      changeDetailContent(change, back),
+    );
+  }
+
+  for (const document of model.openSpec.legacy_archives) {
+    const relativePath = specDetailPath('legacy', legacyDetailSlug(document));
+    if (!relativePath) continue;
+    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
+    pages[relativePath] = shellFor(
+      relativePath,
+      document.title,
+      document.title,
+      legacyDetailContent(document, back),
+    );
+  }
+
+  return pages;
+}
+
 export const SECTION_FILES = [
   'index.html',
   'work.html',
@@ -173,5 +244,6 @@ export function renderSectionPages(model: WorkspaceModel): Record<string, string
     'spec.html': specHtml(model),
     'research.html': researchHtml(model),
     'commands.html': commandsHtml(model),
+    ...renderSpecDetailPages(model),
   };
 }

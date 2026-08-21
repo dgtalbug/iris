@@ -4,8 +4,8 @@ import type {
   OpenSpecSnapshot,
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
-import { renderSafeMarkdown } from '../../lib/markdown.js';
 import { escapeHtml, progressBar, statTile } from '../common.js';
+import { legacyDetailSlug, specDetailPath } from './spec-detail.js';
 
 export const EMPTY_OPENSPEC_SNAPSHOT: OpenSpecSnapshot = {
   version: 1,
@@ -45,71 +45,79 @@ export function specCounts(snapshot: OpenSpecSnapshot): SpecCounts {
   };
 }
 
-function sourceDetails(label: string, document?: OpenSpecSourceDocument): string {
-  if (!document)
-    return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
-  const operations = document.operations
-    .map((operation) => `<span class="pill">${escapeHtml(operation)}</span>`)
+export function capabilityHealth(capability: OpenSpecCapability): string {
+  if (capability.document.warnings.some((item) => item.code === 'malformed-spec')) return 'invalid';
+  return capability.document.warnings.length > 0 ? 'warning' : 'valid';
+}
+
+function nameCell(label: string, href: string | undefined, path: string): string {
+  const title = href
+    ? `<a class="work-table-title" href="${escapeHtml(href)}">${escapeHtml(label)}</a>`
+    : `<span class="work-table-title">${escapeHtml(label)}</span>`;
+  return `<td><span class="work-row-primary">${title}<span class="work-row-id">${escapeHtml(path)}</span></span></td>`;
+}
+
+function capabilityRows(capabilities: OpenSpecCapability[]): string {
+  return capabilities
+    .map((capability) => {
+      const health = capabilityHealth(capability);
+      const href = specDetailPath('capability', capability.capability);
+      return `<tr>
+          ${nameCell(capability.capability, href ? `./${href}` : undefined, capability.path)}
+          <td class="mono col-updated">${capability.document.requirements.length}</td>
+          <td class="mono col-priority">${capability.document.scenarios.length}</td>
+          <td><span class="status-chip health-${health}">${health}</span></td>
+        </tr>`;
+    })
     .join('');
-  const summary = [
-    document.requirements.length > 0 ? `${document.requirements.length} requirements` : '',
-    document.scenarios.length > 0 ? `${document.scenarios.length} scenarios` : '',
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  const isMarkdown = document.format
-    ? document.format === 'markdown'
-    : document.path.endsWith('.md');
-  const body = isMarkdown
-    ? `<div class="spec-document">${renderSafeMarkdown(document.raw)}</div>
-      <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>`
-    : `<pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>`;
-  return `<details class="spec-artifact" data-document-format="${isMarkdown ? 'markdown' : 'yaml'}">
-    <summary>${escapeHtml(label)} · <span class="mono spec-path">${escapeHtml(document.path)}</span></summary>
-    <div class="spec-meta"><span class="mono">${escapeHtml(summary || 'readable source')}</span><span>${operations}</span></div>
-    ${body}
-  </details>`;
 }
 
-function capabilityCard(capability: OpenSpecCapability, label: string): string {
-  const health = capability.document.warnings.some((item) => item.code === 'malformed-spec')
-    ? 'invalid'
-    : capability.document.warnings.length > 0
-      ? 'warning'
-      : 'valid';
-  return `<article class="surface spec-card">
-    <div class="spec-card-header">
-      <div><span class="eyebrow">${escapeHtml(label)}</span><h3>${escapeHtml(capability.capability)}</h3></div>
-      <span class="status-chip health-${health}">${health}</span>
-    </div>
-    <span class="mono spec-path">${escapeHtml(capability.path)}</span>
-    <div class="spec-meta"><span>${capability.document.requirements.length} requirements</span><span>${capability.document.scenarios.length} scenarios</span></div>
-    ${sourceDetails('spec', capability.document)}
-  </article>`;
+function changeRows(changes: OpenSpecChange[]): string {
+  return changes
+    .map((change) => {
+      const tasks = change.artifacts.tasks?.progress;
+      const label = tasks ? `${tasks.complete}/${tasks.total} tasks` : 'tasks unavailable';
+      const href = specDetailPath('change', change.name);
+      return `<tr>
+          ${nameCell(change.name, href ? `./${href}` : undefined, change.path)}
+          <td class="col-type"><span class="pill">${escapeHtml(change.completeness)}</span></td>
+          <td class="col-updated">${tasks ? progressBar(tasks.complete, tasks.total, `${change.name}: ${label}`) : ''}<span class="work-meta">${escapeHtml(label)}</span></td>
+          <td><span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span></td>
+        </tr>`;
+    })
+    .join('');
 }
 
-function changeCard(change: OpenSpecChange): string {
-  const tasks = change.artifacts.tasks?.progress;
-  const progress = tasks
-    ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open`
-    : 'tasks unavailable';
-  const bar = tasks ? progressBar(tasks.complete, tasks.total, `${change.name}: ${progress}`) : '';
-  return `<article class="surface spec-card">
-    <div class="spec-card-header">
-      <div><span class="eyebrow">${escapeHtml(change.lifecycle)} · structured</span><h3>${escapeHtml(change.name)}</h3></div>
-      <span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span>
-    </div>
-    <span class="mono spec-path">${escapeHtml(change.path)}</span>
-    <div class="spec-meta"><span class="pill">${escapeHtml(change.completeness)}</span><span class="mono">${escapeHtml(progress)}</span></div>
-    ${bar}
-    <div class="spec-artifacts">
-      ${sourceDetails('manifest', change.artifacts.manifest)}
-      ${sourceDetails('proposal', change.artifacts.proposal)}
-      ${sourceDetails('design', change.artifacts.design)}
-      ${sourceDetails('tasks', change.artifacts.tasks)}
-      ${change.delta_specs.map((capability) => capabilityCard(capability, 'delta spec')).join('')}
-    </div>
-  </article>`;
+function legacyRows(documents: OpenSpecSourceDocument[]): string {
+  return documents
+    .map((document) => {
+      const href = specDetailPath('legacy', legacyDetailSlug(document));
+      return `<tr>
+        ${nameCell(document.title, href ? `./${href}` : undefined, document.path)}
+        <td class="col-type"><span class="pill">legacy</span></td>
+        <td class="col-updated"><span class="work-meta">not structured</span></td>
+        <td><span class="status-chip">archived</span></td>
+      </tr>`;
+    })
+    .join('');
+}
+
+function table(caption: string, headers: string[], rows: string, empty: string): string {
+  if (rows === '') return `<div class="surface empty-state">${empty}</div>`;
+  return `<div class="surface work-table-wrap">
+      <table class="work-table">
+        <caption class="visually-hidden">${escapeHtml(caption)}</caption>
+        <thead><tr>${headers.map((header, index) => `<th scope="col"${index === 1 ? ' class="col-type"' : index === 2 ? ' class="col-updated"' : index === 3 && headers.length > 4 ? ' class="col-priority"' : ''}>${escapeHtml(header)}</th>`).join('')}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function contextDisclosure(document: OpenSpecSourceDocument): string {
+  return `<details class="surface spec-card spec-artifact">
+      <summary>${escapeHtml(document.title)} · <span class="mono spec-path">${escapeHtml(document.path)}</span></summary>
+      <pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>
+    </details>`;
 }
 
 function warningList(snapshot: OpenSpecSnapshot): string {
@@ -142,7 +150,7 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
       <div>
         <span class="eyebrow">openspec filesystem snapshot</span>
         <h1>Spec</h1>
-        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>; the OpenSpec CLI is not required.</p>
+        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Each record opens its own page; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
       </div>
     </div>
 
@@ -156,19 +164,34 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
 
     <div class="spec-stack">
       ${emptyState}
-      ${contextDocuments.length === 0 ? '' : `<section aria-labelledby="spec-context-title"><div class="section-heading"><div><span class="eyebrow">workspace identity</span><h2 id="spec-context-title">Project context</h2></div></div><div class="spec-grid">${contextDocuments.map((document) => `<article class="surface spec-card"><h3>${escapeHtml(document.title)}</h3>${sourceDetails('source', document)}</article>`).join('')}</div></section>`}
       <section aria-labelledby="canonical-specs-title">
         <div class="section-heading"><div><span class="eyebrow">source of truth</span><h2 id="canonical-specs-title">Canonical specs</h2></div><span class="pill">${counts.canonical}</span></div>
-        ${snapshot.canonical_specs.length === 0 ? '<div class="surface empty-state">No canonical specs found.</div>' : `<div class="spec-grid">${snapshot.canonical_specs.map((capability) => capabilityCard(capability, 'canonical')).join('')}</div>`}
+        ${table(
+          'Canonical specs',
+          ['Capability', 'Requirements', 'Scenarios', 'Health'],
+          capabilityRows(snapshot.canonical_specs),
+          'No canonical specs found.',
+        )}
       </section>
       <section aria-labelledby="active-changes-title">
         <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="active-changes-title">Active changes</h2></div><span class="pill">${counts.active}</span></div>
-        ${snapshot.active_changes.length === 0 ? '<div class="surface empty-state">No active changes found.</div>' : `<div class="spec-grid">${snapshot.active_changes.map(changeCard).join('')}</div>`}
+        ${table(
+          'Active changes',
+          ['Change', 'Completeness', 'Tasks', 'Health'],
+          changeRows(snapshot.active_changes),
+          'No active changes found.',
+        )}
       </section>
       <section aria-labelledby="archive-title">
         <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="pill">${counts.archived}</span></div>
-        ${snapshot.archived_changes.length === 0 && snapshot.legacy_archives.length === 0 ? '<div class="surface empty-state">No archived changes found.</div>' : `<div class="spec-grid">${snapshot.archived_changes.map(changeCard).join('')}${snapshot.legacy_archives.map((document) => `<article class="surface spec-card"><div class="spec-card-header"><div><span class="eyebrow">archived · legacy</span><h3>${escapeHtml(document.title)}</h3></div><span class="status-chip">legacy</span></div>${sourceDetails('archived source', document)}</article>`).join('')}</div>`}
+        ${table(
+          'Archived changes',
+          ['Change', 'Completeness', 'Tasks', 'Health'],
+          `${changeRows(snapshot.archived_changes)}${legacyRows(snapshot.legacy_archives)}`,
+          'No archived changes found.',
+        )}
       </section>
+      ${contextDocuments.length === 0 ? '' : `<section aria-labelledby="spec-context-title"><div class="section-heading"><div><span class="eyebrow">workspace identity</span><h2 id="spec-context-title">Project context</h2></div></div><div class="spec-grid">${contextDocuments.map(contextDisclosure).join('')}</div></section>`}
       ${warningList(snapshot)}
     </div>`;
 }

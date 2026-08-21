@@ -197,7 +197,8 @@ describe('generated agent command surfaces', () => {
     expect(contentGroup).toBeDefined();
     for (const entry of contentGroup?.entries ?? []) {
       expect(skill, `skill maps ${entry.name}`).toContain(`\`${entry.usage}\``);
-      if (entry.lands) expect(skill, `skill names where ${entry.name} lands`).toContain(entry.lands);
+      if (entry.lands)
+        expect(skill, `skill names where ${entry.name} lands`).toContain(entry.lands);
     }
     expect(skill).toContain('## When to use this');
     // The intent table only pays for itself if the whole skill stays cheap to read.

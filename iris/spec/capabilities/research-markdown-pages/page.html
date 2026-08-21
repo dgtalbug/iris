@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>research-markdown-pages · iris</title>
+    <link rel="stylesheet" href="../../../design/tokens.css" />
+    <link rel="stylesheet" href="../../../design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="../../../index.html">
+        <svg class="aperture-glyph tp-plan" viewBox="0 0 24 24" role="img" aria-label="iris" style="width: 1.5rem; height: 1.5rem"><circle cx="12" cy="12" r="8" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="../../../index.html" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" stroke-dasharray="30 10" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../../work.html" title="Work"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="7" rx="1" /></svg><span>Work</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../spec.html" aria-current="page" title="Spec"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6z" /><path d="M9 12h6M9 16h6M15 3v4h4" /></svg><span>Spec</span><em class="nav-count">0</em></a></li><li><a class="nav-item" href="../../../research.html" title="Research"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg><span>Research</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../commands.html" title="Commands"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m7 10 3 2-3 2M12 15h5" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="../../../project/overview.html" title="overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>overview</span></a></li><li><a class="nav-item" href="../../../project/hld.html" title="hld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>hld</span></a></li><li><a class="nav-item" href="../../../project/lld.html" title="lld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>lld</span></a></li><li><a class="nav-item" href="../../../project/erd.html" title="erd"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>erd</span></a></li><li><a class="nav-item" href="../../../project/decisions.html" title="decisions"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="button menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections">&#9776;</button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../../spec.html">Spec</a><span aria-hidden="true">/</span><b>research-markdown-pages</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">theme <kbd>t</kbd></button>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <span class="eyebrow">canonical spec</span>
+        <h1>research-markdown-pages</h1>
+        <div class="doc-meta" style="margin-top: var(--space-2)">
+          <span class="mono spec-path">specs/research-markdown-pages/spec.md</span>
+          <span class="status-chip health-valid">valid</span>
+        </div>
+      </div>
+      <div class="page-head-actions"><a class="button" href="../../../spec.html">&larr; Spec index</a></div>
+    </div>
+
+    <section class="strip" aria-label="capability summary">
+      <div class="surface stat-tile"><span class="stat-value">5</span><span class="stat-label">requirements</span></div>
+      <div class="surface stat-tile"><span class="stat-value">12</span><span class="stat-label">scenarios</span></div>
+      <div class="surface stat-tile"><span class="stat-value">0</span><span class="stat-label">warnings</span></div>
+    </section>
+
+
+    <div class="doc-layout">
+      <article class="surface doc-body">
+        <h1 id="research-markdown-pages-specification">research-markdown-pages Specification</h1>
+<h2 id="purpose">Purpose</h2>
+<p>Let agents record research and investigation output as plain Markdown files that Iris reads directly and renders into organized, navigable, offline HTML pages with their own section, so research stops living as loose Markdown.</p>
+<h2 id="requirements">Requirements</h2>
+<h3 id="requirement-markdown-research-source-contract">Requirement: Markdown research source contract</h3>
+<p>The system MUST treat <code>iris/research/&lt;id&gt;/index.md</code> as the editable source of a research page, where <code>&lt;id&gt;</code> is lowercase kebab-case, the file MAY begin with front matter providing <code>title</code>, <code>status</code> (<code>draft</code>, <code>active</code>, <code>done</code>, <code>archived</code>), <code>tags</code> (list of strings), <code>agent</code>, and <code>updated</code> (ISO date), and the remainder is the Markdown body. Missing front matter values MUST fall back to the first level-one heading or the id for <code>title</code>, <code>draft</code> for <code>status</code>, and an explicit unavailable value for the rest; malformed front matter MUST produce a path-specific warning and defaults, never a failed render of other pages. Reading MUST stay inside <code>iris/research/</code>, MUST refuse symlinks, MUST bound file size, and MUST NOT execute or fetch anything referenced by the file.</p>
+<h4 id="scenario-agent-creates-a-research-skeleton">Scenario: agent creates a research skeleton</h4>
+<ul>
+<li><strong>WHEN</strong> a user or agent runs <code>iris research &lt;id&gt;</code></li>
+<li><strong>THEN</strong> the system MUST create <code>iris/research/&lt;id&gt;/index.md</code> with front matter for the supported keys and Question, Findings, Evidence, and Next steps headings, and MUST refuse an id that already exists or is not kebab-case</li>
+</ul>
+<h4 id="scenario-front-matter-is-absent">Scenario: front matter is absent</h4>
+<ul>
+<li><strong>WHEN</strong> a research file has no front matter</li>
+<li><strong>THEN</strong> the page MUST render with the first level-one heading or the id as its title, <code>draft</code> status, and unavailable tags, agent, and updated values</li>
+</ul>
+<h4 id="scenario-front-matter-is-malformed">Scenario: front matter is malformed</h4>
+<ul>
+<li><strong>WHEN</strong> front matter cannot be parsed or contains an unsupported status value</li>
+<li><strong>THEN</strong> the system MUST render the page with defaults, report a warning naming the file, and continue rendering every other page</li>
+</ul>
+<h4 id="scenario-file-exceeds-bounds-or-is-unsafe">Scenario: file exceeds bounds or is unsafe</h4>
+<ul>
+<li><strong>WHEN</strong> <code>index.md</code> is larger than the configured bound, is a symlink, or escapes the research root</li>
+<li><strong>THEN</strong> the system MUST skip that item with a path-specific warning and MUST NOT read the target</li>
+</ul>
+<h3 id="requirement-research-document-rendering">Requirement: research document rendering</h3>
+<p>Each research source MUST render to <code>iris/research/&lt;id&gt;/page.html</code> as a deterministic document page inside the shared navigation shell with a header showing title, type <code>research</code>, status, tags, agent, and updated, a generated table of contents when the body has two or more level-two or level-three headings, the body rendered by the safe Markdown renderer with embedded HTML, unsafe destinations, and active images disabled, Mermaid fences as source-first diagram hosts, and a print presentation.</p>
+<h4 id="scenario-body-contains-headings-and-a-mermaid-fence">Scenario: body contains headings and a Mermaid fence</h4>
+<ul>
+<li><strong>WHEN</strong> a research body has several level-two headings and an exact <code>mermaid</code> fence</li>
+<li><strong>THEN</strong> the rendered page MUST contain a table of contents linking to each heading and a diagram host that renders after <code>iris vendor</code> while keeping escaped source as fallback</li>
+</ul>
+<h4 id="scenario-body-contains-hostile-content">Scenario: body contains hostile content</h4>
+<ul>
+<li><strong>WHEN</strong> the body contains raw HTML, script, remote image, or <code>javascript:</code> link Markdown</li>
+<li><strong>THEN</strong> the rendered page MUST show it as inert text or omit the active part and MUST NOT emit executable or network-loading markup</li>
+</ul>
+<h4 id="scenario-page-is-published-standalone">Scenario: page is published standalone</h4>
+<ul>
+<li><strong>WHEN</strong> <code>iris publish &lt;id&gt;</code> or <code>iris export &lt;id&gt; --single</code> targets a research page</li>
+<li><strong>THEN</strong> the artifact MUST be self-contained, omit the navigation shell, and keep the document readable</li>
+</ul>
+<h3 id="requirement-research-section-page-and-navigation">Requirement: research section page and navigation</h3>
+<p>The system MUST generate <code>iris/research.html</code> listing every research item with a summary strip (total and per-status counts), a filterable list showing title, id, status, tags, agent, and updated with unavailable values labelled, and MUST add a Research entry to the navigation shell on every generated page.</p>
+<h4 id="scenario-repository-has-research-items">Scenario: repository has research items</h4>
+<ul>
+<li><strong>WHEN</strong> a user opens the Research section</li>
+<li><strong>THEN</strong> it MUST list every rendered research item with a link to its page and honest metadata, and the shell MUST mark Research as current</li>
+</ul>
+<h4 id="scenario-repository-has-no-research-items">Scenario: repository has no research items</h4>
+<ul>
+<li><strong>WHEN</strong> the Research section has no items</li>
+<li><strong>THEN</strong> it MUST name <code>iris research &lt;id&gt;</code> and <code>iris render --all</code> as the commands that populate it</li>
+</ul>
+<h3 id="requirement-research-records-in-the-work-browser-and-lifecyc">Requirement: research records in the work browser and lifecycle</h3>
+<p>Research items MUST appear in the Work browser projection as type <code>research</code> with status from front matter, priority unavailable, a bounded description from the first paragraph, and a full-page link, so List, Table, Kanban, filter, and the detail drawer cover them; <code>iris archive &lt;id&gt;</code> MUST move a research item into the archive while keeping its page reachable, and the Overview summary MUST count research items.</p>
+<h4 id="scenario-research-item-is-filtered-or-opened-from-work">Scenario: research item is filtered or opened from Work</h4>
+<ul>
+<li><strong>WHEN</strong> a user filters by a research tag or activates a research row</li>
+<li><strong>THEN</strong> the matching research record MUST be shown with type <code>research</code> and its drawer MUST link to the research page</li>
+</ul>
+<h4 id="scenario-research-item-is-archived">Scenario: research item is archived</h4>
+<ul>
+<li><strong>WHEN</strong> a user runs <code>iris archive &lt;id&gt;</code> for a research item</li>
+<li><strong>THEN</strong> the source and page MUST move under <code>iris/archive/&lt;id&gt;/</code>, the registry MUST mark it archived, and the dashboard MUST keep a working link</li>
+</ul>
+<h3 id="requirement-agent-guidance-for-research-pages">Requirement: agent guidance for research pages</h3>
+<p>The canonical <code>iris-workspace</code> skill MUST describe creating, writing, and rendering research pages as Markdown, naming the source path and the render command, so agents write Markdown rather than JSON for research responses.</p>
+<h4 id="scenario-skill-is-installed">Scenario: skill is installed</h4>
+<ul>
+<li><strong>WHEN</strong> <code>iris init</code> installs or refreshes the agent skill</li>
+<li><strong>THEN</strong> every generated skill surface MUST include the research workflow alongside the existing content commands</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code># research-markdown-pages Specification
+
+## Purpose
+Let agents record research and investigation output as plain Markdown files that Iris reads directly and renders into organized, navigable, offline HTML pages with their own section, so research stops living as loose Markdown.
+
+## Requirements
+
+### Requirement: Markdown research source contract
+
+The system MUST treat `iris/research/&lt;id&gt;/index.md` as the editable source of a research page, where `&lt;id&gt;` is lowercase kebab-case, the file MAY begin with front matter providing `title`, `status` (`draft`, `active`, `done`, `archived`), `tags` (list of strings), `agent`, and `updated` (ISO date), and the remainder is the Markdown body. Missing front matter values MUST fall back to the first level-one heading or the id for `title`, `draft` for `status`, and an explicit unavailable value for the rest; malformed front matter MUST produce a path-specific warning and defaults, never a failed render of other pages. Reading MUST stay inside `iris/research/`, MUST refuse symlinks, MUST bound file size, and MUST NOT execute or fetch anything referenced by the file.
+
+#### Scenario: agent creates a research skeleton
+
+- **WHEN** a user or agent runs `iris research &lt;id&gt;`
+- **THEN** the system MUST create `iris/research/&lt;id&gt;/index.md` with front matter for the supported keys and Question, Findings, Evidence, and Next steps headings, and MUST refuse an id that already exists or is not kebab-case
+
+#### Scenario: front matter is absent
+
+- **WHEN** a research file has no front matter
+- **THEN** the page MUST render with the first level-one heading or the id as its title, `draft` status, and unavailable tags, agent, and updated values
+
+#### Scenario: front matter is malformed
+
+- **WHEN** front matter cannot be parsed or contains an unsupported status value
+- **THEN** the system MUST render the page with defaults, report a warning naming the file, and continue rendering every other page
+
+#### Scenario: file exceeds bounds or is unsafe
+
+- **WHEN** `index.md` is larger than the configured bound, is a symlink, or escapes the research root
+- **THEN** the system MUST skip that item with a path-specific warning and MUST NOT read the target
+
+### Requirement: research document rendering
+
+Each research source MUST render to `iris/research/&lt;id&gt;/page.html` as a deterministic document page inside the shared navigation shell with a header showing title, type `research`, status, tags, agent, and updated, a generated table of contents when the body has two or more level-two or level-three headings, the body rendered by the safe Markdown renderer with embedded HTML, unsafe destinations, and active images disabled, Mermaid fences as source-first diagram hosts, and a print presentation.
+
+#### Scenario: body contains headings and a Mermaid fence
+
+- **WHEN** a research body has several level-two headings and an exact `mermaid` fence
+- **THEN** the rendered page MUST contain a table of contents linking to each heading and a diagram host that renders after `iris vendor` while keeping escaped source as fallback
+
+#### Scenario: body contains hostile content
+
+- **WHEN** the body contains raw HTML, script, remote image, or `javascript:` link Markdown
+- **THEN** the rendered page MUST show it as inert text or omit the active part and MUST NOT emit executable or network-loading markup
+
+#### Scenario: page is published standalone
+
+- **WHEN** `iris publish &lt;id&gt;` or `iris export &lt;id&gt; --single` targets a research page
+- **THEN** the artifact MUST be self-contained, omit the navigation shell, and keep the document readable
+
+### Requirement: research section page and navigation
+
+The system MUST generate `iris/research.html` listing every research item with a summary strip (total and per-status counts), a filterable list showing title, id, status, tags, agent, and updated with unavailable values labelled, and MUST add a Research entry to the navigation shell on every generated page.
+
+#### Scenario: repository has research items
+
+- **WHEN** a user opens the Research section
+- **THEN** it MUST list every rendered research item with a link to its page and honest metadata, and the shell MUST mark Research as current
+
+#### Scenario: repository has no research items
+
+- **WHEN** the Research section has no items
+- **THEN** it MUST name `iris research &lt;id&gt;` and `iris render --all` as the commands that populate it
+
+### Requirement: research records in the work browser and lifecycle
+
+Research items MUST appear in the Work browser projection as type `research` with status from front matter, priority unavailable, a bounded description from the first paragraph, and a full-page link, so List, Table, Kanban, filter, and the detail drawer cover them; `iris archive &lt;id&gt;` MUST move a research item into the archive while keeping its page reachable, and the Overview summary MUST count research items.
+
+#### Scenario: research item is filtered or opened from Work
+
+- **WHEN** a user filters by a research tag or activates a research row
+- **THEN** the matching research record MUST be shown with type `research` and its drawer MUST link to the research page
+
+#### Scenario: research item is archived
+
+- **WHEN** a user runs `iris archive &lt;id&gt;` for a research item
+- **THEN** the source and page MUST move under `iris/archive/&lt;id&gt;/`, the registry MUST mark it archived, and the dashboard MUST keep a working link
+
+### Requirement: agent guidance for research pages
+
+The canonical `iris-workspace` skill MUST describe creating, writing, and rendering research pages as Markdown, naming the source path and the render command, so agents write Markdown rather than JSON for research responses.
+
+#### Scenario: skill is installed
+
+- **WHEN** `iris init` installs or refreshes the agent skill
+- **THEN** every generated skill surface MUST include the research workflow alongside the existing content commands
+</code></pre></details>
+      </article>
+      <aside class="surface doc-toc" aria-label="On this page"><span class="eyebrow">on this page</span><ol><li class="toc-2"><a href="#purpose">Purpose</a></li><li class="toc-2"><a href="#requirements">Requirements</a></li><li class="toc-3"><a href="#requirement-markdown-research-source-contract">Requirement: Markdown research source contract</a></li><li class="toc-3"><a href="#requirement-research-document-rendering">Requirement: research document rendering</a></li><li class="toc-3"><a href="#requirement-research-section-page-and-navigation">Requirement: research section page and navigation</a></li><li class="toc-3"><a href="#requirement-research-records-in-the-work-browser-and-lifecyc">Requirement: research records in the work browser and lifecycle</a></li><li class="toc-3"><a href="#requirement-agent-guidance-for-research-pages">Requirement: agent guidance for research pages</a></li></ol></aside>
+    </div>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="../../../design/vendor/mermaid.min.js"></script>
+    <script defer src="../../../design/components/base.js"></script>
+  </body>
+</html>

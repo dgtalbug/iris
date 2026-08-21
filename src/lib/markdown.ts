@@ -107,16 +107,21 @@ function slugify(text: string, used: Set<string>): string {
 // Heading ids are opt-in because the Spec view renders many documents into one
 // page, where generated ids from different files would collide.
 markdown.core.ruler.push('iris-heading-ids', (state) => {
-  const environment = state.env as { headingIds?: boolean; headings?: DocumentHeading[] };
+  const environment = state.env as {
+    headingIds?: boolean;
+    idPrefix?: string;
+    headings?: DocumentHeading[];
+  };
   if (!environment?.headingIds) return;
   const headings: DocumentHeading[] = [];
   const used = new Set<string>();
+  const prefix = environment.idPrefix ? `${environment.idPrefix}-` : '';
   for (let index = 0; index < state.tokens.length; index += 1) {
     const token = state.tokens[index];
     if (token.type !== 'heading_open') continue;
     const inline = state.tokens[index + 1];
     const text = inline && inline.type === 'inline' ? inline.content : '';
-    const id = slugify(text, used);
+    const id = `${prefix}${slugify(text, used)}`;
     token.attrSet('id', id);
     headings.push({ level: Number(token.tag.slice(1)) || 1, id, text });
   }
@@ -127,8 +132,15 @@ export function renderSafeMarkdown(value: string): string {
   return markdown.render(value);
 }
 
-export function renderDocument(value: string): { html: string; headings: DocumentHeading[] } {
-  const environment: { headingIds: boolean; headings?: DocumentHeading[] } = { headingIds: true };
+export function renderDocument(
+  value: string,
+  options: { idPrefix?: string } = {},
+): { html: string; headings: DocumentHeading[] } {
+  const environment: {
+    headingIds: boolean;
+    idPrefix?: string;
+    headings?: DocumentHeading[];
+  } = { headingIds: true, idPrefix: options.idPrefix };
   const html = markdown.render(value, environment);
   return { html, headings: environment.headings ?? [] };
 }

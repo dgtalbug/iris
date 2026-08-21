@@ -8,17 +8,17 @@ Iris is an agent-first local visual workspace: a shared navigation shell over on
 
 ## Current implementation
 
-| Area                      | State                                                                                                                                                                                                                                      |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Commands implemented      | `init`, `render`, `research`, `report` (including `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `archive`, `export --single`, `vendor`, `open`, `update`                                                                 |
-| Commands stubbed (exit 1) | `promote`; `export --png` and `export --pdf` refuse explicitly and write nothing                                                                                                                                                           |
-| Workspace                 | Sidebar shell over `index.html` (Overview), `work.html`, `spec.html`, `research.html`, `commands.html`, contract pages, and project docs; classic deferred scripts, both themes, reduced-motion fallback, visible focus, and 360 px layout |
-| OpenSpec inputs           | Project/config, canonical specs, structured active/archive changes, proposal/design/tasks, change-local delta specs, and legacy archive Markdown                                                                                           |
-| OpenSpec snapshot         | Versioned `iris/spec.json`; refreshed by init/full render only, with independent lifecycle/completeness/task/parser-health dimensions and Markdown/YAML presentation identity                                                              |
-| Agent surfaces            | Three `iris-workspace` skills plus `/iris:*` command files for Claude and Copilot prompts, generated from two packaged templates under one managed-ownership contract                                                                      |
-| State                     | Version 2 page registry with active/archive navigation; no adopted-source hashes or stale-source states                                                                                                                                    |
-| Tests                     | 23 Vitest suites (112 tests) plus lint, token, type, HTML, packaging, installed-smoke, and strict OpenSpec gates                                                                                                                           |
-| Runtime dependencies      | `ajv`, generation-time `markdown-it`, and pinned Mermaid copied by explicit offline vendoring; no frontend framework, browser Markdown parser, server, watcher, telemetry, or OpenSpec runtime dependency                                  |
+| Area                      | State                                                                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Commands implemented      | `init`, `render`, `research`, `report` (including `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `archive`, `export --single`, `vendor`, `open`, `update`                                                                                                      |
+| Commands stubbed (exit 1) | `promote`; `export --png` and `export --pdf` refuse explicitly and write nothing                                                                                                                                                                                                |
+| Workspace                 | Sidebar shell over `index.html` (Overview), `work.html`, `spec.html` plus one detail page per spec record, `research.html`, `commands.html`, contract pages, and project docs; classic deferred scripts, both themes, reduced-motion fallback, visible focus, and 360 px layout |
+| OpenSpec inputs           | Project/config, canonical specs, structured active/archive changes, proposal/design/tasks, change-local delta specs, and legacy archive Markdown                                                                                                                                |
+| OpenSpec snapshot         | Versioned `iris/spec.json`; refreshed by init/full render only, with independent lifecycle/completeness/task/parser-health dimensions and Markdown/YAML presentation identity                                                                                                   |
+| Agent surfaces            | Three `iris-workspace` skills plus `/iris:*` command files for Claude and Copilot prompts, generated from two packaged templates under one managed-ownership contract                                                                                                           |
+| State                     | Version 2 page registry with active/archive navigation; no adopted-source hashes or stale-source states                                                                                                                                                                         |
+| Tests                     | 23 Vitest suites (112 tests) plus lint, token, type, HTML, packaging, installed-smoke, and strict OpenSpec gates                                                                                                                                                                |
+| Runtime dependencies      | `ajv`, generation-time `markdown-it`, and pinned Mermaid copied by explicit offline vendoring; no frontend framework, browser Markdown parser, server, watcher, telemetry, or OpenSpec runtime dependency                                                                       |
 
 ## OpenSpec browser contract
 
@@ -29,6 +29,7 @@ Iris is an agent-first local visual workspace: a shared navigation shell over on
 - Nested capability paths and ADDED/MODIFIED/REMOVED/RENAMED labels are preserved.
 - Raw content is escaped. Malformed, partial, unknown, oversized, unsafe, or unreadable inputs produce isolated path-specific warnings while valid siblings remain visible.
 - Markdown artifacts render semantically with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences progressively render one at a time under strict local settings while diagram and document source remain available, and YAML stays literal.
+- The Spec index lists records only; artifact bodies and exact source live on per-record detail pages with deep-linkable requirement headings.
 - The parser reports filesystem evidence, not the result of `openspec validate`.
 
 ## Research page contract

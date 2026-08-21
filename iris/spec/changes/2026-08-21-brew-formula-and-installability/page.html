@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026-08-21-brew-formula-and-installability · iris</title>
+    <link rel="stylesheet" href="../../../design/tokens.css" />
+    <link rel="stylesheet" href="../../../design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="../../../index.html">
+        <svg class="aperture-glyph tp-plan" viewBox="0 0 24 24" role="img" aria-label="iris" style="width: 1.5rem; height: 1.5rem"><circle cx="12" cy="12" r="8" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="../../../index.html" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" stroke-dasharray="30 10" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../../work.html" title="Work"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="7" rx="1" /></svg><span>Work</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../spec.html" aria-current="page" title="Spec"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6z" /><path d="M9 12h6M9 16h6M15 3v4h4" /></svg><span>Spec</span><em class="nav-count">0</em></a></li><li><a class="nav-item" href="../../../research.html" title="Research"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg><span>Research</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="../../../commands.html" title="Commands"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m7 10 3 2-3 2M12 15h5" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="../../../project/overview.html" title="overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>overview</span></a></li><li><a class="nav-item" href="../../../project/hld.html" title="hld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>hld</span></a></li><li><a class="nav-item" href="../../../project/lld.html" title="lld"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>lld</span></a></li><li><a class="nav-item" href="../../../project/erd.html" title="erd"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>erd</span></a></li><li><a class="nav-item" href="../../../project/decisions.html" title="decisions"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v14H4zM4 9h16" /></svg><span>decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="button menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections">&#9776;</button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../../spec.html">Spec</a><span aria-hidden="true">/</span><b>2026-08-21-brew-formula-and-installability</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">theme <kbd>t</kbd></button>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <span class="eyebrow">archived change</span>
+        <h1>2026-08-21-brew-formula-and-installability</h1>
+        <div class="doc-meta" style="margin-top: var(--space-2)">
+          <span class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability</span>
+          <span class="pill">complete</span>
+          <span class="status-chip health-valid">valid</span>
+        </div>
+      </div>
+      <div class="page-head-actions"><a class="button" href="../../../spec.html">&larr; Spec index</a></div>
+    </div>
+
+    <section class="strip" aria-label="change summary">
+      <div class="surface stat-tile"><span class="stat-value">9</span><span class="stat-label">tasks complete</span></div>
+      <div class="surface stat-tile"><span class="stat-value">0</span><span class="stat-label">tasks open</span></div>
+      <div class="surface stat-tile"><span class="stat-value">1</span><span class="stat-label">delta specs</span></div>
+    </section>
+
+    <div class="surface card-body-pad"><div class="progress" role="img" aria-label="2026-08-21-brew-formula-and-installability: 9 of 9 tasks complete"><span style="width: 100%"></span></div><p class="work-meta" style="margin: var(--space-2) 0 0">9/9 tasks complete · 0 open</p></div>
+
+    <div class="doc-layout">
+      <div class="spec-stack"><section class="surface doc-body" id="proposal-artifact">
+        <div class="spec-card-header">
+          <h2>Proposal</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability/proposal.md</p>
+
+        <h2 id="proposal-why">Why</h2>
+<p>The CLI and render pipeline are now working, but the project still lacks a reliable install story for everyday use. A local-first tool is easier to trust when users can install it consistently, verify the command surface quickly, and upgrade without manual repo cloning or shell hacks.</p>
+<h2 id="proposal-what-changes">What Changes</h2>
+<ul>
+<li>Define a supported install path for the <code>iris</code> CLI using Homebrew and/or a standard Node package entrypoint.</li>
+<li>Package the release metadata so the CLI can be versioned and upgraded predictably.</li>
+<li>Add a smoke-testable install path that verifies the binary and core render commands work immediately after installation.</li>
+<li>Keep the install story aligned with the repo's local-first and offline-safe design principles.</li>
+</ul>
+<h2 id="proposal-capabilities">Capabilities</h2>
+<h3 id="proposal-new-capabilities">New Capabilities</h3>
+<ul>
+<li>brew-formula-and-installability: establish a distribution path for the CLI that is easy to install, verify, and upgrade.</li>
+</ul>
+<h3 id="proposal-modified-capabilities">Modified Capabilities</h3>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="proposal-impact">Impact</h2>
+<ul>
+<li>CLI adoption: easier setup for users who want to try or use the tool without a repo checkout.</li>
+<li>Release quality: versioning and install metadata become explicit and testable.</li>
+<li>Documentation: users get a clear first-run path and a consistent command reference.</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Why
+
+The CLI and render pipeline are now working, but the project still lacks a reliable install story for everyday use. A local-first tool is easier to trust when users can install it consistently, verify the command surface quickly, and upgrade without manual repo cloning or shell hacks.
+
+## What Changes
+
+- Define a supported install path for the `iris` CLI using Homebrew and/or a standard Node package entrypoint.
+- Package the release metadata so the CLI can be versioned and upgraded predictably.
+- Add a smoke-testable install path that verifies the binary and core render commands work immediately after installation.
+- Keep the install story aligned with the repo&#039;s local-first and offline-safe design principles.
+
+## Capabilities
+
+### New Capabilities
+- brew-formula-and-installability: establish a distribution path for the CLI that is easy to install, verify, and upgrade.
+
+### Modified Capabilities
+- None
+
+## Impact
+
+- CLI adoption: easier setup for users who want to try or use the tool without a repo checkout.
+- Release quality: versioning and install metadata become explicit and testable.
+- Documentation: users get a clear first-run path and a consistent command reference.
+</code></pre></details>
+      </section><section class="surface doc-body" id="design-artifact">
+        <div class="spec-card-header">
+          <h2>Design</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability/design.md</p>
+
+        <h2 id="design-context">Context</h2>
+<p>The project has evolved from a local CLI plus render-first workflow into a tool that can generate deterministic HTML docs and publish artifacts. The remaining gap is distribution: users still need a clear, repeatable install path that matches the local-first model rather than a hosted service or remote backend.</p>
+<h2 id="design-goals-non-goals">Goals / Non-Goals</h2>
+<p><strong>Goals:</strong></p>
+<ul>
+<li>Provide a stable install flow for the <code>iris</code> CLI.</li>
+<li>Support a Homebrew-friendly equivalent packaging entrypoint for easy setup.</li>
+<li>Keep the install story simple, offline-safe, and consistent with the Node-based project runtime.</li>
+<li>Add release validation around the key CLI commands.</li>
+</ul>
+<p><strong>Non-Goals:</strong></p>
+<ul>
+<li>A hosted SaaS runtime or cloud-managed rendering service.</li>
+<li>Full platform marketing or marketplace expansion.</li>
+<li>Broad feature work unrelated to installability, release quality, and distribution.</li>
+</ul>
+<h2 id="design-decisions">Decisions</h2>
+<ul>
+<li>Keep the CLI as the primary product surface: installs should provide the same command interface users already know from the repo checkout.</li>
+<li>Use npm as the primary distribution path on macOS, Linux, and Windows with Node.js 22.13.0 or newer. The package entrypoint is implemented, cross-platform, versioned, and already exercised from a packed artifact outside the repository.</li>
+<li>Defer a real Homebrew formula until a published release supplies a stable source tarball URL and SHA-256 checksum. Do not mark formula work complete or ship placeholder metadata before those inputs exist.</li>
+<li>Publish from GitHub Releases through <code>.github/workflows/release.yml</code>. The workflow requires an exact <code>v&lt;package version&gt;</code> tag, repeats the full project gate, inspects the package payload, and uses npm trusted publishing with provenance instead of a long-lived automation token.</li>
+<li>Validate the installation path via a focused smoke test around <code>iris --help</code> and a minimal render command.</li>
+<li>Keep packaging offline-safe and local-first; the installer should not require any remote backend to work.</li>
+</ul>
+<h2 id="design-risks-trade-offs">Risks / Trade-offs</h2>
+<ul>
+<li>[Install friction] → Mitigation: keep the install syntax minimal and document the supported path clearly.</li>
+<li>[Version drift] → Mitigation: tie the release and formula metadata to the package version and CI validation.</li>
+<li>[Packaging complexity] → Mitigation: start with a single, narrow distribution path instead of expanding into a wider ecosystem.</li>
+<li>[First-release account gate] → Mitigation: document the one-time npm package/trusted-publisher and GitHub environment setup; the repository contains no credentials and does not claim publication before that owner action.</li>
+</ul>
+<h2 id="design-migration-plan">Migration Plan</h2>
+<ol>
+<li>Treat npm as the supported install and upgrade path; retain Node.js 22.13.0 as the minimum runtime.</li>
+<li>Validate release tags, package metadata, the packed payload, and the installed command before publication.</li>
+<li>Publish from a GitHub Release using npm trusted publishing and provenance after the owner configures the external trust relationship.</li>
+<li>Add Homebrew only after a real release URL and checksum can be tested end to end.</li>
+</ol>
+<h2 id="design-open-questions">Open Questions</h2>
+<p>None. npm-first is decided; Homebrew is explicitly deferred on missing release artifacts rather than left ambiguous.</p>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Context
+
+The project has evolved from a local CLI plus render-first workflow into a tool that can generate deterministic HTML docs and publish artifacts. The remaining gap is distribution: users still need a clear, repeatable install path that matches the local-first model rather than a hosted service or remote backend.
+
+## Goals / Non-Goals
+
+**Goals:**
+- Provide a stable install flow for the `iris` CLI.
+- Support a Homebrew-friendly equivalent packaging entrypoint for easy setup.
+- Keep the install story simple, offline-safe, and consistent with the Node-based project runtime.
+- Add release validation around the key CLI commands.
+
+**Non-Goals:**
+- A hosted SaaS runtime or cloud-managed rendering service.
+- Full platform marketing or marketplace expansion.
+- Broad feature work unrelated to installability, release quality, and distribution.
+
+## Decisions
+
+- Keep the CLI as the primary product surface: installs should provide the same command interface users already know from the repo checkout.
+- Use npm as the primary distribution path on macOS, Linux, and Windows with Node.js 22.13.0 or newer. The package entrypoint is implemented, cross-platform, versioned, and already exercised from a packed artifact outside the repository.
+- Defer a real Homebrew formula until a published release supplies a stable source tarball URL and SHA-256 checksum. Do not mark formula work complete or ship placeholder metadata before those inputs exist.
+- Publish from GitHub Releases through `.github/workflows/release.yml`. The workflow requires an exact `v&lt;package version&gt;` tag, repeats the full project gate, inspects the package payload, and uses npm trusted publishing with provenance instead of a long-lived automation token.
+- Validate the installation path via a focused smoke test around `iris --help` and a minimal render command.
+- Keep packaging offline-safe and local-first; the installer should not require any remote backend to work.
+
+## Risks / Trade-offs
+
+- [Install friction] → Mitigation: keep the install syntax minimal and document the supported path clearly.
+- [Version drift] → Mitigation: tie the release and formula metadata to the package version and CI validation.
+- [Packaging complexity] → Mitigation: start with a single, narrow distribution path instead of expanding into a wider ecosystem.
+- [First-release account gate] → Mitigation: document the one-time npm package/trusted-publisher and GitHub environment setup; the repository contains no credentials and does not claim publication before that owner action.
+
+## Migration Plan
+
+1. Treat npm as the supported install and upgrade path; retain Node.js 22.13.0 as the minimum runtime.
+2. Validate release tags, package metadata, the packed payload, and the installed command before publication.
+3. Publish from a GitHub Release using npm trusted publishing and provenance after the owner configures the external trust relationship.
+4. Add Homebrew only after a real release URL and checksum can be tested end to end.
+
+## Open Questions
+
+None. npm-first is decided; Homebrew is explicitly deferred on missing release artifacts rather than left ambiguous.
+</code></pre></details>
+      </section><section class="surface doc-body" id="tasks-artifact">
+        <div class="spec-card-header">
+          <h2>Tasks</h2>
+          <span class="spec-meta"></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability/tasks.md</p>
+
+        <h2 id="tasks-1-install-path-and-packaging-definition">1. Install path and packaging definition</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.1 Decide the primary install story for the CLI and confirm the supported target environments.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 1.3 Confirm the formula / package surface matches the project's local-first design goals.</li>
+</ul>
+<h2 id="tasks-2-distribution-and-smoke-validation">2. Distribution and smoke validation</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.1 Add the release packaging or formula definition needed for easy install.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.2 Add a smoke-check command or script that validates the CLI after installation.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 2.3 Validate the flow against the minimum supported Node environment.</li>
+</ul>
+<h2 id="tasks-3-documentation-and-rollout">3. Documentation and rollout</h2>
+<ul>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.1 Document the install and upgrade steps in the project docs.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.2 Confirm the CLI documentation reflects the actual installed command surface.</li>
+<li class="task-list-item"><input class="task-checkbox" type="checkbox" disabled checked aria-label="completed task" /> 3.3 Review the change against the roadmap to keep scope limited to installability and distribution.</li>
+</ul>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## 1. Install path and packaging definition
+
+- [x] 1.1 Decide the primary install story for the CLI and confirm the supported target environments.
+- [x] 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.
+- [x] 1.3 Confirm the formula / package surface matches the project&#039;s local-first design goals.
+
+## 2. Distribution and smoke validation
+
+- [x] 2.1 Add the release packaging or formula definition needed for easy install.
+- [x] 2.2 Add a smoke-check command or script that validates the CLI after installation.
+- [x] 2.3 Validate the flow against the minimum supported Node environment.
+
+## 3. Documentation and rollout
+
+- [x] 3.1 Document the install and upgrade steps in the project docs.
+- [x] 3.2 Confirm the CLI documentation reflects the actual installed command surface.
+- [x] 3.3 Review the change against the roadmap to keep scope limited to installability and distribution.
+</code></pre></details>
+      </section><section class="surface doc-body" id="manifest-artifact">
+          <h2>Manifest</h2>
+          <p class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability/.openspec.yaml</p>
+          <pre class="spec-source"><code>schema: spec-driven
+created: 2026-08-18
+</code></pre>
+        </section><section class="surface doc-body" id="delta-brew-formula-and-installability-artifact">
+        <div class="spec-card-header">
+          <h2>Delta spec · brew-formula-and-installability</h2>
+          <span class="spec-meta"><span class="pill">ADDED</span></span>
+        </div>
+        <p class="mono spec-path">changes/archive/2026-08-21-brew-formula-and-installability/specs/brew-formula-and-installability/spec.md</p>
+
+        <h2 id="delta-brew-formula-and-installability-purpose">Purpose</h2>
+<p>Provide a reliable, low-friction installation and upgrade path for the <code>iris</code> CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.</p>
+<h2 id="delta-brew-formula-and-installability-added-requirements">ADDED Requirements</h2>
+<h3 id="delta-brew-formula-and-installability-requirement-supported-cli-installation-path">Requirement: supported CLI installation path</h3>
+<p>The system MUST provide a clear installation path for the <code>iris</code> command that works across supported environments.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-user-installs-the-cli">Scenario: user installs the CLI</h4>
+<p>WHEN a user follows the documented install flow
+THEN the CLI MUST be available as <code>iris</code> and MUST expose the expected command surface.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-install-fails-with-clear-guidance">Scenario: install fails with clear guidance</h4>
+<p>WHEN installation prerequisites are missing or unsupported
+THEN the system MUST fail with a simple, actionable message instead of a vague runtime error.</p>
+<h3 id="delta-brew-formula-and-installability-requirement-versioned-package-distribution">Requirement: versioned package distribution</h3>
+<p>The project MUST distribute the CLI through a package entrypoint that installs the same binary and command surface as the repository build on macOS, Linux, and Windows, and MUST NOT publish package-manager metadata for a distribution channel whose release inputs do not yet exist.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-package-install-path-is-available">Scenario: package install path is available</h4>
+<p>WHEN a user installs the published package with the documented package manager
+THEN the command MUST resolve to the same project binary and versioned CLI behavior as the repository build</p>
+<h4 id="delta-brew-formula-and-installability-scenario-upgrade-path-is-clear">Scenario: upgrade path is clear</h4>
+<p>WHEN a user upgrades the installed CLI
+THEN the system MUST expose a predictable version and install flow that keeps the CLI current</p>
+<h4 id="delta-brew-formula-and-installability-scenario-a-distribution-channel-lacks-release-inputs">Scenario: a distribution channel lacks release inputs</h4>
+<p>WHEN a channel such as a Homebrew formula would require a published release URL and checksum that do not exist yet
+THEN the project MUST document that channel as unavailable and MUST NOT ship a formula or manifest that claims otherwise</p>
+<h3 id="delta-brew-formula-and-installability-requirement-minimal-install-smoke-validation">Requirement: minimal install smoke validation</h3>
+<p>The release workflow MUST include a minimal verification that the installed CLI works for a basic command path.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-install-smoke-test-passes">Scenario: install smoke test passes</h4>
+<p>WHEN the package or formula is installed
+THEN a fast smoke check such as <code>iris --help</code> or a minimal render run MUST succeed without additional repo setup.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-invalid-installation-is-surfaced-early">Scenario: invalid installation is surfaced early</h4>
+<p>WHEN the install path is broken or incompatible
+THEN the validation step MUST fail early and identify the missing or unsupported prerequisite.</p>
+<h3 id="delta-brew-formula-and-installability-requirement-documentation-and-upgrade-guidance">Requirement: documentation and upgrade guidance</h3>
+<p>The project MUST provide install instructions that align with the local-first design and current project conventions.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-user-can-self-serve-setup">Scenario: user can self-serve setup</h4>
+<p>WHEN a new user reads the docs
+THEN they MUST be able to install and verify the CLI with a single, documented path.</p>
+<h4 id="delta-brew-formula-and-installability-scenario-command-reference-stays-current">Scenario: command reference stays current</h4>
+<p>WHEN package distribution changes
+THEN the install docs and command reference MUST stay aligned with the actual CLI behavior.</p>
+
+        <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>## Purpose
+
+Provide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.
+
+## ADDED Requirements
+
+### Requirement: supported CLI installation path
+The system MUST provide a clear installation path for the `iris` command that works across supported environments.
+
+#### Scenario: user installs the CLI
+WHEN a user follows the documented install flow
+THEN the CLI MUST be available as `iris` and MUST expose the expected command surface.
+
+#### Scenario: install fails with clear guidance
+WHEN installation prerequisites are missing or unsupported
+THEN the system MUST fail with a simple, actionable message instead of a vague runtime error.
+
+### Requirement: versioned package distribution
+The project MUST distribute the CLI through a package entrypoint that installs the same binary and command surface as the repository build on macOS, Linux, and Windows, and MUST NOT publish package-manager metadata for a distribution channel whose release inputs do not yet exist.
+
+#### Scenario: package install path is available
+WHEN a user installs the published package with the documented package manager
+THEN the command MUST resolve to the same project binary and versioned CLI behavior as the repository build
+
+#### Scenario: upgrade path is clear
+WHEN a user upgrades the installed CLI
+THEN the system MUST expose a predictable version and install flow that keeps the CLI current
+
+#### Scenario: a distribution channel lacks release inputs
+WHEN a channel such as a Homebrew formula would require a published release URL and checksum that do not exist yet
+THEN the project MUST document that channel as unavailable and MUST NOT ship a formula or manifest that claims otherwise
+
+### Requirement: minimal install smoke validation
+The release workflow MUST include a minimal verification that the installed CLI works for a basic command path.
+
+#### Scenario: install smoke test passes
+WHEN the package or formula is installed
+THEN a fast smoke check such as `iris --help` or a minimal render run MUST succeed without additional repo setup.
+
+#### Scenario: invalid installation is surfaced early
+WHEN the install path is broken or incompatible
+THEN the validation step MUST fail early and identify the missing or unsupported prerequisite.
+
+### Requirement: documentation and upgrade guidance
+The project MUST provide install instructions that align with the local-first design and current project conventions.
+
+#### Scenario: user can self-serve setup
+WHEN a new user reads the docs
+THEN they MUST be able to install and verify the CLI with a single, documented path.
+
+#### Scenario: command reference stays current
+WHEN package distribution changes
+THEN the install docs and command reference MUST stay aligned with the actual CLI behavior.
+</code></pre></details>
+      </section></div>
+      <aside class="surface doc-toc" aria-label="On this page"><span class="eyebrow">on this page</span><ol><li class="toc-2"><a href="#proposal-artifact">Proposal</a></li><li class="toc-2"><a href="#proposal-why">Why</a></li><li class="toc-2"><a href="#proposal-what-changes">What Changes</a></li><li class="toc-2"><a href="#proposal-capabilities">Capabilities</a></li><li class="toc-3"><a href="#proposal-new-capabilities">New Capabilities</a></li><li class="toc-3"><a href="#proposal-modified-capabilities">Modified Capabilities</a></li><li class="toc-2"><a href="#proposal-impact">Impact</a></li><li class="toc-2"><a href="#design-artifact">Design</a></li><li class="toc-2"><a href="#design-context">Context</a></li><li class="toc-2"><a href="#design-goals-non-goals">Goals / Non-Goals</a></li><li class="toc-2"><a href="#design-decisions">Decisions</a></li><li class="toc-2"><a href="#design-risks-trade-offs">Risks / Trade-offs</a></li><li class="toc-2"><a href="#design-migration-plan">Migration Plan</a></li><li class="toc-2"><a href="#design-open-questions">Open Questions</a></li><li class="toc-2"><a href="#tasks-artifact">Tasks</a></li><li class="toc-2"><a href="#tasks-1-install-path-and-packaging-definition">1. Install path and packaging definition</a></li><li class="toc-2"><a href="#tasks-2-distribution-and-smoke-validation">2. Distribution and smoke validation</a></li><li class="toc-2"><a href="#tasks-3-documentation-and-rollout">3. Documentation and rollout</a></li><li class="toc-2"><a href="#manifest-artifact">Manifest</a></li><li class="toc-2"><a href="#delta-brew-formula-and-installability-artifact">Delta spec · brew-formula-and-installability</a></li><li class="toc-2"><a href="#delta-brew-formula-and-installability-purpose">Purpose</a></li><li class="toc-2"><a href="#delta-brew-formula-and-installability-added-requirements">ADDED Requirements</a></li><li class="toc-3"><a href="#delta-brew-formula-and-installability-requirement-supported-cli-installation-path">Requirement: supported CLI installation path</a></li><li class="toc-3"><a href="#delta-brew-formula-and-installability-requirement-versioned-package-distribution">Requirement: versioned package distribution</a></li><li class="toc-3"><a href="#delta-brew-formula-and-installability-requirement-minimal-install-smoke-validation">Requirement: minimal install smoke validation</a></li><li class="toc-3"><a href="#delta-brew-formula-and-installability-requirement-documentation-and-upgrade-guidance">Requirement: documentation and upgrade guidance</a></li></ol></aside>
+    </div>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="../../../design/vendor/mermaid.min.js"></script>
+    <script defer src="../../../design/components/base.js"></script>
+  </body>
+</html>

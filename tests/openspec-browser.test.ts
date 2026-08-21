@@ -75,6 +75,7 @@ describe('OpenSpec Spec browser orchestration', () => {
 
     const overview = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
     expect(overview).toContain('href="./spec.html"');
+    // The index lists records and links out; artifact bodies live on detail pages.
     const dashboard = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
     expect(dashboard).toContain('<span>Spec</span>');
     expect(dashboard).toContain('Canonical specs');
@@ -82,36 +83,54 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).toContain('Project context');
     expect(dashboard).toContain('active-change');
     expect(dashboard).toContain('2026-08-20-complete-change');
-    expect(dashboard).toContain('archived · legacy');
-    expect(dashboard).toContain('1/2 tasks · 1 open');
+    expect(dashboard).toContain('<span class="pill">legacy</span>');
+    expect(dashboard).toContain('1/2 tasks');
     expect(dashboard).toContain('health-invalid');
     expect(dashboard).toContain('malformed-spec');
-    expect(dashboard).toContain('data-document-format="markdown"');
-    expect(dashboard).toContain('data-document-format="yaml"');
-    expect(dashboard).toContain('<div class="spec-document"><h2>Why</h2>');
-    expect(dashboard).toContain('<strong>active layout</strong>');
-    expect(dashboard).toContain('href="./design.md" rel="noopener noreferrer"');
-    expect(dashboard).toContain('<blockquote>');
-    expect(dashboard).toContain('class="task-list-item"');
-    expect(dashboard).toContain('disabled checked aria-label="completed task"');
-    expect(dashboard).toContain('<table>');
-    expect(dashboard).toContain('<pre><code class="language-ts">');
-    expect(dashboard).toContain('data-mermaid-figure');
-    expect(dashboard).toContain('data-mermaid-host aria-label="Mermaid diagram"');
-    expect(dashboard).toContain('<script defer src="./design/vendor/mermaid.min.js">');
-    expect(dashboard).toContain('<summary>Exact source</summary>');
-    expect(dashboard).toContain('- [x] completed task evidence');
+    expect(dashboard).toContain('href="./spec/changes/active-change/page.html"');
+    expect(dashboard).toContain('href="./spec/capabilities/core/page.html"');
     expect(dashboard).toContain('schema: spec-driven');
-    expect(dashboard).toContain('Image: remote tracker (https://example.com/tracker.png)');
-    expect(dashboard).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
-    expect(dashboard).not.toContain('<script>globalThis.pwned=true</script>');
-    expect(dashboard).not.toContain('<script data-attack="script">');
-    expect(dashboard).not.toContain('<iframe ');
-    expect(dashboard).not.toContain('<style>body');
-    expect(dashboard).not.toContain('<img ');
-    expect(dashboard).not.toContain('href="javascript:');
-    expect(dashboard).not.toContain('href="data:');
-    expect(dashboard).not.toContain('src="https://example.com');
+    expect(dashboard).not.toContain('spec-document');
+    expect(dashboard).not.toContain('data-mermaid-figure');
+
+    const changePage = await readFile(
+      path.join(cwd, 'iris', 'spec', 'changes', 'active-change', 'page.html'),
+      'utf8',
+    );
+    expect(changePage).toContain('<h2 id="proposal-why">Why</h2>');
+    expect(changePage).toContain('<strong>active layout</strong>');
+    expect(changePage).toContain('href="./design.md" rel="noopener noreferrer"');
+    expect(changePage).toContain('<blockquote>');
+    expect(changePage).toContain('class="task-list-item"');
+    expect(changePage).toContain('disabled checked aria-label="completed task"');
+    expect(changePage).toContain('<table>');
+    expect(changePage).toContain('<pre><code class="language-ts">');
+    expect(changePage).toContain('data-mermaid-figure');
+    expect(changePage).toContain('data-mermaid-host aria-label="Mermaid diagram"');
+    expect(changePage).toContain('<script defer src="../../../design/vendor/mermaid.min.js">');
+    expect(changePage).toContain('<summary>Exact source</summary>');
+    expect(changePage).toContain('- [x] completed task evidence');
+    expect(changePage).toContain('Image: remote tracker (https://example.com/tracker.png)');
+    expect(changePage).not.toContain('<script data-attack="script">');
+    expect(changePage).not.toContain('<iframe ');
+    expect(changePage).not.toContain('<style>body');
+    expect(changePage).toContain('aria-label="On this page"');
+
+    // Legacy archives are neither a capability nor a change; they keep their own page.
+    const legacyPage = await readFile(
+      path.join(cwd, 'iris', 'spec', 'legacy', '2026-08-18-legacy', 'page.html'),
+      'utf8',
+    );
+    expect(legacyPage).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
+    expect(legacyPage).not.toContain('<script>globalThis.pwned=true</script>');
+    expect(legacyPage).toContain('<summary>Exact source</summary>');
+    expect(dashboard).toContain('href="./spec/legacy/2026-08-18-legacy/page.html"');
+
+    expect(changePage).toContain('schema: spec-driven');
+    expect(changePage).not.toContain('<img ');
+    expect(changePage).not.toContain('href="javascript:');
+    expect(changePage).not.toContain('href="data:');
+    expect(changePage).not.toContain('src="https://example.com');
   });
 
   it('generates accessible offline tabs and responsive reduced-motion styles', async () => {
