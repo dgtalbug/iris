@@ -19,7 +19,7 @@ Data in (`data.json`) to deterministic html out (`page.html`); dashboard is stat
 
 Iris reads OpenSpec as bounded, untrusted local input without invoking the OpenSpec CLI. A sorted allowlisted walker recognizes `project.md`, `config.yaml`, canonical `specs/**/spec.md`, structured active/archive change artifacts and delta specs, and legacy archive Markdown. It preserves nested capability paths, refuses symlinks and escapes, caps depth/file count/file bytes/aggregate bytes, and isolates errors by path.
 
-The parser extracts headings, requirements, scenarios, delta-operation labels, and task checkboxes outside fenced examples. It does not evaluate YAML, execute Markdown/HTML, or claim OpenSpec semantic validation. Unsupported or malformed inputs retain bounded escaped source and actionable warnings.
+The parser extracts headings, requirements, scenarios, delta-operation labels, and task checkboxes outside fenced examples. A pinned generation-time `markdown-it` renderer converts Markdown to semantic HTML with embedded HTML, automatic linkification, unsafe destinations, and active images disabled; YAML is never interpreted. Every artifact retains bounded escaped source and actionable warnings, and Iris does not claim OpenSpec semantic validation.
 
 `iris/spec.json` is a versioned deterministic generated snapshot with no timestamp. `iris init`, bare `iris render`, and `iris render --all` replace it atomically. Single-page render, report, archive, publish preparation, and update reuse the stored snapshot, so there is no watcher or hidden synchronization.
 
@@ -73,3 +73,4 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-21 | Defer PNG/PDF export; prefer puppeteer-core only after accepting a browser-pinning and determinism policy | System Chrome avoids downloads but is not version-stable; Playwright's supported pinned browser adds a separate large download lifecycle |
 | 2026-08-21 | Make `iris init` the complete agent-first setup and upgrade operation | Removes document ingestion and hidden lifecycle coupling while shipping one canonical offline agent skill safely to three supported surfaces |
 | 2026-08-21 | Persist a bounded OpenSpec snapshot for the dashboard Spec tab | Keeps explicit refresh semantics while allowing every dashboard regeneration to remain deterministic and offline |
+| 2026-08-21 | Render OpenSpec Markdown at generation time with embedded HTML disabled | Improves readability without adding browser runtime or weakening exact-source evidence |

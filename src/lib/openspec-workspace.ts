@@ -19,6 +19,7 @@ export type OpenSpecSourceDocument = {
   path: string;
   title: string;
   raw: string;
+  format?: 'markdown' | 'yaml';
   headings: string[];
   requirements: string[];
   scenarios: string[];
@@ -218,7 +219,17 @@ function parseDocument(relativePath: string, raw: string, kind: DocumentKind): O
     warnings.push(warning('empty-document', relativePath, 'The document is empty'));
   }
 
-  return { path: relativePath, title, raw, headings, requirements, scenarios, operations, warnings };
+  return {
+    path: relativePath,
+    title,
+    raw,
+    format: kind === 'config' ? 'yaml' : 'markdown',
+    headings,
+    requirements,
+    scenarios,
+    operations,
+    warnings,
+  };
 }
 
 function parseTasks(relativePath: string, raw: string): OpenSpecTaskDocument {

@@ -7,6 +7,7 @@ import {
   parseOpenSpecWorkspace,
   writeOpenSpecSnapshot,
   type OpenSpecParseLimits,
+  type OpenSpecSnapshot,
 } from '../src/lib/openspec-workspace.js';
 
 const tempDirs: string[] = [];
@@ -171,6 +172,11 @@ describe('OpenSpec workspace parser', () => {
     expect(second).toEqual(first);
     expect(secondRaw).toBe(firstRaw);
     expect(await loadOpenSpecSnapshot(cwd)).toEqual(first);
+
+    const legacyShape = JSON.parse(firstRaw) as OpenSpecSnapshot;
+    delete legacyShape.canonical_specs[0].document.format;
+    await writeFile(path.join(cwd, 'iris', 'spec.json'), `${JSON.stringify(legacyShape)}\n`);
+    expect((await loadOpenSpecSnapshot(cwd)).canonical_specs[0].document.format).toBeUndefined();
 
     await writeFile(path.join(cwd, 'iris', 'spec.json'), '{"version":99}\n');
     expect(await loadOpenSpecSnapshot(cwd)).toMatchObject({

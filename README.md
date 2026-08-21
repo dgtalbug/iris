@@ -33,7 +33,7 @@ iris open
 
 `iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs `iris-workspace` skills for generic/Codex agents, Claude, and GitHub Copilot, and renders the dashboard. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
 
-When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
+When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. Markdown artifacts render as semantic offline HTML with embedded HTML disabled; an exact escaped-source disclosure remains available, while YAML stays literal code. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
 
 ## How it runs
 

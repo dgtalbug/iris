@@ -22,7 +22,7 @@
 - Preservation: existing configuration, user pages, archives, unrelated editor tasks, sibling skills, unmarked files, and edited managed skill content are retained. A skill collision is reported as an incomplete setup instead of being overwritten.
 - Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
 - Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
-- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
+- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact escaped source remains available and YAML remains literal. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
 
 ## `iris render [<id>|--all]`
 
