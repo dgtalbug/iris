@@ -2,13 +2,27 @@
   "name": "@dgtalbug/iris",
   "version": "0.1.0",
   "description": "Visual, versioned HTML docs for AI coding work.",
+  "keywords": [
+    "cli",
+    "documentation",
+    "local-first",
+    "developer-tools"
+  ],
+  "homepage": "https://github.com/dgtalbug/iris#readme",
+  "bugs": {
+    "url": "https://github.com/dgtalbug/iris/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgtalbug/iris.git"
+  },
   "type": "module",
   "packageManager": "pnpm@11.22.0",
   "bin": {
     "iris": "./dist/src/index.js"
   },
   "files": [
-    "dist",
+    "dist/src",
     "schemas",
     "README.md"
   ],
@@ -26,7 +40,7 @@
     "lint": "eslint .",
     "format": "prettier --check .",
     "token-lint": "node ./scripts/token-lint.mjs",
-    "prepare": "npm run build",
+    "html-check": "node ./scripts/html-check.mjs",
     "prepack": "npm run build",
     "smoke:install": "node ./scripts/install-smoke.mjs",
     "release:check": "npm run smoke:install"

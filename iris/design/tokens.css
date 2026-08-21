@@ -1,29 +1,30 @@
 :root {
-  --bg: hsl(220 28% 10%);
-  --surface-1: hsl(220 24% 14%);
-  --surface-2: hsl(220 22% 18%);
-  --surface-3: hsl(220 20% 24%);
-  --text-1: hsl(210 24% 96%);
-  --text-2: hsl(214 16% 78%);
-  --text-3: hsl(214 12% 62%);
-  --accent: hsl(198 90% 57%);
-  --ok: hsl(146 63% 46%);
-  --warn: hsl(42 96% 56%);
-  --danger: hsl(356 83% 62%);
-  --info: hsl(204 89% 62%);
-  --chart-1: hsl(198 90% 57%);
+  --bg: hsl(228 26% 8%);
+  --surface-1: hsl(227 22% 12%);
+  --surface-2: hsl(226 19% 16%);
+  --surface-3: hsl(225 16% 22%);
+  --text-1: hsl(40 24% 94%);
+  --text-2: hsl(228 12% 74%);
+  --text-3: hsl(228 10% 56%);
+  --accent: hsl(40 92% 62%);
+  --accent-ink: hsl(228 26% 10%);
+  --ok: hsl(152 52% 50%);
+  --warn: hsl(28 92% 58%);
+  --danger: hsl(357 78% 62%);
+  --info: hsl(199 84% 62%);
+  --chart-1: hsl(199 84% 62%);
   --chart-2: hsl(276 70% 63%);
-  --chart-3: hsl(146 63% 46%);
-  --chart-4: hsl(42 96% 56%);
+  --chart-3: hsl(152 52% 50%);
+  --chart-4: hsl(40 92% 62%);
   --chart-5: hsl(12 83% 65%);
   --chart-6: hsl(324 75% 62%);
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --size-1: 0.75rem;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --size-1: 0.6875rem;
   --size-2: 0.875rem;
   --size-3: 1rem;
   --size-4: 1.25rem;
-  --size-5: 1.5rem;
+  --size-5: 2rem;
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-bold: 700;
@@ -32,12 +33,12 @@
   --space-3: 0.75rem;
   --space-4: 1rem;
   --space-5: 1.5rem;
-  --space-6: 2rem;
+  --space-6: 2.5rem;
   --radius-1: 0.375rem;
-  --radius-2: 0.5rem;
-  --radius-3: 0.75rem;
-  --border-1: 1px solid hsl(214 16% 32%);
-  --elevation-1: 0 0.25rem 0.75rem hsl(220 50% 3% / 0.25);
+  --radius-2: 0.625rem;
+  --radius-3: 1rem;
+  --border-1: 1px solid hsl(228 14% 24%);
+  --elevation-1: 0 0.25rem 0.75rem hsl(228 50% 3% / 0.35);
   --duration-1: 120ms;
   --duration-2: 220ms;
   --duration-3: 320ms;
@@ -45,15 +46,17 @@
 }
 
 [data-theme='light'] {
-  --bg: hsl(210 20% 98%);
-  --surface-1: hsl(0 0% 100%);
-  --surface-2: hsl(210 22% 95%);
-  --surface-3: hsl(210 18% 90%);
-  --text-1: hsl(220 28% 12%);
-  --text-2: hsl(220 16% 26%);
-  --text-3: hsl(220 10% 42%);
-  --border-1: 1px solid hsl(210 12% 80%);
-  --elevation-1: 0 0.25rem 0.75rem hsl(220 26% 70% / 0.3);
+  --bg: hsl(42 38% 96%);
+  --surface-1: hsl(40 30% 99%);
+  --surface-2: hsl(42 28% 93%);
+  --surface-3: hsl(42 22% 87%);
+  --text-1: hsl(232 20% 14%);
+  --text-2: hsl(230 12% 32%);
+  --text-3: hsl(230 8% 48%);
+  --accent: hsl(34 90% 40%);
+  --accent-ink: hsl(40 30% 99%);
+  --border-1: 1px solid hsl(40 16% 80%);
+  --elevation-1: 0 0.25rem 0.75rem hsl(40 20% 60% / 0.25);
 }
 
 body {
@@ -61,4 +64,9 @@ body {
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text-1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

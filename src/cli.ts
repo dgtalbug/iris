@@ -1,6 +1,14 @@
 import { parseArgs } from 'node:util';
 import { runDraftCommand } from './commands/draft.js';
+import { runExportCommand, type ExportMode } from './commands/export.js';
 import { runInitCommand } from './commands/init.js';
+import {
+  runAdoptCommand,
+  runArchiveCommand,
+  runSyncCommand,
+  runUpdateCommand,
+} from './commands/lifecycle.js';
+import { runOpenCommand } from './commands/open.js';
 import { runPublishCommand } from './commands/publish.js';
 import { runRenderCommand } from './commands/render.js';
 import { runReportFromSessionCommand } from './commands/report.js';
@@ -42,6 +50,9 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
       all: { type: 'boolean', short: 'a' },
       'from-session': { type: 'string' },
       output: { type: 'string', short: 'o' },
+      single: { type: 'boolean' },
+      png: { type: 'boolean' },
+      pdf: { type: 'boolean' },
     },
   });
 
@@ -71,6 +82,11 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
           await runReportFromSessionCommand(cwd, parsed.values['from-session'], id);
           return 0;
         }
+        if (!id) {
+          throw new IrisError(1, "Missing id for command 'report'");
+        }
+        await runDraftCommand(cwd, 'report', id);
+        return 0;
       case 'feature':
       case 'bug':
       case 'idea':
@@ -80,16 +96,36 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         }
         await runDraftCommand(cwd, command, id);
         return 0;
-      case 'promote':
       case 'sync':
+        await runSyncCommand(cwd);
+        return 0;
       case 'adopt':
+        await runAdoptCommand(cwd);
+        return 0;
       case 'archive':
-      case 'export':
-      case 'vendor':
+        await runArchiveCommand(cwd, id);
+        return 0;
+      case 'export': {
+        const modes = (['single', 'png', 'pdf'] as const).filter((mode) => parsed.values[mode]);
+        if (modes.length > 1) {
+          throw new IrisError(1, 'Choose only one export mode: --single, --png, or --pdf');
+        }
+        await runExportCommand(cwd, id, {
+          mode: modes[0] as ExportMode | undefined,
+          outputPath: parsed.values.output,
+        });
+        return 0;
+      }
       case 'open':
-      case 'update':
+        await runOpenCommand(cwd);
+        return 0;
+      case 'vendor':
+      case 'promote':
         process.stderr.write(`Command '${command}' is registered but not yet implemented in M0.\n`);
         return 1;
+      case 'update':
+        await runUpdateCommand(cwd);
+        return 0;
       default:
         throw new IrisError(1, `Unknown command: ${command}`);
     }
