@@ -2,12 +2,7 @@ import { parseArgs } from 'node:util';
 import { runDraftCommand } from './commands/draft.js';
 import { runExportCommand, type ExportMode } from './commands/export.js';
 import { runInitCommand } from './commands/init.js';
-import {
-  runAdoptCommand,
-  runArchiveCommand,
-  runSyncCommand,
-  runUpdateCommand,
-} from './commands/lifecycle.js';
+import { runArchiveCommand, runUpdateCommand } from './commands/lifecycle.js';
 import { runOpenCommand } from './commands/open.js';
 import { runPublishCommand } from './commands/publish.js';
 import { runRenderCommand } from './commands/render.js';
@@ -24,8 +19,6 @@ const ALL_COMMANDS = [
   'idea',
   'plan',
   'promote',
-  'sync',
-  'adopt',
   'archive',
   'export',
   'vendor',
@@ -95,12 +88,6 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
           throw new IrisError(1, `Missing id for command '${command}'`);
         }
         await runDraftCommand(cwd, command, id);
-        return 0;
-      case 'sync':
-        await runSyncCommand(cwd);
-        return 0;
-      case 'adopt':
-        await runAdoptCommand(cwd);
         return 0;
       case 'archive':
         await runArchiveCommand(cwd, id);

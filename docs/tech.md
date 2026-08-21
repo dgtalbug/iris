@@ -15,9 +15,13 @@ Envelope schema plus per-type schemas; rendering is blocked on invalid contracts
 
 Data in (`data.json`) to deterministic html out (`page.html`); dashboard is static file://-compatible HTML.
 
-## Sync algorithm
+## Initialization and state model
 
-The lifecycle registry stores SHA-256 hashes for page contracts and adopted markdown sources. Sync re-renders changed page contracts, marks changed or removed adopted sources stale, and skips unchanged pages. Re-running adopt explicitly refreshes a stale mirror.
+`iris init` is the single setup and upgrade operation. Version 2 state stores only the page registry needed for active/archive navigation. Explicit `iris render <id>|--all` regenerates page HTML and the dashboard; there is no document mirroring, source monitoring, stale-source state, watcher, or background synchronization.
+
+The initializer reads version 1 state only long enough to classify legacy active document mirrors. It removes an exact page directory only when safe path, state provenance, page identity, generated metadata, and both stored data hashes match the current bytes. Every mismatch and every archived record is preserved before state is normalized to version 2.
+
+Agent instructions come from one packaged `templates/agents/iris-workspace.md` source. Generated skill files use versioned managed markers and a SHA-256 body digest. Intact managed regions update atomically; unmarked, malformed, edited, symlinked, or escaping targets are preserved and reported.
 
 ## Permalink algorithm
 
@@ -29,7 +33,7 @@ Meaning-bearing only with reduced-motion fallback to static frame at frame zero.
 
 ## Distribution model
 
-The built npm package is the primary, verified Node entrypoint on macOS, Linux, and Windows. GitHub Release publication is automated through npm trusted publishing and provenance after the owner configures the external trust relationship. Homebrew remains deferred until a real release URL and checksum exist. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
+The built npm package is the primary, verified Node entrypoint on macOS, Linux, and Windows. It includes the canonical agent template, so initialization needs no network after installation. GitHub Release publication is automated through npm trusted publishing and provenance after the owner configures the external trust relationship. Homebrew remains deferred until a real release URL and checksum exist. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
 
 ## License notes
 
@@ -59,3 +63,4 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-21 | Ship Aperture steps 1–3 with contrast-safe text aliases and no remote loaders | Preserves the specified palette, 4.5:1 readable text, and strict offline classic-script rendering while vendor/diagram/chart work remains deferred |
 | 2026-08-21 | Make npm the primary install path and gate publication on an exact release tag, full checks, OIDC trusted publishing, and provenance | The cross-platform packed CLI is already verified; Homebrew lacks the release URL and checksum required for an honest formula |
 | 2026-08-21 | Defer PNG/PDF export; prefer puppeteer-core only after accepting a browser-pinning and determinism policy | System Chrome avoids downloads but is not version-stable; Playwright's supported pinned browser adds a separate large download lifecycle |
+| 2026-08-21 | Make `iris init` the complete agent-first setup and upgrade operation | Removes document ingestion and hidden lifecycle coupling while shipping one canonical offline agent skill safely to three supported surfaces |

@@ -104,7 +104,7 @@ describe('session report ingestion', () => {
       type: 'bug',
       status: 'active',
     });
-    expect(state.content_hashes['pages/session-review/data.json']).toMatch(/^[0-9a-f]{64}$/);
+    expect(state).not.toHaveProperty('content_hashes');
 
     const reportHtml = await readFile(
       path.join(cwd, 'iris/pages/session-review/page.html'),

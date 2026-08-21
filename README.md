@@ -13,13 +13,13 @@ npm install -g @dgtalbug/iris
 iris --help
 ```
 
-Or run that published release without a global install:
+Or initialize a repository from that published release without a global install:
 
 ```bash
-npx @dgtalbug/iris --help
+npx @dgtalbug/iris init
 ```
 
-The package is not yet present in the public npm registry. Until the first release is published, contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, installs it into a temporary directory, then runs `iris --help`, `iris init`, a draft command, and `iris render` outside the repository. Homebrew remains deferred until a real release tarball URL and SHA-256 checksum exist; publishing a placeholder formula would be packaging theatre, which is still theatre even when written in Ruby.
+The package is not yet present in the public npm registry. Until the first release is published, contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, inspects its initialization assets, installs it into a temporary directory, runs `iris init` twice without runtime network access, verifies all supported agent skills, then creates and renders a page outside the repository. Homebrew remains deferred until a real release tarball URL and SHA-256 checksum exist; publishing a placeholder formula would be packaging theatre, which is still theatre even when written in Ruby.
 
 Once installed, a minimal local-first workflow is:
 
@@ -31,22 +31,22 @@ iris render install-check
 iris open
 ```
 
-These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and current implementation status.
+`iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs `iris-workspace` skills for generic/Codex agents, Claude, and GitHub Copilot, and renders the dashboard. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
 
 ## How it runs
 
 iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json`, validates them against the schemas in `schemas/`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
 
-The "skills" mentioned in the docs are planned agent-facing wrappers (Claude `/iris *` commands, Copilot prompts, Codex `$iris-*`) that will call this same CLI; they are scheduled for a later milestone. Until they ship, every documented workflow is the CLI itself.
+Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`. The generated files all describe the same CLI workflow. Iris refreshes only an intact hash-verified managed region, preserves user content outside it, and refuses to overwrite unmarked or edited targets.
 
 ### Upgrade
 
 ```bash
 npm install -g @dgtalbug/iris@latest
-iris --help
+iris init
 ```
 
-The package version controls the installed CLI version; rerunning the command above replaces the global install with the current published release.
+The package version controls the installed CLI version. Rerun `iris init` in each repository after upgrading so managed workspace assets and agent skills converge safely; no separate setup command is required.
 
 ### Release maintainers
 

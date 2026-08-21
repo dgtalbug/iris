@@ -6,19 +6,22 @@
 
 - Exit codes: `0` ok · `1` validation/user error · `2` environment error.
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
-- Agent surfaces: CLI `iris`, Claude `/iris *`, Copilot prompts, Codex `$iris-*` (generated in later milestones).
+- Agent surfaces: CLI `iris` plus the generated `iris-workspace` skill under `.agents/skills`, `.claude/skills`, and `.github/skills`.
 - Navigation contract: the dashboard links every rendered, archived, and project page; every page links back to the dashboard. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
 - Dashboard contract: briefing hero → health strip → architecture placeholder → work surface → project-docs strip. `/` focuses the work filter, `t` toggles theme, and arrow keys move between focused work cards; all remain classic-script, `file://`-safe interactions.
 
 ## `iris init`
 
-- Synopsis: scaffold `iris/`, detect OpenSpec and GitNexus, create dashboard and editor task.
+- Synopsis: create or safely upgrade the complete local Iris workspace and agent setup.
 - Flags: `--json`.
 - Inputs: current project directory.
-- Outputs: scaffolded `iris/` tree, styled placeholder project pages, `.vscode/tasks.json`, quickstart lines.
+- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, and the rendered dashboard.
 - Exit codes: 0/1/2.
 - Example: `iris init`.
 - Surfaces: CLI + all generated skills.
+- Preservation: existing configuration, user pages, archives, unrelated editor tasks, sibling skills, unmarked files, and edited managed skill content are retained. A skill collision is reported as an incomplete setup instead of being overwritten.
+- Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
+- Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
 
 ## `iris render [<id>|--all]`
 
@@ -38,7 +41,7 @@
 - Outputs: `iris/pages/<id>/data.json` skeleton.
 - Exit codes: 0/1/2.
 - Example: `iris bug bug-cache-stampede`.
-- Surfaces: CLI + `/iris bug` style skills.
+- Surfaces: CLI + the generated `iris-workspace` skill.
 
 ## `iris report --from-session <path> [<id>]`
 
@@ -97,28 +100,6 @@ Published HTML includes the page CSS and has no local-file or network asset depe
 - Surfaces: CLI + skills.
 - Status: not yet implemented; the CLI exits 1 with a clear message until a later milestone lands.
 
-## `iris sync`
-
-- Synopsis: incremental changelog, hotspots, stale marks, selective re-render.
-- Flags: `--json`.
-- Inputs: local page contracts, adopted source paths, and the hashes stored in `iris/state.json`.
-- Outputs: state updates + feed/delta artifacts.
-- Exit codes: 0/1/2.
-- Example: `iris sync`.
-- Surfaces: CLI + hooks.
-- State transitions: `refreshed` for changed page data or missing output, `stale` for changed/removed adopted sources, and `unchanged` when no work is needed.
-
-## `iris adopt`
-
-- Synopsis: mirror README/docs markdown as read-only styled pages.
-- Flags: `--json`.
-- Inputs: repo docs markdown.
-- Outputs: mirror pages + dashboard listing.
-- Exit codes: 0/1/2.
-- Example: `iris adopt`.
-- Surfaces: CLI + skills.
-- Contract: scans `README.md` and `docs/**/*.md`, stores the source path and content hash in the page registry, and writes a read-only report mirror. Re-run `adopt` to accept a source update flagged by `sync`.
-
 ## `iris archive <id>`
 
 - Synopsis: move page to archive and update feed/index.
@@ -166,11 +147,12 @@ Renderer decision (2026-08-21): `puppeteer-core` is the preferred future candida
 
 ## `iris update`
 
-- Synopsis: regenerate managed integration shims while preserving user edits outside managed blocks.
+- Synopsis: refresh managed workspace assets and agent skills while preserving user-owned content.
 - Flags: `--json`.
 - Inputs: existing project configuration.
-- Outputs: refreshed surface shim files.
+- Outputs: refreshed design/project surfaces, editor task, dashboard, and intact managed agent-skill regions.
 - Exit codes: 0/1/2.
 - Example: `iris update`.
 - Surfaces: CLI.
-- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved.
+- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill regions update only when their ownership markers and digest remain valid.
+- Setup guidance: use `iris init` for first run and upgrades. `iris update` remains a compatible explicit refresh, not a required setup step.

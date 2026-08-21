@@ -1,13 +1,14 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCli } from '../src/cli.js';
 
 const tempDirs: string[] = [];
 
 afterEach(async () => {
+  vi.restoreAllMocks();
   await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
 });
 
@@ -18,7 +19,7 @@ async function createTempDir(): Promise<string> {
 }
 
 describe('project lifecycle commands', () => {
-  it('initializes a lifecycle-aware scaffold and preserves user task entries on update', async () => {
+  it('initializes idempotently with agent skills and preserves user task entries on update', async () => {
     const cwd = await createTempDir();
     await mkdir(path.join(cwd, '.vscode'), { recursive: true });
     await writeFile(
@@ -35,49 +36,62 @@ describe('project lifecycle commands', () => {
 
     const state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
     const tasks = JSON.parse(await readFile(path.join(cwd, '.vscode', 'tasks.json'), 'utf8'));
-    expect(state).toMatchObject({ version: 1, page_index: {}, content_hashes: {} });
+    expect(state).toEqual({ version: 2, page_index: {} });
     expect(tasks.tasks.map((task: { label: string }) => task.label)).toEqual([
       'user task',
       'iris: open dashboard',
     ]);
+    for (const target of ['.agents', '.claude', '.github']) {
+      expect(existsSync(path.join(cwd, target, 'skills', 'iris-workspace', 'SKILL.md'))).toBe(true);
+    }
     expect(existsSync(path.join(cwd, 'iris', 'design', 'vendor'))).toBe(true);
   });
 
-  it('adopts docs, detects stale source changes, refreshes them, and archives pages', async () => {
+  it('does not ingest README or docs during initialization', async () => {
     const cwd = await createTempDir();
-    await writeFile(path.join(cwd, 'README.md'), '# Example\n\nFirst version.\n');
+    await mkdir(path.join(cwd, 'docs'));
+    await writeFile(path.join(cwd, 'README.md'), '# User README\n');
+    await writeFile(path.join(cwd, 'docs', 'guide.md'), '# User guide\n');
+
     expect(await runCli(['init'], cwd)).toBe(0);
-    expect(await runCli(['adopt'], cwd)).toBe(0);
+    expect(await readFile(path.join(cwd, 'README.md'), 'utf8')).toBe('# User README\n');
+    expect(await readFile(path.join(cwd, 'docs', 'guide.md'), 'utf8')).toBe('# User guide\n');
+    expect(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8')).not.toContain('README.md');
+    expect(existsSync(path.join(cwd, 'iris', 'pages', 'doc-readme'))).toBe(false);
+  });
 
-    const id = 'doc-readme';
-    const dataPath = path.join(cwd, 'iris', 'pages', id, 'data.json');
-    const adopted = JSON.parse(await readFile(dataPath, 'utf8'));
-    expect(adopted.sections.summary).toContain('Source: README.md');
-    let state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
-    expect(state.page_index[id].source.path).toBe('README.md');
+  it('preserves user configuration, pages, and archives across init reruns', async () => {
+    const cwd = await createTempDir();
     expect(await runCli(['init'], cwd)).toBe(0);
-    const adoptedDashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
-    expect(adoptedDashboard).toContain('README');
-    expect(adoptedDashboard).toContain('First version.');
-    expect(await runCli(['sync'], cwd)).toBe(0);
+    const configPath = path.join(cwd, 'iris', 'config.yaml');
+    await writeFile(configPath, 'project: user-owned\ntheme: light\n');
 
-    await writeFile(path.join(cwd, 'README.md'), '# Example\n\nSecond version.\n');
-    expect(await runCli(['sync'], cwd)).toBe(0);
-    state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
-    expect(state.page_index[id].status).toBe('stale');
-    expect(await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8')).toContain('stale');
-
-    expect(await runCli(['adopt'], cwd)).toBe(0);
-    state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
-    expect(state.page_index[id].status).toBe('active');
     expect(await runCli(['bug', 'kept-page'], cwd)).toBe(0);
     expect(await runCli(['render', 'kept-page'], cwd)).toBe(0);
-    expect(await runCli(['archive', id], cwd)).toBe(0);
-    expect(existsSync(path.join(cwd, 'iris', 'archive', id, 'data.json'))).toBe(true);
-    expect(existsSync(path.join(cwd, 'iris', 'pages', id))).toBe(false);
+    expect(await runCli(['archive', 'kept-page'], cwd)).toBe(0);
+    expect(await runCli(['feature', 'active-page'], cwd)).toBe(0);
+    expect(await runCli(['render', 'active-page'], cwd)).toBe(0);
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    expect(await readFile(configPath, 'utf8')).toBe('project: user-owned\ntheme: light\n');
+    expect(existsSync(path.join(cwd, 'iris', 'archive', 'kept-page', 'data.json'))).toBe(true);
+    expect(existsSync(path.join(cwd, 'iris', 'pages', 'active-page', 'data.json'))).toBe(true);
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
-    expect(dashboard).not.toContain(`href="./pages/${id}/page.html"`);
-    expect(dashboard).toContain(`href="./archive/${id}/page.html"`);
-    expect(dashboard).toContain('Kept Page');
+    expect(dashboard).toContain('./archive/kept-page/page.html');
+    expect(dashboard).toContain('./pages/active-page/page.html');
+  });
+
+  it('renders the workspace but reports an incomplete unmarked skill collision', async () => {
+    const cwd = await createTempDir();
+    const target = path.join(cwd, '.agents', 'skills', 'iris-workspace', 'SKILL.md');
+    await mkdir(path.dirname(target), { recursive: true });
+    await writeFile(target, 'user-owned skill\n');
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+    expect(await runCli(['init'], cwd)).toBe(1);
+    expect(await readFile(target, 'utf8')).toBe('user-owned skill\n');
+    expect(existsSync(path.join(cwd, 'iris', 'index.html'))).toBe(true);
+    expect(existsSync(path.join(cwd, '.claude', 'skills', 'iris-workspace', 'SKILL.md'))).toBe(true);
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('agent skill setup is incomplete'));
   });
 });
