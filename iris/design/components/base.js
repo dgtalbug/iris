@@ -354,6 +354,75 @@ async function setupMermaid() {
   await renderVisibleFigures();
 }
 
+function setupSpecBrowser() {
+  const index = document.querySelector('[data-spec-index]');
+  const region = document.querySelector('[data-spec-detail]');
+  const slot = document.querySelector('[data-spec-detail-content]');
+  if (!(index instanceof HTMLElement) || !(region instanceof HTMLElement) || !(slot instanceof HTMLElement)) return;
+
+  const bundle = globalThis.IRIS_SPEC;
+  const records = bundle && bundle.records ? bundle.records : null;
+  const crumb = document.querySelector('[data-spec-crumb]');
+  const crumbDefault = crumb ? crumb.textContent : '';
+
+  const showIndex = () => {
+    region.hidden = true;
+    slot.textContent = '';
+    index.hidden = false;
+    if (crumb) crumb.textContent = crumbDefault;
+  };
+
+  const showRecord = (record) => {
+    index.hidden = true;
+    region.hidden = false;
+    // Content is generated and escaped by Iris at render time; inserted script
+    // elements do not execute, and the parser output is already escaped.
+    slot.innerHTML = record.html;
+    if (crumb) crumb.textContent = record.title;
+    const heading = slot.querySelector('h1');
+    if (heading instanceof HTMLElement) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    }
+    document.dispatchEvent(new CustomEvent('iris:visibilitychange'));
+  };
+
+  const sync = () => {
+    const hash = location.hash;
+    if (!records || !hash.startsWith('#/')) {
+      showIndex();
+      return;
+    }
+    let key = '';
+    try {
+      const parts = hash.slice(2).split('/');
+      const kind = parts.shift() || '';
+      key = kind + ':' + decodeURIComponent(parts.join('/'));
+    } catch (error) {
+      showIndex();
+      return;
+    }
+    const record = Object.prototype.hasOwnProperty.call(records, key) ? records[key] : undefined;
+    if (!record) {
+      showIndex();
+      return;
+    }
+    showRecord(record);
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof Element && target.closest('[data-spec-back]')) {
+      event.preventDefault();
+      if (location.hash.startsWith('#/')) history.replaceState(null, '', location.href.split('#')[0]);
+      showIndex();
+    }
+  });
+
+  window.addEventListener('hashchange', sync);
+  sync();
+}
+
 const navigation = setupNavigation();
 setupTheme();
 setupTabs();
@@ -361,5 +430,6 @@ setupFilter();
 setupKeyboardShortcuts(navigation);
 setupCardNavigation();
 setupWorkDrawer();
+setupSpecBrowser();
 void setupMermaid();
 document.documentElement.setAttribute('data-iris-js', 'ready');

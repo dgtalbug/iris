@@ -31,7 +31,7 @@ The system MUST provide generated component styles and semantic markup for apert
 
 ### Requirement: newcomer-first dashboard hierarchy
 
-The generated workspace MUST consist of an Overview page at `iris/index.html`, a Work page with the dense List/Table/Kanban browser and detail drawer, a Spec index page listing canonical specs, active changes, and the archive with links to one generated detail page per record, a Research page, a Commands page, and the project docs, all reachable through the shared navigation shell; the Overview MUST preserve the briefing hero, per-section summary, architecture pane, and project-docs strip.
+The generated workspace MUST consist of an Overview page at `iris/index.html`, a Work page with the dense List/Table/Kanban browser and detail drawer, a Spec page presenting an index of canonical specs, active changes, and the archive with each record addressable in place, a Research page, a Commands page, and the project docs, all reachable through the shared navigation shell; the Overview MUST preserve the briefing hero, per-section summary, architecture pane, and project-docs strip.
 
 #### Scenario: repository has no generated work pages
 
@@ -55,8 +55,8 @@ The generated workspace MUST consist of an Overview page at `iris/index.html`, a
 
 #### Scenario: a spec detail page is opened
 
-- **WHEN** a user opens a canonical spec or change detail page from the index
-- **THEN** it MUST use the same navigation shell, mark Spec as the current section, and provide a path back to the index
+- **WHEN** a user opens a canonical spec, change, or legacy record from the index
+- **THEN** the page MUST keep the navigation shell and the Spec section current, present that record's content, and provide a way back to the index
 
 ### Requirement: deterministic responsive interaction
 

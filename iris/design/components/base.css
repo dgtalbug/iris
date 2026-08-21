@@ -185,6 +185,10 @@ a.stat-tile:hover { border-color: var(--accent); }
 .work-drawer-section p { margin: 0; color: var(--text-2); white-space: pre-wrap; overflow-wrap: anywhere; }
 .work-drawer-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 
+.spec-detail-region { display: grid; gap: var(--space-5); }
+/* Focus moves here programmatically to announce the record, not for navigation. */
+.spec-detail-region h1[tabindex='-1']:focus { outline: none; }
+.spec-detail-region [data-spec-detail-content] { display: grid; gap: var(--space-5); }
 .spec-stack { display: grid; gap: var(--space-5); min-width: 0; }
 .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--space-3); }
 .spec-card { display: grid; gap: var(--space-3); padding: var(--space-4); min-width: 0; }

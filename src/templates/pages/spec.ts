@@ -5,7 +5,7 @@ import type {
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
 import { escapeHtml, progressBar, statTile } from '../common.js';
-import { legacyDetailSlug, specDetailPath } from './spec-detail.js';
+import { legacyDetailSlug, specRecordHash } from './spec-detail.js';
 
 export const EMPTY_OPENSPEC_SNAPSHOT: OpenSpecSnapshot = {
   version: 1,
@@ -61,9 +61,9 @@ function capabilityRows(capabilities: OpenSpecCapability[]): string {
   return capabilities
     .map((capability) => {
       const health = capabilityHealth(capability);
-      const href = specDetailPath('capability', capability.capability);
+      const href = specRecordHash('capability', capability.capability);
       return `<tr>
-          ${nameCell(capability.capability, href ? `./${href}` : undefined, capability.path)}
+          ${nameCell(capability.capability, href, capability.path)}
           <td class="mono col-updated">${capability.document.requirements.length}</td>
           <td class="mono col-priority">${capability.document.scenarios.length}</td>
           <td><span class="status-chip health-${health}">${health}</span></td>
@@ -77,9 +77,9 @@ function changeRows(changes: OpenSpecChange[]): string {
     .map((change) => {
       const tasks = change.artifacts.tasks?.progress;
       const label = tasks ? `${tasks.complete}/${tasks.total} tasks` : 'tasks unavailable';
-      const href = specDetailPath('change', change.name);
+      const href = specRecordHash('change', change.name);
       return `<tr>
-          ${nameCell(change.name, href ? `./${href}` : undefined, change.path)}
+          ${nameCell(change.name, href, change.path)}
           <td class="col-type"><span class="pill">${escapeHtml(change.completeness)}</span></td>
           <td class="col-updated">${tasks ? progressBar(tasks.complete, tasks.total, `${change.name}: ${label}`) : ''}<span class="work-meta">${escapeHtml(label)}</span></td>
           <td><span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span></td>
@@ -91,9 +91,9 @@ function changeRows(changes: OpenSpecChange[]): string {
 function legacyRows(documents: OpenSpecSourceDocument[]): string {
   return documents
     .map((document) => {
-      const href = specDetailPath('legacy', legacyDetailSlug(document));
+      const href = specRecordHash('legacy', legacyDetailSlug(document));
       return `<tr>
-        ${nameCell(document.title, href ? `./${href}` : undefined, document.path)}
+        ${nameCell(document.title, href, document.path)}
         <td class="col-type"><span class="pill">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
         <td><span class="status-chip">archived</span></td>
@@ -146,11 +146,12 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
     (document): document is OpenSpecSourceDocument => Boolean(document),
   );
 
-  return `<div class="page-head">
+  return `<div data-spec-index>
+    <div class="page-head">
       <div>
         <span class="eyebrow">openspec filesystem snapshot</span>
         <h1>Spec</h1>
-        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Each record opens its own page; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
+        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Selecting a record opens it here; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
       </div>
     </div>
 
@@ -161,6 +162,11 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
       ${statTile({ value: counts.tasksComplete, label: 'tasks complete' })}
       ${statTile({ value: counts.tasksOpen, label: 'tasks open' })}
     </section>
+
+    <noscript>
+      <div class="surface callout info">Opening a record needs JavaScript. Every row below names its
+      source path on disk, so the listing stays complete either way.</div>
+    </noscript>
 
     <div class="spec-stack">
       ${emptyState}
@@ -193,5 +199,10 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
       </section>
       ${contextDocuments.length === 0 ? '' : `<section aria-labelledby="spec-context-title"><div class="section-heading"><div><span class="eyebrow">workspace identity</span><h2 id="spec-context-title">Project context</h2></div></div><div class="spec-grid">${contextDocuments.map(contextDisclosure).join('')}</div></section>`}
       ${warningList(snapshot)}
-    </div>`;
+    </div>
+  </div>
+
+  <section class="spec-detail-region" data-spec-detail hidden aria-live="polite">
+    <div data-spec-detail-content></div>
+  </section>`;
 }

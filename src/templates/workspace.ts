@@ -9,10 +9,11 @@ import { EMPTY_OPENSPEC_SNAPSHOT, specCounts, specPageContent } from './pages/sp
 import {
   capabilityDetailContent,
   changeDetailContent,
+  encodeSpecBundle,
   legacyDetailContent,
   legacyDetailSlug,
-  specDetailDepth,
-  specDetailPath,
+  specRecordKey,
+  type SpecRecord,
 } from './pages/spec-detail.js';
 import { researchDocumentContent, researchPageContent } from './pages/research.js';
 import { workFilterInput, workPageContent } from './pages/work.js';
@@ -66,6 +67,7 @@ type SectionOptions = {
   topbar?: string;
   drawer?: boolean;
   mermaid?: boolean;
+  extraScripts?: string[];
 };
 
 function section(model: WorkspaceModel, options: SectionOptions): string {
@@ -82,6 +84,7 @@ function section(model: WorkspaceModel, options: SectionOptions): string {
     topbar: options.topbar,
     drawer: options.drawer,
     mermaid: options.mermaid,
+    extraScripts: options.extraScripts,
   });
 }
 
@@ -119,6 +122,7 @@ export function specHtml(model: WorkspaceModel): string {
     title: 'Spec',
     crumbLabel: 'Spec',
     mermaid: true,
+    extraScripts: [SPEC_BUNDLE_FILE],
     content: specPageContent(model.openSpec),
   });
 }
@@ -165,67 +169,48 @@ export function researchDocumentHtml(model: WorkspaceModel, item: ResearchItem):
   });
 }
 
-/** Relative path inside `iris/` to generated HTML for every Spec detail page. */
-export function renderSpecDetailPages(model: WorkspaceModel): Record<string, string> {
-  const pages: Record<string, string> = {};
-  const shellFor = (relativePath: string, title: string, crumbLabel: string, content: string) => {
-    const depth = specDetailDepth(relativePath);
-    const back = `${'../'.repeat(depth)}spec.html`;
-    return renderShell({
-      current: 'spec',
-      depth,
-      title,
-      projectName: model.projectName,
-      theme: model.theme,
-      counts: navCounts(model),
-      projectDocs: model.projectDocs,
-      crumbs: [
-        { label: 'iris', href: `${'../'.repeat(depth)}index.html` },
-        { label: 'Spec', href: back },
-        { label: crumbLabel },
-      ],
-      content,
-      mermaid: true,
-    });
-  };
+export const SPEC_BUNDLE_FILE = 'spec/data.js';
+
+/** One record per canonical spec, change, and legacy archive, keyed by kind and name. */
+export function specRecords(model: WorkspaceModel): Record<string, SpecRecord> {
+  const records: Record<string, SpecRecord> = {};
 
   for (const capability of model.openSpec.canonical_specs) {
-    const relativePath = specDetailPath('capability', capability.capability);
-    if (!relativePath) continue;
-    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
-    pages[relativePath] = shellFor(
-      relativePath,
-      capability.capability,
-      capability.capability,
-      capabilityDetailContent(capability, 'canonical spec', back),
-    );
+    records[specRecordKey('capability', capability.capability)] = {
+      kind: 'capability',
+      name: capability.capability,
+      title: capability.capability,
+      path: capability.path,
+      html: capabilityDetailContent(capability, 'canonical spec'),
+    };
   }
 
   for (const change of [...model.openSpec.active_changes, ...model.openSpec.archived_changes]) {
-    const relativePath = specDetailPath('change', change.name);
-    if (!relativePath) continue;
-    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
-    pages[relativePath] = shellFor(
-      relativePath,
-      change.name,
-      change.name,
-      changeDetailContent(change, back),
-    );
+    records[specRecordKey('change', change.name)] = {
+      kind: 'change',
+      name: change.name,
+      title: change.name,
+      path: change.path,
+      html: changeDetailContent(change),
+    };
   }
 
   for (const document of model.openSpec.legacy_archives) {
-    const relativePath = specDetailPath('legacy', legacyDetailSlug(document));
-    if (!relativePath) continue;
-    const back = `${'../'.repeat(specDetailDepth(relativePath))}spec.html`;
-    pages[relativePath] = shellFor(
-      relativePath,
-      document.title,
-      document.title,
-      legacyDetailContent(document, back),
-    );
+    const name = legacyDetailSlug(document);
+    records[specRecordKey('legacy', name)] = {
+      kind: 'legacy',
+      name,
+      title: document.title,
+      path: document.path,
+      html: legacyDetailContent(document),
+    };
   }
 
-  return pages;
+  return records;
+}
+
+export function specBundle(model: WorkspaceModel): string {
+  return encodeSpecBundle(specRecords(model));
 }
 
 export const SECTION_FILES = [
@@ -244,6 +229,6 @@ export function renderSectionPages(model: WorkspaceModel): Record<string, string
     'spec.html': specHtml(model),
     'research.html': researchHtml(model),
     'commands.html': commandsHtml(model),
-    ...renderSpecDetailPages(model),
+    [SPEC_BUNDLE_FILE]: specBundle(model),
   };
 }

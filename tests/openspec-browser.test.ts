@@ -1,8 +1,17 @@
+import { readFileSync } from 'node:fs';
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { runCli } from '../src/cli.js';
+
+/** Evaluates the generated bundle the way a browser would, with a fake global. */
+function loadSpecBundle(cwd: string): Record<string, { html: string }> {
+  const source = readFileSync(path.join(cwd, 'iris', 'spec', 'data.js'), 'utf8');
+  const scope: { IRIS_SPEC?: { records: Record<string, { html: string }> } } = {};
+  new Function('globalThis', source)(scope);
+  return scope.IRIS_SPEC?.records ?? {};
+}
 
 const tempDirs: string[] = [];
 const fixtureRoot = path.resolve(
@@ -87,16 +96,14 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).toContain('1/2 tasks');
     expect(dashboard).toContain('health-invalid');
     expect(dashboard).toContain('malformed-spec');
-    expect(dashboard).toContain('href="./spec/changes/active-change/page.html"');
-    expect(dashboard).toContain('href="./spec/capabilities/core/page.html"');
+    expect(dashboard).toContain('href="#/change/active-change"');
+    expect(dashboard).toContain('href="#/capability/core"');
     expect(dashboard).toContain('schema: spec-driven');
     expect(dashboard).not.toContain('spec-document');
     expect(dashboard).not.toContain('data-mermaid-figure');
 
-    const changePage = await readFile(
-      path.join(cwd, 'iris', 'spec', 'changes', 'active-change', 'page.html'),
-      'utf8',
-    );
+    const records = loadSpecBundle(cwd);
+    const changePage = records['change:active-change'].html;
     expect(changePage).toContain('<h2 id="proposal-why">Why</h2>');
     expect(changePage).toContain('<strong>active layout</strong>');
     expect(changePage).toContain('href="./design.md" rel="noopener noreferrer"');
@@ -107,7 +114,6 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(changePage).toContain('<pre><code class="language-ts">');
     expect(changePage).toContain('data-mermaid-figure');
     expect(changePage).toContain('data-mermaid-host aria-label="Mermaid diagram"');
-    expect(changePage).toContain('<script defer src="../../../design/vendor/mermaid.min.js">');
     expect(changePage).toContain('<summary>Exact source</summary>');
     expect(changePage).toContain('- [x] completed task evidence');
     expect(changePage).toContain('Image: remote tracker (https://example.com/tracker.png)');
@@ -116,15 +122,12 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(changePage).not.toContain('<style>body');
     expect(changePage).toContain('aria-label="On this page"');
 
-    // Legacy archives are neither a capability nor a change; they keep their own page.
-    const legacyPage = await readFile(
-      path.join(cwd, 'iris', 'spec', 'legacy', '2026-08-18-legacy', 'page.html'),
-      'utf8',
-    );
+    // Legacy archives are neither a capability nor a change; they keep their own record.
+    const legacyPage = records['legacy:2026-08-18-legacy'].html;
     expect(legacyPage).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
     expect(legacyPage).not.toContain('<script>globalThis.pwned=true</script>');
     expect(legacyPage).toContain('<summary>Exact source</summary>');
-    expect(dashboard).toContain('href="./spec/legacy/2026-08-18-legacy/page.html"');
+    expect(dashboard).toContain('href="#/legacy/2026-08-18-legacy"');
 
     expect(changePage).toContain('schema: spec-driven');
     expect(changePage).not.toContain('<img ');

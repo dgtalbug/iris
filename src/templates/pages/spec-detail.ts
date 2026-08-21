@@ -6,26 +6,10 @@ import type {
 import { renderDocument, type DocumentHeading } from '../../lib/markdown.js';
 import { escapeHtml, progressBar, statTile } from '../common.js';
 
-const SAFE_SEGMENT = /^[a-z0-9]+(?:[-.][a-z0-9]+)*$/i;
-
 export type SpecDetailKind = 'capability' | 'change' | 'legacy';
 
-/**
- * Detail pages live under two namespaces so a capability named `changes` can
- * never collide with the change namespace, and nested capability paths keep
- * their structure as directories rather than being flattened into a slug.
- */
-export function specDetailPath(kind: SpecDetailKind, name: string): string | undefined {
-  const segments = name.split('/').filter(Boolean);
-  if (segments.length === 0 || !segments.every((segment) => SAFE_SEGMENT.test(segment))) {
-    return undefined;
-  }
-  const root = kind === 'capability' ? 'capabilities' : kind === 'change' ? 'changes' : 'legacy';
-  return `spec/${root}/${segments.join('/')}/page.html`;
-}
-
-export function specDetailDepth(relativePath: string): number {
-  return relativePath.split('/').length - 1;
+export function specRecordHash(kind: SpecDetailKind, name: string): string {
+  return `#/${kind}/${name}`;
 }
 
 function slugPrefix(value: string): string {
@@ -112,11 +96,7 @@ function artifactSection(
   };
 }
 
-export function capabilityDetailContent(
-  capability: OpenSpecCapability,
-  label: string,
-  backHref: string,
-): string {
+export function capabilityDetailContent(capability: OpenSpecCapability, label: string): string {
   const document = capability.document;
   const health = document.warnings.some((item) => item.code === 'malformed-spec')
     ? 'invalid'
@@ -135,7 +115,7 @@ export function capabilityDetailContent(
           <span class="status-chip health-${health}">${health}</span>
         </div>
       </div>
-      <div class="page-head-actions"><a class="button" href="${escapeHtml(backHref)}">&larr; Spec index</a></div>
+      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     <section class="strip" aria-label="capability summary">
@@ -160,7 +140,7 @@ export function legacyDetailSlug(document: OpenSpecSourceDocument): string {
   return base.replace(/\.md$/i, '');
 }
 
-export function legacyDetailContent(document: OpenSpecSourceDocument, backHref: string): string {
+export function legacyDetailContent(document: OpenSpecSourceDocument): string {
   const { html, headings } = renderDocument(document.raw);
   const toc = tableOfContents(headings);
   return `<div class="page-head">
@@ -172,7 +152,7 @@ export function legacyDetailContent(document: OpenSpecSourceDocument, backHref: 
           <span class="status-chip">legacy</span>
         </div>
       </div>
-      <div class="page-head-actions"><a class="button" href="${escapeHtml(backHref)}">&larr; Spec index</a></div>
+      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     ${warningNotice(document)}
@@ -185,7 +165,7 @@ export function legacyDetailContent(document: OpenSpecSourceDocument, backHref: 
     </div>`;
 }
 
-export function changeDetailContent(change: OpenSpecChange, backHref: string): string {
+export function changeDetailContent(change: OpenSpecChange): string {
   const tasks = change.artifacts.tasks?.progress;
   const artifacts: RenderedArtifact[] = [
     artifactSection('Proposal', change.artifacts.proposal, 'proposal'),
@@ -213,7 +193,7 @@ export function changeDetailContent(change: OpenSpecChange, backHref: string): s
           <span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span>
         </div>
       </div>
-      <div class="page-head-actions"><a class="button" href="${escapeHtml(backHref)}">&larr; Spec index</a></div>
+      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     <section class="strip" aria-label="change summary">
@@ -228,4 +208,31 @@ export function changeDetailContent(change: OpenSpecChange, backHref: string): s
       <div class="spec-stack">${artifacts.map((artifact) => artifact.html).join('')}</div>
       ${toc}
     </div>`;
+}
+
+export type SpecRecord = {
+  kind: SpecDetailKind;
+  name: string;
+  title: string;
+  path: string;
+  html: string;
+};
+
+export function specRecordKey(kind: SpecDetailKind, name: string): string {
+  return `${kind}:${name}`;
+}
+
+/**
+ * Encodes the bundle so record content cannot terminate the script element or
+ * open an HTML comment. Escaping every `<` is deliberate bluntness: it makes
+ * `</script>`, `<script`, and `<!--` inexpressible in the source text while
+ * decoding back to the original characters at runtime. U+2028 and U+2029 are
+ * valid JSON but invalid inside a JavaScript string literal.
+ */
+export function encodeSpecBundle(records: Record<string, SpecRecord>): string {
+  const json = JSON.stringify({ records })
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+  return `globalThis.IRIS_SPEC = ${json};\n`;
 }

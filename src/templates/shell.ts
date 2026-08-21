@@ -38,6 +38,7 @@ export type ShellOptions = {
   mermaid?: boolean;
   drawer?: boolean;
   footerHints?: string;
+  extraScripts?: string[];
 };
 
 const SECTIONS: Array<{ id: SectionId; label: string; file: string }> = [
@@ -126,7 +127,7 @@ function renderCrumbs(crumbs: Crumb[]): string {
       const last = index === crumbs.length - 1;
       const separator = last ? '' : '<span aria-hidden="true">/</span>';
       const label = last
-        ? `<b>${escapeHtml(crumb.label)}</b>`
+        ? `<b data-spec-crumb>${escapeHtml(crumb.label)}</b>`
         : crumb.href
           ? `<a href="${escapeHtml(crumb.href)}">${escapeHtml(crumb.label)}</a>`
           : `<span>${escapeHtml(crumb.label)}</span>`;
@@ -167,6 +168,11 @@ export function renderShell(options: ShellOptions): string {
   const mermaidScript = options.mermaid
     ? `<script defer src="${prefix}design/vendor/mermaid.min.js"></script>\n    `
     : '';
+  // Data bundles must execute before the base script reads them; both are
+  // deferred, so document order is their execution order.
+  const extraScripts = (options.extraScripts ?? [])
+    .map((source) => `<script defer src="${prefix}${source}"></script>\n    `)
+    .join('');
 
   return `<!doctype html>
 <html lang="en" data-theme="${escapeHtml(options.theme)}">
@@ -195,7 +201,7 @@ ${options.content}
       </div>
     </div>
     ${options.drawer ? workDrawer() : ''}
-    ${mermaidScript}<script defer src="${prefix}design/components/base.js"></script>
+    ${mermaidScript}${extraScripts}<script defer src="${prefix}design/components/base.js"></script>
   </body>
 </html>`.replace(/[ \t]+$/gm, '');
 }

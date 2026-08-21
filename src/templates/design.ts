@@ -27,7 +27,12 @@ export {
   type WorkspaceContext,
 } from './pages/contract-page.js';
 export { EMPTY_OPENSPEC_SNAPSHOT, specCounts } from './pages/spec.js';
-export { specDetailPath, specDetailDepth } from './pages/spec-detail.js';
+export {
+  encodeSpecBundle,
+  specRecordHash,
+  specRecordKey,
+  type SpecRecord,
+} from './pages/spec-detail.js';
 export { researchDashboardPage } from './pages/research.js';
 export { workStatusCounts } from './pages/work.js';
 export {
@@ -36,7 +41,9 @@ export {
   navCounts,
   overviewHtml,
   renderSectionPages,
-  renderSpecDetailPages,
+  specBundle,
+  specRecords,
+  SPEC_BUNDLE_FILE,
   researchDocumentHtml,
   researchHtml,
   SECTION_FILES,

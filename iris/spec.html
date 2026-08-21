@@ -26,27 +26,33 @@
       <div class="main">
         <header class="topbar" data-iris-nav>
           <button class="button menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections">&#9776;</button>
-          <nav class="crumbs" aria-label="Breadcrumb"><a href="./index.html">iris</a><span aria-hidden="true">/</span><b>Spec</b></nav>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="./index.html">iris</a><span aria-hidden="true">/</span><b data-spec-crumb>Spec</b></nav>
           <span class="topbar-spacer"></span>
 
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">theme <kbd>t</kbd></button>
         </header>
         <main class="content">
-<div class="page-head">
+<div data-spec-index>
+    <div class="page-head">
       <div>
         <span class="eyebrow">openspec filesystem snapshot</span>
         <h1>Spec</h1>
-        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Each record opens its own page; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
+        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Selecting a record opens it here; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
       </div>
     </div>
 
     <section class="strip" aria-label="OpenSpec overview">
       <div class="surface stat-tile"><span class="stat-value">9</span><span class="stat-label">canonical</span></div>
       <div class="surface stat-tile"><span class="stat-value">0</span><span class="stat-label">active changes</span></div>
-      <div class="surface stat-tile"><span class="stat-value">20</span><span class="stat-label">archived</span></div>
-      <div class="surface stat-tile"><span class="stat-value">218</span><span class="stat-label">tasks complete</span></div>
+      <div class="surface stat-tile"><span class="stat-value">21</span><span class="stat-label">archived</span></div>
+      <div class="surface stat-tile"><span class="stat-value">228</span><span class="stat-label">tasks complete</span></div>
       <div class="surface stat-tile"><span class="stat-value">0</span><span class="stat-label">tasks open</span></div>
     </section>
+
+    <noscript>
+      <div class="surface callout info">Opening a record needs JavaScript. Every row below names its
+      source path on disk, so the listing stays complete either way.</div>
+    </noscript>
 
     <div class="spec-stack">
 
@@ -57,47 +63,47 @@
         <caption class="visually-hidden">Canonical specs</caption>
         <thead><tr><th scope="col">Capability</th><th scope="col" class="col-type">Requirements</th><th scope="col" class="col-updated">Scenarios</th><th scope="col">Health</th></tr></thead>
         <tbody><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/agent-first-initialization/page.html">agent-first-initialization</a><span class="work-row-id">specs/agent-first-initialization/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/agent-first-initialization">agent-first-initialization</a><span class="work-row-id">specs/agent-first-initialization/spec.md</span></span></td>
           <td class="mono col-updated">6</td>
           <td class="mono col-priority">18</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/aperture-design-system/page.html">aperture-design-system</a><span class="work-row-id">specs/aperture-design-system/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/aperture-design-system">aperture-design-system</a><span class="work-row-id">specs/aperture-design-system/spec.md</span></span></td>
           <td class="mono col-updated">9</td>
           <td class="mono col-priority">30</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/brew-formula-and-installability/page.html">brew-formula-and-installability</a><span class="work-row-id">specs/brew-formula-and-installability/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/brew-formula-and-installability">brew-formula-and-installability</a><span class="work-row-id">specs/brew-formula-and-installability/spec.md</span></span></td>
           <td class="mono col-updated">4</td>
           <td class="mono col-priority">9</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/markdown-diagram-rendering/page.html">markdown-diagram-rendering</a><span class="work-row-id">specs/markdown-diagram-rendering/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/markdown-diagram-rendering">markdown-diagram-rendering</a><span class="work-row-id">specs/markdown-diagram-rendering/spec.md</span></span></td>
           <td class="mono col-updated">5</td>
           <td class="mono col-priority">10</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/openspec-spec-browser/page.html">openspec-spec-browser</a><span class="work-row-id">specs/openspec-spec-browser/spec.md</span></span></td>
-          <td class="mono col-updated">10</td>
-          <td class="mono col-priority">30</td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/openspec-spec-browser">openspec-spec-browser</a><span class="work-row-id">specs/openspec-spec-browser/spec.md</span></span></td>
+          <td class="mono col-updated">11</td>
+          <td class="mono col-priority">34</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/project-lifecycle-automation/page.html">project-lifecycle-automation</a><span class="work-row-id">specs/project-lifecycle-automation/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/project-lifecycle-automation">project-lifecycle-automation</a><span class="work-row-id">specs/project-lifecycle-automation/spec.md</span></span></td>
           <td class="mono col-updated">3</td>
           <td class="mono col-priority">4</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/research-markdown-pages/page.html">research-markdown-pages</a><span class="work-row-id">specs/research-markdown-pages/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/research-markdown-pages">research-markdown-pages</a><span class="work-row-id">specs/research-markdown-pages/spec.md</span></span></td>
           <td class="mono col-updated">5</td>
           <td class="mono col-priority">12</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/session-ingestion-and-reporting/page.html">session-ingestion-and-reporting</a><span class="work-row-id">specs/session-ingestion-and-reporting/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/session-ingestion-and-reporting">session-ingestion-and-reporting</a><span class="work-row-id">specs/session-ingestion-and-reporting/spec.md</span></span></td>
           <td class="mono col-updated">4</td>
           <td class="mono col-priority">7</td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/capabilities/standalone-publish-and-export/page.html">standalone-publish-and-export</a><span class="work-row-id">specs/standalone-publish-and-export/spec.md</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/capability/standalone-publish-and-export">standalone-publish-and-export</a><span class="work-row-id">specs/standalone-publish-and-export/spec.md</span></span></td>
           <td class="mono col-updated">4</td>
           <td class="mono col-priority">6</td>
           <td><span class="status-chip health-valid">valid</span></td>
@@ -110,108 +116,113 @@
         <div class="surface empty-state">No active changes found.</div>
       </section>
       <section aria-labelledby="archive-title">
-        <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="pill">20</span></div>
+        <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="pill">21</span></div>
         <div class="surface work-table-wrap">
       <table class="work-table">
         <caption class="visually-hidden">Archived changes</caption>
         <thead><tr><th scope="col">Change</th><th scope="col" class="col-type">Completeness</th><th scope="col" class="col-updated">Tasks</th><th scope="col">Health</th></tr></thead>
         <tbody><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-18-release-automation-and-install-smoke/page.html">2026-08-18-release-automation-and-install-smoke</a><span class="work-row-id">changes/archive/2026-08-18-release-automation-and-install-smoke</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-18-release-automation-and-install-smoke">2026-08-18-release-automation-and-install-smoke</a><span class="work-row-id">changes/archive/2026-08-18-release-automation-and-install-smoke</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-18-release-automation-and-install-smoke: 9/9 tasks"><span style="width: 100%"></span></div><span class="work-meta">9/9 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-18-typed-templates-and-distribution/page.html">2026-08-18-typed-templates-and-distribution</a><span class="work-row-id">changes/archive/2026-08-18-typed-templates-and-distribution</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-18-typed-templates-and-distribution">2026-08-18-typed-templates-and-distribution</a><span class="work-row-id">changes/archive/2026-08-18-typed-templates-and-distribution</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-18-typed-templates-and-distribution: 11/11 tasks"><span style="width: 100%"></span></div><span class="work-meta">11/11 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-agent-first-initialization/page.html">2026-08-21-agent-first-initialization</a><span class="work-row-id">changes/archive/2026-08-21-agent-first-initialization</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-agent-first-initialization">2026-08-21-agent-first-initialization</a><span class="work-row-id">changes/archive/2026-08-21-agent-first-initialization</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-agent-first-initialization: 21/21 tasks"><span style="width: 100%"></span></div><span class="work-meta">21/21 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-agent-surface-triggers/page.html">2026-08-21-agent-surface-triggers</a><span class="work-row-id">changes/archive/2026-08-21-agent-surface-triggers</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-agent-surface-triggers">2026-08-21-agent-surface-triggers</a><span class="work-row-id">changes/archive/2026-08-21-agent-surface-triggers</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-agent-surface-triggers: 10/10 tasks"><span style="width: 100%"></span></div><span class="work-meta">10/10 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-brew-formula-and-installability/page.html">2026-08-21-brew-formula-and-installability</a><span class="work-row-id">changes/archive/2026-08-21-brew-formula-and-installability</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-brew-formula-and-installability">2026-08-21-brew-formula-and-installability</a><span class="work-row-id">changes/archive/2026-08-21-brew-formula-and-installability</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-brew-formula-and-installability: 9/9 tasks"><span style="width: 100%"></span></div><span class="work-meta">9/9 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-dashboard-shell-redesign/page.html">2026-08-21-dashboard-shell-redesign</a><span class="work-row-id">changes/archive/2026-08-21-dashboard-shell-redesign</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-dashboard-shell-redesign">2026-08-21-dashboard-shell-redesign</a><span class="work-row-id">changes/archive/2026-08-21-dashboard-shell-redesign</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-dashboard-shell-redesign: 18/18 tasks"><span style="width: 100%"></span></div><span class="work-meta">18/18 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-design-system-aperture/page.html">2026-08-21-design-system-aperture</a><span class="work-row-id">changes/archive/2026-08-21-design-system-aperture</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-design-system-aperture">2026-08-21-design-system-aperture</a><span class="work-row-id">changes/archive/2026-08-21-design-system-aperture</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-design-system-aperture: 11/11 tasks"><span style="width: 100%"></span></div><span class="work-meta">11/11 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-openspec-spec-browser/page.html">2026-08-21-openspec-spec-browser</a><span class="work-row-id">changes/archive/2026-08-21-openspec-spec-browser</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-openspec-spec-browser">2026-08-21-openspec-spec-browser</a><span class="work-row-id">changes/archive/2026-08-21-openspec-spec-browser</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-openspec-spec-browser: 25/25 tasks"><span style="width: 100%"></span></div><span class="work-meta">25/25 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-project-lifecycle-automation/page.html">2026-08-21-project-lifecycle-automation</a><span class="work-row-id">changes/archive/2026-08-21-project-lifecycle-automation</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-project-lifecycle-automation">2026-08-21-project-lifecycle-automation</a><span class="work-row-id">changes/archive/2026-08-21-project-lifecycle-automation</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-project-lifecycle-automation: 15/15 tasks"><span style="width: 100%"></span></div><span class="work-meta">15/15 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-redesign-work-board/page.html">2026-08-21-redesign-work-board</a><span class="work-row-id">changes/archive/2026-08-21-redesign-work-board</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-redesign-work-board">2026-08-21-redesign-work-board</a><span class="work-row-id">changes/archive/2026-08-21-redesign-work-board</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-redesign-work-board: 11/11 tasks"><span style="width: 100%"></span></div><span class="work-meta">11/11 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-render-mermaid-diagrams/page.html">2026-08-21-render-mermaid-diagrams</a><span class="work-row-id">changes/archive/2026-08-21-render-mermaid-diagrams</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-render-mermaid-diagrams">2026-08-21-render-mermaid-diagrams</a><span class="work-row-id">changes/archive/2026-08-21-render-mermaid-diagrams</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-render-mermaid-diagrams: 12/12 tasks"><span style="width: 100%"></span></div><span class="work-meta">12/12 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-render-openspec-markdown/page.html">2026-08-21-render-openspec-markdown</a><span class="work-row-id">changes/archive/2026-08-21-render-openspec-markdown</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-render-openspec-markdown">2026-08-21-render-openspec-markdown</a><span class="work-row-id">changes/archive/2026-08-21-render-openspec-markdown</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-render-openspec-markdown: 12/12 tasks"><span style="width: 100%"></span></div><span class="work-meta">12/12 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-research-markdown-pages/page.html">2026-08-21-research-markdown-pages</a><span class="work-row-id">changes/archive/2026-08-21-research-markdown-pages</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-research-markdown-pages">2026-08-21-research-markdown-pages</a><span class="work-row-id">changes/archive/2026-08-21-research-markdown-pages</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-research-markdown-pages: 14/14 tasks"><span style="width: 100%"></span></div><span class="work-meta">14/14 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-session-ingestion-and-reporting/page.html">2026-08-21-session-ingestion-and-reporting</a><span class="work-row-id">changes/archive/2026-08-21-session-ingestion-and-reporting</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-session-ingestion-and-reporting">2026-08-21-session-ingestion-and-reporting</a><span class="work-row-id">changes/archive/2026-08-21-session-ingestion-and-reporting</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-session-ingestion-and-reporting: 15/15 tasks"><span style="width: 100%"></span></div><span class="work-meta">15/15 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-spec-detail-pages/page.html">2026-08-21-spec-detail-pages</a><span class="work-row-id">changes/archive/2026-08-21-spec-detail-pages</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-spec-data-bundle">2026-08-21-spec-data-bundle</a><span class="work-row-id">changes/archive/2026-08-21-spec-data-bundle</span></span></td>
+          <td class="col-type"><span class="pill">complete</span></td>
+          <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-spec-data-bundle: 10/10 tasks"><span style="width: 100%"></span></div><span class="work-meta">10/10 tasks</span></td>
+          <td><span class="status-chip health-valid">valid</span></td>
+        </tr><tr>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-spec-detail-pages">2026-08-21-spec-detail-pages</a><span class="work-row-id">changes/archive/2026-08-21-spec-detail-pages</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-spec-detail-pages: 13/13 tasks"><span style="width: 100%"></span></div><span class="work-meta">13/13 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-          <td><span class="work-row-primary"><a class="work-table-title" href="./spec/changes/2026-08-21-standalone-publish-and-export/page.html">2026-08-21-standalone-publish-and-export</a><span class="work-row-id">changes/archive/2026-08-21-standalone-publish-and-export</span></span></td>
+          <td><span class="work-row-primary"><a class="work-table-title" href="#/change/2026-08-21-standalone-publish-and-export">2026-08-21-standalone-publish-and-export</a><span class="work-row-id">changes/archive/2026-08-21-standalone-publish-and-export</span></span></td>
           <td class="col-type"><span class="pill">complete</span></td>
           <td class="col-updated"><div class="progress" role="img" aria-label="2026-08-21-standalone-publish-and-export: 12/12 tasks"><span style="width: 100%"></span></div><span class="work-meta">12/12 tasks</span></td>
           <td><span class="status-chip health-valid">valid</span></td>
         </tr><tr>
-        <td><span class="work-row-primary"><a class="work-table-title" href="./spec/legacy/2026-08-18-m0-scaffold/page.html">M0 scaffold (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m0-scaffold.md</span></span></td>
+        <td><span class="work-row-primary"><a class="work-table-title" href="#/legacy/2026-08-18-m0-scaffold">M0 scaffold (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m0-scaffold.md</span></span></td>
         <td class="col-type"><span class="pill">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
         <td><span class="status-chip">archived</span></td>
       </tr><tr>
-        <td><span class="work-row-primary"><a class="work-table-title" href="./spec/legacy/2026-08-18-m1-design-system/page.html">M1 design system (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m1-design-system.md</span></span></td>
+        <td><span class="work-row-primary"><a class="work-table-title" href="#/legacy/2026-08-18-m1-design-system">M1 design system (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m1-design-system.md</span></span></td>
         <td class="col-type"><span class="pill">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
         <td><span class="status-chip">archived</span></td>
       </tr><tr>
-        <td><span class="work-row-primary"><a class="work-table-title" href="./spec/legacy/2026-08-18-m2-merge-friendly-branching/page.html">M2 merge-friendly branching (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m2-merge-friendly-branching.md</span></span></td>
+        <td><span class="work-row-primary"><a class="work-table-title" href="#/legacy/2026-08-18-m2-merge-friendly-branching">M2 merge-friendly branching (archived)</a><span class="work-row-id">changes/archive/2026-08-18-m2-merge-friendly-branching.md</span></span></td>
         <td class="col-type"><span class="pill">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
         <td><span class="status-chip">archived</span></td>
       </tr><tr>
-        <td><span class="work-row-primary"><a class="work-table-title" href="./spec/legacy/2026-08-18-m2-typed-templates-and-distribution/page.html">M2 typed templates + distribution</a><span class="work-row-id">changes/archive/2026-08-18-m2-typed-templates-and-distribution.md</span></span></td>
+        <td><span class="work-row-primary"><a class="work-table-title" href="#/legacy/2026-08-18-m2-typed-templates-and-distribution">M2 typed templates + distribution</a><span class="work-row-id">changes/archive/2026-08-18-m2-typed-templates-and-distribution.md</span></span></td>
         <td class="col-type"><span class="pill">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
         <td><span class="status-chip">archived</span></td>
@@ -269,12 +280,18 @@ githubCopilot:
     </details></div></section>
 
     </div>
+  </div>
+
+  <section class="spec-detail-region" data-spec-detail hidden aria-live="polite">
+    <div data-spec-detail-content></div>
+  </section>
         </main>
         <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
       </div>
     </div>
 
     <script defer src="./design/vendor/mermaid.min.js"></script>
+    <script defer src="./spec/data.js"></script>
     <script defer src="./design/components/base.js"></script>
   </body>
 </html>
