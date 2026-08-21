@@ -56,7 +56,9 @@ describe('project lifecycle commands', () => {
     let state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
     expect(state.page_index[id].source.path).toBe('README.md');
     expect(await runCli(['init'], cwd)).toBe(0);
-    expect(await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8')).toContain('README');
+    const adoptedDashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(adoptedDashboard).toContain('README');
+    expect(adoptedDashboard).toContain('First version.');
     expect(await runCli(['sync'], cwd)).toBe(0);
 
     await writeFile(path.join(cwd, 'README.md'), '# Example\n\nSecond version.\n');

@@ -124,8 +124,43 @@ describe('generated HTML navigation', () => {
       path.join(cwd, 'iris', 'design', 'components', 'base.css'),
       'utf8',
     );
+    const baseJs = await readFile(
+      path.join(cwd, 'iris', 'design', 'components', 'base.js'),
+      'utf8',
+    );
     // Class display values beat the UA [hidden] rule unless the CSS restores it.
     expect(baseCss).toMatch(/\[hidden\]\s*\{\s*display:\s*none/);
+    expect(baseJs).not.toContain('import(');
+    expect(baseJs).not.toMatch(/https?:\/\//);
+  });
+
+  it('renders the Aperture hierarchy, shortcuts, and narrow-screen fallback', async () => {
+    const cwd = await createTempDir();
+
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const baseCss = await readFile(
+      path.join(cwd, 'iris', 'design', 'components', 'base.css'),
+      'utf8',
+    );
+    const baseJs = await readFile(
+      path.join(cwd, 'iris', 'design', 'components', 'base.js'),
+      'utf8',
+    );
+
+    const orderedLabels = ['what this repo is', 'repository health', 'Architecture', 'Work', 'Project docs'];
+    const offsets = orderedLabels.map((label) => dashboard.indexOf(label));
+    expect(offsets.every((offset) => offset >= 0)).toBe(true);
+    expect(offsets).toEqual([...offsets].sort((left, right) => left - right));
+    expect(dashboard).toContain('iris adopt');
+    expect(dashboard).toContain('iris vendor');
+    expect(dashboard).toContain('<kbd>/</kbd>');
+    expect(baseJs).toContain("event.key === '/'");
+    expect(baseJs).toContain("event.key.toLowerCase() === 't'");
+    expect(baseCss).toContain('@media (max-width: 40rem)');
+    expect(baseCss).toMatch(/health-strip\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
+    expect(baseCss).toMatch(/prefers-reduced-motion:[^)]+\)[\s\S]*aperture \.seg/);
   });
 
   it('publishes standalone artifacts without tree-relative navigation chrome', async () => {

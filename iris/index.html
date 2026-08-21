@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>iris project · iris dashboard</title>
+    <title>iris · iris dashboard</title>
     <link rel="stylesheet" href="./design/tokens.css" />
     <link rel="stylesheet" href="./design/components/base.css" />
   </head>
@@ -11,38 +11,181 @@
     <main class="page-shell">
       <header class="header">
         <div class="topbar">
-          <span class="eyebrow">iris · visual versioned docs</span>
+          <span class="eyebrow">◔ iris · iris</span>
           <button class="theme-toggle" type="button" data-theme-toggle data-iris-nav aria-label="Toggle color theme">theme</button>
         </div>
-        <div class="hero surface">
-          <svg class="aperture" width="84" height="84" viewBox="0 0 84 84" role="img" aria-label="0 pages by status">
-      <circle class="ring-empty" cx="42" cy="42" r="32" />
-      <text class="aperture-count" x="42" y="44" text-anchor="middle" dominant-baseline="middle">0</text>
+        <section class="briefing-hero surface" aria-labelledby="briefing-title">
+          <svg class="aperture" width="84" height="84" viewBox="0 0 84 84" role="img" aria-label="6 pages by status">
+      <circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(-90.00 42 42)"><title>Docs Cmds · report · draft</title></circle><circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(-30.00 42 42)"><title>Docs Design System · report · draft</title></circle><circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(30.00 42 42)"><title>Docs Project · report · draft</title></circle><circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(90.00 42 42)"><title>Docs Status · report · draft</title></circle><circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(150.00 42 42)"><title>Docs Tech · report · draft</title></circle><circle class="seg tp-report" cx="42" cy="42" r="32" stroke-dasharray="29.51 171.55" transform="rotate(210.00 42 42)"><title>README · report · draft</title></circle>
+      <text class="aperture-count" x="42" y="44" text-anchor="middle" dominant-baseline="middle">6</text>
       <text class="aperture-label" x="42" y="58" text-anchor="middle">pages</text>
     </svg>
           <div class="hero-copy">
-            <h1>iris project</h1>
-            <p class="hero-line">no pages yet</p>
+            <span class="eyebrow">what this repo is</span>
+            <h1 id="briefing-title">iris</h1>
+            <p class="hero-line">Visual, versioned docs from your AI coding agents. Less prose, more pictures — understand any change in seconds.</p>
+            <p class="hero-meta"><span>run: <code>pnpm dev</code></span><span>test: <code>pnpm test</code></span><span>entry: <code>src/</code> · <code>docs/</code></span></p>
           </div>
-        </div>
+        </section>
       </header>
 
-      <section class="surface toolbar">
-        <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
-          <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">List</button>
-          <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">Board</button>
-        </div>
-        <input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" />
-      </section>
+      <div class="dashboard-stack">
+        <section class="health-strip" aria-label="repository health">
+          <a class="surface stat-tile" href="#work"><span class="stat-value">6</span><span class="stat-label">pages</span></a>
+          <a class="surface stat-tile" href="#work"><span class="stat-value">0</span><span class="stat-label">stale</span></a>
+          <a class="surface stat-tile" href="#work"><span class="stat-value">6</span><span class="stat-label">active</span></a>
+          <a class="surface stat-tile" href="#project-docs"><span class="stat-value">6</span><span class="stat-label">project docs</span></a>
+        </section>
 
-      <section class="list" data-dashboard-list>
-        <article class="surface empty-state"><h2>No pages yet</h2><p>Create one with <code>iris bug my-first-bug</code>, then run <code>iris render --all</code>.</p></article>
-      </section>
+        <section aria-labelledby="architecture-title">
+          <div class="section-heading"><div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div><span class="pill">HLD</span></div>
+          <div class="surface architecture-pane">
+            <div class="empty-state"><h2>Architecture view is waiting for its renderer</h2><p>Run <code>iris vendor</code>, then <code>iris render --all</code> when the later diagram change lands. Until then, <a href="./project/hld.html">open the HLD page</a>.</p></div>
+          </div>
+        </section>
 
-      <section class="board" data-dashboard-board hidden>
-        <div class="board-col"><span class="eyebrow">Draft</span><p class="board-empty">Nothing here yet.</p></div><div class="board-col"><span class="eyebrow">Active</span><p class="board-empty">Nothing here yet.</p></div><div class="board-col"><span class="eyebrow">Done</span><p class="board-empty">Nothing here yet.</p></div><div class="board-col"><span class="eyebrow">Archived</span><p class="board-empty">Nothing here yet.</p></div>
-      </section>
-      <section class="surface project-strip">
+        <section class="work-surface" id="work" aria-labelledby="work-title">
+          <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="work-title">Work</h2></div><span class="mono">6 pages</span></div>
+          <div class="surface toolbar">
+            <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
+              <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">List</button>
+              <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">Board</button>
+            </div>
+            <label class="filter-wrap"><span class="eyebrow">filter</span><input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" /><kbd>/</kbd></label>
+          </div>
+
+          <section class="list" data-dashboard-list>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-cmds/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Cmds</span>
+        <span class="card-id">doc-docs-cmds</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-design-system/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Design System</span>
+        <span class="card-id">doc-docs-design-system</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-project/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Project</span>
+        <span class="card-id">doc-docs-project</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-status/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Status</span>
+        <span class="card-id">doc-docs-status</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-tech/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Tech</span>
+        <span class="card-id">doc-docs-tech</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-readme/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">README</span>
+        <span class="card-id">doc-readme</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+          </section>
+
+          <section class="board" data-dashboard-board hidden>
+            <div class="board-col"><span class="eyebrow">Draft</span>
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-cmds/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Cmds</span>
+        <span class="card-id">doc-docs-cmds</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-design-system/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Design System</span>
+        <span class="card-id">doc-docs-design-system</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-project/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Project</span>
+        <span class="card-id">doc-docs-project</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-status/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Status</span>
+        <span class="card-id">doc-docs-status</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-docs-tech/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">Docs Tech</span>
+        <span class="card-id">doc-docs-tech</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+
+    <a class="surface page-card" data-page-card href="./pages/doc-readme/page.html">
+      <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+      <span class="type-chip tp-report">report</span>
+      <span class="card-main">
+        <span class="card-title">README</span>
+        <span class="card-id">doc-readme</span>
+      </span>
+      <span class="status-chip st-draft">draft</span>
+    </a>
+  </div><div class="board-col"><span class="eyebrow">Active</span><p class="board-empty">Nothing here yet. Create work with <code>iris bug my-first-bug</code>.</p></div><div class="board-col"><span class="eyebrow">Done</span><p class="board-empty">Nothing here yet. Create work with <code>iris bug my-first-bug</code>.</p></div><div class="board-col"><span class="eyebrow">Archived</span><p class="board-empty">Nothing here yet. Create work with <code>iris bug my-first-bug</code>.</p></div>
+          </section>
+        </section>
+
+        <section id="project-docs" aria-labelledby="project-docs-title">
+          <div class="section-heading"><div><span class="eyebrow">reference shelf</span><h2 id="project-docs-title">Project docs</h2></div></div>
+          <section class="surface project-strip">
         <span class="eyebrow">project docs</span>
         <nav class="project-links">
           <a href="./project/overview.html">overview</a>
@@ -53,7 +196,9 @@
           <a href="./project/decisions.html">decisions</a>
         </nav>
       </section>
-      <footer class="footer">generated by iris · works offline from file://</footer>
+        </section>
+      </div>
+      <footer class="footer"><span>generated by iris · works offline from file://</span><span><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>↑</kbd><kbd>↓</kbd> move</span></footer>
     </main>
     <script defer src="./design/components/base.js"></script>
   </body>
