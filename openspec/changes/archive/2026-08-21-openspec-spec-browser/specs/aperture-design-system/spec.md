@@ -1,24 +1,4 @@
-# Aperture Design System Specification
-
-## Purpose
-
-Define the deterministic visual language and dashboard hierarchy that lets a newcomer understand an iris-enabled repository from a single offline HTML entry point.
-
-## Requirements
-
-### Requirement: Aperture token contract
-The system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.
-
-#### Scenario: generated styles are validated
-- **WHEN** a contributor runs the token validation command
-- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme
-
-### Requirement: Aperture component language
-The system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, pills, callouts, timelines, keyboard hints, and command-specific empty states.
-
-#### Scenario: meaning is communicated accessibly
-- **WHEN** a generated page uses type or status color, interactive controls, or motion
-- **THEN** the page MUST provide a non-color signal, visible keyboard focus, and a static reduced-motion presentation
+## MODIFIED Requirements
 
 ### Requirement: newcomer-first dashboard hierarchy
 The generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.

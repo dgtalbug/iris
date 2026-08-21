@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { ensureDir, writeIfMissing } from '../lib/fs.js';
+import { writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import { migrateProjectState } from '../lib/project-migration.js';
 import { createProjectState, loadProjectState } from '../lib/project-state.js';
 import { assertSkillInstallComplete, updateManagedSurfaces } from './lifecycle.js';
@@ -43,6 +44,7 @@ export async function runInitCommand(cwd: string): Promise<void> {
   await writeIfMissing(path.join(irisRoot, 'design/vendor/.gitkeep'), '');
   const migration = await migrateProjectState(cwd);
   const skills = await updateManagedSurfaces(cwd);
+  await writeOpenSpecSnapshot(cwd);
   await refreshDashboard(cwd);
 
   await loadProjectState(cwd);

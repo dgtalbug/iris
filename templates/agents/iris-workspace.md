@@ -6,6 +6,8 @@ Use Iris to turn intentional agent work into local, versioned HTML that opens di
 
 Run `iris init` once after installing or upgrading the CLI. It creates or safely refreshes the local `iris/` workspace, installs this agent skill, and renders the dashboard. It does not copy or monitor `README.md` or `docs/**/*.md`.
 
+If the repository contains `openspec/`, initialization also builds the dashboard's `Spec` tab from the local OpenSpec filesystem. It reads canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task checkboxes without requiring the OpenSpec CLI.
+
 ## Content workflow
 
 1. Create intentional content with one of:
@@ -20,6 +22,8 @@ Run `iris init` once after installing or upgrading the CLI. It creates or safely
 4. Open the workspace with `iris open`.
 
 Use lowercase kebab-case page ids. Treat `data.json` as the editable source and generated `page.html`, `iris/index.html`, and design assets as CLI-owned outputs.
+
+Use `iris render --all` after OpenSpec files change. Full renders refresh `iris/spec.json`; page-specific renders and other lifecycle commands deliberately reuse the last snapshot instead of monitoring files in the background. Treat `iris/spec.json` as CLI-owned generated output.
 
 ## Existing commands
 
