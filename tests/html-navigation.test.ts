@@ -118,6 +118,7 @@ describe('generated HTML navigation', () => {
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
     // Browsers CORS-block module scripts on file://; only classic scripts run.
     expect(dashboard).not.toContain('type="module"');
+    expect(dashboard).toContain('<script defer src="./design/vendor/mermaid.min.js">');
     expect(dashboard).toContain('<script defer src="./design/components/base.js">');
 
     const baseCss = await readFile(

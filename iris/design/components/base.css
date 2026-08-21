@@ -153,6 +153,15 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .metric-value { margin-top: var(--space-2); font-size: var(--size-4); font-weight: var(--weight-bold); }
 .table-wrap { overflow: auto; }
 .chart-wrap, .mermaid-wrap, .flow-wrap { min-height: 16rem; padding: var(--space-4); }
+.mermaid-figure { display: grid; gap: var(--space-3); min-width: 0; margin: var(--space-4) 0; padding: var(--space-4); border: var(--border-1); border-radius: var(--radius-2); background: var(--surface-2); overflow: hidden; }
+.mermaid-status { color: var(--text-2); font-size: var(--size-2); }
+.mermaid-host { display: none; min-width: 0; overflow: auto; color: var(--text-1); }
+.mermaid-host[data-render-state='measuring'], .mermaid-host[data-render-state='pending'], .mermaid-host[data-render-state='rendered'] { display: block; }
+.mermaid-host svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.mermaid-fallback { max-width: 100%; max-height: 24rem; margin: 0; overflow: auto; white-space: pre; background: var(--surface-1); }
+.mermaid-figure[data-render-state='rendered'] .mermaid-fallback { display: none; }
+.mermaid-figure[data-render-state='error'] { border-color: var(--danger); }
+.mermaid-figure[data-render-state='error'] .mermaid-status { color: var(--danger); }
 .callout { padding: var(--space-4); border-left: 0.25rem solid var(--info); }
 .callout.info { background: var(--info-soft); border-left-color: var(--info); }
 .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
@@ -176,6 +185,7 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .filter-wrap { width: 100%; }
   .filter-input { min-width: 0; width: 100%; }
   .board { grid-template-columns: 1fr; }
+  .mermaid-figure { padding: var(--space-3); }
   .page-card { grid-template-columns: auto minmax(0, 1fr); }
   .page-card .type-chip, .page-card .status-chip { grid-column: 2; }
 }
@@ -185,4 +195,6 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .surface { box-shadow: none; break-inside: avoid; }
   a { color: inherit; text-decoration: underline; }
   .spec-document pre, .spec-document table, .spec-source { max-height: none; overflow: visible; }
+  .mermaid-host { display: none !important; }
+  .mermaid-fallback { display: block !important; max-height: none; overflow: visible; white-space: pre-wrap; }
 }

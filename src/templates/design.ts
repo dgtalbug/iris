@@ -271,6 +271,15 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .metric-value { margin-top: var(--space-2); font-size: var(--size-4); font-weight: var(--weight-bold); }
 .table-wrap { overflow: auto; }
 .chart-wrap, .mermaid-wrap, .flow-wrap { min-height: 16rem; padding: var(--space-4); }
+.mermaid-figure { display: grid; gap: var(--space-3); min-width: 0; margin: var(--space-4) 0; padding: var(--space-4); border: var(--border-1); border-radius: var(--radius-2); background: var(--surface-2); overflow: hidden; }
+.mermaid-status { color: var(--text-2); font-size: var(--size-2); }
+.mermaid-host { display: none; min-width: 0; overflow: auto; color: var(--text-1); }
+.mermaid-host[data-render-state='measuring'], .mermaid-host[data-render-state='pending'], .mermaid-host[data-render-state='rendered'] { display: block; }
+.mermaid-host svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.mermaid-fallback { max-width: 100%; max-height: 24rem; margin: 0; overflow: auto; white-space: pre; background: var(--surface-1); }
+.mermaid-figure[data-render-state='rendered'] .mermaid-fallback { display: none; }
+.mermaid-figure[data-render-state='error'] { border-color: var(--danger); }
+.mermaid-figure[data-render-state='error'] .mermaid-status { color: var(--danger); }
 .callout { padding: var(--space-4); border-left: 0.25rem solid var(--info); }
 .callout.info { background: var(--info-soft); border-left-color: var(--info); }
 .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
@@ -294,6 +303,7 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .filter-wrap { width: 100%; }
   .filter-input { min-width: 0; width: 100%; }
   .board { grid-template-columns: 1fr; }
+  .mermaid-figure { padding: var(--space-3); }
   .page-card { grid-template-columns: auto minmax(0, 1fr); }
   .page-card .type-chip, .page-card .status-chip { grid-column: 2; }
 }
@@ -303,6 +313,8 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .surface { box-shadow: none; break-inside: avoid; }
   a { color: inherit; text-decoration: underline; }
   .spec-document pre, .spec-document table, .spec-source { max-height: none; overflow: visible; }
+  .mermaid-host { display: none !important; }
+  .mermaid-fallback { display: block !important; max-height: none; overflow: visible; white-space: pre-wrap; }
 }
 `;
 
@@ -321,6 +333,7 @@ function setupTabs() {
       panels.forEach((panel) => {
         panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
       });
+      document.dispatchEvent(new CustomEvent('iris:visibilitychange'));
       if (moveFocus) button.focus();
     };
     buttons.forEach((button) => {
@@ -403,11 +416,76 @@ function setupTheme() {
   });
 }
 
+async function setupMermaid() {
+  const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
+  if (figures.length === 0) return;
+  if (!globalThis.mermaid || typeof globalThis.mermaid.initialize !== 'function') return;
+
+  globalThis.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering', 'maxEdges', 'htmlLabels', 'flowchart'],
+    htmlLabels: false,
+    maxTextSize: 50000,
+    maxEdges: 500,
+    suppressErrorRendering: true,
+    theme: 'neutral',
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
+    flowchart: { htmlLabels: false, useMaxWidth: true },
+  });
+
+  async function renderFigure(figure) {
+    if (figure.hasAttribute('data-render-state')) return;
+    const host = figure.querySelector('[data-mermaid-host]');
+    const status = figure.querySelector('[data-mermaid-status]');
+    if (!(host instanceof HTMLElement) || !(status instanceof HTMLElement)) return;
+    host.setAttribute('data-render-state', 'measuring');
+    if (host.getClientRects().length === 0) {
+      host.removeAttribute('data-render-state');
+      return;
+    }
+    const source = host.textContent || '';
+    host.classList.add('mermaid');
+    host.setAttribute('data-render-state', 'pending');
+    figure.setAttribute('data-render-state', 'pending');
+    status.textContent = 'Rendering diagram…';
+    try {
+      if (source.length > 50000) throw new Error('diagram source exceeds 50000 characters');
+      await globalThis.mermaid.run({ nodes: [host], suppressErrors: true });
+      const svg = host.querySelector('svg');
+      if (!(svg instanceof SVGElement)) throw new Error('Mermaid did not produce an SVG');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', host.getAttribute('aria-label') || 'Mermaid diagram');
+      host.setAttribute('data-render-state', 'rendered');
+      figure.setAttribute('data-render-state', 'rendered');
+      status.textContent = 'Diagram rendered.';
+    } catch (error) {
+      host.textContent = source;
+      host.setAttribute('data-render-state', 'error');
+      figure.setAttribute('data-render-state', 'error');
+      status.textContent = 'Diagram could not be rendered. Escaped source is shown below.';
+    }
+  }
+
+  async function renderVisibleFigures() {
+    for (const figure of figures) await renderFigure(figure);
+  }
+
+  for (const details of document.querySelectorAll('details')) {
+    details.addEventListener('toggle', () => {
+      if (details.open) void renderVisibleFigures();
+    });
+  }
+  document.addEventListener('iris:visibilitychange', () => void renderVisibleFigures());
+  await renderVisibleFigures();
+}
+
 setupTabs();
 setupFilter();
 setupTheme();
 setupKeyboardShortcuts();
 setupCardNavigation();
+void setupMermaid();
 document.documentElement.setAttribute('data-iris-js', 'ready');
 `;
 
@@ -455,35 +533,8 @@ function getStringList(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === 'string');
 }
 
-function linkifyEscaped(escaped: string): string {
-  return escaped.replace(
-    /https?:\/\/[^\s<]+/g,
-    (url) => `<a href="${url}" rel="noopener">${url}</a>`,
-  );
-}
-
 function markdownToHtml(value: string): string {
-  const blocks = value
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
-
-  if (blocks.length === 0) return '<p>Empty.</p>';
-
-  return blocks
-    .map((block) => {
-      const lines = block.split('\n').map((line) => line.trim());
-      if (lines.some((line) => /^[-*] /.test(line))) {
-        const items = lines
-          .filter((line) => /^[-*] /.test(line))
-          .map((line) => `<li>${linkifyEscaped(escapeHtml(line.replace(/^[-*]\s*/, '')))}</li>`)
-          .join('');
-        return `<ul>${items}</ul>`;
-      }
-
-      return `<p>${linkifyEscaped(escapeHtml(block)).replace(/\n/g, '<br />')}</p>`;
-    })
-    .join('');
+  return value.trim() === '' ? '<p>Empty.</p>' : renderSafeMarkdown(value);
 }
 
 function statusClass(status: string): string {
@@ -662,6 +713,7 @@ function renderPageShell({
    <title>${escapeHtml(title)} · iris</title>
    <link rel="stylesheet" href="../../design/tokens.css" />
    <link rel="stylesheet" href="../../design/components/base.css" />
+   <script defer src="../../design/vendor/mermaid.min.js"></script>
  </head>
  <body>
    <main class="page-shell">
@@ -877,15 +929,20 @@ function summaryLine(pages: DashboardPage[]): string {
 }
 
 function sourceDetails(label: string, document?: OpenSpecSourceDocument): string {
-  if (!document) return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
+  if (!document)
+    return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
   const operations = document.operations
     .map((operation) => `<span class="pill">${escapeHtml(operation)}</span>`)
     .join('');
   const summary = [
     document.requirements.length > 0 ? `${document.requirements.length} requirements` : '',
     document.scenarios.length > 0 ? `${document.scenarios.length} scenarios` : '',
-  ].filter(Boolean).join(' · ');
-  const isMarkdown = document.format ? document.format === 'markdown' : document.path.endsWith('.md');
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const isMarkdown = document.format
+    ? document.format === 'markdown'
+    : document.path.endsWith('.md');
   const body = isMarkdown
     ? `<div class="spec-document">${renderSafeMarkdown(document.raw)}</div>
       <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>`
@@ -916,7 +973,9 @@ function capabilityCard(capability: OpenSpecCapability, label: string): string {
 
 function changeCard(change: OpenSpecChange): string {
   const tasks = change.artifacts.tasks?.progress;
-  const progress = tasks ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open` : 'tasks unavailable';
+  const progress = tasks
+    ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open`
+    : 'tasks unavailable';
   return `<article class="surface spec-card">
     <div class="spec-card-header">
       <div><span class="eyebrow">${escapeHtml(change.lifecycle)} · structured</span><h3>${escapeHtml(change.name)}</h3></div>
@@ -953,7 +1012,8 @@ function specView(snapshot: OpenSpecSnapshot): string {
     }),
     { complete: 0, open: 0 },
   );
-  const supportedCount = snapshot.canonical_specs.length + changes.length + snapshot.legacy_archives.length;
+  const supportedCount =
+    snapshot.canonical_specs.length + changes.length + snapshot.legacy_archives.length;
   const emptyState = !snapshot.detected
     ? '<article class="surface empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
     : supportedCount === 0
@@ -1011,7 +1071,8 @@ export function dashboardHtml(
 ): string {
   const activeCount = pages.filter((page) => !['done', 'archived'].includes(page.status)).length;
   const archivedCount = pages.filter((page) => page.status === 'archived').length;
-  const briefing = 'Agent-first workspace ready. Create intentional visual content with the installed Iris skill and explicit content commands.';
+  const briefing =
+    'Agent-first workspace ready. Create intentional visual content with the installed Iris skill and explicit content commands.';
   const listCards =
     pages.length === 0
       ? `<article class="surface empty-state"><h2>No pages yet</h2><p>Create one with <code>iris bug my-first-bug</code>, then run <code>iris render --all</code>.</p></article>`
@@ -1092,7 +1153,7 @@ export function dashboardHtml(
         <section aria-labelledby="architecture-title">
           <div class="section-heading"><div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div><span class="pill">HLD</span></div>
           <div class="surface architecture-pane">
-            <div class="empty-state"><h2>Architecture view is waiting for its renderer</h2><p>Run <code>iris vendor</code>, then <code>iris render --all</code> when the later diagram change lands. Until then, <a href="./project/hld.html">open the HLD page</a>.</p></div>
+            <div class="empty-state"><h2>No architecture diagram is projected here yet</h2><p>Mermaid fences render inside Markdown after <code>iris vendor</code>. Automatic HLD projection into this pane remains separate work; <a href="./project/hld.html">open the HLD page</a>.</p></div>
           </div>
         </section>
 
@@ -1127,6 +1188,7 @@ export function dashboardHtml(
       </section>
       <footer class="footer"><span>generated by iris · works offline from file://</span><span><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>↑</kbd><kbd>↓</kbd> move</span></footer>
     </main>
+    <script defer src="./design/vendor/mermaid.min.js"></script>
     <script defer src="./design/components/base.js"></script>
   </body>
 </html>`.replace(/[ \t]+$/gm, '');

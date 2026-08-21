@@ -26,6 +26,7 @@ Once installed, a minimal local-first workflow is:
 ```bash
 mkdir my-iris-project && cd my-iris-project
 iris init
+iris vendor
 iris bug install-check
 iris render install-check
 iris open
@@ -33,7 +34,18 @@ iris open
 
 `iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs `iris-workspace` skills for generic/Codex agents, Claude, and GitHub Copilot, and renders the dashboard. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
 
-When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. Markdown artifacts render as semantic offline HTML with embedded HTML disabled; an exact escaped-source disclosure remains available, while YAML stays literal code. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
+When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. Markdown artifacts render as semantic offline HTML with embedded HTML disabled; an exact escaped-source disclosure remains available, while YAML stays literal code. Fenced blocks labeled `mermaid` retain escaped source and become diagrams after `iris vendor` installs the pinned local runtime. Each diagram renders independently under strict settings, so an invalid graph cannot hide its siblings or surrounding Markdown. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
+
+Use an exact Mermaid language fence in OpenSpec Markdown or an Iris contract Markdown field:
+
+````markdown
+```mermaid
+flowchart LR
+  Source --> Rendered[Offline diagram]
+```
+````
+
+Without JavaScript or before `iris vendor`, Iris shows the escaped diagram source. Standalone `publish` and `export --single` artifacts also keep that source fallback; Iris does not claim a pre-rendered SVG snapshot without a deterministic browser renderer.
 
 ## How it runs
 

@@ -61,11 +61,16 @@ describe('OpenSpec Spec browser orchestration', () => {
 
   it('renders semantic Markdown, literal YAML, exact source, and inert hostile content', async () => {
     const cwd = await tempProject();
+    const proposal = path.join(cwd, 'openspec', 'changes', 'active-change', 'proposal.md');
     const legacy = path.join(cwd, 'openspec', 'changes', 'archive', '2026-08-18-legacy.md');
     const malformed = path.join(cwd, 'openspec', 'specs', 'malformed', 'spec.md');
     await writeFile(legacy, '# Legacy <script>globalThis.pwned=true</script>\n');
     await mkdir(path.dirname(malformed), { recursive: true });
     await writeFile(malformed, '# Malformed without requirements\n');
+    await writeFile(
+      proposal,
+      `${await readFile(proposal, 'utf8')}\n\`\`\`mermaid\nflowchart LR\n  A --> B\n\`\`\`\n`,
+    );
     expect(await runCli(['init'], cwd)).toBe(0);
 
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
@@ -89,6 +94,9 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).toContain('disabled checked aria-label="completed task"');
     expect(dashboard).toContain('<table>');
     expect(dashboard).toContain('<pre><code class="language-ts">');
+    expect(dashboard).toContain('data-mermaid-figure');
+    expect(dashboard).toContain('data-mermaid-host aria-label="Mermaid diagram"');
+    expect(dashboard).toContain('<script defer src="./design/vendor/mermaid.min.js">');
     expect(dashboard).toContain('<summary>Exact source</summary>');
     expect(dashboard).toContain('- [x] completed task evidence');
     expect(dashboard).toContain('schema: spec-driven');
@@ -110,7 +118,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
     const tokens = await readFile(path.join(cwd, 'iris', 'design', 'tokens.css'), 'utf8');
     const css = await readFile(path.join(cwd, 'iris', 'design', 'components', 'base.css'), 'utf8');
-    const script = await readFile(path.join(cwd, 'iris', 'design', 'components', 'base.js'), 'utf8');
+    const script = await readFile(
+      path.join(cwd, 'iris', 'design', 'components', 'base.js'),
+      'utf8',
+    );
     const ids = [...dashboard.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
 
     expect(new Set(ids).size).toBe(ids.length);
@@ -121,6 +132,13 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).not.toContain('type="module"');
     expect(dashboard).not.toMatch(/(?:src|href)="https?:\/\//);
     expect(script).toContain("['ArrowLeft', 'ArrowRight', 'Home', 'End']");
+    expect(script).toContain("securityLevel: 'strict'");
+    expect(script).toContain('for (const figure of figures)');
+    expect(script).toContain('nodes: [host]');
+    expect(script).toContain('host.getClientRects().length === 0');
+    expect(script).toContain("details.addEventListener('toggle'");
+    expect(script).toContain("'iris:visibilitychange'");
+    expect(script).toContain('Escaped source is shown below');
     expect(script).not.toContain('import(');
     expect(script).not.toMatch(/https?:\/\//);
     expect(tokens).toContain("[data-theme='light']");

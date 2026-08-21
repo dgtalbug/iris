@@ -13,6 +13,7 @@ function setupTabs() {
       panels.forEach((panel) => {
         panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
       });
+      document.dispatchEvent(new CustomEvent('iris:visibilitychange'));
       if (moveFocus) button.focus();
     };
     buttons.forEach((button) => {
@@ -95,9 +96,74 @@ function setupTheme() {
   });
 }
 
+async function setupMermaid() {
+  const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
+  if (figures.length === 0) return;
+  if (!globalThis.mermaid || typeof globalThis.mermaid.initialize !== 'function') return;
+
+  globalThis.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering', 'maxEdges', 'htmlLabels', 'flowchart'],
+    htmlLabels: false,
+    maxTextSize: 50000,
+    maxEdges: 500,
+    suppressErrorRendering: true,
+    theme: 'neutral',
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
+    flowchart: { htmlLabels: false, useMaxWidth: true },
+  });
+
+  async function renderFigure(figure) {
+    if (figure.hasAttribute('data-render-state')) return;
+    const host = figure.querySelector('[data-mermaid-host]');
+    const status = figure.querySelector('[data-mermaid-status]');
+    if (!(host instanceof HTMLElement) || !(status instanceof HTMLElement)) return;
+    host.setAttribute('data-render-state', 'measuring');
+    if (host.getClientRects().length === 0) {
+      host.removeAttribute('data-render-state');
+      return;
+    }
+    const source = host.textContent || '';
+    host.classList.add('mermaid');
+    host.setAttribute('data-render-state', 'pending');
+    figure.setAttribute('data-render-state', 'pending');
+    status.textContent = 'Rendering diagram…';
+    try {
+      if (source.length > 50000) throw new Error('diagram source exceeds 50000 characters');
+      await globalThis.mermaid.run({ nodes: [host], suppressErrors: true });
+      const svg = host.querySelector('svg');
+      if (!(svg instanceof SVGElement)) throw new Error('Mermaid did not produce an SVG');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', host.getAttribute('aria-label') || 'Mermaid diagram');
+      host.setAttribute('data-render-state', 'rendered');
+      figure.setAttribute('data-render-state', 'rendered');
+      status.textContent = 'Diagram rendered.';
+    } catch (error) {
+      host.textContent = source;
+      host.setAttribute('data-render-state', 'error');
+      figure.setAttribute('data-render-state', 'error');
+      status.textContent = 'Diagram could not be rendered. Escaped source is shown below.';
+    }
+  }
+
+  async function renderVisibleFigures() {
+    for (const figure of figures) await renderFigure(figure);
+  }
+
+  for (const details of document.querySelectorAll('details')) {
+    details.addEventListener('toggle', () => {
+      if (details.open) void renderVisibleFigures();
+    });
+  }
+  document.addEventListener('iris:visibilitychange', () => void renderVisibleFigures());
+  await renderVisibleFigures();
+}
+
 setupTabs();
 setupFilter();
 setupTheme();
 setupKeyboardShortcuts();
 setupCardNavigation();
+void setupMermaid();
 document.documentElement.setAttribute('data-iris-js', 'ready');

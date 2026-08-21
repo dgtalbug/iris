@@ -22,7 +22,7 @@
 - Preservation: existing configuration, user pages, archives, unrelated editor tasks, sibling skills, unmarked files, and edited managed skill content are retained. A skill collision is reported as an incomplete setup instead of being overwritten.
 - Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
 - Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
-- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact escaped source remains available and YAML remains literal. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
+- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences get source-first diagram hosts, exact escaped document source remains available, and YAML remains literal. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
 
 ## `iris render [<id>|--all]`
 
@@ -88,7 +88,7 @@ Empty files, malformed JSON, unsupported extensions, missing sources, directorie
 - Example: `iris publish bug-cache-stampede --output dist/published.html`.
 - Surfaces: CLI + local publish/export flows.
 
-Published HTML includes the page CSS and has no local-file or network asset dependency. Interactive features that require the project script, and navigation links that point into the `iris/` tree, are intentionally omitted from this static handoff artifact.
+Published HTML includes the page CSS and has no local-file or network asset dependency. Interactive features that require the project script, navigation links that point into the `iris/` tree, and the Mermaid runtime are intentionally omitted from this static handoff artifact. Mermaid fences remain readable as escaped source; SVG snapshots are not claimed.
 
 ## `iris promote <report-id> <feature|bug|idea>`
 
@@ -127,14 +127,16 @@ Renderer decision (2026-08-21): `puppeteer-core` is the preferred future candida
 
 ## `iris vendor`
 
-- Synopsis: download pinned CDN assets into `design/vendor` and switch asset base.
+- Synopsis: install or refresh the pinned Mermaid browser runtime for offline diagram previews.
 - Flags: `--json`.
-- Inputs: CDN constants.
-- Outputs: local vendored assets.
+- Inputs: an initialized Iris workspace and Mermaid 11.17.0 from the installed Iris production dependencies; no network request is made.
+- Outputs: `iris/design/vendor/mermaid.min.js` and `iris/design/vendor/LICENSE.mermaid.txt`, written atomically.
 - Exit codes: 0/1/2.
 - Example: `iris vendor`.
 - Surfaces: CLI + skills.
-- Status: not yet implemented; the CLI exits 1 with a clear message until a later milestone lands.
+- Behavior: idempotently refreshes the exact pinned bytes. Running before `iris init`, or from an incomplete package installation, fails with an actionable error rather than creating a partial workspace.
+
+Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered one at a time from `file://` using this local classic script. Strict security disables active HTML and clicks; configured text/edge bounds and per-diagram error handling keep invalid graphs isolated. Before vendoring, without JavaScript, during print, or in a standalone artifact, the escaped source fallback remains readable.
 
 ## `iris open`
 

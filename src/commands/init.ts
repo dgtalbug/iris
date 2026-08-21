@@ -42,6 +42,10 @@ export async function runInitCommand(cwd: string): Promise<void> {
     JSON.stringify(createProjectState(), null, 2) + '\n',
   );
   await writeIfMissing(path.join(irisRoot, 'design/vendor/.gitkeep'), '');
+  await writeIfMissing(
+    path.join(irisRoot, 'design/vendor/mermaid.min.js'),
+    '/* Mermaid runtime not installed. Run `iris vendor` to enable diagram previews. */\n',
+  );
   const migration = await migrateProjectState(cwd);
   const skills = await updateManagedSurfaces(cwd);
   await writeOpenSpecSnapshot(cwd);
@@ -54,7 +58,8 @@ export async function runInitCommand(cwd: string): Promise<void> {
     readFile(path.join(irisRoot, 'state.json'), 'utf8'),
   ]);
 
-  for (const id of migration.removed) process.stdout.write(`removed generated adopted page ${id}\n`);
+  for (const id of migration.removed)
+    process.stdout.write(`removed generated adopted page ${id}\n`);
   for (const id of migration.preserved) {
     process.stderr.write(`preserved ambiguous legacy adopted page ${id}; review it manually\n`);
   }

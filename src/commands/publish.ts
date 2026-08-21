@@ -12,6 +12,8 @@ const BASE_STYLESHEET_PATTERN =
   /<link\b(?=[^>]*\brel=["']stylesheet["'])(?=[^>]*\bhref=["'][^"']*design\/components\/base\.css["'])[^>]*>/gi;
 const BASE_SCRIPT_PATTERN =
   /<script\b(?=[^>]*\bsrc=["'][^"']*design\/components\/base\.js["'])[^>]*><\/script>/gi;
+const MERMAID_SCRIPT_PATTERN =
+  /<script\b(?=[^>]*\bsrc=["'][^"']*design\/vendor\/mermaid\.min\.js["'])[^>]*><\/script>/gi;
 // Navigation chrome points into the iris tree; a standalone artifact leaves
 // that tree, so marked elements are removed rather than shipped broken.
 const NAV_CHROME_PATTERN = /<(a|button|nav)\b[^>]*\bdata-iris-nav\b[^>]*>.*?<\/\1>/gis;
@@ -62,6 +64,7 @@ function inlineLocalAssets(
   const withoutLocalAssets = html
     .replace(TOKENS_STYLESHEET_PATTERN, '')
     .replace(BASE_STYLESHEET_PATTERN, '')
+    .replace(MERMAID_SCRIPT_PATTERN, '')
     .replace(BASE_SCRIPT_PATTERN, '')
     .replace(NAV_CHROME_PATTERN, '');
   const style = `<style data-iris-standalone>\n${tokensCss}\n${baseCss}\n</style>`;

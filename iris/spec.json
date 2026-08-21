@@ -452,6 +452,179 @@
       "warnings": []
     },
     {
+      "name": "render-mermaid-diagrams",
+      "path": "changes/render-mermaid-diagrams",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/render-mermaid-diagrams/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/render-mermaid-diagrams/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris renders Markdown semantically but leaves Mermaid fences as inert code, so architecture and workflow diagrams cannot be inspected visually in the offline workspace. Mermaid support should preserve Iris's safe-source evidence and `file://` contract instead of introducing a network loader or allowing diagram failures to break an entire document.\n\n## What Changes\n\n- Recognize fenced Markdown blocks whose language is exactly `mermaid` and emit an accessible diagram host with an escaped-source fallback.\n- Render each diagram independently in the browser from a locally installed, pinned Mermaid asset; make invalid diagrams fail locally while leaving their source readable.\n- Make the local Mermaid runtime available through the existing `iris vendor` lifecycle command and keep generated pages free of remote requests and runtime modules.\n- Document and test the Markdown authoring, offline asset, security, fallback, theme, and standalone-publish boundaries.\n\n## Capabilities\n\n### New Capabilities\n\n- `markdown-diagram-rendering`: Safe, offline rendering and fallback behavior for Mermaid fences embedded in Iris Markdown.\n\n### Modified Capabilities\n\n- `openspec-spec-browser`: OpenSpec Markdown artifacts may progressively render recognized Mermaid fences while preserving exact source and inert untrusted content.\n\n## Impact\n\n- Affects `src/lib/markdown.ts`, static page templates and client script, CLI lifecycle handling, generated design assets, tests, and rendering documentation.\n- Adds Mermaid as a pinned runtime dependency whose browser bundle and license are copied into each Iris workspace on explicit vendoring.\n- Does not enable embedded HTML, remote assets, arbitrary Markdown plugins, or server-side/browser automation.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/render-mermaid-diagrams/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe generation-time Markdown renderer currently escapes HTML and active images, rejects unsafe links, and emits ordinary fences as `<pre><code>`. Generated pages load one local classic deferred script and work directly from `file://`. The CLI already creates `iris/design/vendor/`, registers a stubbed `iris vendor` command, and documents Mermaid as a later local-only enhancement. See `proposal.md` for motivation and the two delta specs for observable behavior.\n\nMermaid's browser runtime is necessarily client-side if Iris is to avoid a browser automation dependency. Diagram source is untrusted repository input, so the integration must preserve the Markdown renderer's existing trust boundary and must not treat successful JavaScript execution as the only readable state.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Add one safe Markdown extension for exact `mermaid` fences.\n- Keep source-first no-JS behavior, per-diagram failure isolation, and deterministic generated markup.\n- Install a pinned Mermaid classic browser bundle from Iris's already installed dependency, without a second network operation.\n- Use the same behavior in contract Markdown and OpenSpec Markdown.\n\n**Non-Goals:**\n\n- Rendering diagrams to SVG during CLI generation or embedding SVG snapshots in standalone exports.\n- Supporting remote Mermaid loaders, ES modules at view time, click interactions, HTML labels, custom icons, external images, arbitrary plugins, or theme directives that weaken global security configuration.\n- Replacing fenced source with a diagram-only representation.\n\n## Decisions\n\n### Extend the existing Markdown renderer at the fence rule\n\nThe `markdown-it` fence renderer will delegate all non-Mermaid fences to its existing default and emit a semantic figure for exact normalized `mermaid` info strings. The figure contains a dedicated runtime host plus an always-present escaped `<pre><code>` fallback. This keeps escaping centralized and makes no-JS output complete.\n\nAlternative considered: preprocess Markdown with regular expressions. Rejected because fence parsing, nesting, and escaping already belong to the Markdown parser; duplicating them would create divergent edge cases.\n\n### Use a pinned runtime dependency and explicit offline vendoring\n\nMermaid will be pinned as a production dependency. `iris vendor` will resolve the installed package, verify the expected browser bundle and license, then atomically copy those bytes into `iris/design/vendor/`. It will not download from the CDN. Generated pages may reference only that relative classic-script path.\n\nAlternative considered: load the documented CDN ESM build. Rejected because it violates `file://`, offline, no-network, and no-runtime-module constraints. A CLI-side SVG renderer was also rejected for this slice because it would introduce DOM/browser emulation or headless-browser policy that the project has explicitly deferred.\n\n### Initialize once, then render one node at a time\n\nThe shared base script will call `mermaid.initialize` once with `startOnLoad: false`, `securityLevel: 'strict'`, `htmlLabels: false`, fixed text/edge bounds, suppressed built-in error SVGs, and a system font stack. It will then await `mermaid.run({ nodes: [node], suppressErrors: true })` separately for every host. Success hides only that host's fallback and adds accessible SVG metadata; rejection marks only that figure as failed and leaves its source visible.\n\nThis follows Mermaid's current official security contract: strict mode encodes HTML and disables click behavior, secure configuration keys prevent diagram directives from weakening core limits, and `run` supports explicit node arrays. Theme-specific color remapping is deferred; Mermaid's neutral theme will sit on Iris surfaces in both themes while source remains authoritative.\n\nAlternative considered: render all nodes in one `run` call. Rejected because a single invalid diagram can make failure attribution and fallback state ambiguous.\n\n### Treat contract fields and OpenSpec artifacts as one Markdown surface\n\nContract section Markdown will use `renderSafeMarkdown` instead of its small parallel paragraph/list converter. This avoids implementing Mermaid twice and brings the same embedded-HTML/link/image protections to both inputs. Exact OpenSpec source disclosure remains unchanged.\n\n### Keep standalone publishing source-safe\n\nPublished single-file contract pages will remove external Mermaid and base-script tags as they already do for local shared assets. The embedded diagram source fallback remains visible; runtime SVG snapshotting remains out of scope until Iris adopts a deterministic browser renderer.\n\n## Risks / Trade-offs\n\n- [The full Mermaid bundle materially increases installed dependency and per-workspace size] → Keep installation explicit through `iris vendor`, pin the version, copy one minified browser file plus its license, and document the size.\n- [Mermaid is a large untrusted-input parser with its own security history] → Pin exact versions, use strict mode and secure bounds, disable interactions/HTML labels, retain source fallback, and include dependency/security review in upgrades.\n- [Theme changes after rendering do not recolor an existing SVG] → Use a neutral, surface-compatible first implementation and retain accessible source; theme-aware rerendering can be a later independently specified enhancement.\n- [A missing vendor file produces a local resource load error] → The base script detects the absent global, keeps all fallbacks visible, and reports a concise local status in each figure.\n- [Standalone artifacts do not include rendered SVG] → Preserve the escaped source honestly; do not embed a multi-megabyte runtime or claim visual standalone diagrams without snapshot evidence.\n\n## Migration Plan\n\n1. Add the pinned dependency and the idempotent local vendor command.\n2. Extend safe Markdown output, styles, base script initialization, templates, and standalone stripping.\n3. Add unit, CLI, HTML integrity, malicious-input, multiple-diagram, offline, and packaging tests.\n4. Update authoring/technical documentation, run `iris vendor`, then regenerate checked-in Iris output with `iris render --all`.\n\nRollback removes the Mermaid fence override, vendor command implementation, script references, dependency, and generated vendor files; existing Markdown remains ordinary fenced code with no data migration.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Extend the existing Markdown renderer at the fence rule",
+            "Use a pinned runtime dependency and explicit offline vendoring",
+            "Initialize once, then render one node at a time",
+            "Treat contract fields and OpenSpec artifacts as one Markdown surface",
+            "Keep standalone publishing source-safe",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/render-mermaid-diagrams/tasks.md",
+          "title": "1. Offline Runtime",
+          "raw": "## 1. Offline Runtime\n\n- [x] 1.1 Add and lock the pinned Mermaid production dependency, including its runtime rationale.\n- [x] 1.2 Implement idempotent `iris vendor` copying of the classic browser bundle and upstream license with actionable precondition and asset errors.\n- [x] 1.3 Add CLI, package, and offline asset tests for successful vendoring, refresh, missing workspace, and installed artifact contents.\n\n## 2. Markdown and Browser Rendering\n\n- [x] 2.1 Extend the safe Markdown renderer so exact Mermaid fences emit escaped, accessible diagram hosts while other fences remain literal code.\n- [x] 2.2 Use the safe Markdown renderer for contract Markdown fields and load only relative classic Mermaid assets from generated HTML.\n- [x] 2.3 Add isolated Mermaid initialization, strict security and complexity configuration, success accessibility, missing-runtime fallback, and per-diagram error handling to the shared base script.\n- [x] 2.4 Add responsive, theme-compatible, print-safe diagram and fallback styles without page-level overflow.\n- [x] 2.5 Keep standalone publish/export artifacts self-contained by removing the local runtime reference and retaining diagram source fallback.\n\n## 3. Verification and Documentation\n\n- [x] 3.1 Add renderer, OpenSpec dashboard, hostile-input, multiple-diagram, invalid-diagram, accessibility, offline, and HTML-integrity coverage.\n- [x] 3.2 Update README, command, technical, design-system, status, and dependency documentation for the implemented authoring and fallback contract.\n- [x] 3.3 Validate the OpenSpec change strictly and run focused tests followed by the repository release checks.\n- [x] 3.4 Vendor Mermaid locally, regenerate managed Iris output, and verify generated HTML and assets without modifying unrelated user-owned files.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Offline Runtime",
+            "2. Markdown and Browser Rendering",
+            "3. Verification and Documentation"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 12,
+            "open": 0,
+            "total": 12
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "markdown-diagram-rendering",
+          "path": "changes/render-mermaid-diagrams/specs/markdown-diagram-rendering/spec.md",
+          "document": {
+            "path": "changes/render-mermaid-diagrams/specs/markdown-diagram-rendering/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide safe, offline visual rendering for Mermaid fences in Iris Markdown while retaining readable source evidence whenever rendering is unavailable or invalid.\n\n## ADDED Requirements\n\n### Requirement: explicit Mermaid fence rendering\n\nThe system SHALL recognize only fenced Markdown code blocks whose normalized language identifier is exactly `mermaid` as diagrams and SHALL leave every other fenced block as literal code.\n\n#### Scenario: Markdown contains a Mermaid fence\n\n- **WHEN** rendered Markdown contains a closed fenced block labeled `mermaid`\n- **THEN** the generated HTML SHALL contain a diagram host and the exact escaped diagram source as its fallback\n\n#### Scenario: another code fence resembles a diagram\n\n- **WHEN** rendered Markdown contains an unlabeled fence or a fence with another language identifier\n- **THEN** the generated HTML SHALL preserve it as literal code and SHALL NOT submit it to the diagram runtime\n\n### Requirement: offline progressive enhancement\n\nThe system MUST render Mermaid diagrams using only a pinned local classic-script asset and MUST keep the Markdown readable through `file://` with no server, runtime module, or network request.\n\n#### Scenario: local Mermaid asset is installed\n\n- **WHEN** a generated Iris page containing a valid Mermaid fence opens from `file://` and the vendored runtime exists\n- **THEN** the page SHALL replace the diagram host with an accessible inline SVG without requesting a remote resource\n\n#### Scenario: local Mermaid asset is absent or JavaScript is unavailable\n\n- **WHEN** a generated page cannot load or execute the local diagram runtime\n- **THEN** each diagram SHALL retain its readable escaped-source fallback and the rest of the Markdown SHALL remain usable\n\n### Requirement: isolated safe failure\n\nThe system MUST process each Mermaid fence independently under strict untrusted-content settings, MUST disable diagram click behavior and active HTML, and MUST preserve a diagram's escaped source when parsing or rendering that diagram fails.\n\n#### Scenario: one document contains valid and invalid diagrams\n\n- **WHEN** a Markdown document contains a valid Mermaid fence and a separate invalid Mermaid fence\n- **THEN** the valid diagram SHALL render, the invalid diagram SHALL show an actionable local error and its escaped source, and neither outcome SHALL hide the surrounding document\n\n#### Scenario: diagram source requests active behavior\n\n- **WHEN** Mermaid source includes HTML labels, click callbacks, links, scripts, or configuration intended to weaken the renderer\n- **THEN** the rendered page MUST keep active HTML and click behavior disabled and MUST NOT execute repository-authored JavaScript\n\n### Requirement: bounded and accessible diagram presentation\n\nThe system MUST give each diagram an accessible name, MUST bound accepted source and graph complexity, and MUST keep both rendered output and fallback source usable in light, dark, print, reduced-motion, and 360-pixel layouts.\n\n#### Scenario: diagram renders successfully\n\n- **WHEN** a Mermaid fence becomes an inline SVG\n- **THEN** the diagram SHALL expose a non-empty accessible label and fit its content region without forcing page-level horizontal overflow\n\n#### Scenario: diagram input exceeds a configured bound\n\n- **WHEN** Mermaid source or graph complexity exceeds the renderer's configured limit\n- **THEN** that diagram SHALL fail locally with its escaped source and an actionable error while other content remains available\n\n### Requirement: explicit local asset installation\n\nThe system SHALL provide an idempotent `iris vendor` operation that copies the pinned Mermaid browser bundle and upstream license from the installed Iris package into the workspace without fetching from the network.\n\n#### Scenario: user vendors diagram assets\n\n- **WHEN** a user runs `iris vendor` in an initialized Iris workspace\n- **THEN** the command SHALL install or refresh the exact pinned Mermaid runtime and license under `iris/design/vendor/` and report the installed version\n\n#### Scenario: user vendors before initialization\n\n- **WHEN** a user runs `iris vendor` without an initialized Iris workspace\n- **THEN** the command SHALL fail with an actionable instruction to run `iris init` and SHALL NOT create a partial workspace\n",
+            "format": "markdown",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: explicit Mermaid fence rendering",
+              "Scenario: Markdown contains a Mermaid fence",
+              "Scenario: another code fence resembles a diagram",
+              "Requirement: offline progressive enhancement",
+              "Scenario: local Mermaid asset is installed",
+              "Scenario: local Mermaid asset is absent or JavaScript is unavailable",
+              "Requirement: isolated safe failure",
+              "Scenario: one document contains valid and invalid diagrams",
+              "Scenario: diagram source requests active behavior",
+              "Requirement: bounded and accessible diagram presentation",
+              "Scenario: diagram renders successfully",
+              "Scenario: diagram input exceeds a configured bound",
+              "Requirement: explicit local asset installation",
+              "Scenario: user vendors diagram assets",
+              "Scenario: user vendors before initialization"
+            ],
+            "requirements": [
+              "explicit Mermaid fence rendering",
+              "offline progressive enhancement",
+              "isolated safe failure",
+              "bounded and accessible diagram presentation",
+              "explicit local asset installation"
+            ],
+            "scenarios": [
+              "Markdown contains a Mermaid fence",
+              "another code fence resembles a diagram",
+              "local Mermaid asset is installed",
+              "local Mermaid asset is absent or JavaScript is unavailable",
+              "one document contains valid and invalid diagrams",
+              "diagram source requests active behavior",
+              "diagram renders successfully",
+              "diagram input exceeds a configured bound",
+              "user vendors diagram assets",
+              "user vendors before initialization"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        },
+        {
+          "capability": "openspec-spec-browser",
+          "path": "changes/render-mermaid-diagrams/specs/openspec-spec-browser/spec.md",
+          "document": {
+            "path": "changes/render-mermaid-diagrams/specs/openspec-spec-browser/spec.md",
+            "title": "MODIFIED Requirements",
+            "raw": "## MODIFIED Requirements\n\n### Requirement: safe semantic Markdown presentation\n\nThe system MUST present Markdown OpenSpec documents as semantic HTML for reading, MUST progressively render fenced blocks labeled exactly `mermaid` as safe offline diagrams with escaped-source fallback, MUST keep the exact escaped document source available as a secondary disclosure, and MUST keep non-Markdown configuration artifacts in a literal code presentation.\n\n#### Scenario: supported Markdown structures are present\n\n- **WHEN** an OpenSpec Markdown artifact contains headings, paragraphs, emphasis, links, lists, task lists, blockquotes, tables, inline code, fenced code, or Mermaid fences\n- **THEN** the Spec view MUST render those structures with readable semantic markup, progressively enhance Mermaid fences when the local runtime is available, and preserve escaped fallback source rather than displaying Markdown punctuation as the primary presentation\n\n#### Scenario: user needs exact source evidence\n\n- **WHEN** a rendered Markdown artifact is displayed\n- **THEN** the user MUST be able to reveal the exact escaped source without leaving the dashboard\n\n#### Scenario: configuration artifact is displayed\n\n- **WHEN** the Spec view presents an OpenSpec YAML manifest or workspace configuration\n- **THEN** the artifact MUST remain escaped literal code and MUST NOT be interpreted as Markdown or submitted to the diagram runtime\n\n### Requirement: inert Markdown generation\n\nThe system MUST generate Markdown presentation without allowing repository content or Mermaid diagram source to inject active HTML, unsafe URL schemes, executable click behavior, runtime modules, or implicit network requests.\n\n#### Scenario: Markdown contains embedded HTML\n\n- **WHEN** an artifact contains an HTML element, event handler, script, iframe, style, or other executable-looking markup outside or inside a Mermaid fence\n- **THEN** the generated document MUST keep that input inert and MUST NOT add it as executable DOM content\n\n#### Scenario: Markdown contains an unsafe link\n\n- **WHEN** a Markdown link or Mermaid interaction uses an unsafe scheme such as `javascript:` or `data:`\n- **THEN** the generated document MUST not emit a navigable link or executable interaction for that destination\n\n#### Scenario: dashboard opens offline\n\n- **WHEN** a user opens the generated dashboard through `file://`\n- **THEN** rendered Markdown and diagram fallbacks MUST remain readable without loading a Markdown library, module, stylesheet, font, script, or other asset from the network\n",
+            "format": "markdown",
+            "headings": [
+              "MODIFIED Requirements",
+              "Requirement: safe semantic Markdown presentation",
+              "Scenario: supported Markdown structures are present",
+              "Scenario: user needs exact source evidence",
+              "Scenario: configuration artifact is displayed",
+              "Requirement: inert Markdown generation",
+              "Scenario: Markdown contains embedded HTML",
+              "Scenario: Markdown contains an unsafe link",
+              "Scenario: dashboard opens offline"
+            ],
+            "requirements": [
+              "safe semantic Markdown presentation",
+              "inert Markdown generation"
+            ],
+            "scenarios": [
+              "supported Markdown structures are present",
+              "user needs exact source evidence",
+              "configuration artifact is displayed",
+              "Markdown contains embedded HTML",
+              "Markdown contains an unsafe link",
+              "dashboard opens offline"
+            ],
+            "operations": [
+              "MODIFIED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
       "name": "standalone-publish-and-export",
       "path": "changes/standalone-publish-and-export",
       "lifecycle": "active",

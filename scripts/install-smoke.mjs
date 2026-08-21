@@ -44,10 +44,7 @@ const packedFiles = new Set(packInfo[0]?.files?.map((file) => file.path) ?? []);
 if (!tarballName) {
   throw new Error('npm pack did not return a tarball filename');
 }
-for (const requiredPath of [
-  'dist/src/lib/agent-skills.js',
-  'templates/agents/iris-workspace.md',
-]) {
+for (const requiredPath of ['dist/src/lib/agent-skills.js', 'templates/agents/iris-workspace.md']) {
   if (!packedFiles.has(requiredPath)) {
     throw new Error(`Packed CLI is missing required initialization asset: ${requiredPath}`);
   }
@@ -101,6 +98,11 @@ try {
     stdio: 'inherit',
     env: offlineRuntimeEnv,
   });
+  execFileSync(binaryPath, ['vendor'], {
+    cwd: projectDir,
+    stdio: 'inherit',
+    env: offlineRuntimeEnv,
+  });
   execFileSync(binaryPath, ['bug', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
   execFileSync(binaryPath, ['render', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
 
@@ -114,6 +116,14 @@ try {
     'the rendered page',
   );
   assertFile(path.join(projectDir, 'iris', 'index.html'), 'the rendered dashboard');
+  assertFile(
+    path.join(projectDir, 'iris', 'design', 'vendor', 'mermaid.min.js'),
+    'the offline Mermaid browser bundle',
+  );
+  assertFile(
+    path.join(projectDir, 'iris', 'design', 'vendor', 'LICENSE.mermaid.txt'),
+    'the Mermaid license',
+  );
   for (const skillRoot of ['.agents', '.claude', '.github']) {
     assertFile(
       path.join(projectDir, skillRoot, 'skills', 'iris-workspace', 'SKILL.md'),

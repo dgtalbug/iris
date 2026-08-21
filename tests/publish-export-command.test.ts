@@ -1,4 +1,4 @@
-import { access, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -25,6 +25,12 @@ describe('publish and export commands', () => {
   it('publishes portable HTML to an explicit path and creates its parents', async () => {
     const cwd = await createTempDir();
     await createBugPage(cwd);
+    const dataPath = path.join(cwd, 'iris', 'pages', 'bug-cache-stampede', 'data.json');
+    const contract = JSON.parse(await readFile(dataPath, 'utf8')) as {
+      sections: { symptom: { md: string } };
+    };
+    contract.sections.symptom.md = '```mermaid\nflowchart LR\n  A --> B\n```';
+    await writeFile(dataPath, `${JSON.stringify(contract, null, 2)}\n`);
 
     expect(
       await runCli(
@@ -41,6 +47,9 @@ describe('publish and export commands', () => {
     expect(html).toContain('.page-shell');
     expect(html).not.toMatch(/<link\b[^>]*\b(?:href|src)=/i);
     expect(html).not.toMatch(/<script\b[^>]*\bsrc=/i);
+    expect(html).not.toContain('design/vendor/mermaid.min.js');
+    expect(html).toContain('data-mermaid-fallback');
+    expect(html).toContain('flowchart LR');
     expect(html).not.toMatch(/@import\s|url\s*\(/i);
 
     await rm(path.join(cwd, 'iris'), { recursive: true, force: true });
@@ -78,7 +87,9 @@ describe('publish and export commands', () => {
     expect(await runCli(['export', 'bug-cache-stampede', '--png'], cwd)).toBe(1);
     expect(await runCli(['export', 'bug-cache-stampede', '--single', '--pdf'], cwd)).toBe(1);
     expect(writeError).toHaveBeenCalledWith(
-      expect.stringMatching(/no browser renderer meets the deterministic offline contract; use --single/),
+      expect.stringMatching(
+        /no browser renderer meets the deterministic offline contract; use --single/,
+      ),
     );
     writeError.mockRestore();
   });
