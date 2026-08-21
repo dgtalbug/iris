@@ -1,7 +1,7 @@
 import { access, mkdtemp, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCli } from '../src/cli.js';
 
 const tempDirs: string[] = [];
@@ -72,9 +72,14 @@ describe('publish and export commands', () => {
 
   it('rejects export requests that cannot be produced honestly', async () => {
     const cwd = await createTempDir();
+    const writeError = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
     expect(await runCli(['export'], cwd)).toBe(1);
     expect(await runCli(['export', 'bug-cache-stampede', '--png'], cwd)).toBe(1);
     expect(await runCli(['export', 'bug-cache-stampede', '--single', '--pdf'], cwd)).toBe(1);
+    expect(writeError).toHaveBeenCalledWith(
+      expect.stringMatching(/no browser renderer meets the deterministic offline contract; use --single/),
+    );
+    writeError.mockRestore();
   });
 });

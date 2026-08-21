@@ -29,7 +29,7 @@ Meaning-bearing only with reduced-motion fallback to static frame at frame zero.
 
 ## Distribution model
 
-The built npm package is the verified Node entrypoint; public npm and Homebrew distribution remain pending a release URL and checksum. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
+The built npm package is the primary, verified Node entrypoint on macOS, Linux, and Windows. GitHub Release publication is automated through npm trusted publishing and provenance after the owner configures the external trust relationship. Homebrew remains deferred until a real release URL and checksum exist. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
 
 ## License notes
 
@@ -57,3 +57,5 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-19 | Dashboard links every page; publish strips nav chrome via data-iris-nav    | Local HTML must be navigable, published artifacts must stand alone   |
 | 2026-08-19 | Enforce generated-link integrity with html-check in CI                     | A broken reference in generated HTML must fail the build             |
 | 2026-08-21 | Ship Aperture steps 1–3 with contrast-safe text aliases and no remote loaders | Preserves the specified palette, 4.5:1 readable text, and strict offline classic-script rendering while vendor/diagram/chart work remains deferred |
+| 2026-08-21 | Make npm the primary install path and gate publication on an exact release tag, full checks, OIDC trusted publishing, and provenance | The cross-platform packed CLI is already verified; Homebrew lacks the release URL and checksum required for an honest formula |
+| 2026-08-21 | Defer PNG/PDF export; prefer puppeteer-core only after accepting a browser-pinning and determinism policy | System Chrome avoids downloads but is not version-stable; Playwright's supported pinned browser adds a separate large download lifecycle |

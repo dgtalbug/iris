@@ -1,78 +1,77 @@
 # iris status report
 
-> Snapshot date: 2026-08-21 · branch `main` · read-only audit, no code changed.
+> Snapshot date: 2026-08-21 · branch `feat/phase-3-release-and-export-decisions` · implementation audit after stabilization, OpenSpec archival, Aperture, and release/export decisions.
 
 ## One-line summary
 
-iris is a working 0.1 CLI (14 of 16 documented commands implemented, 10 test suites, 7-gate CI) with **4 open spec tasks, 2 stub commands, and 7 backlog items** — but an entire milestone of work (35 files, +2,911/−803) is sitting staged and uncommitted on `main`, and the npm package is not yet published.
+iris is a working 0.1 CLI with **14 of 16 documented commands implemented, 12 test suites, 7 CI gates, an npm release workflow, and 1 of 62 audited OpenSpec tasks still open**. Aperture is shipped and dogfooded; public npm publication and browser-rendered PNG/PDF remain external/design gates.
 
-## What iris is (for anyone landing here cold)
+## What iris is
 
-A plain Node.js CLI — no server, no AI runtime, no telemetry. You (or an AI coding agent) run `iris` commands in any repository; it writes JSON contracts under `iris/pages/<id>/data.json`, validates them against `schemas/`, and renders deterministic static HTML that opens straight from disk (`iris open`). It is **not** an agent-only skill: agents are one of its users, not a requirement. The Claude `/iris *` / Copilot / Codex "skills" mentioned in docs are planned thin wrappers around this same CLI (later milestone; see README "How it runs").
+A plain Node.js CLI — no server, AI runtime, or telemetry. It writes JSON contracts under `iris/pages/<id>/data.json`, validates them against `schemas/`, and renders deterministic static HTML that opens directly from `file://`. Agents are supported users of the same CLI, not a runtime dependency.
 
 ## Implementation state
 
 | Area | State |
 | --- | --- |
-| Commands implemented | `init`, `render`, `report` (incl. `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `sync`, `adopt`, `archive`, `export` (`--single` only), `open`, `update` |
+| Commands implemented | `init`, `render`, `report` (including `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `sync`, `adopt`, `archive`, `export --single`, `open`, `update` |
 | Commands stubbed (exit 1) | `promote`, `vendor` |
-| Export modes missing | `--png`, `--pdf` (blocked on approving a browser renderer) |
-| Tests | 10 vitest suites in `tests/` |
-| CI gates | lint, token-lint, typecheck, test, html-check, smoke:install (plus frozen-lockfile install) |
-| Runtime deps | `ajv` only — zero front-end framework |
-| Source size | ~2,600 lines of TypeScript in `src/` |
-| Distribution | `@dgtalbug/iris` 0.1.0, **not yet on the public npm registry**; Homebrew deferred until a release URL + checksum exist |
+| Export modes deferred | `--png`, `--pdf`; task remains open pending a browser-pinning and determinism policy |
+| Tests | 12 Vitest suites, including token-contract and release-packaging coverage |
+| CI gates | lint, token-lint, typecheck, test, html-check, smoke:install, plus frozen-lockfile install |
+| Runtime deps | `ajv` only; no front-end framework or remote render dependency |
+| Distribution | npm-first package `@dgtalbug/iris` 0.1.0; release workflow ready, public publication not yet performed |
+| Dogfood | six repository documents adopted into the Aperture dashboard; 13 generated HTML files pass link integrity |
 
-## Pending work
+## OpenSpec state
 
-### Open spec tasks — 4 of 48 unchecked
+The five audited structured changes contain 62 tasks: **61 complete, 1 open**.
 
-Active changes live in `openspec/changes/` (archive holds completed ones).
-
-| Change | Done | Open tasks |
+| Change | State | Open tasks |
 | --- | --- | --- |
-| brew-formula-and-installability | 6/9 | 1.1 decide primary install story · 1.3 confirm formula matches local-first goals · 2.1 add release packaging/formula |
-| standalone-publish-and-export | 11/12 | 2.2 implement PNG/PDF export modes |
-| project-lifecycle-automation | 15/15 | none — complete, ready to archive |
-| session-ingestion-and-reporting | 15/15 | none — complete, ready to archive |
+| brew-formula-and-installability | 9/9 implementation tasks complete; external release proof pending | none; Homebrew is an explicit future change after a release URL and checksum exist |
+| standalone-publish-and-export | 11/12 active | 2.2 PNG/PDF export; explicitly deferred |
+| project-lifecycle-automation | 15/15 archived | none |
+| session-ingestion-and-reporting | 15/15 archived | none |
+| design-system-aperture | 11/11 verified and archived | none |
 
-### Backlog (`BACKLOG.md`, unscheduled)
+## What changed in this audit
 
-VS Code webview extension · `iris publish` to gist · session-storage report ingestion · Reaviz swap behind chart contract · MCP wrapper · brew formula · themes marketplace.
+- The staged 35-file lifecycle/session/publish milestone was committed and merged through PR #4.
+- OpenSpec history is versioned; `.claude/*` remains ignored.
+- Dependabot AJV 8.18.0 and Vitest 3.2.6 updates were rebased, tested, and merged.
+- Completed lifecycle/session changes were verified, synced to canonical specs, archived, and merged through PR #5.
+- Aperture steps 1–3 shipped with contrast validation, accessible components, responsive dashboard IA, classic offline runtime, and real dogfood content through PR #6.
+- npm-first distribution is decided. Release automation validates the tag, full test gate, package payload, OIDC trusted publishing, and provenance.
+- Homebrew is deferred until a real release artifact supplies a stable URL and SHA-256.
+- Browser export evaluation prefers `puppeteer-core` over Playwright for a future narrow renderer, but neither currently satisfies the deterministic local-install contract without a new browser policy.
 
-### Not yet implemented but documented
+## Remaining risks and gates
 
-`promote`, `vendor`, full `--json` output parity, generated agent-surface shims (Claude/Copilot/Codex), permalink algorithm (M2/M3).
-
-## Risks and repo hygiene findings
-
-1. **35 files staged but uncommitted on `main`** (+2,911/−803): the lifecycle, session-ingestion, publish/export, and html-check milestones exist only in the git index. One hard reset loses them. Highest-priority action: commit (ideally on a feature branch + PR, matching how PR #1 was done).
-2. **Spec traceability is not versioned**: `.gitignore` excludes `openspec/*`, `.claude/*`, `.agents/*`, `.github/prompts/*`, `.github/skills/*`. Task history and decisions can't be recovered from a fresh clone, and CI can't see them.
-3. **Direct-to-main history**: recent commits landed on `main` without PRs; no branch protection evident.
-4. **Two Dependabot branches open** (`ajv` 8.18.0, `vitest` 3.2.6) awaiting merge decisions.
-5. **Dogfood dashboard is empty**: `iris/state.json` has no pages, so the shipped `iris/index.html` shows the empty state — the repo does not yet demonstrate its own product.
-6. **No LICENSE file** in the repo root despite `"license": "MIT"` in package.json; no CONTRIBUTING, CODEOWNERS, SECURITY, or PR/issue templates.
+1. **npm owner gate:** `@dgtalbug/iris` is not yet public. The owner must bootstrap the package if needed, configure `release.yml` as the npm trusted publisher, protect/approve the GitHub `npm` environment, and publish a matching GitHub Release.
+2. **PNG/PDF determinism:** system Chrome avoids a browser download but drifts by installed version; a pinned Playwright browser adds a separate download and large cache. Task 2.2 remains open until that trade-off is accepted.
+3. **Homebrew inputs:** no formula should ship before a real release URL and checksum can be tested.
+4. **Repository governance:** LICENSE, CONTRIBUTING, CODEOWNERS, SECURITY, PR/issue templates, branch protection, commitlint, changelog automation, and release notes policy remain incomplete.
+5. **Deferred product scope:** `promote`, `vendor`, generated agent-surface shims, full `--json` parity, permalink work, Mermaid, and chart blocks remain later milestones.
 
 ## Enterprise-readiness checklist
 
-Current gaps against common professional/enterprise repo standards:
-
-- [ ] LICENSE file (MIT text) at repo root
-- [ ] CONTRIBUTING.md (setup, test, PR expectations — Quickstart exists in README, move/expand)
-- [ ] CODEOWNERS + branch protection on `main` (require PR, passing CI, review)
+- [ ] LICENSE file at repo root
+- [ ] CONTRIBUTING.md
+- [ ] CODEOWNERS + branch protection on `main`
 - [ ] PR + issue templates
-- [ ] SECURITY.md with a disclosure contact
-- [ ] Conventional commits enforced (commitlint) → automated changelog + release (changesets or release-please) → npm publish with provenance
-- [ ] CHANGELOG.md
-- [ ] Version openspec/ history (or export decisions into docs/) so traceability survives a clone
-- [x] CI with lint/typecheck/tests/smoke (already strong: 7 gates including generated-HTML link integrity)
-- [x] Dependabot enabled
-- [x] Strict TypeScript, pinned toolchain, frozen lockfile
+- [ ] SECURITY.md
+- [ ] Conventional commits enforced with commitlint
+- [ ] CHANGELOG.md / release-notes policy
+- [x] Versioned OpenSpec history
+- [x] CI with lint, typecheck, tests, token/HTML integrity, and packed-install smoke
+- [x] Dependabot updates integrated
+- [x] npm release workflow with exact tag validation, trusted-publishing OIDC, and provenance
 
-## Suggested next moves (in order)
+## Suggested next moves
 
-1. Commit the staged milestone work via a PR; archive the two completed openspec changes.
-2. Publish 0.1.0 to npm (the smoke:install gate already verifies the artifact) so `npx @dgtalbug/iris init` works anywhere — this is the whole "newbie in any repo" promise.
-3. Add the enterprise hygiene files above (one small PR).
-4. Dogfood: render this repo's own overview/HLD pages so `iris/index.html` demonstrates the product.
-5. UI overhaul per `docs/design-system.md` (market research + full redesign direction, written alongside this report).
+1. Complete the npm owner/trusted-publisher setup, run the release workflow manually as a dry verification, then publish the first matching GitHub Release.
+2. Verify the public install path, then archive `brew-formula-and-installability` after the first npm release succeeds.
+3. Open a dedicated browser-renderer policy change before implementing PNG/PDF.
+4. Add the repository governance files and branch protection.
+5. Continue Aperture later changes separately: `iris vendor`, diagram/chart blocks, then richer dogfood types.

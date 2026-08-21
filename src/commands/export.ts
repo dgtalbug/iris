@@ -26,7 +26,7 @@ export async function runExportCommand(
   if (mode !== 'single') {
     throw new IrisError(
       1,
-      `Export mode '--${mode}' is not available yet; PNG and PDF require an approved browser renderer dependency`,
+      `Export mode '--${mode}' is deferred because no browser renderer meets the deterministic offline contract; use --single`,
     );
   }
 

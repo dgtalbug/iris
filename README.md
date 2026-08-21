@@ -6,7 +6,7 @@ Visual, versioned docs from your AI coding agents. Less prose, more pictures —
 
 Prerequisite: Node.js 22.13.0 or newer on macOS, Linux, or Windows.
 
-The implemented package entrypoint is the versioned npm package, which provides the Node-package equivalent of the planned Homebrew formula. After a release is published to npm, install and verify it with:
+The primary install surface is the versioned npm package. After a release is published to npm, install and verify it with:
 
 ```bash
 npm install -g @dgtalbug/iris
@@ -19,7 +19,7 @@ Or run that published release without a global install:
 npx @dgtalbug/iris --help
 ```
 
-The package is not yet present in the public npm registry. Until the first release is published, contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, installs it into a temporary directory, then runs `iris --help`, `iris init`, a draft command, and `iris render` outside the repository. The accepted distribution design remains Homebrew-first, but a usable formula is deferred until a stable release URL and checksum exist.
+The package is not yet present in the public npm registry. Until the first release is published, contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, installs it into a temporary directory, then runs `iris --help`, `iris init`, a draft command, and `iris render` outside the repository. Homebrew remains deferred until a real release tarball URL and SHA-256 checksum exist; publishing a placeholder formula would be packaging theatre, which is still theatre even when written in Ruby.
 
 Once installed, a minimal local-first workflow is:
 
@@ -47,6 +47,14 @@ iris --help
 ```
 
 The package version controls the installed CLI version; rerunning the command above replaces the global install with the current published release.
+
+### Release maintainers
+
+1. Update `package.json` to the intended version and merge the fully verified change.
+2. Create a GitHub Release whose tag is exactly `v<package version>`.
+3. The `release.yml` workflow repeats the full release gate, verifies tag/package alignment, inspects the tarball, and publishes the public package with provenance.
+
+The workflow uses npm trusted publishing through GitHub OIDC and the protected `npm` environment; it stores no long-lived publish token. Before the first automated release, the package owner must bootstrap `@dgtalbug/iris` on npm if necessary, configure `dgtalbug/iris` + `release.yml` as its trusted publisher, and approve the GitHub `npm` environment. A manual workflow run is verification-only and never publishes.
 
 ## Quickstart for contributors
 
