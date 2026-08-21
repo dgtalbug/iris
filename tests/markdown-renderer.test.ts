@@ -68,4 +68,43 @@ const value = 1;
     expect(renderSafeMarkdown(source)).toBe(renderSafeMarkdown(source));
     expect(renderSafeMarkdown(source)).not.toContain('<a ');
   });
+
+  it('emits escaped source-first hosts only for Mermaid fences', () => {
+    const html = renderSafeMarkdown(`
+\`\`\`mermaid
+flowchart LR
+  A[Safe] --> B[<script>globalThis.pwned=true</script>]
+\`\`\`
+
+\`\`\`mermaid-example
+flowchart LR
+  C --> D
+\`\`\`
+`);
+
+    expect(html.match(/data-mermaid-figure/g)).toHaveLength(1);
+    expect(html).toContain('data-mermaid-host aria-label="Mermaid diagram"');
+    expect(html).toContain('data-mermaid-fallback');
+    expect(html).toContain('class="language-mermaid"');
+    expect(html).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
+    expect(html).not.toContain('<script>globalThis.pwned=true</script>');
+    expect(html).toContain('class="language-mermaid-example"');
+  });
+
+  it('keeps multiple diagrams independent in deterministic output', () => {
+    const source = `\`\`\`mermaid
+flowchart LR
+  A --> B
+\`\`\`
+
+Between diagrams.
+
+\`\`\`MERMAID
+not a valid graph
+\`\`\``;
+    const html = renderSafeMarkdown(source);
+    expect(html.match(/data-mermaid-figure/g)).toHaveLength(2);
+    expect(html).toContain('<p>Between diagrams.</p>');
+    expect(renderSafeMarkdown(source)).toBe(html);
+  });
 });

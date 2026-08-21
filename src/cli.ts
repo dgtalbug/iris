@@ -7,6 +7,7 @@ import { runOpenCommand } from './commands/open.js';
 import { runPublishCommand } from './commands/publish.js';
 import { runRenderCommand } from './commands/render.js';
 import { runReportFromSessionCommand } from './commands/report.js';
+import { runVendorCommand } from './commands/vendor.js';
 import { IrisError } from './lib/errors.js';
 
 const ALL_COMMANDS = [
@@ -109,6 +110,8 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         await runOpenCommand(cwd);
         return 0;
       case 'vendor':
+        await runVendorCommand(cwd);
+        return 0;
       case 'promote':
         process.stderr.write(`Command '${command}' is registered but not yet implemented in M0.\n`);
         return 1;

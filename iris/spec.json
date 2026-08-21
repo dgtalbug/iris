@@ -452,6 +452,333 @@
       "warnings": []
     },
     {
+      "name": "redesign-work-board",
+      "path": "changes/redesign-work-board",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/redesign-work-board/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/redesign-work-board/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris's Work surface is visually spacious, exposes only coarse List/Board layouts, and navigates away from the dashboard before users can inspect an item. A denser, context-preserving work browser is needed so repositories with many agent-authored records remain quickly scannable across desktop and narrow screens.\n\n## What Changes\n\n- Replace the current List/Board switcher with peer List, Table, and Kanban views that share one filter and the same real Iris contract data.\n- Introduce compact work-item hierarchy for type, ID, title, status, priority, update time, and owner, while displaying unavailable fields honestly rather than inventing values.\n- Open work items in an accessible right-side detail drawer with description/evidence, an explicit full-page action, Escape/backdrop close behavior, focus containment and return, and a full-screen 360 px treatment.\n- Evolve Aperture semantic tokens and component styles for neutral density, selected/hover states, status, priority, work type, focus, and responsive column priority.\n- Preserve deterministic static HTML, `file://`, classic deferred JavaScript, both themes, reduced motion, no drag-and-drop, no remote assets, and no unsupported data mutation.\n\n## Capabilities\n\n### New Capabilities\n\nNone.\n\n### Modified Capabilities\n\n- `aperture-design-system`: Expand the Work surface and responsive interaction requirements to cover dense List/Table/Kanban presentation and an accessible side-detail drawer.\n\n## Impact\n\n- Changes generated dashboard markup, Aperture tokens/components, classic interaction script, navigation behavior, tests, design documentation, and checked-in Iris output.\n- Extends the internal dashboard page projection with bounded optional metadata derived from existing contracts; schemas and editable source contracts remain unchanged.\n- Adds no framework, dependency, network request, persistence layer, drag-and-drop behavior, or Jira-owned asset.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/redesign-work-board/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe Work surface currently projects each page into a minimal `DashboardPage` containing ID, type, title, status, and link, then duplicates a spacious card in List and Board views. The validated envelope also supplies agent, timestamps, and tags, while type-specific sections contain bounded description and evidence fields. The static output must remain deterministic, open from `file://`, use classic scripts, and preserve full-page links when JavaScript is unavailable.\n\nPublic Jira guidance supports the transferable interaction model: list views prioritize type/key/summary/status/priority/updated/assignee fields; boards map status to columns and expose selected fields on compact cards; compact density helps busy backlogs; and preview panels keep users in context with a full-page escape hatch. Iris will implement those principles through Aperture tokens and its own component language rather than copy Atlassian branding, fonts, icons, or exact styling.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Make 20–100 Iris records scannable without decorative card padding dominating the viewport.\n- Provide one data projection shared by List, Table, Kanban, filtering, and drawer detail.\n- Preserve navigation and source honesty when scripts fail or metadata is absent.\n- Meet keyboard, focus, reduced-motion, light/dark, print, and 360 px requirements.\n\n**Non-Goals:**\n\n- Drag-and-drop, inline editing, persistence, sorting, saved filters, pagination, or invented workflow transitions.\n- New contract fields, schema changes, user accounts, remote fonts, Jira assets, or a frontend framework.\n- Replacing the Spec view or redesigning full contract pages.\n\n## Decisions\n\n### Derive a bounded Work projection during generation\n\n`refreshDashboard` will derive updated date, agent, tags, description, evidence, and priority from validated contract payloads. Bug severity maps directly to display priority (`p0` urgent through `p3` low); other types report priority as unavailable because effort, impact, status, and type are not interchangeable with priority. Description and evidence strings are bounded before entering generated attributes.\n\nArchived state currently retains only ID/type/title/status/link, so optional fields remain unavailable instead of reading moved source opportunistically or inventing values.\n\nAlternative: expand the schema with owner and priority. Rejected because this redesign is a read-only presentation change and schema semantics require a separate capability decision.\n\n### Keep all three views in static semantic HTML\n\nList uses compact linked rows with a strong ID/title pair and one-line metadata. Table uses a real table with type, ID, title, status, priority, updated, and agent columns; responsive CSS hides agent, updated, priority, then type in that order before allowing page overflow. Kanban uses four fixed columns matching Iris's actual statuses: Draft, Active, Done, Archived. Cards stay compact and are not draggable.\n\nAll representations use full-page anchors. JavaScript intercepts activation for the detail drawer, while no-JS users follow the existing page link. A single filter hides matching representations across all views and computes unique results from the List representation.\n\nAlternative: render only the active layout and rebuild on tab changes. Rejected because it complicates no-JS behavior and introduces client-side templating into a deterministic static artifact.\n\n### Use one reusable modal side drawer\n\nThe dashboard emits one drawer after the main content. Activating any work anchor copies escaped data attributes into text-only drawer slots, updates `#work=<id>`, marks the dashboard main content inert, locks body scrolling, focuses Close, and traps Tab within the drawer. Escape, backdrop, Close, or hash removal closes it and restores the opener focus.\n\nThe drawer is `min(38rem, 52vw)` on wide screens and the full viewport below 40rem. Its content order is ID/type, title, status, metadata, description, evidence/tags, then actions. “Open full page” uses the original static link.\n\nAlternative: CSS `:target` only. Rejected because it cannot reliably trap/restore focus, populate one reusable drawer, or provide Escape behavior.\n\n### Evolve Aperture toward neutral compact density\n\nThe existing system stack remains. Work UI uses 0.75–0.875rem metadata/body text, 1.25rem section headings, 32–40 px interactive row targets, 4–8 px radii for compact elements, hairline separators, and neutral surfaces. Spectrum colors appear only in aperture/type, status, and priority signals, always paired with text. Hover, selected, and focus states use existing accent/border semantics.\n\n### Keep deep links local and deterministic\n\nThe drawer hash contains only the encoded work ID. On load or `hashchange`, the script opens a matching item; unknown IDs leave the dashboard unchanged. Closing uses history replacement for direct closes, while browser Back naturally removes a pushed hash. The full page remains the authoritative deep link and no data is serialized into the URL.\n\n## Risks / Trade-offs\n\n- [Three DOM representations increase generated HTML size] → Keep markup compact, reuse one drawer, and avoid client-side templates or duplicated descriptions.\n- [Data attributes can become large or unsafe] → Bound derived text and HTML-escape every attribute; populate drawer fields with `textContent` only.\n- [A modal drawer can create focus bugs] → Test initial focus, Tab boundaries, Escape, backdrop, hash navigation, focus return, and inert cleanup in a real browser.\n- [Responsive tables can hide useful context] → Preserve ID, title, and status longest; every row opens the drawer where all available metadata remains visible.\n- [The checked-in repository has no work pages] → Use temporary validated fixture contracts for visual/runtime proof; do not add demo records to user-owned `iris/pages/`.\n\n## Migration Plan\n\n1. Extend the dashboard projection and add focused generator tests for real and unavailable metadata.\n2. Replace Work markup and styles while preserving existing full-page links and empty state.\n3. Add shared filtering, drawer, hash, focus, and keyboard behavior in the classic base script.\n4. Regenerate managed output, validate at desktop and 360 px with temporary populated fixtures, and run the full release gate.\n\nRollback restores the prior projection and List/Board markup; contracts and state require no migration.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Derive a bounded Work projection during generation",
+            "Keep all three views in static semantic HTML",
+            "Use one reusable modal side drawer",
+            "Evolve Aperture toward neutral compact density",
+            "Keep deep links local and deterministic",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/redesign-work-board/tasks.md",
+          "title": "1. Work data projection",
+          "raw": "## 1. Work data projection\n\n- [x] 1.1 Extend the generated dashboard page projection with bounded update, agent, tag, priority, description, and evidence metadata derived only from validated contracts.\n- [x] 1.2 Cover supported type-specific derivation and honest unavailable values with focused generator tests.\n\n## 2. Dense Work views\n\n- [x] 2.1 Replace the current List/Board markup with semantic List, Table, and Kanban representations that retain full-page links and share one filter.\n- [x] 2.2 Add Aperture tokens and compact responsive styles for work rows, table columns, Kanban columns/cards, type/status/priority signals, both themes, print, reduced motion, and 360 px layouts.\n- [x] 2.3 Implement shared filtering, unique result counts, layout tabs, and keyboard navigation without adding persistence, remote assets, or runtime modules.\n\n## 3. Work detail drawer\n\n- [x] 3.1 Emit one reusable detail drawer populated from escaped bounded data attributes with a full-page action and local item hash.\n- [x] 3.2 Implement click, Enter, Space, Escape, backdrop, hash, focus containment, focus return, inert cleanup, and responsive full-screen behavior.\n- [x] 3.3 Add focused markup and interaction tests for dialog semantics, keyboard behavior, no-JavaScript links, and offline dependency constraints.\n\n## 4. Documentation and verification\n\n- [x] 4.1 Record the Jira-inspired interaction research and Aperture implementation decisions without copying Jira branding or assets.\n- [x] 4.2 Regenerate checked-in output, inspect populated temporary fixture output in Safari and a 360 px WebKit rendering, and fix visible layout/accessibility defects.\n- [x] 4.3 Run strict OpenSpec validation and the full release gate, then reconcile task evidence with the implementation.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Work data projection",
+            "2. Dense Work views",
+            "3. Work detail drawer",
+            "4. Documentation and verification"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 11,
+            "open": 0,
+            "total": 11
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "aperture-design-system",
+          "path": "changes/redesign-work-board/specs/aperture-design-system/spec.md",
+          "document": {
+            "path": "changes/redesign-work-board/specs/aperture-design-system/spec.md",
+            "title": "ADDED Requirements",
+            "raw": "## ADDED Requirements\n\n### Requirement: dense context-preserving Work browser\n\nThe generated Work surface MUST provide peer List, Table, and Kanban views over the same Iris page records, MUST share one text filter across all views, and MUST use only metadata available from validated contracts or explicit unavailable labels.\n\n#### Scenario: user changes Work layout\n\n- **WHEN** a user selects List, Table, or Kanban\n- **THEN** the corresponding view MUST present the same matching records with type, ID, title, status, and every supported optional field without changing source data\n\n#### Scenario: user filters work\n\n- **WHEN** a user enters text matching a title, ID, type, status, priority, agent, or tag\n- **THEN** every Work view MUST hide nonmatching records and report the matching unique-record count\n\n#### Scenario: optional metadata is unavailable\n\n- **WHEN** a page contract does not define priority or another requested field\n- **THEN** List, Table, Kanban, and detail views MUST use a neutral unavailable value and MUST NOT infer or fabricate data\n\n#### Scenario: JavaScript is unavailable\n\n- **WHEN** the generated dashboard opens without executing JavaScript\n- **THEN** every work item MUST retain a navigable full-page link and the default List view MUST remain readable\n\n### Requirement: accessible work-item detail drawer\n\nSelecting a work item MUST open one right-side detail drawer that preserves the current Work view, displays available contract metadata, description, evidence, and a full-page link, and provides deterministic close and focus behavior.\n\n#### Scenario: item is activated\n\n- **WHEN** a user clicks a work item or activates its link with Enter or Space\n- **THEN** the drawer MUST open with dialog semantics, identify the selected ID and title, move focus to its close control, and update a local hash that can reopen the same item\n\n#### Scenario: drawer is closed\n\n- **WHEN** the user presses Escape, activates the close control, activates the backdrop, or navigates back from the item hash\n- **THEN** the drawer MUST close, remove its modal state, and return focus to the item that opened it when that item remains available\n\n#### Scenario: focus moves within the drawer\n\n- **WHEN** the drawer is open and the user presses Tab or Shift+Tab at its focus boundaries\n- **THEN** focus MUST remain within the drawer until it is closed\n\n#### Scenario: narrow viewport opens a drawer\n\n- **WHEN** the viewport is 360 px wide and a work item is activated\n- **THEN** the drawer MUST occupy the viewport without horizontal page overflow and MUST keep its close and full-page actions reachable\n\n## MODIFIED Requirements\n\n### Requirement: Aperture component language\n\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n\n- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\n\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, dense List/Table/Kanban work browser, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: repository has generated work pages\n\n- **WHEN** a newcomer opens the Work view with one or more page contracts\n- **THEN** the dashboard MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from the dashboard\n\n#### Scenario: user opens the Spec view\n\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\n\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n\n- **WHEN** focus is on the Work/Spec or List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: work items are keyboard operated\n\n- **WHEN** focus is on a work-item link and the user presses Enter or Space\n- **THEN** the corresponding detail drawer MUST open without navigating away\n\n#### Scenario: narrow viewport is used\n\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** Work List rows, the prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+            "format": "markdown",
+            "headings": [
+              "ADDED Requirements",
+              "Requirement: dense context-preserving Work browser",
+              "Scenario: user changes Work layout",
+              "Scenario: user filters work",
+              "Scenario: optional metadata is unavailable",
+              "Scenario: JavaScript is unavailable",
+              "Requirement: accessible work-item detail drawer",
+              "Scenario: item is activated",
+              "Scenario: drawer is closed",
+              "Scenario: focus moves within the drawer",
+              "Scenario: narrow viewport opens a drawer",
+              "MODIFIED Requirements",
+              "Requirement: Aperture component language",
+              "Scenario: meaning is communicated accessibly",
+              "Requirement: newcomer-first dashboard hierarchy",
+              "Scenario: repository has no generated work pages",
+              "Scenario: repository has generated work pages",
+              "Scenario: user opens the Spec view",
+              "Scenario: state is communicated in the Spec view",
+              "Requirement: deterministic responsive interaction",
+              "Scenario: keyboard navigation is used",
+              "Scenario: top-level tabs are keyboard operated",
+              "Scenario: work items are keyboard operated",
+              "Scenario: narrow viewport is used",
+              "Scenario: reduced motion is requested"
+            ],
+            "requirements": [
+              "dense context-preserving Work browser",
+              "accessible work-item detail drawer",
+              "Aperture component language",
+              "newcomer-first dashboard hierarchy",
+              "deterministic responsive interaction"
+            ],
+            "scenarios": [
+              "user changes Work layout",
+              "user filters work",
+              "optional metadata is unavailable",
+              "JavaScript is unavailable",
+              "item is activated",
+              "drawer is closed",
+              "focus moves within the drawer",
+              "narrow viewport opens a drawer",
+              "meaning is communicated accessibly",
+              "repository has no generated work pages",
+              "repository has generated work pages",
+              "user opens the Spec view",
+              "state is communicated in the Spec view",
+              "keyboard navigation is used",
+              "top-level tabs are keyboard operated",
+              "work items are keyboard operated",
+              "narrow viewport is used",
+              "reduced motion is requested"
+            ],
+            "operations": [
+              "ADDED",
+              "MODIFIED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "render-mermaid-diagrams",
+      "path": "changes/render-mermaid-diagrams",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/render-mermaid-diagrams/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/render-mermaid-diagrams/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris renders Markdown semantically but leaves Mermaid fences as inert code, so architecture and workflow diagrams cannot be inspected visually in the offline workspace. Mermaid support should preserve Iris's safe-source evidence and `file://` contract instead of introducing a network loader or allowing diagram failures to break an entire document.\n\n## What Changes\n\n- Recognize fenced Markdown blocks whose language is exactly `mermaid` and emit an accessible diagram host with an escaped-source fallback.\n- Render each diagram independently in the browser from a locally installed, pinned Mermaid asset; make invalid diagrams fail locally while leaving their source readable.\n- Make the local Mermaid runtime available through the existing `iris vendor` lifecycle command and keep generated pages free of remote requests and runtime modules.\n- Document and test the Markdown authoring, offline asset, security, fallback, theme, and standalone-publish boundaries.\n\n## Capabilities\n\n### New Capabilities\n\n- `markdown-diagram-rendering`: Safe, offline rendering and fallback behavior for Mermaid fences embedded in Iris Markdown.\n\n### Modified Capabilities\n\n- `openspec-spec-browser`: OpenSpec Markdown artifacts may progressively render recognized Mermaid fences while preserving exact source and inert untrusted content.\n\n## Impact\n\n- Affects `src/lib/markdown.ts`, static page templates and client script, CLI lifecycle handling, generated design assets, tests, and rendering documentation.\n- Adds Mermaid as a pinned runtime dependency whose browser bundle and license are copied into each Iris workspace on explicit vendoring.\n- Does not enable embedded HTML, remote assets, arbitrary Markdown plugins, or server-side/browser automation.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/render-mermaid-diagrams/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe generation-time Markdown renderer currently escapes HTML and active images, rejects unsafe links, and emits ordinary fences as `<pre><code>`. Generated pages load one local classic deferred script and work directly from `file://`. The CLI already creates `iris/design/vendor/`, registers a stubbed `iris vendor` command, and documents Mermaid as a later local-only enhancement. See `proposal.md` for motivation and the two delta specs for observable behavior.\n\nMermaid's browser runtime is necessarily client-side if Iris is to avoid a browser automation dependency. Diagram source is untrusted repository input, so the integration must preserve the Markdown renderer's existing trust boundary and must not treat successful JavaScript execution as the only readable state.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Add one safe Markdown extension for exact `mermaid` fences.\n- Keep source-first no-JS behavior, per-diagram failure isolation, and deterministic generated markup.\n- Install a pinned Mermaid classic browser bundle from Iris's already installed dependency, without a second network operation.\n- Use the same behavior in contract Markdown and OpenSpec Markdown.\n\n**Non-Goals:**\n\n- Rendering diagrams to SVG during CLI generation or embedding SVG snapshots in standalone exports.\n- Supporting remote Mermaid loaders, ES modules at view time, click interactions, HTML labels, custom icons, external images, arbitrary plugins, or theme directives that weaken global security configuration.\n- Replacing fenced source with a diagram-only representation.\n\n## Decisions\n\n### Extend the existing Markdown renderer at the fence rule\n\nThe `markdown-it` fence renderer will delegate all non-Mermaid fences to its existing default and emit a semantic figure for exact normalized `mermaid` info strings. The figure contains a dedicated runtime host plus an always-present escaped `<pre><code>` fallback. This keeps escaping centralized and makes no-JS output complete.\n\nAlternative considered: preprocess Markdown with regular expressions. Rejected because fence parsing, nesting, and escaping already belong to the Markdown parser; duplicating them would create divergent edge cases.\n\n### Use a pinned runtime dependency and explicit offline vendoring\n\nMermaid will be pinned as a production dependency. `iris vendor` will resolve the installed package, verify the expected browser bundle and license, then atomically copy those bytes into `iris/design/vendor/`. It will not download from the CDN. Generated pages may reference only that relative classic-script path.\n\nAlternative considered: load the documented CDN ESM build. Rejected because it violates `file://`, offline, no-network, and no-runtime-module constraints. A CLI-side SVG renderer was also rejected for this slice because it would introduce DOM/browser emulation or headless-browser policy that the project has explicitly deferred.\n\n### Initialize once, then render one node at a time\n\nThe shared base script will call `mermaid.initialize` once with `startOnLoad: false`, `securityLevel: 'strict'`, `htmlLabels: false`, fixed text/edge bounds, suppressed built-in error SVGs, and a system font stack. It will then await `mermaid.run({ nodes: [node], suppressErrors: true })` separately for every host. Success hides only that host's fallback and adds accessible SVG metadata; rejection marks only that figure as failed and leaves its source visible.\n\nThis follows Mermaid's current official security contract: strict mode encodes HTML and disables click behavior, secure configuration keys prevent diagram directives from weakening core limits, and `run` supports explicit node arrays. Theme-specific color remapping is deferred; Mermaid's neutral theme will sit on Iris surfaces in both themes while source remains authoritative.\n\nAlternative considered: render all nodes in one `run` call. Rejected because a single invalid diagram can make failure attribution and fallback state ambiguous.\n\n### Treat contract fields and OpenSpec artifacts as one Markdown surface\n\nContract section Markdown will use `renderSafeMarkdown` instead of its small parallel paragraph/list converter. This avoids implementing Mermaid twice and brings the same embedded-HTML/link/image protections to both inputs. Exact OpenSpec source disclosure remains unchanged.\n\n### Keep standalone publishing source-safe\n\nPublished single-file contract pages will remove external Mermaid and base-script tags as they already do for local shared assets. The embedded diagram source fallback remains visible; runtime SVG snapshotting remains out of scope until Iris adopts a deterministic browser renderer.\n\n## Risks / Trade-offs\n\n- [The full Mermaid bundle materially increases installed dependency and per-workspace size] → Keep installation explicit through `iris vendor`, pin the version, copy one minified browser file plus its license, and document the size.\n- [Mermaid is a large untrusted-input parser with its own security history] → Pin exact versions, use strict mode and secure bounds, disable interactions/HTML labels, retain source fallback, and include dependency/security review in upgrades.\n- [Theme changes after rendering do not recolor an existing SVG] → Use a neutral, surface-compatible first implementation and retain accessible source; theme-aware rerendering can be a later independently specified enhancement.\n- [A missing vendor file produces a local resource load error] → The base script detects the absent global, keeps all fallbacks visible, and reports a concise local status in each figure.\n- [Standalone artifacts do not include rendered SVG] → Preserve the escaped source honestly; do not embed a multi-megabyte runtime or claim visual standalone diagrams without snapshot evidence.\n\n## Migration Plan\n\n1. Add the pinned dependency and the idempotent local vendor command.\n2. Extend safe Markdown output, styles, base script initialization, templates, and standalone stripping.\n3. Add unit, CLI, HTML integrity, malicious-input, multiple-diagram, offline, and packaging tests.\n4. Update authoring/technical documentation, run `iris vendor`, then regenerate checked-in Iris output with `iris render --all`.\n\nRollback removes the Mermaid fence override, vendor command implementation, script references, dependency, and generated vendor files; existing Markdown remains ordinary fenced code with no data migration.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Extend the existing Markdown renderer at the fence rule",
+            "Use a pinned runtime dependency and explicit offline vendoring",
+            "Initialize once, then render one node at a time",
+            "Treat contract fields and OpenSpec artifacts as one Markdown surface",
+            "Keep standalone publishing source-safe",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/render-mermaid-diagrams/tasks.md",
+          "title": "1. Offline Runtime",
+          "raw": "## 1. Offline Runtime\n\n- [x] 1.1 Add and lock the pinned Mermaid production dependency, including its runtime rationale.\n- [x] 1.2 Implement idempotent `iris vendor` copying of the classic browser bundle and upstream license with actionable precondition and asset errors.\n- [x] 1.3 Add CLI, package, and offline asset tests for successful vendoring, refresh, missing workspace, and installed artifact contents.\n\n## 2. Markdown and Browser Rendering\n\n- [x] 2.1 Extend the safe Markdown renderer so exact Mermaid fences emit escaped, accessible diagram hosts while other fences remain literal code.\n- [x] 2.2 Use the safe Markdown renderer for contract Markdown fields and load only relative classic Mermaid assets from generated HTML.\n- [x] 2.3 Add isolated Mermaid initialization, strict security and complexity configuration, success accessibility, missing-runtime fallback, and per-diagram error handling to the shared base script.\n- [x] 2.4 Add responsive, theme-compatible, print-safe diagram and fallback styles without page-level overflow.\n- [x] 2.5 Keep standalone publish/export artifacts self-contained by removing the local runtime reference and retaining diagram source fallback.\n\n## 3. Verification and Documentation\n\n- [x] 3.1 Add renderer, OpenSpec dashboard, hostile-input, multiple-diagram, invalid-diagram, accessibility, offline, and HTML-integrity coverage.\n- [x] 3.2 Update README, command, technical, design-system, status, and dependency documentation for the implemented authoring and fallback contract.\n- [x] 3.3 Validate the OpenSpec change strictly and run focused tests followed by the repository release checks.\n- [x] 3.4 Vendor Mermaid locally, regenerate managed Iris output, and verify generated HTML and assets without modifying unrelated user-owned files.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Offline Runtime",
+            "2. Markdown and Browser Rendering",
+            "3. Verification and Documentation"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 12,
+            "open": 0,
+            "total": 12
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "markdown-diagram-rendering",
+          "path": "changes/render-mermaid-diagrams/specs/markdown-diagram-rendering/spec.md",
+          "document": {
+            "path": "changes/render-mermaid-diagrams/specs/markdown-diagram-rendering/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide safe, offline visual rendering for Mermaid fences in Iris Markdown while retaining readable source evidence whenever rendering is unavailable or invalid.\n\n## ADDED Requirements\n\n### Requirement: explicit Mermaid fence rendering\n\nThe system SHALL recognize only fenced Markdown code blocks whose normalized language identifier is exactly `mermaid` as diagrams and SHALL leave every other fenced block as literal code.\n\n#### Scenario: Markdown contains a Mermaid fence\n\n- **WHEN** rendered Markdown contains a closed fenced block labeled `mermaid`\n- **THEN** the generated HTML SHALL contain a diagram host and the exact escaped diagram source as its fallback\n\n#### Scenario: another code fence resembles a diagram\n\n- **WHEN** rendered Markdown contains an unlabeled fence or a fence with another language identifier\n- **THEN** the generated HTML SHALL preserve it as literal code and SHALL NOT submit it to the diagram runtime\n\n### Requirement: offline progressive enhancement\n\nThe system MUST render Mermaid diagrams using only a pinned local classic-script asset and MUST keep the Markdown readable through `file://` with no server, runtime module, or network request.\n\n#### Scenario: local Mermaid asset is installed\n\n- **WHEN** a generated Iris page containing a valid Mermaid fence opens from `file://` and the vendored runtime exists\n- **THEN** the page SHALL replace the diagram host with an accessible inline SVG without requesting a remote resource\n\n#### Scenario: local Mermaid asset is absent or JavaScript is unavailable\n\n- **WHEN** a generated page cannot load or execute the local diagram runtime\n- **THEN** each diagram SHALL retain its readable escaped-source fallback and the rest of the Markdown SHALL remain usable\n\n### Requirement: isolated safe failure\n\nThe system MUST process each Mermaid fence independently under strict untrusted-content settings, MUST disable diagram click behavior and active HTML, and MUST preserve a diagram's escaped source when parsing or rendering that diagram fails.\n\n#### Scenario: one document contains valid and invalid diagrams\n\n- **WHEN** a Markdown document contains a valid Mermaid fence and a separate invalid Mermaid fence\n- **THEN** the valid diagram SHALL render, the invalid diagram SHALL show an actionable local error and its escaped source, and neither outcome SHALL hide the surrounding document\n\n#### Scenario: diagram source requests active behavior\n\n- **WHEN** Mermaid source includes HTML labels, click callbacks, links, scripts, or configuration intended to weaken the renderer\n- **THEN** the rendered page MUST keep active HTML and click behavior disabled and MUST NOT execute repository-authored JavaScript\n\n### Requirement: bounded and accessible diagram presentation\n\nThe system MUST give each diagram an accessible name, MUST bound accepted source and graph complexity, and MUST keep both rendered output and fallback source usable in light, dark, print, reduced-motion, and 360-pixel layouts.\n\n#### Scenario: diagram renders successfully\n\n- **WHEN** a Mermaid fence becomes an inline SVG\n- **THEN** the diagram SHALL expose a non-empty accessible label and fit its content region without forcing page-level horizontal overflow\n\n#### Scenario: diagram input exceeds a configured bound\n\n- **WHEN** Mermaid source or graph complexity exceeds the renderer's configured limit\n- **THEN** that diagram SHALL fail locally with its escaped source and an actionable error while other content remains available\n\n### Requirement: explicit local asset installation\n\nThe system SHALL provide an idempotent `iris vendor` operation that copies the pinned Mermaid browser bundle and upstream license from the installed Iris package into the workspace without fetching from the network.\n\n#### Scenario: user vendors diagram assets\n\n- **WHEN** a user runs `iris vendor` in an initialized Iris workspace\n- **THEN** the command SHALL install or refresh the exact pinned Mermaid runtime and license under `iris/design/vendor/` and report the installed version\n\n#### Scenario: user vendors before initialization\n\n- **WHEN** a user runs `iris vendor` without an initialized Iris workspace\n- **THEN** the command SHALL fail with an actionable instruction to run `iris init` and SHALL NOT create a partial workspace\n",
+            "format": "markdown",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: explicit Mermaid fence rendering",
+              "Scenario: Markdown contains a Mermaid fence",
+              "Scenario: another code fence resembles a diagram",
+              "Requirement: offline progressive enhancement",
+              "Scenario: local Mermaid asset is installed",
+              "Scenario: local Mermaid asset is absent or JavaScript is unavailable",
+              "Requirement: isolated safe failure",
+              "Scenario: one document contains valid and invalid diagrams",
+              "Scenario: diagram source requests active behavior",
+              "Requirement: bounded and accessible diagram presentation",
+              "Scenario: diagram renders successfully",
+              "Scenario: diagram input exceeds a configured bound",
+              "Requirement: explicit local asset installation",
+              "Scenario: user vendors diagram assets",
+              "Scenario: user vendors before initialization"
+            ],
+            "requirements": [
+              "explicit Mermaid fence rendering",
+              "offline progressive enhancement",
+              "isolated safe failure",
+              "bounded and accessible diagram presentation",
+              "explicit local asset installation"
+            ],
+            "scenarios": [
+              "Markdown contains a Mermaid fence",
+              "another code fence resembles a diagram",
+              "local Mermaid asset is installed",
+              "local Mermaid asset is absent or JavaScript is unavailable",
+              "one document contains valid and invalid diagrams",
+              "diagram source requests active behavior",
+              "diagram renders successfully",
+              "diagram input exceeds a configured bound",
+              "user vendors diagram assets",
+              "user vendors before initialization"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        },
+        {
+          "capability": "openspec-spec-browser",
+          "path": "changes/render-mermaid-diagrams/specs/openspec-spec-browser/spec.md",
+          "document": {
+            "path": "changes/render-mermaid-diagrams/specs/openspec-spec-browser/spec.md",
+            "title": "MODIFIED Requirements",
+            "raw": "## MODIFIED Requirements\n\n### Requirement: safe semantic Markdown presentation\n\nThe system MUST present Markdown OpenSpec documents as semantic HTML for reading, MUST progressively render fenced blocks labeled exactly `mermaid` as safe offline diagrams with escaped-source fallback, MUST keep the exact escaped document source available as a secondary disclosure, and MUST keep non-Markdown configuration artifacts in a literal code presentation.\n\n#### Scenario: supported Markdown structures are present\n\n- **WHEN** an OpenSpec Markdown artifact contains headings, paragraphs, emphasis, links, lists, task lists, blockquotes, tables, inline code, fenced code, or Mermaid fences\n- **THEN** the Spec view MUST render those structures with readable semantic markup, progressively enhance Mermaid fences when the local runtime is available, and preserve escaped fallback source rather than displaying Markdown punctuation as the primary presentation\n\n#### Scenario: user needs exact source evidence\n\n- **WHEN** a rendered Markdown artifact is displayed\n- **THEN** the user MUST be able to reveal the exact escaped source without leaving the dashboard\n\n#### Scenario: configuration artifact is displayed\n\n- **WHEN** the Spec view presents an OpenSpec YAML manifest or workspace configuration\n- **THEN** the artifact MUST remain escaped literal code and MUST NOT be interpreted as Markdown or submitted to the diagram runtime\n\n### Requirement: inert Markdown generation\n\nThe system MUST generate Markdown presentation without allowing repository content or Mermaid diagram source to inject active HTML, unsafe URL schemes, executable click behavior, runtime modules, or implicit network requests.\n\n#### Scenario: Markdown contains embedded HTML\n\n- **WHEN** an artifact contains an HTML element, event handler, script, iframe, style, or other executable-looking markup outside or inside a Mermaid fence\n- **THEN** the generated document MUST keep that input inert and MUST NOT add it as executable DOM content\n\n#### Scenario: Markdown contains an unsafe link\n\n- **WHEN** a Markdown link or Mermaid interaction uses an unsafe scheme such as `javascript:` or `data:`\n- **THEN** the generated document MUST not emit a navigable link or executable interaction for that destination\n\n#### Scenario: dashboard opens offline\n\n- **WHEN** a user opens the generated dashboard through `file://`\n- **THEN** rendered Markdown and diagram fallbacks MUST remain readable without loading a Markdown library, module, stylesheet, font, script, or other asset from the network\n",
+            "format": "markdown",
+            "headings": [
+              "MODIFIED Requirements",
+              "Requirement: safe semantic Markdown presentation",
+              "Scenario: supported Markdown structures are present",
+              "Scenario: user needs exact source evidence",
+              "Scenario: configuration artifact is displayed",
+              "Requirement: inert Markdown generation",
+              "Scenario: Markdown contains embedded HTML",
+              "Scenario: Markdown contains an unsafe link",
+              "Scenario: dashboard opens offline"
+            ],
+            "requirements": [
+              "safe semantic Markdown presentation",
+              "inert Markdown generation"
+            ],
+            "scenarios": [
+              "supported Markdown structures are present",
+              "user needs exact source evidence",
+              "configuration artifact is displayed",
+              "Markdown contains embedded HTML",
+              "Markdown contains an unsafe link",
+              "dashboard opens offline"
+            ],
+            "operations": [
+              "MODIFIED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
       "name": "standalone-publish-and-export",
       "path": "changes/standalone-publish-and-export",
       "lifecycle": "active",

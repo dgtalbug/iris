@@ -36,6 +36,13 @@ export const TOKENS_CSS = `:root {
   --warn-soft: #f0913e26;
   --danger-soft: #ef6a6a26;
   --info-soft: #5cb8f026;
+  --selected: #f2b24e1a;
+  --hover: #232936;
+  --backdrop: #05070bcc;
+  --priority-urgent: #ef6a6a;
+  --priority-high: #f0913e;
+  --priority-medium: #5cb8f0;
+  --priority-low: #a6adbf;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -98,6 +105,13 @@ export const TOKENS_CSS = `:root {
   --warn-soft: #95470818;
   --danger-soft: #b62b3218;
   --info-soft: #126b9b18;
+  --selected: #b87a1614;
+  --hover: #ecebe7;
+  --backdrop: #191d2666;
+  --priority-urgent: #b62b32;
+  --priority-high: #954708;
+  --priority-medium: #126b9b;
+  --priority-low: #4b5163;
   --elevation-1: 0 0.25rem 0.75rem #6b625629;
 }
 
@@ -180,11 +194,11 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .section-heading h2 { margin: 0; }
 .architecture-pane { min-height: 13rem; display: grid; place-items: center; padding: var(--space-5); }
 .architecture-pane .empty-state { max-width: 38rem; text-align: center; }
-.work-surface { display: grid; gap: var(--space-3); }
+.work-surface { display: grid; gap: var(--space-3); min-width: 0; }
 
 .primary-tabs { margin-bottom: var(--space-4); padding: var(--space-2); width: fit-content; }
 .dashboard-panel { min-width: 0; }
-.toolbar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-3); flex-wrap: wrap; }
 .tabs { display: flex; gap: var(--space-2); }
 .tab-button { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: var(--radius-1); padding: var(--space-2) var(--space-3); cursor: pointer; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
 .tab-button[aria-selected='true'] { color: var(--accent-text); background: var(--surface-3); border-color: var(--accent); }
@@ -193,11 +207,35 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .filter-input::placeholder { color: var(--text-2); }
 .kbd, kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; padding: var(--space-1) var(--space-2); border: var(--border-1); border-bottom-color: var(--text-2); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); }
 
-.list { display: grid; gap: var(--space-3); }
+.list { display: grid; gap: 0; overflow: hidden; }
 /* Class display values would otherwise defeat the hidden attribute. */
 [hidden] { display: none !important; }
-.page-card { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); padding: var(--space-4); text-decoration: none; color: inherit; transition: border-color var(--duration-1) var(--easing), background var(--duration-1) var(--easing), transform var(--duration-1) var(--easing); }
-.page-card:hover { border-color: var(--accent); background: var(--surface-2); transform: translateY(-1px); }
+.work-result-count { color: var(--text-2); }
+.work-list-row + .work-list-row { border-top: var(--border-1); }
+.work-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto auto auto; align-items: center; gap: var(--space-3); min-height: calc(var(--space-6) + var(--space-1)); padding: var(--space-2) var(--space-3); color: inherit; text-decoration: none; transition: background var(--duration-1) var(--easing), box-shadow var(--duration-1) var(--easing); }
+.work-row:hover, .work-row:focus-visible { background: var(--hover); box-shadow: inset var(--space-1) 0 var(--accent); }
+[data-work-selected] .work-row, .work-table tr[data-work-selected], .kanban-card[data-work-selected] { background: var(--selected); box-shadow: inset var(--space-1) 0 var(--accent); }
+.work-row-primary { min-width: 0; }
+.work-row-title { display: block; overflow: hidden; color: var(--text-1); font-weight: var(--weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.work-row-id, .work-meta { color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); }
+.work-row-id { display: block; overflow-wrap: anywhere; }
+.priority-chip { display: inline-flex; align-items: center; width: fit-content; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.08em; }
+.pr-urgent { color: var(--priority-urgent); }
+.pr-high { color: var(--priority-high); }
+.pr-medium { color: var(--priority-medium); }
+.pr-low { color: var(--priority-low); }
+.pr-unset { color: var(--text-2); }
+.work-table-wrap { min-width: 0; overflow: auto; }
+.work-table { width: 100%; border-collapse: collapse; font-size: var(--size-2); }
+.work-table th { position: sticky; top: 0; z-index: 1; padding: var(--space-2) var(--space-3); border-bottom: var(--border-1); background: var(--surface-2); color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); text-align: left; text-transform: uppercase; letter-spacing: 0.08em; }
+.work-table td { min-width: 0; padding: var(--space-2) var(--space-3); border-bottom: var(--border-1); color: var(--text-2); }
+.work-table tbody tr { transition: background var(--duration-1) var(--easing); }
+.work-table tbody tr:hover { background: var(--hover); }
+.work-table tbody tr:last-child td { border-bottom: 0; }
+.work-table-title { color: var(--text-1); font-weight: var(--weight-medium); text-decoration: none; }
+.work-table-title:hover { color: var(--accent-text); text-decoration: underline; }
+.work-title-cell { max-width: 28rem; }
+.work-title-cell a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-main { display: grid; gap: var(--space-1); min-width: 0; }
 .card-title { font-weight: var(--weight-medium); color: var(--text-1); }
 .card-id { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); overflow-wrap: anywhere; }
@@ -245,10 +283,34 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .health-warning { color: var(--warn); }
 .health-invalid { color: var(--danger); }
 
-.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-3); }
-.board-col { display: grid; gap: var(--space-3); align-content: start; }
-.board-col .eyebrow { padding: var(--space-2) var(--space-1) 0; }
-.board-empty { color: var(--text-2); font-size: var(--size-2); padding: var(--space-2) var(--space-1); }
+.kanban { display: grid; grid-template-columns: repeat(4, minmax(13rem, 1fr)); gap: var(--space-3); min-width: 0; overflow: auto; }
+.kanban-col { display: grid; align-content: start; gap: var(--space-2); min-width: 0; padding: var(--space-2); background: var(--surface-2); border: var(--border-1); border-radius: var(--radius-2); }
+.kanban-col-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1); }
+.kanban-card { display: grid; gap: var(--space-2); min-height: calc(var(--space-6) * 2); padding: var(--space-3); color: inherit; text-decoration: none; background: var(--surface-1); border: var(--border-1); border-radius: var(--radius-1); transition: border-color var(--duration-1) var(--easing), background var(--duration-1) var(--easing); }
+.kanban-card:hover, .kanban-card:focus-visible { border-color: var(--accent); background: var(--hover); }
+.kanban-card-head, .kanban-card-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.kanban-card-title { color: var(--text-1); font-weight: var(--weight-medium); line-height: var(--leading-tight); }
+.kanban-empty { color: var(--text-2); font-size: var(--size-2); padding: var(--space-3); }
+
+.drawer-open { overflow: hidden; }
+.work-drawer-shell { position: fixed; inset: 0; z-index: 20; display: grid; justify-items: end; }
+.work-drawer-backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: var(--backdrop); cursor: pointer; }
+.work-drawer { position: relative; z-index: 1; display: grid; grid-template-rows: auto minmax(0, 1fr); width: min(38rem, 52vw); height: 100%; background: var(--surface-1); border-left: var(--border-1); box-shadow: var(--elevation-1); animation: drawer-enter var(--duration-2) var(--easing) both; }
+.work-drawer-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: var(--border-1); }
+.work-drawer-body { display: grid; align-content: start; gap: var(--space-4); min-width: 0; padding: var(--space-4); overflow: auto; }
+.work-drawer-title { font-size: var(--size-4); overflow-wrap: anywhere; }
+.work-drawer-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; }
+.work-drawer-meta div { display: grid; gap: var(--space-1); padding-bottom: var(--space-2); border-bottom: var(--border-1); }
+.work-drawer-meta dt { color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.08em; }
+.work-drawer-meta dd { margin: 0; overflow-wrap: anywhere; }
+.work-drawer-section { display: grid; gap: var(--space-2); }
+.work-drawer-section h3 { margin: 0; font-size: var(--size-2); text-transform: uppercase; letter-spacing: 0.08em; }
+.work-drawer-section p { margin: 0; color: var(--text-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.work-drawer-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.button { display: inline-flex; align-items: center; justify-content: center; min-height: calc(var(--space-6) + var(--space-1)); padding: var(--space-2) var(--space-3); border: var(--border-1); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-1); font: inherit; font-size: var(--size-2); text-decoration: none; cursor: pointer; }
+.button:hover { border-color: var(--accent); background: var(--hover); }
+.button-primary { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.button-primary:hover { background: var(--accent); color: var(--accent-ink); }
 
 .project-strip { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); margin-top: var(--space-4); flex-wrap: wrap; }
 .project-links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
@@ -271,16 +333,25 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .metric-value { margin-top: var(--space-2); font-size: var(--size-4); font-weight: var(--weight-bold); }
 .table-wrap { overflow: auto; }
 .chart-wrap, .mermaid-wrap, .flow-wrap { min-height: 16rem; padding: var(--space-4); }
+.mermaid-figure { display: grid; gap: var(--space-3); min-width: 0; margin: var(--space-4) 0; padding: var(--space-4); border: var(--border-1); border-radius: var(--radius-2); background: var(--surface-2); overflow: hidden; }
+.mermaid-status { color: var(--text-2); font-size: var(--size-2); }
+.mermaid-host { display: none; min-width: 0; overflow: auto; color: var(--text-1); }
+.mermaid-host[data-render-state='measuring'], .mermaid-host[data-render-state='pending'], .mermaid-host[data-render-state='rendered'] { display: block; }
+.mermaid-host svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.mermaid-fallback { max-width: 100%; max-height: 24rem; margin: 0; overflow: auto; white-space: pre; background: var(--surface-1); }
+.mermaid-figure[data-render-state='rendered'] .mermaid-fallback { display: none; }
+.mermaid-figure[data-render-state='error'] { border-color: var(--danger); }
+.mermaid-figure[data-render-state='error'] .mermaid-status { color: var(--danger); }
 .callout { padding: var(--space-4); border-left: 0.25rem solid var(--info); }
 .callout.info { background: var(--info-soft); border-left-color: var(--info); }
 .callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
 .callout.danger { background: var(--danger-soft); border-left-color: var(--danger); }
 
 @keyframes aperture-open { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }
+@keyframes drawer-enter { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @media (prefers-reduced-motion: reduce) {
   .aperture .seg { animation: none; stroke-dashoffset: 0; }
-  .page-card, .stat-tile, .theme-toggle, .tab-button, .dashboard-panel { transition: none; }
-  .page-card:hover { transform: none; }
+  .work-row, .work-table tbody tr, .kanban-card, .work-drawer, .stat-tile, .theme-toggle, .tab-button, .dashboard-panel { animation: none; transition: none; }
 }
 @media (max-width: 40rem) {
   .page-shell { width: min(100% - calc(var(--space-3) * 2), 72rem); padding: var(--space-4) 0; }
@@ -293,16 +364,24 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .toolbar, .filter-wrap { align-items: stretch; }
   .filter-wrap { width: 100%; }
   .filter-input { min-width: 0; width: 100%; }
-  .board { grid-template-columns: 1fr; }
-  .page-card { grid-template-columns: auto minmax(0, 1fr); }
-  .page-card .type-chip, .page-card .status-chip { grid-column: 2; }
+  .work-row { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .work-row .work-updated, .work-row .work-agent { display: none; }
+  .work-row .priority-chip { grid-column: 2; }
+  .work-table .col-agent, .work-table .col-updated, .work-table .col-priority, .work-table .col-type { display: none; }
+  .work-title-cell { max-width: 12rem; }
+  .kanban { grid-template-columns: minmax(0, 1fr); overflow: visible; }
+  .work-drawer { width: 100%; border-left: 0; }
+  .work-drawer-meta { grid-template-columns: minmax(0, 1fr); }
+  .mermaid-figure { padding: var(--space-3); }
 }
 @media print {
-  .theme-toggle, .crumbs, .toolbar, .kbd { display: none !important; }
+  .theme-toggle, .crumbs, .toolbar, .kbd, .work-drawer-shell { display: none !important; }
   .page-shell { width: 100%; padding: 0; }
   .surface { box-shadow: none; break-inside: avoid; }
   a { color: inherit; text-decoration: underline; }
   .spec-document pre, .spec-document table, .spec-source { max-height: none; overflow: visible; }
+  .mermaid-host { display: none !important; }
+  .mermaid-fallback { display: block !important; max-height: none; overflow: visible; white-space: pre-wrap; }
 }
 `;
 
@@ -321,6 +400,7 @@ function setupTabs() {
       panels.forEach((panel) => {
         panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
       });
+      document.dispatchEvent(new CustomEvent('iris:visibilitychange'));
       if (moveFocus) button.focus();
     };
     buttons.forEach((button) => {
@@ -343,12 +423,20 @@ function setupTabs() {
 function setupFilter() {
   const input = document.querySelector('[data-filter-input]');
   if (!input) return;
-  input.addEventListener('input', () => {
+  const apply = () => {
     const query = input.value.trim().toLowerCase();
-    for (const card of document.querySelectorAll('[data-page-card]')) {
-      card.hidden = query !== '' && !card.textContent.toLowerCase().includes(query);
+    for (const item of document.querySelectorAll('[data-work-item]')) {
+      const searchable = item.getAttribute('data-work-search') || item.textContent || '';
+      item.hidden = query !== '' && !searchable.toLowerCase().includes(query);
     }
-  });
+    const visible = Array.from(document.querySelectorAll('[data-work-list-item]'))
+      .filter((item) => !item.hidden).length;
+    for (const count of document.querySelectorAll('[data-work-result-count]')) {
+      count.textContent = visible + (visible === 1 ? ' item' : ' items');
+    }
+  };
+  input.addEventListener('input', apply);
+  apply();
 }
 
 function setupKeyboardShortcuts() {
@@ -379,7 +467,8 @@ function setupKeyboardShortcuts() {
 function setupCardNavigation() {
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-    const cards = Array.from(document.querySelectorAll('[data-page-card]:not([hidden])'));
+    const cards = Array.from(document.querySelectorAll('[data-work-open]'))
+      .filter((card) => !card.closest('[hidden]'));
     const index = cards.indexOf(document.activeElement);
     if (index < 0) return;
     event.preventDefault();
@@ -387,6 +476,125 @@ function setupCardNavigation() {
     const next = cards[(index + offset + cards.length) % cards.length];
     if (next instanceof HTMLElement) next.focus();
   });
+}
+
+function setupWorkDrawer() {
+  const shell = document.querySelector('[data-work-drawer]');
+  const drawer = shell && shell.querySelector('[role="dialog"]');
+  const main = document.querySelector('[data-dashboard-main]');
+  if (!(shell instanceof HTMLElement) || !(drawer instanceof HTMLElement) || !(main instanceof HTMLElement)) return;
+
+  const closeButton = shell.querySelector('[data-work-drawer-close]');
+  const backdrop = shell.querySelector('[data-work-drawer-backdrop]');
+  const fullPage = shell.querySelector('[data-work-drawer-full-page]');
+  let lastOpener = null;
+
+  const slot = (name) => shell.querySelector('[data-work-drawer-' + name + ']');
+  const setText = (name, value) => {
+    const target = slot(name);
+    if (target) target.textContent = value || 'not set';
+  };
+  const itemForId = (id) => Array.from(document.querySelectorAll('[data-work-item]'))
+    .find((item) => item.getAttribute('data-work-id') === id);
+
+  const open = (opener, updateHash) => {
+    const item = opener.closest('[data-work-item]');
+    if (!(item instanceof HTMLElement)) return;
+    lastOpener = opener;
+    for (const selected of document.querySelectorAll('[data-work-selected]')) selected.removeAttribute('data-work-selected');
+    for (const match of document.querySelectorAll('[data-work-item]')) {
+      if (match.getAttribute('data-work-id') === item.dataset.workId) match.setAttribute('data-work-selected', '');
+    }
+    setText('id', item.dataset.workId);
+    setText('title', item.dataset.workTitle);
+    setText('type', item.dataset.workType);
+    setText('status', item.dataset.workStatus);
+    setText('priority', item.dataset.workPriority);
+    setText('updated', item.dataset.workUpdated);
+    setText('agent', item.dataset.workAgent);
+    setText('description', item.dataset.workDescription);
+    setText('evidence', item.dataset.workEvidence);
+    setText('tags', item.dataset.workTags || 'not set');
+    if (fullPage instanceof HTMLAnchorElement) fullPage.href = item.dataset.workHref || opener.href;
+    shell.hidden = false;
+    main.setAttribute('inert', '');
+    document.body.classList.add('drawer-open');
+    if (closeButton instanceof HTMLElement) closeButton.focus();
+    const id = item.dataset.workId || '';
+    const hash = '#work=' + encodeURIComponent(id);
+    if (updateHash && location.hash !== hash) history.pushState(null, '', hash);
+  };
+
+  const close = (restoreFocus, clearHash) => {
+    if (shell.hidden) return;
+    shell.hidden = true;
+    main.removeAttribute('inert');
+    document.body.classList.remove('drawer-open');
+    for (const selected of document.querySelectorAll('[data-work-selected]')) selected.removeAttribute('data-work-selected');
+    if (clearHash && location.hash.startsWith('#work=')) {
+      history.replaceState(null, '', location.href.split('#')[0]);
+    }
+    if (restoreFocus && lastOpener instanceof HTMLElement && document.contains(lastOpener)) lastOpener.focus();
+  };
+
+  for (const opener of document.querySelectorAll('[data-work-open]')) {
+    opener.addEventListener('click', (event) => {
+      event.preventDefault();
+      open(opener, true);
+    });
+    opener.addEventListener('keydown', (event) => {
+      if (event.key !== ' ') return;
+      event.preventDefault();
+      open(opener, true);
+    });
+  }
+
+  for (const row of document.querySelectorAll('[data-work-row]')) {
+    row.addEventListener('click', (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('a, button, input, select, textarea')) return;
+      const opener = row.querySelector('[data-work-open]');
+      if (opener instanceof HTMLElement) opener.click();
+    });
+  }
+
+  if (closeButton) closeButton.addEventListener('click', () => close(true, true));
+  if (backdrop) backdrop.addEventListener('click', () => close(true, true));
+  drawer.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close(true, true);
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = Array.from(drawer.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+      .filter((element) => !element.hasAttribute('hidden'));
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  const syncHash = () => {
+    if (!location.hash.startsWith('#work=')) {
+      close(true, false);
+      return;
+    }
+    let id = '';
+    try { id = decodeURIComponent(location.hash.slice(6)); } catch { return; }
+    const item = itemForId(id);
+    if (!(item instanceof HTMLElement)) return;
+    const opener = item.matches('[data-work-open]') ? item : item.querySelector('[data-work-open]');
+    if (opener instanceof HTMLElement) open(opener, false);
+  };
+  window.addEventListener('hashchange', syncHash);
+  syncHash();
 }
 
 function setupTheme() {
@@ -403,11 +611,77 @@ function setupTheme() {
   });
 }
 
+async function setupMermaid() {
+  const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
+  if (figures.length === 0) return;
+  if (!globalThis.mermaid || typeof globalThis.mermaid.initialize !== 'function') return;
+
+  globalThis.mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering', 'maxEdges', 'htmlLabels', 'flowchart'],
+    htmlLabels: false,
+    maxTextSize: 50000,
+    maxEdges: 500,
+    suppressErrorRendering: true,
+    theme: 'neutral',
+    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
+    flowchart: { htmlLabels: false, useMaxWidth: true },
+  });
+
+  async function renderFigure(figure) {
+    if (figure.hasAttribute('data-render-state')) return;
+    const host = figure.querySelector('[data-mermaid-host]');
+    const status = figure.querySelector('[data-mermaid-status]');
+    if (!(host instanceof HTMLElement) || !(status instanceof HTMLElement)) return;
+    host.setAttribute('data-render-state', 'measuring');
+    if (host.getClientRects().length === 0) {
+      host.removeAttribute('data-render-state');
+      return;
+    }
+    const source = host.textContent || '';
+    host.classList.add('mermaid');
+    host.setAttribute('data-render-state', 'pending');
+    figure.setAttribute('data-render-state', 'pending');
+    status.textContent = 'Rendering diagram…';
+    try {
+      if (source.length > 50000) throw new Error('diagram source exceeds 50000 characters');
+      await globalThis.mermaid.run({ nodes: [host], suppressErrors: true });
+      const svg = host.querySelector('svg');
+      if (!(svg instanceof SVGElement)) throw new Error('Mermaid did not produce an SVG');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', host.getAttribute('aria-label') || 'Mermaid diagram');
+      host.setAttribute('data-render-state', 'rendered');
+      figure.setAttribute('data-render-state', 'rendered');
+      status.textContent = 'Diagram rendered.';
+    } catch (error) {
+      host.textContent = source;
+      host.setAttribute('data-render-state', 'error');
+      figure.setAttribute('data-render-state', 'error');
+      status.textContent = 'Diagram could not be rendered. Escaped source is shown below.';
+    }
+  }
+
+  async function renderVisibleFigures() {
+    for (const figure of figures) await renderFigure(figure);
+  }
+
+  for (const details of document.querySelectorAll('details')) {
+    details.addEventListener('toggle', () => {
+      if (details.open) void renderVisibleFigures();
+    });
+  }
+  document.addEventListener('iris:visibilitychange', () => void renderVisibleFigures());
+  await renderVisibleFigures();
+}
+
 setupTabs();
 setupFilter();
 setupTheme();
 setupKeyboardShortcuts();
 setupCardNavigation();
+setupWorkDrawer();
+void setupMermaid();
 document.documentElement.setAttribute('data-iris-js', 'ready');
 `;
 
@@ -417,6 +691,12 @@ export type DashboardPage = {
   title: string;
   status: string;
   href: string;
+  updated: string;
+  agent: string;
+  tags: string[];
+  priority: string;
+  description: string;
+  evidence: string;
 };
 
 export const PROJECT_DOC_NAMES = [
@@ -455,35 +735,8 @@ function getStringList(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === 'string');
 }
 
-function linkifyEscaped(escaped: string): string {
-  return escaped.replace(
-    /https?:\/\/[^\s<]+/g,
-    (url) => `<a href="${url}" rel="noopener">${url}</a>`,
-  );
-}
-
 function markdownToHtml(value: string): string {
-  const blocks = value
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
-
-  if (blocks.length === 0) return '<p>Empty.</p>';
-
-  return blocks
-    .map((block) => {
-      const lines = block.split('\n').map((line) => line.trim());
-      if (lines.some((line) => /^[-*] /.test(line))) {
-        const items = lines
-          .filter((line) => /^[-*] /.test(line))
-          .map((line) => `<li>${linkifyEscaped(escapeHtml(line.replace(/^[-*]\s*/, '')))}</li>`)
-          .join('');
-        return `<ul>${items}</ul>`;
-      }
-
-      return `<p>${linkifyEscaped(escapeHtml(block)).replace(/\n/g, '<br />')}</p>`;
-    })
-    .join('');
+  return value.trim() === '' ? '<p>Empty.</p>' : renderSafeMarkdown(value);
 }
 
 function statusClass(status: string): string {
@@ -662,6 +915,7 @@ function renderPageShell({
    <title>${escapeHtml(title)} · iris</title>
    <link rel="stylesheet" href="../../design/tokens.css" />
    <link rel="stylesheet" href="../../design/components/base.css" />
+   <script defer src="../../design/vendor/mermaid.min.js"></script>
  </head>
  <body>
    <main class="page-shell">
@@ -849,26 +1103,77 @@ function apertureRing(pages: DashboardPage[]): string {
     </svg>`;
 }
 
-function dashboardCard(page: DashboardPage): string {
-  return `
-    <a class="surface page-card" data-page-card href="${escapeHtml(page.href)}">
-      ${apertureGlyph(page.type)}
-      <span class="type-chip ${typeClass(page.type)}">${escapeHtml(page.type)}</span>
-      <span class="card-main">
-        <span class="card-title">${escapeHtml(page.title)}</span>
-        <span class="card-id">${escapeHtml(page.id)}</span>
-      </span>
-      <span class="status-chip ${statusClass(page.status)}">${escapeHtml(page.status)}</span>
-    </a>
-  `;
+function priorityClass(priority: string): string {
+  return ['urgent', 'high', 'medium', 'low'].includes(priority) ? `pr-${priority}` : 'pr-unset';
 }
 
-function boardColumn(label: string, pages: DashboardPage[]): string {
+function workItemAttributes(page: DashboardPage): string {
+  const search = [
+    page.id,
+    page.type,
+    page.title,
+    page.status,
+    page.priority,
+    page.updated,
+    page.agent,
+    ...page.tags,
+  ].join(' ');
+  return [
+    'data-work-item',
+    `data-work-id="${escapeHtml(page.id)}"`,
+    `data-work-type="${escapeHtml(page.type)}"`,
+    `data-work-title="${escapeHtml(page.title)}"`,
+    `data-work-status="${escapeHtml(page.status)}"`,
+    `data-work-priority="${escapeHtml(page.priority)}"`,
+    `data-work-updated="${escapeHtml(page.updated)}"`,
+    `data-work-agent="${escapeHtml(page.agent)}"`,
+    `data-work-tags="${escapeHtml(page.tags.join(', '))}"`,
+    `data-work-description="${escapeHtml(page.description)}"`,
+    `data-work-evidence="${escapeHtml(page.evidence)}"`,
+    `data-work-href="${escapeHtml(page.href)}"`,
+    `data-work-search="${escapeHtml(search)}"`,
+  ].join(' ');
+}
+
+function workListItem(page: DashboardPage): string {
+  return `<article class="work-list-row" ${workItemAttributes(page)} data-work-list-item>
+    <a class="work-row" data-work-open href="${escapeHtml(page.href)}">
+      ${apertureGlyph(page.type)}
+      <span class="work-row-primary"><span class="work-row-title">${escapeHtml(page.title)}</span><span class="work-row-id">${escapeHtml(page.id)} · ${escapeHtml(page.type)}</span></span>
+      <span class="status-chip ${statusClass(page.status)}">${escapeHtml(page.status)}</span>
+      <span class="priority-chip ${priorityClass(page.priority)}">${escapeHtml(page.priority)}</span>
+      <span class="work-meta work-updated">${escapeHtml(page.updated)}</span>
+      <span class="work-meta work-agent">${escapeHtml(page.agent)}</span>
+    </a>
+  </article>`;
+}
+
+function workTableRow(page: DashboardPage): string {
+  return `<tr ${workItemAttributes(page)} data-work-row>
+    <td class="col-type"><span class="type-chip ${typeClass(page.type)}">${escapeHtml(page.type)}</span></td>
+    <td class="mono">${escapeHtml(page.id)}</td>
+    <td class="work-title-cell"><a class="work-table-title" data-work-open href="${escapeHtml(page.href)}">${escapeHtml(page.title)}</a></td>
+    <td><span class="status-chip ${statusClass(page.status)}">${escapeHtml(page.status)}</span></td>
+    <td class="col-priority"><span class="priority-chip ${priorityClass(page.priority)}">${escapeHtml(page.priority)}</span></td>
+    <td class="col-updated mono">${escapeHtml(page.updated)}</td>
+    <td class="col-agent mono">${escapeHtml(page.agent)}</td>
+  </tr>`;
+}
+
+function kanbanCard(page: DashboardPage): string {
+  return `<a class="kanban-card" ${workItemAttributes(page)} data-work-open href="${escapeHtml(page.href)}">
+    <span class="kanban-card-head"><span class="mono">${escapeHtml(page.id)}</span><span class="type-chip ${typeClass(page.type)}">${escapeHtml(page.type)}</span></span>
+    <span class="kanban-card-title">${escapeHtml(page.title)}</span>
+    <span class="kanban-card-foot"><span class="priority-chip ${priorityClass(page.priority)}">${escapeHtml(page.priority)}</span><span class="work-meta">${escapeHtml(page.updated)}</span></span>
+  </a>`;
+}
+
+function kanbanColumn(label: string, pages: DashboardPage[]): string {
   const cards =
     pages.length === 0
-      ? '<p class="board-empty">Nothing here yet. Create work with <code>iris bug my-first-bug</code>.</p>'
-      : pages.map((page) => dashboardCard(page)).join('');
-  return `<div class="board-col"><span class="eyebrow">${escapeHtml(label)}</span>${cards}</div>`;
+      ? '<p class="kanban-empty">No items</p>'
+      : pages.map((page) => kanbanCard(page)).join('');
+  return `<section class="kanban-col" aria-label="${escapeHtml(label)} work"><header class="kanban-col-header"><span class="eyebrow">${escapeHtml(label)}</span><span class="pill">${pages.length}</span></header>${cards}</section>`;
 }
 
 function summaryLine(pages: DashboardPage[]): string {
@@ -877,15 +1182,20 @@ function summaryLine(pages: DashboardPage[]): string {
 }
 
 function sourceDetails(label: string, document?: OpenSpecSourceDocument): string {
-  if (!document) return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
+  if (!document)
+    return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
   const operations = document.operations
     .map((operation) => `<span class="pill">${escapeHtml(operation)}</span>`)
     .join('');
   const summary = [
     document.requirements.length > 0 ? `${document.requirements.length} requirements` : '',
     document.scenarios.length > 0 ? `${document.scenarios.length} scenarios` : '',
-  ].filter(Boolean).join(' · ');
-  const isMarkdown = document.format ? document.format === 'markdown' : document.path.endsWith('.md');
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const isMarkdown = document.format
+    ? document.format === 'markdown'
+    : document.path.endsWith('.md');
   const body = isMarkdown
     ? `<div class="spec-document">${renderSafeMarkdown(document.raw)}</div>
       <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>`
@@ -916,7 +1226,9 @@ function capabilityCard(capability: OpenSpecCapability, label: string): string {
 
 function changeCard(change: OpenSpecChange): string {
   const tasks = change.artifacts.tasks?.progress;
-  const progress = tasks ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open` : 'tasks unavailable';
+  const progress = tasks
+    ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open`
+    : 'tasks unavailable';
   return `<article class="surface spec-card">
     <div class="spec-card-header">
       <div><span class="eyebrow">${escapeHtml(change.lifecycle)} · structured</span><h3>${escapeHtml(change.name)}</h3></div>
@@ -953,7 +1265,8 @@ function specView(snapshot: OpenSpecSnapshot): string {
     }),
     { complete: 0, open: 0 },
   );
-  const supportedCount = snapshot.canonical_specs.length + changes.length + snapshot.legacy_archives.length;
+  const supportedCount =
+    snapshot.canonical_specs.length + changes.length + snapshot.legacy_archives.length;
   const emptyState = !snapshot.detected
     ? '<article class="surface empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
     : supportedCount === 0
@@ -1011,26 +1324,29 @@ export function dashboardHtml(
 ): string {
   const activeCount = pages.filter((page) => !['done', 'archived'].includes(page.status)).length;
   const archivedCount = pages.filter((page) => page.status === 'archived').length;
-  const briefing = 'Agent-first workspace ready. Create intentional visual content with the installed Iris skill and explicit content commands.';
+  const briefing =
+    'Agent-first workspace ready. Create intentional visual content with the installed Iris skill and explicit content commands.';
   const listCards =
     pages.length === 0
       ? `<article class="surface empty-state"><h2>No pages yet</h2><p>Create one with <code>iris bug my-first-bug</code>, then run <code>iris render --all</code>.</p></article>`
-      : pages.map((page) => dashboardCard(page)).join('');
+      : pages.map((page) => workListItem(page)).join('');
+
+  const tableRows = pages.map((page) => workTableRow(page)).join('');
 
   const columns = [
-    boardColumn(
+    kanbanColumn(
       'Draft',
       pages.filter((page) => page.status === 'draft'),
     ),
-    boardColumn(
+    kanbanColumn(
       'Active',
       pages.filter((page) => !['draft', 'done', 'archived'].includes(page.status)),
     ),
-    boardColumn(
+    kanbanColumn(
       'Done',
       pages.filter((page) => page.status === 'done'),
     ),
-    boardColumn(
+    kanbanColumn(
       'Archived',
       pages.filter((page) => page.status === 'archived'),
     ),
@@ -1058,7 +1374,7 @@ export function dashboardHtml(
     <link rel="stylesheet" href="./design/components/base.css" />
   </head>
   <body>
-    <main class="page-shell">
+    <main class="page-shell" data-dashboard-main>
       <header class="header">
         <div class="topbar">
           <span class="eyebrow">◔ iris · ${escapeHtml(projectName)}</span>
@@ -1092,7 +1408,7 @@ export function dashboardHtml(
         <section aria-labelledby="architecture-title">
           <div class="section-heading"><div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div><span class="pill">HLD</span></div>
           <div class="surface architecture-pane">
-            <div class="empty-state"><h2>Architecture view is waiting for its renderer</h2><p>Run <code>iris vendor</code>, then <code>iris render --all</code> when the later diagram change lands. Until then, <a href="./project/hld.html">open the HLD page</a>.</p></div>
+            <div class="empty-state"><h2>No architecture diagram is projected here yet</h2><p>Mermaid fences render inside Markdown after <code>iris vendor</code>. Automatic HLD projection into this pane remains separate work; <a href="./project/hld.html">open the HLD page</a>.</p></div>
           </div>
         </section>
 
@@ -1101,16 +1417,25 @@ export function dashboardHtml(
           <div class="surface toolbar">
             <div class="tabs" role="tablist" aria-label="work layout" data-tabs="work-layout">
               <button id="work-layout-tab-list" role="tab" class="tab-button" aria-controls="work-layout-panel-list" aria-selected="true" tabindex="0" data-tab-id="list">List</button>
-              <button id="work-layout-tab-board" role="tab" class="tab-button" aria-controls="work-layout-panel-board" aria-selected="false" tabindex="-1" data-tab-id="board">Board</button>
+              <button id="work-layout-tab-table" role="tab" class="tab-button" aria-controls="work-layout-panel-table" aria-selected="false" tabindex="-1" data-tab-id="table">Table</button>
+              <button id="work-layout-tab-kanban" role="tab" class="tab-button" aria-controls="work-layout-panel-kanban" aria-selected="false" tabindex="-1" data-tab-id="kanban">Kanban</button>
             </div>
-            <label class="filter-wrap"><span class="eyebrow">filter</span><input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" /><kbd>/</kbd></label>
+            <label class="filter-wrap"><span class="work-result-count mono" data-work-result-count>${pages.length} ${pages.length === 1 ? 'item' : 'items'}</span><input class="filter-input" type="search" data-filter-input placeholder="Filter work…" aria-label="Filter work" /><kbd>/</kbd></label>
           </div>
 
-          <section id="work-layout-panel-list" class="list" role="tabpanel" aria-labelledby="work-layout-tab-list" data-tab-group="work-layout" data-tab-id="list" data-dashboard-list>
+          <section id="work-layout-panel-list" class="surface list" role="tabpanel" aria-labelledby="work-layout-tab-list" data-tab-group="work-layout" data-tab-id="list" data-dashboard-list>
             ${listCards}
           </section>
 
-          <section id="work-layout-panel-board" class="board" role="tabpanel" aria-labelledby="work-layout-tab-board" data-tab-group="work-layout" data-tab-id="board" data-dashboard-board hidden>
+          <section id="work-layout-panel-table" class="surface work-table-wrap" role="tabpanel" aria-labelledby="work-layout-tab-table" data-tab-group="work-layout" data-tab-id="table" data-dashboard-table hidden>
+            <table class="work-table">
+              <thead><tr><th class="col-type" scope="col">Type</th><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Status</th><th class="col-priority" scope="col">Priority</th><th class="col-updated" scope="col">Updated</th><th class="col-agent" scope="col">Agent</th></tr></thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+            ${pages.length === 0 ? '<div class="empty-state">No items to show.</div>' : ''}
+          </section>
+
+          <section id="work-layout-panel-kanban" class="kanban" role="tabpanel" aria-labelledby="work-layout-tab-kanban" data-tab-group="work-layout" data-tab-id="kanban" data-dashboard-kanban hidden>
             ${columns}
           </section>
         </section>
@@ -1127,6 +1452,29 @@ export function dashboardHtml(
       </section>
       <footer class="footer"><span>generated by iris · works offline from file://</span><span><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>↑</kbd><kbd>↓</kbd> move</span></footer>
     </main>
+    <div class="work-drawer-shell" data-work-drawer hidden>
+      <button class="work-drawer-backdrop" type="button" data-work-drawer-backdrop aria-label="Close work details"></button>
+      <aside class="work-drawer" role="dialog" aria-modal="true" aria-labelledby="work-drawer-title" aria-describedby="work-drawer-description" tabindex="-1">
+        <header class="work-drawer-header">
+          <div><span class="eyebrow" data-work-drawer-type>type</span><span class="mono" data-work-drawer-id>id</span></div>
+          <button class="button" type="button" data-work-drawer-close>Close</button>
+        </header>
+        <div class="work-drawer-body">
+          <h2 class="work-drawer-title" id="work-drawer-title" data-work-drawer-title>Work details</h2>
+          <dl class="work-drawer-meta">
+            <div><dt>Status</dt><dd data-work-drawer-status>not set</dd></div>
+            <div><dt>Priority</dt><dd data-work-drawer-priority>not set</dd></div>
+            <div><dt>Updated</dt><dd data-work-drawer-updated>not set</dd></div>
+            <div><dt>Agent</dt><dd data-work-drawer-agent>not set</dd></div>
+          </dl>
+          <section class="work-drawer-section"><h3>Description</h3><p id="work-drawer-description" data-work-drawer-description>No description provided.</p></section>
+          <section class="work-drawer-section"><h3>Evidence</h3><p data-work-drawer-evidence>No evidence summary available.</p></section>
+          <section class="work-drawer-section"><h3>Tags</h3><p data-work-drawer-tags>not set</p></section>
+          <div class="work-drawer-actions"><a class="button button-primary" data-work-drawer-full-page href="./index.html">Open full page</a></div>
+        </div>
+      </aside>
+    </div>
+    <script defer src="./design/vendor/mermaid.min.js"></script>
     <script defer src="./design/components/base.js"></script>
   </body>
 </html>`.replace(/[ \t]+$/gm, '');

@@ -10,13 +10,13 @@ A newcomer runs `iris` in any repo, opens one HTML file, and understands the rep
 
 ### 2.1 Competitive landscape
 
-| Tool | Model | What their UI does well | What iris does that they can't |
-| --- | --- | --- | --- |
-| DeepWiki | Hosted, auto-generated wiki per public repo | Zero-effort structural draft, conversational Q&A | Works offline, private, deterministic, versioned with the repo |
-| Mintlify | Docs-as-code SaaS, MDX in Git | Polished reading experience, docs merge with code | No server, no account, no build pipeline |
-| Backstage TechDocs | Self-hosted portal, Markdown → central hub | Single pane for a whole org | Zero infrastructure; per-repo, file:// only |
-| GitBook / Docusaurus / Starlight | Doc sites | Beautiful typography, strong IA | No site build; agents write JSON contracts, not prose |
-| Swimm | IDE-coupled doc monitoring | Docs validated against code changes | Explicit agent-authored contracts and rendering with no plugin or background watcher |
+| Tool                             | Model                                       | What their UI does well                           | What iris does that they can't                                                       |
+| -------------------------------- | ------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| DeepWiki                         | Hosted, auto-generated wiki per public repo | Zero-effort structural draft, conversational Q&A  | Works offline, private, deterministic, versioned with the repo                       |
+| Mintlify                         | Docs-as-code SaaS, MDX in Git               | Polished reading experience, docs merge with code | No server, no account, no build pipeline                                             |
+| Backstage TechDocs               | Self-hosted portal, Markdown → central hub  | Single pane for a whole org                       | Zero infrastructure; per-repo, file:// only                                          |
+| GitBook / Docusaurus / Starlight | Doc sites                                   | Beautiful typography, strong IA                   | No site build; agents write JSON contracts, not prose                                |
+| Swimm                            | IDE-coupled doc monitoring                  | Docs validated against code changes               | Explicit agent-authored contracts and rendering with no plugin or background watcher |
 
 The gap iris occupies: **local-first, agent-writable, zero-infrastructure visual docs**. Nobody else renders straight from disk with no server. The UI must make that feel like a feature (instant, private, portable) rather than a limitation (plain, static).
 
@@ -31,11 +31,11 @@ Sources: [Muzli dashboard examples 2026](https://muz.li/blog/best-dashboard-desi
 
 ### 2.3 What this means for iris
 
-The current UI is not ugly because of its colors; it is generic because nothing about it is *about* iris, and the dashboard leads with an empty list instead of answers. The redesign gives iris an identity rooted in its own name and reorganizes the dashboard around the newcomer's first sixty seconds.
+The current UI is not ugly because of its colors; it is generic because nothing about it is _about_ iris, and the dashboard leads with an empty list instead of answers. The redesign gives iris an identity rooted in its own name and reorganizes the dashboard around the newcomer's first sixty seconds.
 
 ## 3. Identity concept: the optical instrument
 
-*iris* is the aperture of an eye — the mechanism that admits exactly enough light to see — and, in Greek myth, the messenger who carries the spectrum. Both readings are load-bearing:
+_iris_ is the aperture of an eye — the mechanism that admits exactly enough light to see — and, in Greek myth, the messenger who carries the spectrum. Both readings are load-bearing:
 
 - **The chamber.** The interface is a dark instrument body: near-black, matte, quiet. Content panels are ground-glass viewing surfaces. Nothing in the chrome competes with the content.
 - **The spectrum is meaning.** Color appears only where it encodes something: page type, status, chart series. The chrome itself stays monochrome plus one accent. If a color can be removed without losing information, it is removed.
@@ -49,18 +49,18 @@ All values live in `tokens.css`; `token-lint` continues to forbid literals elsew
 
 ### 4.1 Color — dark (default)
 
-| Token | Value | Role |
-| --- | --- | --- |
-| `--bg` | `#0B0E14` | chamber — page ground |
-| `--surface-1` | `#12161F` | ground glass — cards, panels |
-| `--surface-2` | `#1A1F2B` | raised — headers within cards, inputs |
-| `--surface-3` | `#232936` | top elevation — menus, hover |
-| `--line-1` | `#252B39` | hairline borders |
-| `--text-1` | `#E9EBF1` | primary text |
-| `--text-2` | `#A6ADBF` | secondary text |
-| `--text-3` | `#6E7689` | captions, disabled |
-| `--accent` | `#F2B24E` | lamplight amber — interactive chrome only (links, focus, active tab, primary button) |
-| `--accent-ink` | `#141008` | text on accent |
+| Token          | Value     | Role                                                                                 |
+| -------------- | --------- | ------------------------------------------------------------------------------------ |
+| `--bg`         | `#0B0E14` | chamber — page ground                                                                |
+| `--surface-1`  | `#12161F` | ground glass — cards, panels                                                         |
+| `--surface-2`  | `#1A1F2B` | raised — headers within cards, inputs                                                |
+| `--surface-3`  | `#232936` | top elevation — menus, hover                                                         |
+| `--line-1`     | `#252B39` | hairline borders                                                                     |
+| `--text-1`     | `#E9EBF1` | primary text                                                                         |
+| `--text-2`     | `#A6ADBF` | secondary text                                                                       |
+| `--text-3`     | `#6E7689` | captions, disabled                                                                   |
+| `--accent`     | `#F2B24E` | lamplight amber — interactive chrome only (links, focus, active tab, primary button) |
+| `--accent-ink` | `#141008` | text on accent                                                                       |
 
 Amber stays as the single interactive accent deliberately: dev-tool dark UIs are saturated with blue and green accents; warm light against a cool-black chamber is both rarer and true to the optics metaphor (light entering the aperture).
 
@@ -68,13 +68,13 @@ Amber stays as the single interactive accent deliberately: dev-tool dark UIs are
 
 Used exclusively for page types, statuses, and chart series. Never for decoration, never in chrome.
 
-| Token | Value | Encodes |
-| --- | --- | --- |
-| `--type-report` | `#5CB8F0` | report pages / series 1 |
-| `--type-feature` | `#4FC98C` | feature pages / series 2 |
-| `--type-bug` | `#EF6A6A` | bug pages / series 3 |
-| `--type-idea` | `#A78BFA` | idea pages / series 4 |
-| `--type-plan` | `#F2B24E` | plan pages / series 5 |
+| Token                                     | Value                                         | Encodes                               |
+| ----------------------------------------- | --------------------------------------------- | ------------------------------------- |
+| `--type-report`                           | `#5CB8F0`                                     | report pages / series 1               |
+| `--type-feature`                          | `#4FC98C`                                     | feature pages / series 2              |
+| `--type-bug`                              | `#EF6A6A`                                     | bug pages / series 3                  |
+| `--type-idea`                             | `#A78BFA`                                     | idea pages / series 4                 |
+| `--type-plan`                             | `#F2B24E`                                     | plan pages / series 5                 |
 | `--ok` / `--warn` / `--danger` / `--info` | `#4FC98C` / `#F0913E` / `#EF6A6A` / `#5CB8F0` | statuses, warnings, and render errors |
 
 Rule: a type color always appears with a second channel (label, icon, or position) — color is never the only signal (color-blind safety).
@@ -123,9 +123,9 @@ The dashboard uses peer Work and `Spec` top-level tabs. Work leads with answers 
 │  │              (mermaid flowchart)                   │  │  (vendored)
 │  └────────────────────────────────────────────────────┘  │
 ├──────────────────────────────────────────────────────────┤
-│  WORK   [List | Board]                 filter…           │
-│  ◔ bug-cache-stampede   bug    active  2026-08-19        │  work surface
-│  ◔ session-review       report ok     2026-08-18        │
+│  WORK   [List | Table | Kanban]        filter…           │
+│  ◔ bug-cache-stampede  active  urgent  2026-08-19       │  work surface
+│  ◔ session-review      done    not set 2026-08-18       │
 ├──────────────────────────────────────────────────────────┤
 │  project docs: overview · hld · lld · erd · commands …   │  docs strip
 │  generated by iris · works offline from file://          │
@@ -143,8 +143,18 @@ Canonical, active, structured archive, legacy archive, incomplete, and invalid s
 - **Briefing hero** is the "one shot": agent-first workspace guidance plus explicit content/render commands. The empty state points to an intentional page command and `iris render --all`; general repository documentation is not ingested.
 - **Health strip**: four stat tiles maximum. Numbers in display face; each tile links to its filtered view.
 - **Architecture pane** renders the HLD page's diagram inline when it exists; otherwise a one-line empty state.
-- **Work surface** keeps today's List/Board tabs and filter; cards gain the type-colored aperture glyph, status pill, and relative date.
+- **Work surface** provides peer List, Table, and Kanban tabs over one contract projection and one filter. Compact rows and cards show type, ID, title, status, priority, date, and agent when the contract supports them; unsupported values say `not set`.
+- **Detail drawer** opens from any work representation without discarding the current view. It exposes the bounded description/evidence projection, retains an explicit full-page link, supports hash reopening, and behaves as a modal dialog with focus containment and return.
 - Keyboard: `/` focuses filter, `t` toggles theme, arrow keys move the list. Focus rings use `--accent`.
+
+### 5.1 Jira-inspired Work research
+
+The Work redesign borrows information-density and context-preserving interaction principles, not Atlassian branding, fonts, icons, or exact styling:
+
+- Jira's list view prioritizes type, key, summary, priority, created/updated, status, and assignee fields for scanning ([Atlassian: list view](https://support.atlassian.com/jira-software-cloud/docs/what-is-the-list-view/)). Iris maps only fields backed by its contracts.
+- Jira boards organize work by status columns, while configurable compact card fields help busy backlogs remain legible ([Atlassian: boards](https://support.atlassian.com/jira-software-cloud/docs/what-is-a-jira-software-board/), [Atlassian: board and backlog view](https://support.atlassian.com/jira-software-cloud/docs/customize-your-view-of-the-board-and-backlog/)). Iris keeps its four real statuses and deliberately omits drag-and-drop.
+- Jira's side panel preserves list context and provides close, keyboard, and full-page paths ([Atlassian: side panel](https://support.atlassian.com/jira-software-cloud/docs/view-content-in-a-side-panel/)). Iris implements one reusable offline drawer with stronger explicit focus and hash behavior.
+- Aperture retains its own tokens and identity; Atlassian's guidance is used only as a density and interaction reference ([Atlassian Design System: typography](https://atlassian.design/foundations/typography/applying-typography/), [design tokens](https://atlassian.design/foundations/tokens/design-tokens/)).
 
 Page templates keep the same anatomy: identity bar (back to dashboard) → page header with aperture glyph, id, type, status, dates → typed section slots → evidence/footer. Published artifacts drop the identity bar (existing `data-iris-nav` stripping).
 
@@ -152,35 +162,36 @@ Page templates keep the same anatomy: identity bar (back to dashboard) → page 
 
 Tokens-only styling, one class per component, no utility soup — `base.css` stays small and auditable.
 
-| Component | Notes |
-| --- | --- |
-| `aperture` | ring (dashboard) and glyph (cards/pages); SVG, segments driven by rendered data |
-| `stat-tile` | display-face number, caption label, optional delta arrow, links to filtered view |
-| `card` | surface-1, hover raises to surface-2, aperture glyph + title + meta row |
-| `pill` | status/type badge; spectrum background at 15% alpha, full-strength text |
-| `tabs`, `filter-input`, `theme-toggle` | keep current behavior, restyle to tokens |
-| `board-col` | column header shows count; drag is out of scope (static render) |
-| `diagram` | mermaid host block with code fallback (§7) |
-| `chart` | CLI-generated inline SVG (§7); legend uses spectrum tokens |
-| `timeline` | vertical, for report/session evidence (checkpoints, tool activity) |
-| `code` | mono, surface-2, copy affordance; language label eyebrow |
-| `callout` | info/warn/danger left-rule variants |
-| `table` | hairline rows, sticky header, right-aligned numerics in mono |
-| `empty-state` | always states the exact command that fills it |
-| `kbd` | keyboard hints in footer/filter |
+| Component                              | Notes                                                                            |
+| -------------------------------------- | -------------------------------------------------------------------------------- |
+| `aperture`                             | ring (dashboard) and glyph (cards/pages); SVG, segments driven by rendered data  |
+| `stat-tile`                            | display-face number, caption label, optional delta arrow, links to filtered view |
+| `work-row` / `work-table` / `kanban`   | three compact peer representations over one honest Work projection               |
+| `work-drawer`                          | modal right-side preview, full-screen at 360 px, with full-page escape hatch     |
+| `pill`                                 | status/type badge; spectrum background at 15% alpha, full-strength text          |
+| `tabs`, `filter-input`, `theme-toggle` | keep current behavior, restyle to tokens                                         |
+| `kanban-col`                           | four real status columns with counts; drag remains out of scope                  |
+| `diagram`                              | mermaid host block with code fallback (§7)                                       |
+| `chart`                                | CLI-generated inline SVG (§7); legend uses spectrum tokens                       |
+| `timeline`                             | vertical, for report/session evidence (checkpoints, tool activity)               |
+| `code`                                 | mono, surface-2, copy affordance; language label eyebrow                         |
+| `callout`                              | info/warn/danger left-rule variants                                              |
+| `table`                                | hairline rows, sticky header, right-aligned numerics in mono                     |
+| `empty-state`                          | always states the exact command that fills it                                    |
+| `kbd`                                  | keyboard hints in footer/filter                                                  |
 
 ## 7. Library policy — mermaid, React Flow, charts (the direct answer)
 
 Hard constraints these decisions obey: deterministic render, works from `file://`, no network at view time, no build step, classic (non-module) scripts, publish artifacts must stand alone.
 
-| Ask | Verdict | How |
-| --- | --- | --- |
-| **Mermaid** | **Yes — adopt.** | Vendor the standalone `mermaid.min.js` (~2.8 MB, works from file:// as a classic script) into `design/vendor/` via the `iris vendor` command (already spec'd, currently stubbed). Diagram blocks store mermaid source in the contract; the page initializes mermaid with theme variables mapped from tokens. Covers flowcharts (HLD/LLD), sequence, state, and ER — replacing hand-built diagram markup for the project pages. Fallback when vendor assets are absent: render the source in a `code` block with a "run `iris vendor`" callout. |
-| **React Flow** | **No — rejected.** | It is a React library: requires the React runtime, a bundler, and client-side state. That breaks the zero-build, framework-free, deterministic model (same grounds Reaviz was rejected on in `docs/tech.md`). If an interactive draggable node graph is ever genuinely needed, the framework-free path is vendored Cytoscape.js (~400 KB UMD) — but mermaid flowcharts cover the actual v1 use cases. |
-| **Charts** | **Yes — CLI-generated SVG first.** | The chart block's primary renderer is deterministic inline SVG produced at `iris render` time from the contract data (bar, line, donut; spectrum tokens for series; `<title>` elements for accessibility). Zero runtime, works in published single-file artifacts, diffs cleanly in git. A vendored uPlot (~50 KB) can layer tooltips/zoom onto the same data later as progressive enhancement — the SVG remains the no-JS fallback. This preserves the "Reaviz swap behind chart contract" backlog idea: the contract is the interface, renderers are swappable. |
-| **Animations** | **Yes — CSS only, meaning-bearing.** | Existing policy in `docs/tech.md` stands: animation only where it carries meaning, `prefers-reduced-motion` falls back to frame zero. Budget: the aperture opening sweep on dashboard load and 120 ms hover/focus transitions on cards, tabs, and pills. Nothing else. No scroll-triggered effects, no parallax, no JS animation libraries. |
+| Ask            | Verdict                              | How                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Mermaid**    | **Adopted for Markdown fences.**     | `iris vendor` copies the pinned 11.17.0 classic bundle (~3.4 MB) and license from the installed package into `design/vendor/` without network access. Exact `mermaid` fences emit source-first hosts; the browser renders each independently with strict security, HTML/click behavior disabled, explicit complexity bounds, accessible SVG labeling, and escaped fallback. Automatic HLD projection into the Architecture pane remains separate future work.                                                                                                     |
+| **React Flow** | **No — rejected.**                   | It is a React library: requires the React runtime, a bundler, and client-side state. That breaks the zero-build, framework-free, deterministic model (same grounds Reaviz was rejected on in `docs/tech.md`). If an interactive draggable node graph is ever genuinely needed, the framework-free path is vendored Cytoscape.js (~400 KB UMD) — but mermaid flowcharts cover the actual v1 use cases.                                                                                                                                                             |
+| **Charts**     | **Yes — CLI-generated SVG first.**   | The chart block's primary renderer is deterministic inline SVG produced at `iris render` time from the contract data (bar, line, donut; spectrum tokens for series; `<title>` elements for accessibility). Zero runtime, works in published single-file artifacts, diffs cleanly in git. A vendored uPlot (~50 KB) can layer tooltips/zoom onto the same data later as progressive enhancement — the SVG remains the no-JS fallback. This preserves the "Reaviz swap behind chart contract" backlog idea: the contract is the interface, renderers are swappable. |
+| **Animations** | **Yes — CSS only, meaning-bearing.** | Existing policy in `docs/tech.md` stands: animation only where it carries meaning, `prefers-reduced-motion` falls back to frame zero. Budget: the aperture opening sweep on dashboard load and 120 ms hover/focus transitions on cards, tabs, and pills. Nothing else. No scroll-triggered effects, no parallax, no JS animation libraries.                                                                                                                                                                                                                       |
 
-Publish/export note: `iris publish` output must stay self-contained. Charts are already inline SVG, so they survive. For diagram blocks, publish inlines the pre-rendered SVG snapshot if one was captured at render time, else the source in a code block — the 2.8 MB mermaid script is not embedded in shared artifacts.
+Publish/export note: `iris publish` output stays self-contained. It strips project scripts and retains Mermaid source fallback; Iris does not yet capture or claim a pre-rendered SVG snapshot, and the 3.4 MB runtime is not embedded in shared artifacts.
 
 ## 8. Motion, accessibility, and quality floor
 
@@ -196,14 +207,14 @@ Publish/export note: `iris publish` output must stay self-contained. Charts are 
 1. **Tokens 2.0** — replace `tokens.css` values with §4; extend `token-lint` for the new names + contrast check. Everything else keeps working.
 2. **Components 2.0** — restyle `base.css` to §6; add stat-tile, pill, callout, timeline, kbd. Update `src/templates/design.ts` markup accordingly; `html-check` guards links.
 3. **Dashboard IA** — reorder `index.html` template to §5 (briefing hero, health strip, work surface); use agent-first guidance rather than inferred repository-document content.
-4. **`iris vendor`** — implement the stubbed command: mermaid.min.js, Lucide sprite, tier-1 fonts, pinned versions + checksums from `src/cdn.ts`.
-5. **Diagram + chart blocks** — mermaid host block on project pages; CLI-side SVG chart renderer behind the chart contract.
+4. **`iris vendor` + Markdown Mermaid fences** — implemented for the pinned Mermaid runtime and license; font/icon vendoring remains separate.
+5. **Architecture projection + chart blocks** — project the relevant HLD Mermaid fence into the Architecture pane and add a CLI-side SVG chart renderer behind the chart contract.
 6. **Dogfood** — run `iris init` and `iris render --all` so the shipped `iris/` tree is generated from intentional page contracts without repository-document ingestion.
 
 Each step is an OpenSpec change; each keeps CI green independently.
 
 ## 10. Open questions
 
-- Vendor payload size: mermaid alone is ~2.8 MB per repo. Acceptable for a dev tool, but worth a `--minimal` vendor mode (fonts + icons only)?
+- Vendor payload size: Mermaid alone is ~3.4 MB per repo. It is explicit today; a later multi-asset vendor command may need selective flags.
 - Should render-time mermaid→SVG snapshots (needed for fully-visual published artifacts) wait for the PNG/PDF browser-renderer decision, since both need headless Chromium?
 - Light-theme default for `iris publish` output? Shared artifacts are often pasted into docs/wikis where dark blocks look heavy.

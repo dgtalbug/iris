@@ -16,6 +16,25 @@ const markdown = new MarkdownIt({
   typographer: false,
 });
 
+const defaultFence = markdown.renderer.rules.fence;
+markdown.renderer.rules.fence = (tokens, index, options, environment, renderer) => {
+  const token = tokens[index];
+  const language = token.info.trim().split(/\s+/, 1)[0]?.toLowerCase();
+  if (language !== 'mermaid') {
+    return defaultFence
+      ? defaultFence(tokens, index, options, environment, renderer)
+      : renderer.renderToken(tokens, index, options);
+  }
+
+  const source = escapeHtml(token.content);
+  return `<figure class="mermaid-figure" data-mermaid-figure>
+<div class="mermaid-status" role="status" data-mermaid-status>Diagram source. Run <code>iris vendor</code> to enable the offline preview.</div>
+<div class="mermaid-host" data-mermaid-host aria-label="Mermaid diagram">${source}</div>
+<pre class="mermaid-fallback" data-mermaid-fallback><code class="language-mermaid">${source}</code></pre>
+</figure>
+`;
+};
+
 const defaultLinkOpen = markdown.renderer.rules.link_open;
 markdown.renderer.rules.link_open = (tokens, index, options, environment, renderer) => {
   tokens[index].attrSet('rel', 'noopener noreferrer');
