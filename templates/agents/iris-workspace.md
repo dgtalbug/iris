@@ -1,35 +1,50 @@
 # Iris workspace
 
-Use Iris to turn intentional agent work into local, versioned HTML that opens directly from `file://`.
+Iris turns finished agent work into local, versioned HTML that opens straight from `file://`. No server, no network, no build step.
 
-## Setup
+## When to use this
 
-Run `iris init` once after installing or upgrading the CLI. It creates or safely refreshes the local `iris/` workspace, installs this agent skill, and renders the dashboard. It does not copy or monitor `README.md` or `docs/**/*.md`.
+Reach for Iris the moment a piece of work is _done_ — not while exploring. If the answer would otherwise stay in the chat log or a loose Markdown file, it belongs in the workspace.
 
-If the repository contains `openspec/`, initialization also builds the dashboard's `Spec` tab from the local OpenSpec filesystem. It reads canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task checkboxes without requiring the OpenSpec CLI. Markdown artifacts render as safe semantic HTML with exact escaped source available; YAML remains literal code.
+| The user says / you just finished          | Run                  | Lands in                      |
+| ------------------------------------------ | -------------------- | ----------------------------- |
+| investigated something, wrote up an answer | `iris research <id>` | `iris/research/<id>/index.md` |
+| reproduced, diagnosed, or fixed a bug      | `iris bug <id>`      | `iris/pages/<id>/data.json`   |
+| built or scoped a feature                  | `iris feature <id>`  | `iris/pages/<id>/data.json`   |
+| proposed something worth keeping           | `iris idea <id>`     | `iris/pages/<id>/data.json`   |
+| planned a milestone or a sequence          | `iris plan <id>`     | `iris/pages/<id>/data.json`   |
+| wrapped a working session                  | `iris report <id>`   | `iris/pages/<id>/data.json`   |
+| wants the workspace refreshed              | `iris render --all`  | every generated page          |
+| wants to look at it                        | `iris open`          | the browser                   |
 
-## Content workflow
+Always: create → fill the source file → `iris render --all` → tell the user the page path. Use lowercase kebab-case ids.
 
-1. Create intentional content with one of:
-   - `iris report <id>`
-   - `iris report --from-session <path> [<id>]`
-   - `iris feature <id>`
-   - `iris bug <id>`
-   - `iris idea <id>`
-   - `iris plan <id>`
-2. Edit the generated `iris/pages/<id>/data.json` contract.
-3. Run `iris render <id>` or `iris render --all`.
-4. Open the workspace with `iris open`.
+## Research pages are Markdown
 
-Use lowercase kebab-case page ids. Treat `data.json` as the editable source and generated `page.html`, `iris/index.html`, and design assets as CLI-owned outputs.
+`iris research <id>` writes `iris/research/<id>/index.md`. Write plain Markdown there — headings, lists, tables, fenced code, and exact `mermaid` fences all render. Optional front matter:
 
-Use `iris render --all` after OpenSpec files change. Full renders refresh `iris/spec.json`; page-specific renders and other lifecycle commands deliberately reuse the last snapshot instead of monitoring files in the background. Treat `iris/spec.json` as CLI-owned generated output.
+```markdown
+---
+title: Why the cache stampedes
+status: active
+tags: [cache, performance]
+agent: claude-code
+updated: 2026-08-21
+---
+```
 
-## Existing commands
+Supported `status` values are `draft`, `active`, `done`, `archived`. Missing values fall back to the first `#` heading, `draft`, and explicit `not set` labels — never invented.
 
-- `iris archive <id>` moves a page into Iris history and refreshes navigation.
-- `iris publish [<id>] [--output path]` creates portable standalone HTML.
-- `iris export <id> --single [--output path]` creates standalone HTML; PNG and PDF remain unavailable until Iris has an approved deterministic browser policy.
-- `iris update` remains compatible for refreshing managed surfaces, but setup and upgrades use `iris init`.
+## Contract pages are JSON
 
-Never hand-edit generated HTML or design assets. Preserve user-owned configuration, pages, archives, and unrelated agent/editor files.
+The other content commands write a typed contract at `iris/pages/<id>/data.json`. Edit that file; it is validated against a schema on render. Treat `page.html`, `iris/index.html`, the section pages, `iris/spec.json`, and everything under `iris/design/` as CLI-owned output and never hand-edit them.
+
+## Setup and the rest of the surface
+
+- `iris init` creates or safely upgrades the workspace, installs these agent surfaces, and renders every page. Run it once after installing or upgrading the CLI. It never copies or monitors `README.md` or `docs/**/*.md`.
+- `iris vendor` installs the pinned Mermaid runtime locally so diagrams render offline.
+- `iris archive <id>` moves a page into history; `iris publish [<id>]` and `iris export <id> --single` write portable standalone HTML.
+- If the repository has an `openspec/` directory, the Spec page visualizes canonical specs, active changes, archives, and real task checkboxes. `iris init` and `iris render --all` refresh that snapshot; nothing watches files in the background.
+- The Commands page (`iris/commands.html`) lists every command with its real status.
+
+Preserve user-owned configuration, pages, archives, and unrelated agent or editor files.

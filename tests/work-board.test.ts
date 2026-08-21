@@ -74,7 +74,9 @@ describe('dense Work board', () => {
 
     expect(await runCli(['render', '--all'], cwd)).toBe(0);
 
-    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const dashboard = await readFile(path.join(cwd, 'iris', 'work.html'), 'utf8');
+    const overview = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(overview).toContain('href="./work.html"');
     expect(dashboard).toContain('data-tab-id="list">List</button>');
     expect(dashboard).toContain('data-tab-id="table">Table</button>');
     expect(dashboard).toContain('data-tab-id="kanban">Kanban</button>');
@@ -128,7 +130,7 @@ describe('dense Work board', () => {
     expect(baseJs).not.toMatch(/\bimport\s|https?:\/\//);
 
     expect(baseCss).toContain('.work-drawer {');
-    expect(baseCss).toContain('@media (max-width: 40rem)');
+    expect(baseCss).toContain('@media (max-width: 48rem)');
     expect(baseCss).toContain('.work-drawer { width: 100%; border-left: 0; }');
     expect(baseCss).toContain('@media (prefers-reduced-motion: reduce)');
   });

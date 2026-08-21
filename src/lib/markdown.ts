@@ -81,6 +81,66 @@ markdown.renderer.rules.iris_task_checkbox = (tokens, index) => {
   return `<input class="task-checkbox" type="checkbox" disabled${checked ? ' checked' : ''} aria-label="${checked ? 'completed' : 'open'} task" /> `;
 };
 
+export type DocumentHeading = {
+  level: number;
+  id: string;
+  text: string;
+};
+
+function slugify(text: string, used: Set<string>): string {
+  const base =
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60) || 'section';
+  let candidate = base;
+  let suffix = 2;
+  while (used.has(candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  used.add(candidate);
+  return candidate;
+}
+
+// Heading ids are opt-in because the Spec view renders many documents into one
+// page, where generated ids from different files would collide.
+markdown.core.ruler.push('iris-heading-ids', (state) => {
+  const environment = state.env as {
+    headingIds?: boolean;
+    idPrefix?: string;
+    headings?: DocumentHeading[];
+  };
+  if (!environment?.headingIds) return;
+  const headings: DocumentHeading[] = [];
+  const used = new Set<string>();
+  const prefix = environment.idPrefix ? `${environment.idPrefix}-` : '';
+  for (let index = 0; index < state.tokens.length; index += 1) {
+    const token = state.tokens[index];
+    if (token.type !== 'heading_open') continue;
+    const inline = state.tokens[index + 1];
+    const text = inline && inline.type === 'inline' ? inline.content : '';
+    const id = `${prefix}${slugify(text, used)}`;
+    token.attrSet('id', id);
+    headings.push({ level: Number(token.tag.slice(1)) || 1, id, text });
+  }
+  environment.headings = headings;
+});
+
 export function renderSafeMarkdown(value: string): string {
   return markdown.render(value);
+}
+
+export function renderDocument(
+  value: string,
+  options: { idPrefix?: string } = {},
+): { html: string; headings: DocumentHeading[] } {
+  const environment: {
+    headingIds: boolean;
+    idPrefix?: string;
+    headings?: DocumentHeading[];
+  } = { headingIds: true, idPrefix: options.idPrefix };
+  const html = markdown.render(value, environment);
+  return { html, headings: environment.headings ?? [] };
 }

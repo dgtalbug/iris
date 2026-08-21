@@ -86,9 +86,7 @@ describe('OpenSpec workspace parser', () => {
     const snapshot = await parseOpenSpecWorkspace(await fixtureProject('synthetic'));
 
     expect(snapshot.canonical_specs[0].capability).toBe('platform/identity/access');
-    expect(snapshot.active_changes[0].delta_specs[0].capability).toBe(
-      'platform/identity/access',
-    );
+    expect(snapshot.active_changes[0].delta_specs[0].capability).toBe('platform/identity/access');
     expect(snapshot.active_changes[0].delta_specs[0].document.operations).toEqual([
       'ADDED',
       'MODIFIED',
@@ -112,9 +110,9 @@ describe('OpenSpec workspace parser', () => {
     expect(snapshot.warnings.map((item) => item.code)).toEqual(
       expect.arrayContaining(['unsupported-entry', 'malformed-spec']),
     );
-    expect(snapshot.canonical_specs.find((spec) => spec.capability === 'unsafe')?.document.raw).toContain(
-      '<script>',
-    );
+    expect(
+      snapshot.canonical_specs.find((spec) => spec.capability === 'unsafe')?.document.raw,
+    ).toContain('<script>');
   });
 
   it('reports deterministic depth, file-count, file-size, and aggregate-size bounds', async () => {
@@ -147,20 +145,21 @@ describe('OpenSpec workspace parser', () => {
     expect(snapshot.canonical_specs.some((spec) => spec.capability === 'linked')).toBe(false);
   });
 
-  it.skipIf(process.platform === 'win32')('refuses a symlinked OpenSpec workspace root', async () => {
-    const cwd = await tempProject();
-    const outside = await fixtureProject('observed');
-    await symlink(path.join(outside, 'openspec'), path.join(cwd, 'openspec'));
+  it.skipIf(process.platform === 'win32')(
+    'refuses a symlinked OpenSpec workspace root',
+    async () => {
+      const cwd = await tempProject();
+      const outside = await fixtureProject('observed');
+      await symlink(path.join(outside, 'openspec'), path.join(cwd, 'openspec'));
 
-    const snapshot = await parseOpenSpecWorkspace(cwd);
-    expect(snapshot).toMatchObject({
-      detected: true,
-      canonical_specs: [],
-      warnings: [
-        expect.objectContaining({ code: 'symlink-refused', path: 'openspec' }),
-      ],
-    });
-  });
+      const snapshot = await parseOpenSpecWorkspace(cwd);
+      expect(snapshot).toMatchObject({
+        detected: true,
+        canonical_specs: [],
+        warnings: [expect.objectContaining({ code: 'symlink-refused', path: 'openspec' })],
+      });
+    },
+  );
 
   it('writes deterministic snapshots atomically and degrades invalid generated state', async () => {
     const cwd = await fixtureProject('observed');

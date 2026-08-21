@@ -1,8 +1,17 @@
+import { readFileSync } from 'node:fs';
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { runCli } from '../src/cli.js';
+
+/** Evaluates the generated bundle the way a browser would, with a fake global. */
+function loadSpecBundle(cwd: string): Record<string, { html: string }> {
+  const source = readFileSync(path.join(cwd, 'iris', 'spec', 'data.js'), 'utf8');
+  const scope: { IRIS_SPEC?: { records: Record<string, { html: string }> } } = {};
+  new Function('globalThis', source)(scope);
+  return scope.IRIS_SPEC?.records ?? {};
+}
 
 const tempDirs: string[] = [];
 const fixtureRoot = path.resolve(
@@ -73,49 +82,64 @@ describe('OpenSpec Spec browser orchestration', () => {
     );
     expect(await runCli(['init'], cwd)).toBe(0);
 
-    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
-    expect(dashboard).toContain('>Spec</button>');
+    const overview = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(overview).toContain('href="./spec.html"');
+    // The index lists records and links out; artifact bodies live on detail pages.
+    const dashboard = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
+    expect(dashboard).toContain('<span>Spec</span>');
     expect(dashboard).toContain('Canonical specs');
     expect(dashboard).toContain('Active changes');
     expect(dashboard).toContain('Project context');
     expect(dashboard).toContain('active-change');
     expect(dashboard).toContain('2026-08-20-complete-change');
-    expect(dashboard).toContain('archived · legacy');
-    expect(dashboard).toContain('1/2 tasks · 1 open');
+    expect(dashboard).toContain('<span class="pill">legacy</span>');
+    expect(dashboard).toContain('1/2 tasks');
     expect(dashboard).toContain('health-invalid');
     expect(dashboard).toContain('malformed-spec');
-    expect(dashboard).toContain('data-document-format="markdown"');
-    expect(dashboard).toContain('data-document-format="yaml"');
-    expect(dashboard).toContain('<div class="spec-document"><h2>Why</h2>');
-    expect(dashboard).toContain('<strong>active layout</strong>');
-    expect(dashboard).toContain('href="./design.md" rel="noopener noreferrer"');
-    expect(dashboard).toContain('<blockquote>');
-    expect(dashboard).toContain('class="task-list-item"');
-    expect(dashboard).toContain('disabled checked aria-label="completed task"');
-    expect(dashboard).toContain('<table>');
-    expect(dashboard).toContain('<pre><code class="language-ts">');
-    expect(dashboard).toContain('data-mermaid-figure');
-    expect(dashboard).toContain('data-mermaid-host aria-label="Mermaid diagram"');
-    expect(dashboard).toContain('<script defer src="./design/vendor/mermaid.min.js">');
-    expect(dashboard).toContain('<summary>Exact source</summary>');
-    expect(dashboard).toContain('- [x] completed task evidence');
+    expect(dashboard).toContain('href="#/change/active-change"');
+    expect(dashboard).toContain('href="#/capability/core"');
     expect(dashboard).toContain('schema: spec-driven');
-    expect(dashboard).toContain('Image: remote tracker (https://example.com/tracker.png)');
-    expect(dashboard).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
-    expect(dashboard).not.toContain('<script>globalThis.pwned=true</script>');
-    expect(dashboard).not.toContain('<script data-attack="script">');
-    expect(dashboard).not.toContain('<iframe ');
-    expect(dashboard).not.toContain('<style>body');
-    expect(dashboard).not.toContain('<img ');
-    expect(dashboard).not.toContain('href="javascript:');
-    expect(dashboard).not.toContain('href="data:');
-    expect(dashboard).not.toContain('src="https://example.com');
+    expect(dashboard).not.toContain('spec-document');
+    expect(dashboard).not.toContain('data-mermaid-figure');
+
+    const records = loadSpecBundle(cwd);
+    const changePage = records['change:active-change'].html;
+    expect(changePage).toContain('<h2 id="proposal-why">Why</h2>');
+    expect(changePage).toContain('<strong>active layout</strong>');
+    expect(changePage).toContain('href="./design.md" rel="noopener noreferrer"');
+    expect(changePage).toContain('<blockquote>');
+    expect(changePage).toContain('class="task-list-item"');
+    expect(changePage).toContain('disabled checked aria-label="completed task"');
+    expect(changePage).toContain('<table>');
+    expect(changePage).toContain('<pre><code class="language-ts">');
+    expect(changePage).toContain('data-mermaid-figure');
+    expect(changePage).toContain('data-mermaid-host aria-label="Mermaid diagram"');
+    expect(changePage).toContain('<summary>Exact source</summary>');
+    expect(changePage).toContain('- [x] completed task evidence');
+    expect(changePage).toContain('Image: remote tracker (https://example.com/tracker.png)');
+    expect(changePage).not.toContain('<script data-attack="script">');
+    expect(changePage).not.toContain('<iframe ');
+    expect(changePage).not.toContain('<style>body');
+    expect(changePage).toContain('aria-label="On this page"');
+
+    // Legacy archives are neither a capability nor a change; they keep their own record.
+    const legacyPage = records['legacy:2026-08-18-legacy'].html;
+    expect(legacyPage).toContain('&lt;script&gt;globalThis.pwned=true&lt;/script&gt;');
+    expect(legacyPage).not.toContain('<script>globalThis.pwned=true</script>');
+    expect(legacyPage).toContain('<summary>Exact source</summary>');
+    expect(dashboard).toContain('href="#/legacy/2026-08-18-legacy"');
+
+    expect(changePage).toContain('schema: spec-driven');
+    expect(changePage).not.toContain('<img ');
+    expect(changePage).not.toContain('href="javascript:');
+    expect(changePage).not.toContain('href="data:');
+    expect(changePage).not.toContain('src="https://example.com');
   });
 
   it('generates accessible offline tabs and responsive reduced-motion styles', async () => {
     const cwd = await tempProject();
     expect(await runCli(['init'], cwd)).toBe(0);
-    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const dashboard = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
     const tokens = await readFile(path.join(cwd, 'iris', 'design', 'tokens.css'), 'utf8');
     const css = await readFile(path.join(cwd, 'iris', 'design', 'components', 'base.css'), 'utf8');
     const script = await readFile(
@@ -125,9 +149,9 @@ describe('OpenSpec Spec browser orchestration', () => {
     const ids = [...dashboard.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
 
     expect(new Set(ids).size).toBe(ids.length);
-    expect(dashboard).toContain('role="tablist" aria-label="dashboard sections"');
-    expect(dashboard).toContain('aria-controls="dashboard-panel-spec"');
-    expect(dashboard).toContain('role="tabpanel" aria-labelledby="dashboard-tab-spec"');
+    expect(dashboard).toContain('aria-label="Workspace sections"');
+    expect(dashboard).toContain('<a class="nav-item" href="./spec.html" aria-current="page"');
+    expect(dashboard).toContain('aria-label="Breadcrumb"');
     expect(dashboard).toContain('<script defer src="./design/components/base.js">');
     expect(dashboard).not.toContain('type="module"');
     expect(dashboard).not.toMatch(/(?:src|href)="https?:\/\//);
@@ -143,8 +167,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(script).not.toMatch(/https?:\/\//);
     expect(tokens).toContain("[data-theme='light']");
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(css).toContain('@media (max-width: 40rem)');
-    expect(css).toMatch(/spec-grid\s*\{\s*grid-template-columns:\s*minmax\(0, 1fr\)/);
+    expect(css).toContain('@media (max-width: 48rem)');
+    expect(css).toMatch(
+      /\.grid-2, \.doc-layout, \.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/,
+    );
     expect(css).toContain('.spec-document table');
     expect(css).toContain('.spec-document pre');
     expect(css).toContain('.spec-source-details');
@@ -154,14 +180,14 @@ describe('OpenSpec Spec browser orchestration', () => {
   it('renders distinct absent and empty OpenSpec states', async () => {
     const absent = await tempProject(false);
     expect(await runCli(['init'], absent)).toBe(0);
-    expect(await readFile(path.join(absent, 'iris', 'index.html'), 'utf8')).toContain(
+    expect(await readFile(path.join(absent, 'iris', 'spec.html'), 'utf8')).toContain(
       'No OpenSpec workspace detected',
     );
 
     const empty = await tempProject(false);
     await mkdir(path.join(empty, 'openspec'));
     expect(await runCli(['init'], empty)).toBe(0);
-    expect(await readFile(path.join(empty, 'iris', 'index.html'), 'utf8')).toContain(
+    expect(await readFile(path.join(empty, 'iris', 'spec.html'), 'utf8')).toContain(
       'OpenSpec workspace is empty',
     );
   });

@@ -89,7 +89,12 @@ const DEFAULT_LIMITS: OpenSpecParseLimits = {
   maxTotalBytes: OPENSPEC_MAX_TOTAL_BYTES,
 };
 
-type ParseBudget = { files: number; bytes: number; exhausted: boolean; limits: OpenSpecParseLimits };
+type ParseBudget = {
+  files: number;
+  bytes: number;
+  exhausted: boolean;
+  limits: OpenSpecParseLimits;
+};
 type DocumentKind = 'artifact' | 'config' | 'legacy' | 'project' | 'spec' | 'tasks';
 
 export function emptyOpenSpecSnapshot(detected = false): OpenSpecSnapshot {
@@ -112,7 +117,10 @@ function warning(code: string, filePath: string, message: string): OpenSpecWarni
 
 function confined(root: string, candidate: string): boolean {
   const relative = path.relative(root, candidate);
-  return relative === '' || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+  return (
+    relative === '' ||
+    (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative))
+  );
 }
 
 function relativeDepth(relativePath: string): number {
@@ -128,16 +136,30 @@ async function safeRead(
   const normalized = relativePath.replaceAll('\\', '/');
   const absolute = path.resolve(root, normalized);
   if (!confined(root, absolute) || normalized.startsWith('/')) {
-    warnings.push(warning('unsafe-path', normalized, 'Skipped a path outside the supported OpenSpec boundary'));
+    warnings.push(
+      warning('unsafe-path', normalized, 'Skipped a path outside the supported OpenSpec boundary'),
+    );
     return null;
   }
   if (relativeDepth(normalized) > budget.limits.maxDepth) {
-    warnings.push(warning('depth-limit', normalized, `Skipped content deeper than ${budget.limits.maxDepth} levels`));
+    warnings.push(
+      warning(
+        'depth-limit',
+        normalized,
+        `Skipped content deeper than ${budget.limits.maxDepth} levels`,
+      ),
+    );
     return null;
   }
   if (budget.exhausted || budget.files >= budget.limits.maxFiles) {
     budget.exhausted = true;
-    warnings.push(warning('file-count-limit', normalized, `Skipped input after ${budget.limits.maxFiles} supported files`));
+    warnings.push(
+      warning(
+        'file-count-limit',
+        normalized,
+        `Skipped input after ${budget.limits.maxFiles} supported files`,
+      ),
+    );
     return null;
   }
 
@@ -147,7 +169,9 @@ async function safeRead(
       current = path.join(current, part);
       const stat = await lstat(current);
       if (stat.isSymbolicLink()) {
-        warnings.push(warning('symlink-refused', normalized, 'Skipped a path containing a symbolic link'));
+        warnings.push(
+          warning('symlink-refused', normalized, 'Skipped a path containing a symbolic link'),
+        );
         return null;
       }
     }
@@ -157,12 +181,24 @@ async function safeRead(
       return null;
     }
     if (stat.size > budget.limits.maxFileBytes) {
-      warnings.push(warning('file-size-limit', normalized, `Skipped a file larger than ${budget.limits.maxFileBytes} bytes`));
+      warnings.push(
+        warning(
+          'file-size-limit',
+          normalized,
+          `Skipped a file larger than ${budget.limits.maxFileBytes} bytes`,
+        ),
+      );
       return null;
     }
     if (budget.bytes + stat.size > budget.limits.maxTotalBytes) {
       budget.exhausted = true;
-      warnings.push(warning('total-size-limit', normalized, `Skipped input beyond ${budget.limits.maxTotalBytes} total bytes`));
+      warnings.push(
+        warning(
+          'total-size-limit',
+          normalized,
+          `Skipped input beyond ${budget.limits.maxTotalBytes} total bytes`,
+        ),
+      );
       return null;
     }
     const raw = await readFile(absolute, 'utf8');
@@ -171,12 +207,18 @@ async function safeRead(
     return raw;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
-    warnings.push(warning('read-failed', normalized, `Could not read input: ${(error as Error).message}`));
+    warnings.push(
+      warning('read-failed', normalized, `Could not read input: ${(error as Error).message}`),
+    );
     return null;
   }
 }
 
-function parseDocument(relativePath: string, raw: string, kind: DocumentKind): OpenSpecSourceDocument {
+function parseDocument(
+  relativePath: string,
+  raw: string,
+  kind: DocumentKind,
+): OpenSpecSourceDocument {
   const headings: string[] = [];
   const requirements: string[] = [];
   const scenarios: string[] = [];
@@ -208,12 +250,17 @@ function parseDocument(relativePath: string, raw: string, kind: DocumentKind): O
     if (operation) operations.push(operation[1].toUpperCase());
   }
 
-  if (fence !== null) warnings.push(warning('unclosed-fence', relativePath, 'Markdown fence is not closed'));
+  if (fence !== null)
+    warnings.push(warning('unclosed-fence', relativePath, 'Markdown fence is not closed'));
   if (kind === 'spec' && requirements.length === 0) {
-    warnings.push(warning('malformed-spec', relativePath, 'No requirement headings were recognized'));
+    warnings.push(
+      warning('malformed-spec', relativePath, 'No requirement headings were recognized'),
+    );
   }
   if (kind === 'spec' && requirements.length > 0 && scenarios.length === 0) {
-    warnings.push(warning('malformed-spec', relativePath, 'Requirements have no recognized scenarios'));
+    warnings.push(
+      warning('malformed-spec', relativePath, 'Requirements have no recognized scenarios'),
+    );
   }
   if (kind !== 'config' && raw.trim() === '') {
     warnings.push(warning('empty-document', relativePath, 'The document is empty'));
@@ -261,7 +308,13 @@ async function safeDirectoryEntries(
 ): Promise<Dirent[]> {
   const absolute = path.resolve(root, relativePath);
   if (!confined(root, absolute) || relativeDepth(relativePath) > OPENSPEC_MAX_DEPTH) {
-    warnings.push(warning('unsafe-path', relativePath, 'Skipped a directory outside the supported OpenSpec boundary'));
+    warnings.push(
+      warning(
+        'unsafe-path',
+        relativePath,
+        'Skipped a directory outside the supported OpenSpec boundary',
+      ),
+    );
     return [];
   }
   try {
@@ -271,10 +324,18 @@ async function safeDirectoryEntries(
       return [];
     }
     if (!stat.isDirectory()) return [];
-    return (await readdir(absolute, { withFileTypes: true })).sort((left, right) => left.name.localeCompare(right.name));
+    return (await readdir(absolute, { withFileTypes: true })).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    );
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-      warnings.push(warning('read-failed', relativePath, `Could not read directory: ${(error as Error).message}`));
+      warnings.push(
+        warning(
+          'read-failed',
+          relativePath,
+          `Could not read directory: ${(error as Error).message}`,
+        ),
+      );
     }
     return [];
   }
@@ -288,7 +349,9 @@ async function collectSpecPaths(
   depth = 0,
 ): Promise<string[]> {
   if (depth > maxDepth) {
-    warnings.push(warning('depth-limit', relativeRoot, `Skipped content deeper than ${maxDepth} levels`));
+    warnings.push(
+      warning('depth-limit', relativeRoot, `Skipped content deeper than ${maxDepth} levels`),
+    );
     return [];
   }
   const results: string[] = [];
@@ -301,7 +364,13 @@ async function collectSpecPaths(
     } else if (entry.isFile() && entry.name === 'spec.md') {
       results.push(relativePath);
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
-      warnings.push(warning('unsupported-entry', relativePath, 'Ignored Markdown outside a supported spec.md path'));
+      warnings.push(
+        warning(
+          'unsupported-entry',
+          relativePath,
+          'Ignored Markdown outside a supported spec.md path',
+        ),
+      );
     }
   }
   return results.sort();
@@ -347,17 +416,33 @@ async function readStructuredChange(
   const manifest = await read('.openspec.yaml', 'config');
   const proposal = await read('proposal.md', 'artifact');
   const design = await read('design.md', 'artifact');
-  const taskSource = await safeRead(root, path.posix.join(relativeRoot, 'tasks.md'), budget, changeWarnings);
-  const tasks = taskSource === null ? null : parseTasks(path.posix.join(relativeRoot, 'tasks.md'), taskSource);
+  const taskSource = await safeRead(
+    root,
+    path.posix.join(relativeRoot, 'tasks.md'),
+    budget,
+    changeWarnings,
+  );
+  const tasks =
+    taskSource === null ? null : parseTasks(path.posix.join(relativeRoot, 'tasks.md'), taskSource);
   if (tasks) changeWarnings.push(...tasks.warnings);
   const specsRoot = path.posix.join(relativeRoot, 'specs');
   const delta_specs: OpenSpecCapability[] = [];
-  for (const specPath of await collectSpecPaths(root, specsRoot, changeWarnings, budget.limits.maxDepth)) {
+  for (const specPath of await collectSpecPaths(
+    root,
+    specsRoot,
+    changeWarnings,
+    budget.limits.maxDepth,
+  )) {
     const capability = await readCapability(root, specPath, specsRoot, budget, changeWarnings);
     if (capability) delta_specs.push(capability);
   }
 
-  const requiredPresent = Boolean(proposal && design && tasks && (delta_specs.length > 0 || /(^|\n)\s*skip_specs:\s*true\s*($|\n)/.test(manifest?.raw ?? '')));
+  const requiredPresent = Boolean(
+    proposal &&
+      design &&
+      tasks &&
+      (delta_specs.length > 0 || /(^|\n)\s*skip_specs:\s*true\s*($|\n)/.test(manifest?.raw ?? '')),
+  );
   const completeness = requiredPresent && tasks?.progress.open === 0 ? 'complete' : 'incomplete';
   const invalid = changeWarnings.some((item) => item.code === 'malformed-spec');
   const health = invalid ? 'invalid' : changeWarnings.length > 0 ? 'warning' : 'valid';
@@ -398,13 +483,21 @@ export async function parseOpenSpecWorkspace(
     }
     if (!rootStat.isDirectory()) {
       snapshot.warnings.push(
-        warning('unsupported-entry', 'openspec', 'Expected the OpenSpec workspace root to be a directory'),
+        warning(
+          'unsupported-entry',
+          'openspec',
+          'Expected the OpenSpec workspace root to be a directory',
+        ),
       );
       return snapshot;
     }
   } catch (error) {
     snapshot.warnings.push(
-      warning('read-failed', 'openspec', `Could not inspect workspace root: ${(error as Error).message}`),
+      warning(
+        'read-failed',
+        'openspec',
+        `Could not inspect workspace root: ${(error as Error).message}`,
+      ),
     );
     return snapshot;
   }
@@ -413,11 +506,23 @@ export async function parseOpenSpecWorkspace(
   try {
     const rootStat = await lstat(root);
     if (rootStat.isSymbolicLink() || !rootStat.isDirectory()) {
-      snapshot.warnings.push(warning('unsafe-root', 'openspec', 'OpenSpec root must be a regular directory, not a symlink'));
+      snapshot.warnings.push(
+        warning(
+          'unsafe-root',
+          'openspec',
+          'OpenSpec root must be a regular directory, not a symlink',
+        ),
+      );
       return snapshot;
     }
   } catch (error) {
-    snapshot.warnings.push(warning('read-failed', 'openspec', `Could not inspect OpenSpec root: ${(error as Error).message}`));
+    snapshot.warnings.push(
+      warning(
+        'read-failed',
+        'openspec',
+        `Could not inspect OpenSpec root: ${(error as Error).message}`,
+      ),
+    );
     return snapshot;
   }
 
@@ -426,7 +531,12 @@ export async function parseOpenSpecWorkspace(
   if (project) snapshot.context.project = project;
   if (config) snapshot.context.config = config;
 
-  for (const specPath of await collectSpecPaths(root, 'specs', snapshot.warnings, limits.maxDepth)) {
+  for (const specPath of await collectSpecPaths(
+    root,
+    'specs',
+    snapshot.warnings,
+    limits.maxDepth,
+  )) {
     const capability = await readCapability(root, specPath, 'specs', budget, snapshot.warnings);
     if (capability) snapshot.canonical_specs.push(capability);
   }
@@ -435,25 +545,37 @@ export async function parseOpenSpecWorkspace(
     if (entry.name === 'archive') continue;
     const relativePath = path.posix.join('changes', entry.name);
     if (entry.isSymbolicLink()) {
-      snapshot.warnings.push(warning('symlink-refused', relativePath, 'Skipped a symbolic-link change'));
+      snapshot.warnings.push(
+        warning('symlink-refused', relativePath, 'Skipped a symbolic-link change'),
+      );
     } else if (entry.isDirectory()) {
-      snapshot.active_changes.push(await readStructuredChange(root, relativePath, 'active', budget, snapshot.warnings));
+      snapshot.active_changes.push(
+        await readStructuredChange(root, relativePath, 'active', budget, snapshot.warnings),
+      );
     } else {
-      snapshot.warnings.push(warning('unsupported-entry', relativePath, 'Ignored an unsupported active-change entry'));
+      snapshot.warnings.push(
+        warning('unsupported-entry', relativePath, 'Ignored an unsupported active-change entry'),
+      );
     }
   }
 
   for (const entry of await safeDirectoryEntries(root, 'changes/archive', snapshot.warnings)) {
     const relativePath = path.posix.join('changes/archive', entry.name);
     if (entry.isSymbolicLink()) {
-      snapshot.warnings.push(warning('symlink-refused', relativePath, 'Skipped a symbolic-link archive entry'));
+      snapshot.warnings.push(
+        warning('symlink-refused', relativePath, 'Skipped a symbolic-link archive entry'),
+      );
     } else if (entry.isDirectory()) {
-      snapshot.archived_changes.push(await readStructuredChange(root, relativePath, 'archived', budget, snapshot.warnings));
+      snapshot.archived_changes.push(
+        await readStructuredChange(root, relativePath, 'archived', budget, snapshot.warnings),
+      );
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
       const document = await readDocument(root, relativePath, 'legacy', budget, snapshot.warnings);
       if (document) snapshot.legacy_archives.push(document);
     } else {
-      snapshot.warnings.push(warning('unsupported-entry', relativePath, 'Ignored an unsupported archive entry'));
+      snapshot.warnings.push(
+        warning('unsupported-entry', relativePath, 'Ignored an unsupported archive entry'),
+      );
     }
   }
 
@@ -461,7 +583,9 @@ export async function parseOpenSpecWorkspace(
   snapshot.active_changes.sort((left, right) => left.path.localeCompare(right.path));
   snapshot.archived_changes.sort((left, right) => left.path.localeCompare(right.path));
   snapshot.legacy_archives.sort((left, right) => left.path.localeCompare(right.path));
-  snapshot.warnings.sort((left, right) => left.path.localeCompare(right.path) || left.code.localeCompare(right.code));
+  snapshot.warnings.sort(
+    (left, right) => left.path.localeCompare(right.path) || left.code.localeCompare(right.code),
+  );
   return snapshot;
 }
 
@@ -475,7 +599,10 @@ export async function writeOpenSpecSnapshot(cwd: string): Promise<OpenSpecSnapsh
   await ensureDir(path.dirname(target));
   const temporary = path.join(path.dirname(target), `.spec.json.${randomUUID()}.tmp`);
   try {
-    await writeFile(temporary, `${JSON.stringify(snapshot, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+    await writeFile(temporary, `${JSON.stringify(snapshot, null, 2)}\n`, {
+      encoding: 'utf8',
+      flag: 'wx',
+    });
     await rename(temporary, target);
   } finally {
     await rm(temporary, { force: true });
@@ -502,7 +629,13 @@ export async function loadOpenSpecSnapshot(cwd: string): Promise<OpenSpecSnapsho
     return parsed as OpenSpecSnapshot;
   } catch (error) {
     const snapshot = emptyOpenSpecSnapshot(false);
-    snapshot.warnings.push(warning('snapshot-invalid', 'iris/spec.json', `Could not load generated snapshot: ${(error as Error).message}`));
+    snapshot.warnings.push(
+      warning(
+        'snapshot-invalid',
+        'iris/spec.json',
+        `Could not load generated snapshot: ${(error as Error).message}`,
+      ),
+    );
     return snapshot;
   }
 }

@@ -1,24 +1,24 @@
 # iris status report
 
-> Snapshot date: 2026-08-21 · branch `feat/render-openspec-markdown` · offline Mermaid fence rendering is implemented locally under the active `render-mermaid-diagrams` change.
+> Snapshot date: 2026-08-21 · branch `feat/dashboard-shell-redesign` · every OpenSpec change is archived and its deltas synced into the canonical specs; there are no active changes.
 
 ## One-line summary
 
-Iris is an agent-first local visual workspace whose dashboard now has peer Work and `Spec` views: intentional Iris pages remain separate from a bounded, deterministic visualization of the repository's actual OpenSpec filesystem.
+Iris is an agent-first local visual workspace: a shared navigation shell over one page per section — Overview, Work, Spec, Research, Commands, and project docs — where JSON contracts, Markdown research, and a bounded view of the repository's OpenSpec filesystem all render as deterministic offline HTML.
 
 ## Current implementation
 
-| Area                      | State                                                                                                                                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Commands implemented      | `init`, `render`, `report` (including `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `archive`, `export --single`, `vendor`, `open`, `update`                                            |
-| Commands stubbed (exit 1) | `promote`                                                                                                                                                                                                 |
-| Dashboard                 | Work plus top-level `Spec`; classic deferred scripts, both themes, reduced-motion fallback, visible focus, and 360 px layout                                                                              |
-| OpenSpec inputs           | Project/config, canonical specs, structured active/archive changes, proposal/design/tasks, change-local delta specs, and legacy archive Markdown                                                          |
-| OpenSpec snapshot         | Versioned `iris/spec.json`; refreshed by init/full render only, with independent lifecycle/completeness/task/parser-health dimensions and Markdown/YAML presentation identity                             |
-| Agent surfaces            | `.agents/skills/iris-workspace`, `.claude/skills/iris-workspace`, `.github/skills/iris-workspace`, generated from one packaged template                                                                   |
-| State                     | Version 2 page registry with active/archive navigation; no adopted-source hashes or stale-source states                                                                                                   |
-| Tests                     | 18 Vitest suites (79 tests) plus lint, token, type, HTML, packaging, installed-smoke, and strict OpenSpec gates                                                                                           |
-| Runtime dependencies      | `ajv`, generation-time `markdown-it`, and pinned Mermaid copied by explicit offline vendoring; no frontend framework, browser Markdown parser, server, watcher, telemetry, or OpenSpec runtime dependency |
+| Area                      | State                                                                                                                                                                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Commands implemented      | `init`, `render`, `research`, `report` (including `--from-session`), `publish`, `feature`, `bug`, `idea`, `plan`, `archive`, `export --single`, `vendor`, `open`, `update`                                                                                        |
+| Commands stubbed (exit 1) | `promote`; `export --png` and `export --pdf` refuse explicitly and write nothing                                                                                                                                                                                  |
+| Workspace                 | Sidebar shell over `index.html` (Overview), `work.html`, `spec.html` plus its record bundle, `research.html`, `commands.html`, contract pages, and project docs; classic deferred scripts, both themes, reduced-motion fallback, visible focus, and 360 px layout |
+| OpenSpec inputs           | Project/config, canonical specs, structured active/archive changes, proposal/design/tasks, change-local delta specs, and legacy archive Markdown                                                                                                                  |
+| OpenSpec snapshot         | Versioned `iris/spec.json`; refreshed by init/full render only, with independent lifecycle/completeness/task/parser-health dimensions and Markdown/YAML presentation identity                                                                                     |
+| Agent surfaces            | Three `iris-workspace` skills plus `/iris:*` command files for Claude and Copilot prompts, generated from two packaged templates under one managed-ownership contract                                                                                             |
+| State                     | Version 2 page registry with active/archive navigation; no adopted-source hashes or stale-source states                                                                                                                                                           |
+| Tests                     | 23 Vitest suites (112 tests) plus lint, token, type, HTML, packaging, installed-smoke, and strict OpenSpec gates                                                                                                                                                  |
+| Runtime dependencies      | `ajv`, generation-time `markdown-it`, and pinned Mermaid copied by explicit offline vendoring; no frontend framework, browser Markdown parser, server, watcher, telemetry, or OpenSpec runtime dependency                                                         |
 
 ## OpenSpec browser contract
 
@@ -29,12 +29,20 @@ Iris is an agent-first local visual workspace whose dashboard now has peer Work 
 - Nested capability paths and ADDED/MODIFIED/REMOVED/RENAMED labels are preserved.
 - Raw content is escaped. Malformed, partial, unknown, oversized, unsafe, or unreadable inputs produce isolated path-specific warnings while valid siblings remain visible.
 - Markdown artifacts render semantically with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences progressively render one at a time under strict local settings while diagram and document source remain available, and YAML stays literal.
+- The Spec index lists records only; artifact bodies and exact source live in a generated classic-script bundle addressed by hash, with deep-linkable requirement headings. Opening a record needs JavaScript; the index, its counts, and every source path do not.
 - The parser reports filesystem evidence, not the result of `openspec validate`.
+
+## Research page contract
+
+- `iris research <id>` creates `iris/research/<id>/index.md`; the Markdown file is the editable source and `page.html` is generated output.
+- Front matter supports `title`, `status`, `tags`, `agent`, and `updated`; missing values fall back to the first heading, `draft`, or explicit `not set`, and malformed input warns per path instead of failing the render.
+- Discovery is sorted, symlink-refusing, repository-confined, and bounded by file size and directory count; only `iris/research/` is read.
+- Research records appear in the Work browser as type `research` and are covered by archive, publish, and export.
 
 ## Remaining risks and gates
 
-1. Mermaid runtime/browser dogfood, local gates, OpenSpec verification, spec sync, archive, hosted PR checks, and merge remain pending for the active change.
+1. Hosted PR checks and merge remain pending for the branch; every local gate passes.
 2. Public npm release still requires package-owner bootstrap, trusted-publisher configuration, and the protected GitHub `npm` environment.
-3. PNG/PDF export remains unavailable until a deterministic browser-pinning policy is approved.
-4. Homebrew remains deferred until a published release supplies verifiable URL/checksum inputs.
+3. PNG/PDF export remains unavailable until a deterministic browser-pinning policy is approved. The CLI refuses those modes and writes nothing, and the canonical spec states that contract rather than claiming the modes work.
+4. Homebrew remains deferred until a published release supplies verifiable URL/checksum inputs. The canonical spec requires that no formula or manifest be shipped for a channel whose release inputs do not exist.
 5. Repository governance files and branch-protection policy remain incomplete.

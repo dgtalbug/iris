@@ -1,9 +1,12 @@
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
+import { RESEARCH_ID_PATTERN, researchSourcePath } from '../lib/research-workspace.js';
 import { validateContract } from '../lib/schemas.js';
 
-export type DraftKind = 'report' | 'feature' | 'bug' | 'idea' | 'plan';
+export type ContractKind = 'report' | 'feature' | 'bug' | 'idea' | 'plan';
+export type DraftKind = ContractKind | 'research';
 
 function titleFromId(id: string): string {
   return id
@@ -13,7 +16,7 @@ function titleFromId(id: string): string {
     .join(' ');
 }
 
-function buildDraftPayload(kind: DraftKind, id: string): Record<string, unknown> {
+function buildDraftPayload(kind: ContractKind, id: string): Record<string, unknown> {
   const created = new Date().toISOString();
   const title = titleFromId(id);
 
@@ -114,9 +117,60 @@ function buildDraftPayload(kind: DraftKind, id: string): Record<string, unknown>
   }
 }
 
+function researchSkeleton(id: string, title: string): string {
+  return [
+    '---',
+    `title: ${title}`,
+    'status: active',
+    'tags: []',
+    'agent: other',
+    'updated: ',
+    '---',
+    '',
+    `# ${title}`,
+    '',
+    '## Question',
+    '',
+    'What was asked, and why it matters.',
+    '',
+    '## Findings',
+    '',
+    'What you learned. Keep claims separable so each can be checked.',
+    '',
+    '## Evidence',
+    '',
+    'Files, commands, links, or measurements that support the findings.',
+    '',
+    '## Next steps',
+    '',
+    'What should happen with this, if anything.',
+    '',
+  ].join('\n');
+}
+
+function assertIdIsFree(cwd: string, id: string): void {
+  const taken = [
+    path.join(cwd, 'iris', 'pages', id),
+    path.join(cwd, 'iris', 'research', id),
+    path.join(cwd, 'iris', 'archive', id),
+  ].find((candidate) => existsSync(candidate));
+  if (taken) {
+    throw new IrisError(1, `Id '${id}' already exists at ${path.relative(cwd, taken)}`);
+  }
+}
+
 export async function runDraftCommand(cwd: string, kind: DraftKind, id: string): Promise<void> {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) {
+  if (!RESEARCH_ID_PATTERN.test(id)) {
     throw new IrisError(1, `Draft id must be lowercase kebab-case: ${id}`);
+  }
+
+  if (kind === 'research') {
+    assertIdIsFree(cwd, id);
+    const sourcePath = researchSourcePath(cwd, id);
+    await writeAlways(sourcePath, researchSkeleton(id, titleFromId(id)));
+    process.stdout.write(`created ${path.relative(cwd, sourcePath)}\n`);
+    process.stdout.write('next: write Markdown there, then run iris render --all\n');
+    return;
   }
 
   const payload = buildDraftPayload(kind, id);

@@ -16,13 +16,14 @@ const MERMAID_SCRIPT_PATTERN =
   /<script\b(?=[^>]*\bsrc=["'][^"']*design\/vendor\/mermaid\.min\.js["'])[^>]*><\/script>/gi;
 // Navigation chrome points into the iris tree; a standalone artifact leaves
 // that tree, so marked elements are removed rather than shipped broken.
-const NAV_CHROME_PATTERN = /<(a|button|nav)\b[^>]*\bdata-iris-nav\b[^>]*>.*?<\/\1>/gis;
+const NAV_CHROME_PATTERN =
+  /<(a|button|nav|header|aside|span)\b[^>]*\bdata-iris-nav\b[^>]*>.*?<\/\1>/gis;
 const RESOURCE_REFERENCE_PATTERN =
   /<(?:link|script|img|source|video|audio|iframe|object)\b[^>]*\b(?:href|src|data)=["'](?!data:|#)[^"']+["'][^>]*>/i;
 
-async function listPageIds(pagesRoot: string): Promise<string[]> {
+async function listPageIds(root: string): Promise<string[]> {
   try {
-    const entries = await readdir(pagesRoot, { withFileTypes: true });
+    const entries = await readdir(root, { withFileTypes: true });
     return entries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
@@ -32,22 +33,43 @@ async function listPageIds(pagesRoot: string): Promise<string[]> {
   }
 }
 
-async function selectPageId(cwd: string, id?: string): Promise<string> {
-  const pagesRoot = path.join(cwd, 'iris', 'pages');
+/** Rendered pages live under `pages/`, `research/`, or `archive/`; the first hit wins. */
+function renderedPagePath(cwd: string, id: string): string | undefined {
+  for (const root of ['pages', 'research', 'archive']) {
+    const candidate = path.join(cwd, 'iris', root, id, 'page.html');
+    if (existsSync(candidate)) return candidate;
+  }
+  return undefined;
+}
 
+function sourceExists(cwd: string, id: string): boolean {
+  return (
+    existsSync(path.join(cwd, 'iris', 'pages', id, 'data.json')) ||
+    existsSync(path.join(cwd, 'iris', 'research', id, 'index.md')) ||
+    Boolean(renderedPagePath(cwd, id))
+  );
+}
+
+async function selectPageId(cwd: string, id?: string): Promise<string> {
   if (id) {
     if (!PAGE_ID_PATTERN.test(id)) {
       throw new IrisError(1, `Invalid page id '${id}'; expected lowercase kebab-case`);
     }
 
-    if (!existsSync(path.join(pagesRoot, id, 'data.json'))) {
-      throw new IrisError(1, `Page '${id}' does not exist (missing iris/pages/${id}/data.json)`);
+    if (!sourceExists(cwd, id)) {
+      throw new IrisError(
+        1,
+        `Page '${id}' does not exist (looked in iris/pages, iris/research, and iris/archive)`,
+      );
     }
 
     return id;
   }
 
-  const pageIds = await listPageIds(pagesRoot);
+  const pageIds = [
+    ...(await listPageIds(path.join(cwd, 'iris', 'pages'))),
+    ...(await listPageIds(path.join(cwd, 'iris', 'research'))),
+  ].sort();
   if (pageIds.length === 0) {
     throw new IrisError(1, 'No pages found to publish');
   }
@@ -96,19 +118,30 @@ export async function createStandaloneArtifact(
     throw new IrisError(1, `Invalid page id '${id}'; expected lowercase kebab-case`);
   }
 
-  if (!existsSync(path.join(cwd, 'iris', 'pages', id, 'data.json'))) {
-    throw new IrisError(1, `Page '${id}' does not exist (missing iris/pages/${id}/data.json)`);
+  if (!sourceExists(cwd, id)) {
+    throw new IrisError(
+      1,
+      `Page '${id}' does not exist (looked in iris/pages, iris/research, and iris/archive)`,
+    );
   }
 
-  try {
-    await runRenderCommand(cwd, id);
-  } catch (error) {
-    if (error instanceof IrisError) throw error;
-    throw new IrisError(1, `Failed to render page '${id}': ${(error as Error).message}`);
+  const editable =
+    existsSync(path.join(cwd, 'iris', 'pages', id, 'data.json')) ||
+    existsSync(path.join(cwd, 'iris', 'research', id, 'index.md'));
+  if (editable) {
+    try {
+      await runRenderCommand(cwd, id);
+    } catch (error) {
+      if (error instanceof IrisError) throw error;
+      throw new IrisError(1, `Failed to render page '${id}': ${(error as Error).message}`);
+    }
   }
 
   const irisRoot = path.join(cwd, 'iris');
-  const pageHtmlPath = path.join(irisRoot, 'pages', id, 'page.html');
+  const pageHtmlPath = renderedPagePath(cwd, id);
+  if (!pageHtmlPath) {
+    throw new IrisError(1, `Page '${id}' has no rendered page.html; run iris render first`);
+  }
 
   try {
     const [pageHtml, tokensCss, baseCss] = await Promise.all([

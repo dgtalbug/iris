@@ -15,6 +15,13 @@ export const REQUIRED_TOKENS = [
   'type-bug',
   'type-idea',
   'type-plan',
+  'type-research',
+  'topbar-bg',
+  'nav-bg',
+  'nav-text',
+  'nav-active-bg',
+  'nav-active-text',
+  'accent-soft',
   'ok',
   'warn',
   'danger',
@@ -31,6 +38,8 @@ export const REQUIRED_TOKENS = [
   'leading-tight',
   'leading-body',
   'radius-full',
+  'nav-width',
+  'nav-rail',
   'duration-1',
   'duration-2',
   'duration-3',
@@ -54,6 +63,13 @@ const THEME_REQUIRED_TOKENS = [
   'type-bug',
   'type-idea',
   'type-plan',
+  'type-research',
+  'topbar-bg',
+  'nav-bg',
+  'nav-text',
+  'nav-active-bg',
+  'nav-active-text',
+  'accent-soft',
   'ok',
   'warn',
   'danger',
@@ -76,11 +92,36 @@ const CONTRAST_PAIRS = [
   ['type-bug', 'surface-1'],
   ['type-idea', 'surface-1'],
   ['type-plan', 'surface-1'],
+  ['type-research', 'surface-1'],
+  ['nav-text', 'nav-bg'],
+  ['nav-active-text', 'nav-bg'],
+  ['text-1', 'nav-bg'],
   ['ok', 'surface-1'],
   ['warn', 'surface-1'],
   ['danger', 'surface-1'],
   ['info', 'surface-1'],
 ];
+
+// WCAG 1.4.11: the accent draws buttons, the active navigation rail, and focus
+// rings, so its edge against every surface it lands on is a control boundary.
+const CONTROL_BOUNDARY_PAIRS = [
+  ['accent', 'bg'],
+  ['accent', 'surface-1'],
+  ['accent', 'surface-2'],
+];
+
+// A card border is not a control, so no accessibility criterion governs it. This
+// floor exists so that "the boundary is visible" is measurable rather than a
+// matter of taste, and it is reported under its own name for that reason.
+const BORDER_PAIRS = [
+  ['line-1', 'bg'],
+  ['line-1', 'surface-1'],
+  ['line-1', 'surface-2'],
+];
+
+const TEXT_RATIO = 4.5;
+const CONTROL_BOUNDARY_RATIO = 3;
+const BORDER_VISIBILITY_RATIO = 1.45;
 
 function declarations(block) {
   return Object.fromEntries(
@@ -105,9 +146,7 @@ export function parseTokenThemes(css) {
 
 function channel(value) {
   const normalized = value / 255;
-  return normalized <= 0.04045
-    ? normalized / 12.92
-    : ((normalized + 0.055) / 1.055) ** 2.4;
+  return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
 }
 
 function luminance(hex) {
@@ -144,19 +183,27 @@ export function validateTokenContract(css, referenceText = '') {
     if (!declared.has(match[1])) errors.push(`undeclared token reference --${match[1]}`);
   }
 
+  const checks = [
+    { pairs: CONTRAST_PAIRS, minimum: TEXT_RATIO, label: 'contrast' },
+    { pairs: CONTROL_BOUNDARY_PAIRS, minimum: CONTROL_BOUNDARY_RATIO, label: 'control boundary' },
+    { pairs: BORDER_PAIRS, minimum: BORDER_VISIBILITY_RATIO, label: 'border visibility floor' },
+  ];
+
   for (const [themeName, theme] of Object.entries({ dark, light })) {
-    for (const [foregroundName, backgroundName] of CONTRAST_PAIRS) {
-      const foreground = theme[foregroundName];
-      const background = theme[backgroundName];
-      const ratio = contrastRatio(foreground, background);
-      if (ratio === undefined) {
-        errors.push(
-          `${themeName} contrast pair --${foregroundName}/--${backgroundName} is not opaque hex`,
-        );
-      } else if (ratio < 4.5) {
-        errors.push(
-          `${themeName} contrast --${foregroundName} on --${backgroundName} is ${ratio.toFixed(2)}:1`,
-        );
+    for (const { pairs, minimum, label } of checks) {
+      for (const [foregroundName, backgroundName] of pairs) {
+        const foreground = theme[foregroundName];
+        const background = theme[backgroundName];
+        const ratio = contrastRatio(foreground, background);
+        if (ratio === undefined) {
+          errors.push(
+            `${themeName} ${label} pair --${foregroundName}/--${backgroundName} is not opaque hex`,
+          );
+        } else if (ratio < minimum) {
+          errors.push(
+            `${themeName} ${label} --${foregroundName} on --${backgroundName} is ${ratio.toFixed(2)}:1, needs ${minimum}:1`,
+          );
+        }
       }
     }
   }

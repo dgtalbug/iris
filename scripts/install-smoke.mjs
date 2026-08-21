@@ -44,7 +44,11 @@ const packedFiles = new Set(packInfo[0]?.files?.map((file) => file.path) ?? []);
 if (!tarballName) {
   throw new Error('npm pack did not return a tarball filename');
 }
-for (const requiredPath of ['dist/src/lib/agent-skills.js', 'templates/agents/iris-workspace.md']) {
+for (const requiredPath of [
+  'dist/src/lib/agent-skills.js',
+  'templates/agents/iris-workspace.md',
+  'templates/agents/iris-commands.md',
+]) {
   if (!packedFiles.has(requiredPath)) {
     throw new Error(`Packed CLI is missing required initialization asset: ${requiredPath}`);
   }
@@ -73,12 +77,21 @@ try {
     encoding: 'utf8',
   });
 
+  const { COMMAND_GROUPS } = await import('../dist/src/lib/command-catalog.js');
+  const missingCommands = COMMAND_GROUPS.flatMap((group) => group.entries)
+    .map((entry) => entry.usage)
+    .filter((usage) => !helpOutput.includes(usage));
+
   if (
     helpOutput !== repoHelp ||
     !/Usage:\s*iris/i.test(helpOutput) ||
-    !/Commands:/i.test(helpOutput)
+    missingCommands.length > 0
   ) {
-    throw new Error('Installed command help does not match the repository CLI interface');
+    throw new Error(
+      `Installed command help does not match the repository CLI interface${
+        missingCommands.length > 0 ? `; missing ${missingCommands.join(', ')}` : ''
+      }`,
+    );
   }
 
   const offlineRuntimeEnv = {
@@ -123,6 +136,17 @@ try {
   assertFile(
     path.join(projectDir, 'iris', 'design', 'vendor', 'LICENSE.mermaid.txt'),
     'the Mermaid license',
+  );
+  for (const section of ['work.html', 'spec.html', 'research.html', 'commands.html']) {
+    assertFile(path.join(projectDir, 'iris', section), `the generated ${section}`);
+  }
+  assertFile(
+    path.join(projectDir, '.claude', 'commands', 'iris', 'research.md'),
+    'the generated Claude research command',
+  );
+  assertFile(
+    path.join(projectDir, '.github', 'prompts', 'iris-research.prompt.md'),
+    'the generated Copilot research prompt',
   );
   for (const skillRoot of ['.agents', '.claude', '.github']) {
     assertFile(

@@ -27,14 +27,41 @@ Once installed, a minimal local-first workflow is:
 mkdir my-iris-project && cd my-iris-project
 iris init
 iris vendor
-iris bug install-check
-iris render install-check
+iris research install-check
+iris render --all
 iris open
 ```
 
-`iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs `iris-workspace` skills for generic/Codex agents, Claude, and GitHub Copilot, and renders the dashboard. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
+`iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs the `iris-workspace` skill for generic/Codex agents, Claude, and GitHub Copilot, generates the `/iris:*` command surfaces for Claude Code and Copilot, and renders every page. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
 
-When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. Markdown artifacts render as semantic offline HTML with embedded HTML disabled; an exact escaped-source disclosure remains available, while YAML stays literal code. Fenced blocks labeled `mermaid` retain escaped source and become diagrams after `iris vendor` installs the pinned local runtime. Each diagram renders independently under strict settings, so an invalid graph cannot hide its siblings or surrounding Markdown. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
+## The workspace
+
+`iris/index.html` is an Overview: what the repository is, per-section counts, the most recent work, active spec changes with real task progress, and the commands that fill each area. Every generated page shares one navigation shell — a collapsible sidebar plus a breadcrumb top bar — and each section owns its own page:
+
+| Page             | Holds                                                                                    |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| `index.html`     | Overview: briefing, section summaries, recent work, spec movement                        |
+| `work.html`      | Dense List / Table / Kanban browser over every record, with a detail drawer              |
+| `spec.html`      | The OpenSpec filesystem snapshot: canonical specs, active changes, archives, task counts |
+| `research.html`  | Markdown research pages with status, tags, and warnings                                  |
+| `commands.html`  | Every CLI command with its real implementation status                                    |
+| `project/*.html` | The managed overview, HLD, LLD, ERD, and decisions placeholders                          |
+
+`/` focuses the visible filter, `t` toggles the theme, and `b` collapses the sidebar. Theme and sidebar state persist per browser; the initial theme comes from `iris/config.yaml`.
+
+## Research pages are Markdown
+
+Agents write research as plain Markdown, not JSON-escaped strings:
+
+```bash
+iris research cache-stampede-causes
+# edit iris/research/cache-stampede-causes/index.md
+iris render --all
+```
+
+Optional front matter (`title`, `status`, `tags`, `agent`, `updated`) sets the page header; anything missing falls back to the first heading, `draft`, or an explicit `not set` label rather than an invented value. The body renders through the same safe pipeline as OpenSpec Markdown — embedded HTML, unsafe destinations, and active images disabled — with a generated table of contents and offline Mermaid diagrams. Research pages join the Work browser as type `research` and support archive, publish, and export. Iris reads only `iris/research/`; general repository documentation is never ingested.
+
+When a repository contains `openspec/`, the `Spec` page visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. Markdown artifacts render as semantic offline HTML with embedded HTML disabled; an exact escaped-source disclosure remains available, while YAML stays literal code. Fenced blocks labeled `mermaid` retain escaped source and become diagrams after `iris vendor` installs the pinned local runtime. Each diagram renders independently under strict settings, so an invalid graph cannot hide its siblings or surrounding Markdown. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
 
 Use an exact Mermaid language fence in OpenSpec Markdown or an Iris contract Markdown field:
 
@@ -49,9 +76,9 @@ Without JavaScript or before `iris vendor`, Iris shows the escaped diagram sourc
 
 ## How it runs
 
-iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json`, validates them against the schemas in `schemas/`, snapshots supported OpenSpec filesystem evidence into `iris/spec.json`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
+iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json` and Markdown research under `iris/research/<id>/index.md`, validates contracts against the schemas in `schemas/`, snapshots supported OpenSpec filesystem evidence into `iris/spec.json`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
 
-Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`. The generated files all describe the same CLI workflow. Iris refreshes only an intact hash-verified managed region, preserves user content outside it, and refuses to overwrite unmarked or edited targets.
+Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`, and generates `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, and `/iris:report` into `.claude/commands/iris/` and `.github/prompts/`. All of them are generated from two packaged templates and describe the same CLI workflow, and the skill names the moments that call for Iris so finished work reaches the workspace without being asked for. Iris refreshes only an intact hash-verified managed region, preserves user content outside it, and refuses to overwrite unmarked or edited targets.
 
 ### Upgrade
 

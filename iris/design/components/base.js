@@ -1,4 +1,80 @@
 
+function readStored(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeStored(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    /* Private browsing and file:// restrictions must not break navigation. */
+  }
+}
+
+function setupTheme() {
+  const root = document.documentElement;
+  const stored = readStored('iris-theme');
+  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
+    toggle.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      writeStored('iris-theme', next);
+    });
+  }
+}
+
+function setupNavigation() {
+  const root = document.documentElement;
+  if (readStored('iris-nav') === 'collapsed') root.setAttribute('data-nav', 'collapsed');
+
+  const setCollapsed = (collapsed) => {
+    if (collapsed) root.setAttribute('data-nav', 'collapsed');
+    else root.removeAttribute('data-nav');
+    writeStored('iris-nav', collapsed ? 'collapsed' : 'expanded');
+    for (const control of document.querySelectorAll('[data-nav-toggle]')) {
+      control.setAttribute('aria-expanded', String(!collapsed));
+      control.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    }
+  };
+
+  for (const control of document.querySelectorAll('[data-nav-toggle]')) {
+    control.addEventListener('click', () => setCollapsed(root.getAttribute('data-nav') !== 'collapsed'));
+  }
+
+  const setMenuOpen = (open) => {
+    if (open) root.setAttribute('data-nav-open', '');
+    else root.removeAttribute('data-nav-open');
+    for (const control of document.querySelectorAll('[data-menu-toggle]')) {
+      control.setAttribute('aria-expanded', String(open));
+    }
+  };
+
+  for (const control of document.querySelectorAll('[data-menu-toggle]')) {
+    control.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setMenuOpen(!root.hasAttribute('data-nav-open'));
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!root.hasAttribute('data-nav-open')) return;
+    const target = event.target;
+    if (target instanceof Element && target.closest('[data-sidebar]')) return;
+    setMenuOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && root.hasAttribute('data-nav-open')) setMenuOpen(false);
+  });
+
+  return { setCollapsed };
+}
+
 function setupTabs() {
   for (const group of document.querySelectorAll('[data-tabs]')) {
     const buttons = Array.from(group.querySelectorAll('[role="tab"]'));
@@ -52,7 +128,7 @@ function setupFilter() {
   apply();
 }
 
-function setupKeyboardShortcuts() {
+function setupKeyboardShortcuts(navigation) {
   document.addEventListener('keydown', (event) => {
     const target = event.target;
     const editing = target instanceof HTMLElement && (
@@ -73,6 +149,10 @@ function setupKeyboardShortcuts() {
         event.preventDefault();
         toggle.click();
       }
+    }
+    if (event.key.toLowerCase() === 'b' && navigation) {
+      event.preventDefault();
+      navigation.setCollapsed(document.documentElement.getAttribute('data-nav') !== 'collapsed');
     }
   });
 }
@@ -210,20 +290,6 @@ function setupWorkDrawer() {
   syncHash();
 }
 
-function setupTheme() {
-  const toggle = document.querySelector('[data-theme-toggle]');
-  const stored = localStorage.getItem('iris-theme');
-  if (stored === 'light' || stored === 'dark') {
-    document.documentElement.setAttribute('data-theme', stored);
-  }
-  if (!toggle) return;
-  toggle.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('iris-theme', next);
-  });
-}
-
 async function setupMermaid() {
   const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
   if (figures.length === 0) return;
@@ -288,11 +354,82 @@ async function setupMermaid() {
   await renderVisibleFigures();
 }
 
+function setupSpecBrowser() {
+  const index = document.querySelector('[data-spec-index]');
+  const region = document.querySelector('[data-spec-detail]');
+  const slot = document.querySelector('[data-spec-detail-content]');
+  if (!(index instanceof HTMLElement) || !(region instanceof HTMLElement) || !(slot instanceof HTMLElement)) return;
+
+  const bundle = globalThis.IRIS_SPEC;
+  const records = bundle && bundle.records ? bundle.records : null;
+  const crumb = document.querySelector('[data-spec-crumb]');
+  const crumbDefault = crumb ? crumb.textContent : '';
+
+  const showIndex = () => {
+    region.hidden = true;
+    slot.textContent = '';
+    index.hidden = false;
+    if (crumb) crumb.textContent = crumbDefault;
+  };
+
+  const showRecord = (record) => {
+    index.hidden = true;
+    region.hidden = false;
+    // Content is generated and escaped by Iris at render time; inserted script
+    // elements do not execute, and the parser output is already escaped.
+    slot.innerHTML = record.html;
+    if (crumb) crumb.textContent = record.title;
+    const heading = slot.querySelector('h1');
+    if (heading instanceof HTMLElement) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    }
+    document.dispatchEvent(new CustomEvent('iris:visibilitychange'));
+  };
+
+  const sync = () => {
+    const hash = location.hash;
+    if (!records || !hash.startsWith('#/')) {
+      showIndex();
+      return;
+    }
+    let key = '';
+    try {
+      const parts = hash.slice(2).split('/');
+      const kind = parts.shift() || '';
+      key = kind + ':' + decodeURIComponent(parts.join('/'));
+    } catch (error) {
+      showIndex();
+      return;
+    }
+    const record = Object.prototype.hasOwnProperty.call(records, key) ? records[key] : undefined;
+    if (!record) {
+      showIndex();
+      return;
+    }
+    showRecord(record);
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof Element && target.closest('[data-spec-back]')) {
+      event.preventDefault();
+      if (location.hash.startsWith('#/')) history.replaceState(null, '', location.href.split('#')[0]);
+      showIndex();
+    }
+  });
+
+  window.addEventListener('hashchange', sync);
+  sync();
+}
+
+const navigation = setupNavigation();
+setupTheme();
 setupTabs();
 setupFilter();
-setupTheme();
-setupKeyboardShortcuts();
+setupKeyboardShortcuts(navigation);
 setupCardNavigation();
 setupWorkDrawer();
+setupSpecBrowser();
 void setupMermaid();
 document.documentElement.setAttribute('data-iris-js', 'ready');

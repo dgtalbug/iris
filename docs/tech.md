@@ -13,7 +13,15 @@ Envelope schema plus per-type schemas; rendering is blocked on invalid contracts
 
 ## Rendering model
 
-Data in (`data.json`) to deterministic html out (`page.html`); dashboard is static file://-compatible HTML.
+Two editable sources produce deterministic HTML: JSON contracts at `iris/pages/<id>/data.json` and Markdown research at `iris/research/<id>/index.md`. Both render to a `page.html` beside their source and both feed one Work projection.
+
+Browsers treat every local file as its own opaque origin, so a `file://` page cannot read a sibling file: `fetch` fails with `TypeError: Failed to fetch` and `XMLHttpRequest` fails with `status 0`. A classic `<script src>` is the one local-load mechanism that still works, which is why the vendored Mermaid runtime loads that way and why the Spec section ships its record detail as a generated data bundle rather than reading Markdown at view time. The bundle escapes every `<` so no record can terminate the script element or open an HTML comment.
+
+The workspace is a set of static `file://`-compatible pages that share one generated shell: `index.html` (Overview), `work.html`, `spec.html`, `research.html`, `commands.html`, contract pages, and project docs. The shell is depth-aware — every asset and navigation reference is relative — and is marked `data-iris-nav` so publish and export strip it. Splitting sections into separate files keeps each page small enough for an agent to read without pulling in the whole OpenSpec snapshot.
+
+Research Markdown is read by a bounded local walker (sorted, symlink-refusing, repository-confined, 256 KB per file, 500 directories) and rendered through the same safe Markdown pipeline as OpenSpec artifacts, with opt-in heading ids so a document page can carry a table of contents. Heading ids stay opt-in because the Spec page renders many documents into one page, where generated ids would collide.
+
+The CLI command surface is declared once in `src/lib/command-catalog.ts`; `iris --help` and the generated `commands.html` both read it, and each entry carries an explicit `implemented`, `partial`, or `stubbed` status.
 
 ## OpenSpec filesystem model
 
@@ -29,7 +37,7 @@ The parser extracts headings, requirements, scenarios, delta-operation labels, a
 
 The initializer reads version 1 state only long enough to classify legacy active document mirrors. It removes an exact page directory only when safe path, state provenance, page identity, generated metadata, and both stored data hashes match the current bytes. Every mismatch and every archived record is preserved before state is normalized to version 2.
 
-Agent instructions come from one packaged `templates/agents/iris-workspace.md` source. Generated skill files use versioned managed markers and a SHA-256 body digest. Intact managed regions update atomically; unmarked, malformed, edited, symlinked, or escaping targets are preserved and reported.
+Agent instructions come from two packaged sources: `templates/agents/iris-workspace.md` for the skill and `templates/agents/iris-commands.md` for the generated `/iris:*` command and prompt files. One descriptor-driven installer writes every surface, so skills and commands share the same versioned managed markers, SHA-256 body digest, confinement and symlink checks, and atomic writes. Intact managed regions update atomically; unmarked, malformed, edited, symlinked, or escaping targets are preserved and reported.
 
 ## Permalink algorithm
 

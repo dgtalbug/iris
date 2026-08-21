@@ -1,6 +1,6 @@
-# iris design system 2.0 — "Aperture"
+# iris design system 3.1 — "Aperture / Electra"
 
-> Implemented direction, updated 2026-08-21 for the agent-first workspace. Generated design output remains owned by `src/templates/design.ts`.
+> Implemented direction, updated 2026-08-21 for the multi-page workspace. Generated design output is owned by `src/templates/`: `tokens.ts`, `styles.ts`, `script.ts`, `shell.ts`, `common.ts`, and `pages/*.ts`, with `design.ts` as the import barrel.
 
 ## 1. The one goal
 
@@ -49,20 +49,26 @@ All values live in `tokens.css`; `token-lint` continues to forbid literals elsew
 
 ### 4.1 Color — dark (default)
 
-| Token          | Value     | Role                                                                                 |
-| -------------- | --------- | ------------------------------------------------------------------------------------ |
-| `--bg`         | `#0B0E14` | chamber — page ground                                                                |
-| `--surface-1`  | `#12161F` | ground glass — cards, panels                                                         |
-| `--surface-2`  | `#1A1F2B` | raised — headers within cards, inputs                                                |
-| `--surface-3`  | `#232936` | top elevation — menus, hover                                                         |
-| `--line-1`     | `#252B39` | hairline borders                                                                     |
-| `--text-1`     | `#E9EBF1` | primary text                                                                         |
-| `--text-2`     | `#A6ADBF` | secondary text                                                                       |
-| `--text-3`     | `#6E7689` | captions, disabled                                                                   |
-| `--accent`     | `#F2B24E` | lamplight amber — interactive chrome only (links, focus, active tab, primary button) |
-| `--accent-ink` | `#141008` | text on accent                                                                       |
+| Token               | Value       | Role                                                     |
+| ------------------- | ----------- | -------------------------------------------------------- |
+| `--bg`              | `#0e1117`   | chamber — page ground                                    |
+| `--surface-1`       | `#151923`   | ground glass — cards, panels                             |
+| `--surface-2`       | `#1b2030`   | raised — table headers, inputs, code                     |
+| `--surface-3`       | `#242a3b`   | top elevation — menus, hover                             |
+| `--line-1`          | `#2a3143`   | hairline borders                                         |
+| `--text-1`          | `#e7eaf2`   | primary text                                             |
+| `--text-2`          | `#a4adc2`   | secondary text                                           |
+| `--text-3`          | `#7a8399`   | captions, metadata                                       |
+| `--accent`          | `#6f8cff`   | interactive chrome — focus, selected tab, primary button |
+| `--accent-text`     | `#93a8ff`   | contrast-safe linked text                                |
+| `--accent-soft`     | `#6f8cff1f` | selected tab fill, blockquote ground                     |
+| `--accent-ink`      | `#0b0e14`   | text on accent                                           |
+| `--nav-bg`          | `#0a0d13`   | sidebar ground, one step below the page                  |
+| `--nav-text`        | `#a4adc2`   | sidebar entries                                          |
+| `--nav-active-bg`   | `#6f8cff1f` | current section fill                                     |
+| `--nav-active-text` | `#c3cfff`   | current section label                                    |
 
-Amber stays as the single interactive accent deliberately: dev-tool dark UIs are saturated with blue and green accents; warm light against a cool-black chamber is both rarer and true to the optics metaphor (light entering the aperture).
+The palette was brightened in 3.1: grounds gained blue and the encoded spectrum gained saturation, so status and type read at a glance without the chrome getting louder. Every pair still clears 4.5:1 in both themes, which is what stops "brighter" from becoming "washed out". The interactive accent is electric indigo, not the earlier amber. Amber survives as `--type-plan`, where it encodes meaning; using it for chrome as well made every interactive element read as a plan badge. Indigo is the convention the tools this replaces already use for selection and focus, which is worth more here than novelty. The sidebar sits one step darker than the page so the content area reads as the lit surface.
 
 ### 4.2 Color — the spectrum (encoding only)
 
@@ -75,15 +81,16 @@ Used exclusively for page types, statuses, and chart series. Never for decoratio
 | `--type-bug`                              | `#EF6A6A`                                     | bug pages / series 3                  |
 | `--type-idea`                             | `#A78BFA`                                     | idea pages / series 4                 |
 | `--type-plan`                             | `#F2B24E`                                     | plan pages / series 5                 |
+| `--type-research`                         | `#2DD4BF`                                     | research pages / series 6             |
 | `--ok` / `--warn` / `--danger` / `--info` | `#4FC98C` / `#F0913E` / `#EF6A6A` / `#5CB8F0` | statuses, warnings, and render errors |
 
 Rule: a type color always appears with a second channel (label, icon, or position) — color is never the only signal (color-blind safety).
 
-### 4.3 Color — light theme (derived)
+### 4.3 Color — light theme (peer, not afterthought)
 
-Daylight version of the same instrument: `--bg #F6F5F1` (warm paper, not blue-white), surfaces step down toward white, text inverts to `#191D26` / `#4B5163` / `#7A8093`, accent deepens to `#B87A16` for contrast, spectrum values darken ~15% lightness to hold 4.5:1 on light ground. Toggle mechanism (`data-theme`) is unchanged.
+Light is a first-class theme rather than a derived one, because the workspace is read in daylight as often as not. Ground is a cool `#f4f5f7`, cards are pure white, and the sidebar is white against that grey so the navigation reads as a panel rather than a stripe. Text inverts to `#172b4d` / `#44546f` / `#626f86`; the accent deepens to `#3b5bdb` with `#2f4ac0` for linked text; spectrum values darken to hold 4.5:1 on white. `--elevation-1` becomes a real two-layer shadow in light and stays `none` in dark, where elevation comes from surface steps.
 
-Implementation note: `#B87A16` and the tertiary text values remain palette tokens, but automated contrast checks showed they do not reach 4.5:1 as small text on every surface. Components therefore use the contrast-safe `--accent-text` token for linked text and `--text-2` for readable captions; `--accent` remains the focus/border chrome color.
+The initial theme comes from `theme:` in `iris/config.yaml`, emitted as `data-theme` on `<html>`. The `t` toggle overrides it per browser through `localStorage`, and every generated page reads that key so the choice follows the reader across sections.
 
 ### 4.4 Type
 
@@ -99,53 +106,50 @@ Scale (unchanged token names, retuned): `--size-1 0.6875rem` caption · `--size-
 
 ### 4.5 Space, radius, elevation, motion
 
-Keep the existing `--space-*`, `--radius-*` ramps. Add `--radius-full` for the aperture and pills. Elevation in dark mode = surface step + 1px `--line-1` border; shadows (`--elevation-1`) only in light theme and menus. Motion tokens unchanged (`--duration-1/2/3`, `--easing`); policy in §8.
+Keep the existing `--space-*`, `--radius-*` ramps. `--radius-full` covers the aperture and pills. Elevation in dark mode = surface step + 1px `--line-1` border; shadows (`--elevation-1`) apply in the light theme only. Motion tokens unchanged (`--duration-1/2/3`, `--easing`); policy in §8. Two layout tokens drive the shell: `--nav-width` (15rem) and `--nav-rail` (3.5rem), with `[data-nav='collapsed']` swapping one for the other so the collapse is a single token change rather than a second layout.
 
-## 5. Dashboard information architecture
+## 5. Workspace information architecture
 
-The dashboard uses peer Work and `Spec` top-level tabs. Work leads with answers in the order a newcomer asks them; Spec exposes the repository's OpenSpec workspace without ingesting general documentation:
+The workspace is a set of static pages behind one shared shell, not a single scrolling dashboard. Sections are separate files so each stays small enough for an agent to read on its own and for a human to deep-link:
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ ◔ iris · <repo name>                      [theme] [⌕ /]  │  identity bar
-├──────────────────────────────────────────────────────────┤
-│  [ Work ] [ Spec ]                                      │  primary views
-├──────────────────────────────────────────────────────────┤
-│  ╭───────╮   WHAT THIS REPO IS                           │
-│  │ ◔ 12  │   Agent-first workspace guidance              │  briefing hero
-│  │ pages │   run: `pnpm dev` · test: `pnpm test`         │  + aperture ring
-│  ╰───────╯   entry points: src/cli.ts · docs/            │
-├──────────────────────────────────────────────────────────┤
-│  [ 12 pages ] [ 2 archived ] [ 4 active ] [ 6 project ]  │  health strip
-├──────────────────────────────────────────────────────────┤
-│  ARCHITECTURE                                            │
-│  ┌────────────────────────────────────────────────────┐  │  hld diagram
-│  │              (mermaid flowchart)                   │  │  (vendored)
-│  └────────────────────────────────────────────────────┘  │
-├──────────────────────────────────────────────────────────┤
-│  WORK   [List | Table | Kanban]        filter…           │
-│  ◔ bug-cache-stampede  active  urgent  2026-08-19       │  work surface
-│  ◔ session-review      done    not set 2026-08-18       │
-├──────────────────────────────────────────────────────────┤
-│  project docs: overview · hld · lld · erd · commands …   │  docs strip
-│  generated by iris · works offline from file://          │
-└──────────────────────────────────────────────────────────┘
+┌───────────────┬──────────────────────────────────────────────────┐
+│ ◔ iris        │ iris / Work                    [filter] [theme]  │  top bar
+│   <repo>      ├──────────────────────────────────────────────────┤
+│               │                                                  │
+│ ◔ Overview    │  WORK                                            │
+│ ▤ Work     7  │  Every contract and research page in one browser │  page head
+│ ▣ Spec     4  │                                                  │
+│ ⌕ Research 2  │  ┌────┐┌────┐┌────┐┌────┐┌────┐                  │  summary strip
+│ ▭ Commands 15 │  │ 7  ││ 3  ││ 2  ││ 2  ││ 0  │                  │
+│               │  └────┘└────┘└────┘└────┘└────┘                  │
+│ PROJECT DOCS  │  [List|Table|Kanban]              7 items         │  toolbar
+│ ▤ overview    │  ◔ cache-stampede   active urgent 2026-08-21     │  work surface
+│ ▤ hld         │  ◔ agent-notes      active  —     2026-08-21     │
+│ ▤ lld  …      │                                                  │
+│               │                                                  │
+│ offline    ‹  │  generated by iris · works offline from file://  │
+└───────────────┴──────────────────────────────────────────────────┘
 ```
 
-The `Spec` view uses this hierarchy:
+| Page                | Owns                                                                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index.html`        | Overview: briefing hero + aperture ring, four section tiles, recent work, spec movement with task progress, architecture pane, project-docs strip |
+| `work.html`         | Dense List / Table / Kanban browser over one projection, shared filter, detail drawer                                                             |
+| `spec.html`         | OpenSpec index: overview counts, compact tables for canonical specs, active changes, and archive, project context, warnings — no artifact bodies  |
+| `spec/**/page.html` | One detail page per canonical spec, change, and legacy archive: header, counts, requirement table of contents, rendered artifacts, exact source   |
+| `research.html`     | Markdown research index with status, tags, evidence, and parser warnings                                                                          |
+| `commands.html`     | Every catalog command grouped by purpose with an explicit status chip                                                                             |
+| `pages/<id>/`       | One contract page per record, same shell                                                                                                          |
+| `research/<id>/`    | One research document per record: header from front matter, table of contents, safe body                                                          |
+| `project/*.html`    | Managed overview, HLD, LLD, ERD, decisions placeholders                                                                                           |
 
-```text
-Overview → project/config context → canonical specs → active changes → archive
-```
+The Overview **summarizes and links**; it never embeds another section's content. That is what keeps `index.html` around 13 KB while the Spec page carries the full OpenSpec snapshot.
 
-Canonical, active, structured archive, legacy archive, incomplete, and invalid states always carry text or structural labels. Proposal, design, tasks, delta specs, project identity, and legacy Markdown use native disclosures with semantic generated prose as the primary view and an exact escaped-source disclosure beneath it. YAML/config artifacts stay literal. Tables and code scroll within their component, long paths stay contained at 360 px, and hostile HTML, unsafe links, and image requests never become active markup. Tab selection uses correct ARIA relationships and arrow/Home/End keyboard behavior; motion is optional and becomes immediate under reduced-motion preferences.
-
-- **Briefing hero** is the "one shot": agent-first workspace guidance plus explicit content/render commands. The empty state points to an intentional page command and `iris render --all`; general repository documentation is not ingested.
-- **Health strip**: four stat tiles maximum. Numbers in display face; each tile links to its filtered view.
-- **Architecture pane** renders the HLD page's diagram inline when it exists; otherwise a one-line empty state.
-- **Work surface** provides peer List, Table, and Kanban tabs over one contract projection and one filter. Compact rows and cards show type, ID, title, status, priority, date, and agent when the contract supports them; unsupported values say `not set`.
-- **Detail drawer** opens from any work representation without discarding the current view. It exposes the bounded description/evidence projection, retains an explicit full-page link, supports hash reopening, and behaves as a modal dialog with focus containment and return.
-- Keyboard: `/` focuses filter, `t` toggles theme, arrow keys move the list. Focus rings use `--accent`.
+- **Shell.** Sidebar (sections + project docs, current entry marked with `aria-current` and an inset accent rule) and a top bar carrying the breadcrumb, an optional filter slot, and the theme toggle. The sidebar collapses to a `--nav-rail` icon strip via the footer control or `b`, and the state persists in `localStorage`. Below 48rem it becomes an overlay opened from a top-bar menu button. Everything in the shell is marked `data-iris-nav`, so publish and export strip it and the page body still stands alone.
+- **Depth-aware paths.** `renderShell` takes a `depth` and derives every asset and navigation href from it (`./`, `../`, `../../`), so the same shell serves root sections, project docs, and nested record pages.
+- **Keyboard.** `/` focuses the visible filter, `t` toggles theme, `b` toggles the sidebar, arrow keys move between work items, and the layout tablist follows the standard tab pattern. Focus rings use `--accent`.
+- **No JavaScript.** The sidebar renders expanded and fully linked, the default List view is readable, and every work item keeps its full-page link.
 
 ### 5.1 Jira-inspired Work research
 
@@ -164,7 +168,13 @@ Tokens-only styling, one class per component, no utility soup — `base.css` sta
 
 | Component                              | Notes                                                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------- |
-| `aperture`                             | ring (dashboard) and glyph (cards/pages); SVG, segments driven by rendered data  |
+| `sidebar` / `nav-item`                 | workspace shell: sections, project docs, current marking, collapsed rail         |
+| `topbar` / `crumbs`                    | breadcrumb, filter slot, theme toggle; stripped from published artifacts         |
+| `page-head`                            | eyebrow, H1, one-line description, optional actions — opens every section page   |
+| `progress`                             | task-completion bar for OpenSpec changes; label carried by `aria-label`          |
+| `command-card`                         | one catalog command: name, status chip, synopsis, usage, flags                   |
+| `doc-layout` / `doc-toc` / `doc-body`  | research document with sticky table of contents; stacks below 48 rem             |
+| `aperture`                             | ring (overview) and glyph (cards/pages); SVG, segments driven by rendered data   |
 | `stat-tile`                            | display-face number, caption label, optional delta arrow, links to filtered view |
 | `work-row` / `work-table` / `kanban`   | three compact peer representations over one honest Work projection               |
 | `work-drawer`                          | modal right-side preview, full-screen at 360 px, with full-page escape hatch     |
@@ -210,6 +220,9 @@ Publish/export note: `iris publish` output stays self-contained. It strips proje
 4. **`iris vendor` + Markdown Mermaid fences** — implemented for the pinned Mermaid runtime and license; font/icon vendoring remains separate.
 5. **Architecture projection + chart blocks** — project the relevant HLD Mermaid fence into the Architecture pane and add a CLI-side SVG chart renderer behind the chart contract.
 6. **Dogfood** — run `iris init` and `iris render --all` so the shipped `iris/` tree is generated from intentional page contracts without repository-document ingestion.
+7. **Workspace shell (`dashboard-shell-redesign`)** — Electra tokens, module split, one shell over per-section pages, generated command reference. Done.
+8. **Markdown research (`research-markdown-pages`)** — a second editable source: `iris/research/<id>/index.md` with bounded front matter, document template, section page, and Work-browser inclusion. Done.
+9. **Conversational agent surfaces (`agent-surface-triggers`)** — intent-mapped skill plus generated `/iris:*` commands and Copilot prompts from one managed-surface installer. Done.
 
 Each step is an OpenSpec change; each keeps CI green independently.
 

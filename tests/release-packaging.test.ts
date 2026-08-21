@@ -4,11 +4,14 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
+const packageVersion = JSON.parse(
+  await readFile(path.join(repoRoot, 'package.json'), 'utf8'),
+).version;
 
 describe('npm release packaging', () => {
   it('accepts the tag matching the package version', () => {
     expect(() =>
-      execFileSync('node', ['scripts/verify-release.mjs', 'v0.1.0'], {
+      execFileSync('node', ['scripts/verify-release.mjs', `v${packageVersion}`], {
         cwd: repoRoot,
         stdio: 'pipe',
       }),

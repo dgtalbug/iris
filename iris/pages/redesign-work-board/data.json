@@ -1,0 +1,52 @@
+{
+  "iris": "1",
+  "type": "feature",
+  "id": "redesign-work-board",
+  "title": "Redesign Work Board",
+  "status": "done",
+  "agent": "codex",
+  "created": "2026-08-21T11:59:13.327Z",
+  "updated": "2026-08-21T11:59:13.327Z",
+  "commit": "f1bf7a4cb7055df58136b73583797ef2c8bb932a",
+  "tags": [
+    "feature",
+    "work-board",
+    "accessibility",
+    "offline"
+  ],
+  "sections": {
+    "problem": {
+      "md": "The Work surface exposed only spacious List and Board layouts, navigated away for details, and remained visually empty in repositories without page contracts. It lacked a compact table, shared field hierarchy, context-preserving inspection, and explicit handling for unavailable metadata."
+    },
+    "goal": {
+      "md": "Provide compact List, Table, and Kanban views over one validated contract projection, with shared filtering and an accessible right-side detail drawer. Preserve deterministic static HTML, file:// operation, no-JavaScript full-page links, light/dark themes, reduced motion, and readable 360 px layouts."
+    },
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Derive bounded Work metadata from validated contracts without inventing unsupported values",
+        "done": true
+      },
+      {
+        "id": "2",
+        "title": "Implement peer List, Table, and Kanban views with shared filtering",
+        "done": true
+      },
+      {
+        "id": "3",
+        "title": "Implement hash-addressable accessible detail drawer and keyboard behavior",
+        "done": true
+      },
+      {
+        "id": "4",
+        "title": "Add Jira-inspired design documentation and focused regression coverage",
+        "done": true
+      },
+      {
+        "id": "5",
+        "title": "Pass the full release gate and merge the implementation into main",
+        "done": true
+      }
+    ]
+  }
+}

@@ -118,7 +118,8 @@ describe('generated HTML navigation', () => {
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
     // Browsers CORS-block module scripts on file://; only classic scripts run.
     expect(dashboard).not.toContain('type="module"');
-    expect(dashboard).toContain('<script defer src="./design/vendor/mermaid.min.js">');
+    const specPage = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
+    expect(specPage).toContain('<script defer src="./design/vendor/mermaid.min.js">');
     expect(dashboard).toContain('<script defer src="./design/components/base.js">');
 
     const baseCss = await readFile(
@@ -152,22 +153,28 @@ describe('generated HTML navigation', () => {
 
     const orderedLabels = [
       'what this repo is',
-      'repository health',
+      'aria-label="workspace summary"',
+      'Recent work',
+      'Spec movement',
       'Architecture',
-      'id="work-title">Work',
       'Project docs',
     ];
     const offsets = orderedLabels.map((label) => dashboard.indexOf(label));
     expect(offsets.every((offset) => offset >= 0)).toBe(true);
     expect(offsets).toEqual([...offsets].sort((left, right) => left - right));
-    expect(dashboard).toContain('Agent-first workspace ready');
+    expect(dashboard).toContain('Agent-first visual workspace');
     expect(dashboard).toContain('iris vendor');
     expect(dashboard).toContain('<kbd>/</kbd>');
     expect(baseJs).toContain("event.key === '/'");
     expect(baseJs).toContain("event.key.toLowerCase() === 't'");
-    expect(baseCss).toContain('@media (max-width: 40rem)');
-    expect(baseCss).toMatch(/health-strip\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
+    expect(baseJs).toContain("event.key.toLowerCase() === 'b'");
+    expect(baseCss).toContain('@media (max-width: 48rem)');
+    expect(baseCss).toMatch(/\.strip[^{]*\{[^}]*grid-template-columns:\s*repeat\(auto-fit/);
     expect(baseCss).toMatch(/prefers-reduced-motion:[^)]+\)[\s\S]*aperture \.seg/);
+
+    for (const section of ['work.html', 'spec.html', 'research.html', 'commands.html']) {
+      expect(dashboard).toContain(`href="./${section}"`);
+    }
   });
 
   it('publishes standalone artifacts without tree-relative navigation chrome', async () => {

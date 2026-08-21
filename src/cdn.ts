@@ -5,7 +5,6 @@ export const CDN = {
   reactDom: 'https://esm.sh/react-dom@18.3.1/client',
   reactFlow: 'https://esm.sh/@xyflow/react@12.8.5',
   chartJs: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js',
-  tanstackTableCore:
-    'https://cdn.jsdelivr.net/npm/@tanstack/table-core@8.21.3/build/lib/index.mjs',
+  tanstackTableCore: 'https://cdn.jsdelivr.net/npm/@tanstack/table-core@8.21.3/build/lib/index.mjs',
   shiki: 'https://cdn.jsdelivr.net/npm/shiki@3.12.2/dist/index.mjs',
 } as const;

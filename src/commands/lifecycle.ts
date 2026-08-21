@@ -1,41 +1,80 @@
 import { existsSync } from 'node:fs';
-import { readFile, rename } from 'node:fs/promises';
+import { readFile, rename, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
-import { installAgentSkills, type SkillInstallResult } from '../lib/agent-skills.js';
+import { installAgentSurfaces, type SkillInstallResult } from '../lib/agent-skills.js';
 import { loadProjectState, saveProjectState } from '../lib/project-state.js';
 import {
   BASE_COMPONENTS_CSS,
   BASE_COMPONENTS_JS,
   PROJECT_DOC_NAMES,
   projectPlaceholderHtml,
+  RETIRED_PROJECT_DOC_NAMES,
   TOKENS_CSS,
 } from '../templates/design.js';
-import { refreshDashboard, runRenderCommand } from './render.js';
+import { loadWorkspaceTheme, refreshDashboard, runRenderCommand } from './render.js';
 
 const MANAGED_TASK_LABEL = 'iris: open dashboard';
 const LEGACY_PENDING_STUB = '<!doctype html><title>pending</title>\n';
 
-async function refreshProjectPlaceholders(cwd: string): Promise<void> {
+export type ManagedSurfaceResult = {
+  skills: SkillInstallResult;
+  retiredProjectDocs: string[];
+  preservedProjectDocs: string[];
+};
+
+function isManaged(content: string): boolean {
+  return content === LEGACY_PENDING_STUB || content.includes('data-iris-managed');
+}
+
+async function refreshProjectPlaceholders(
+  cwd: string,
+): Promise<{ retired: string[]; preserved: string[] }> {
+  const theme = await loadWorkspaceTheme(cwd);
+  const context = {
+    projectName: path.basename(cwd),
+    theme,
+    counts: {},
+    projectDocs: PROJECT_DOC_NAMES,
+  };
+
   for (const name of PROJECT_DOC_NAMES) {
     const pagePath = path.join(cwd, 'iris', 'project', `${name}.html`);
     if (existsSync(pagePath)) {
       const current = await readFile(pagePath, 'utf8');
-      if (current !== LEGACY_PENDING_STUB && !current.includes('data-iris-managed')) continue;
+      if (!isManaged(current)) continue;
     }
-    await writeAlways(pagePath, projectPlaceholderHtml(name));
+    await writeAlways(pagePath, projectPlaceholderHtml(name, context));
   }
+
+  // Retired project docs are removed only when Iris can prove it generated them;
+  // anything a user wrote or edited is preserved and reported instead.
+  const retired: string[] = [];
+  const preserved: string[] = [];
+  for (const name of RETIRED_PROJECT_DOC_NAMES) {
+    const pagePath = path.join(cwd, 'iris', 'project', `${name}.html`);
+    if (!existsSync(pagePath)) continue;
+    const current = await readFile(pagePath, 'utf8');
+    if (isManaged(current)) {
+      await rm(pagePath, { force: true });
+      retired.push(`iris/project/${name}.html`);
+    } else {
+      preserved.push(`iris/project/${name}.html`);
+    }
+  }
+
+  return { retired, preserved };
 }
 
-export async function updateManagedSurfaces(cwd: string): Promise<SkillInstallResult> {
+export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurfaceResult> {
   await writeAlways(path.join(cwd, 'iris', 'design', 'tokens.css'), TOKENS_CSS);
   await writeAlways(
     path.join(cwd, 'iris', 'design', 'components', 'base.css'),
     BASE_COMPONENTS_CSS,
   );
   await writeAlways(path.join(cwd, 'iris', 'design', 'components', 'base.js'), BASE_COMPONENTS_JS);
-  await refreshProjectPlaceholders(cwd);
+  const projectDocs = await refreshProjectPlaceholders(cwd);
 
   const tasksPath = path.join(cwd, '.vscode', 'tasks.json');
   let existing: { version?: string; tasks?: unknown[] } = {};
@@ -69,7 +108,11 @@ export async function updateManagedSurfaces(cwd: string): Promise<SkillInstallRe
     `${JSON.stringify({ ...existing, version: '2.0.0', tasks }, null, 2)}\n`,
   );
 
-  return installAgentSkills(cwd);
+  return {
+    skills: await installAgentSurfaces(cwd),
+    retiredProjectDocs: projectDocs.retired,
+    preservedProjectDocs: projectDocs.preserved,
+  };
 }
 
 function assertSkillInstallComplete(result: SkillInstallResult): void {
@@ -77,15 +120,23 @@ function assertSkillInstallComplete(result: SkillInstallResult): void {
   const details = result.conflicts
     .map((conflict) => `${conflict.path}: ${conflict.reason}`)
     .join('; ');
-  throw new IrisError(1, `Iris agent skill setup is incomplete; ${details}`);
+  throw new IrisError(1, `Iris agent surface setup is incomplete; ${details}`);
+}
+
+function archiveSourceRoot(cwd: string, id: string): string | undefined {
+  for (const root of ['pages', 'research']) {
+    const candidate = path.join(cwd, 'iris', root, id);
+    if (existsSync(candidate)) return candidate;
+  }
+  return undefined;
 }
 
 export async function runArchiveCommand(cwd: string, id?: string): Promise<void> {
   if (!id) throw new IrisError(1, "Missing id for command 'archive'");
   const state = await loadProjectState(cwd);
-  const source = path.join(cwd, 'iris', 'pages', id);
+  const source = archiveSourceRoot(cwd, id);
   const destination = path.join(cwd, 'iris', 'archive', id);
-  if (!existsSync(source)) throw new IrisError(1, `Page '${id}' does not exist`);
+  if (!source) throw new IrisError(1, `Page '${id}' does not exist`);
   if (existsSync(destination)) {
     throw new IrisError(1, `Archive destination already exists for page '${id}'`);
   }
@@ -105,10 +156,18 @@ export async function runArchiveCommand(cwd: string, id?: string): Promise<void>
 
 export async function runUpdateCommand(cwd: string): Promise<void> {
   await loadProjectState(cwd);
-  const skills = await updateManagedSurfaces(cwd);
+  const surfaces = await updateManagedSurfaces(cwd);
   await refreshDashboard(cwd);
-  assertSkillInstallComplete(skills);
-  process.stdout.write('updated managed iris surfaces and agent skills; preserved user-owned content\n');
+  for (const retired of surfaces.retiredProjectDocs) {
+    process.stdout.write(`removed retired managed page ${retired}\n`);
+  }
+  for (const preserved of surfaces.preservedProjectDocs) {
+    process.stderr.write(`preserved user-owned ${preserved}; it is no longer generated\n`);
+  }
+  assertSkillInstallComplete(surfaces.skills);
+  process.stdout.write(
+    'updated managed iris surfaces and agent skills; preserved user-owned content\n',
+  );
 }
 
 export { assertSkillInstallComplete };

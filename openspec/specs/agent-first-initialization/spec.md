@@ -7,7 +7,7 @@ Make a single installed Iris command establish and safely upgrade the local visu
 ## Requirements
 
 ### Requirement: one-command agent-first setup
-The system MUST make `iris init` the complete project setup and upgrade flow for an installed Iris CLI.
+The system MUST make `iris init` the complete project setup and upgrade flow for an installed Iris CLI, MUST report the agent surfaces that operation installed, and MUST NOT record derived tool detection in the user-owned workspace configuration.
 
 #### Scenario: first initialization
 - **WHEN** a user runs `iris init` in a repository with no Iris workspace
@@ -21,16 +21,32 @@ The system MUST make `iris init` the complete project setup and upgrade flow for
 - **WHEN** initialization completes successfully
 - **THEN** agents and users MUST still be able to use the existing draft, render, report, archive, publish, export, and open commands
 
+#### Scenario: initialization installs agent surfaces
+- **WHEN** `iris init` finishes installing agent surfaces
+- **THEN** it MUST report how many surfaces were created, updated, and left unchanged, and MUST name every surface it could not write, so that the operator can see what was installed without inspecting the filesystem
+
+#### Scenario: generated configuration is written
+- **WHEN** the system writes the workspace configuration file
+- **THEN** that file MUST NOT contain detection results derived from the repository's contents, so that a value frozen at creation time can never contradict the detection the dashboard actually reads
+
 ### Requirement: canonical multi-agent skill installation
-The system MUST generate supported agent skill files from one canonical Iris-owned skill source rather than maintaining independent instruction copies.
+
+The system MUST generate supported agent skill files from one canonical Iris-owned skill source rather than maintaining independent instruction copies, and that source MUST state when to use Iris in conversational terms and map common user intents to the exact command and generated destination.
 
 #### Scenario: supported skill surfaces are installed
+
 - **WHEN** `iris init` installs agent guidance
 - **THEN** it MUST provide the `iris-workspace` skill to the generic/Codex, Claude, and GitHub Copilot repository skill locations
 
 #### Scenario: unrelated agent content exists
+
 - **WHEN** a supported skill directory already contains sibling skills or unrelated files
 - **THEN** initialization MUST leave that content unchanged
+
+#### Scenario: agent decides whether Iris applies
+
+- **WHEN** an agent reads the installed skill while deciding how to record completed work
+- **THEN** the skill MUST name the situations that call for Iris and map each supported intent to its command and generated output location without requiring the agent to read any other file
 
 ### Requirement: managed skill preservation
 The system MUST identify its generated skill content with verifiable managed ownership metadata and fail safely around user-owned or modified content.
@@ -72,3 +88,41 @@ The system MUST remove a legacy adopted-document page only when Iris can positiv
 #### Scenario: arbitrary user page resembles an adopted page
 - **WHEN** a user-created page has a `doc-` prefix, an `adopted-doc` tag, source-like prose, or only some legacy fields
 - **THEN** initialization MUST NOT treat those hints alone as permission to delete the page
+
+### Requirement: generated agent command surfaces
+
+The system MUST generate typed command files for the supported agent surfaces from the same canonical Iris source that produces the skill, covering the frequent content actions, and MUST apply its managed-ownership rules to those files.
+
+#### Scenario: command surfaces are installed
+
+- **WHEN** `iris init` installs agent guidance
+- **THEN** it MUST generate one command file per supported content action into the Claude command directory and the GitHub prompt directory, each naming the exact Iris command, the file the agent edits, and the render step
+
+#### Scenario: generated command content is refreshed
+
+- **WHEN** a previously generated command file has valid ownership markers and its managed content matches the recorded digest
+- **THEN** initialization MUST update only that managed content and preserve user-authored bytes outside the managed boundary
+
+#### Scenario: command file was edited or is user-owned
+
+- **WHEN** a target command file is unmarked, partially marked, misordered, edited so its digest no longer matches, symlinked, or outside the repository boundary
+- **THEN** initialization MUST preserve the file, MUST NOT truncate or follow it, and MUST report the affected surface
+
+#### Scenario: unrelated command content exists
+
+- **WHEN** a supported command directory already contains unrelated commands or prompts
+- **THEN** initialization MUST leave that content unchanged
+
+### Requirement: installed agent surface visibility
+
+The generated workspace MUST show which agent surfaces Iris installed and where each one lives, so that the setup Iris performs is inspectable from the dashboard rather than only from the filesystem.
+
+#### Scenario: surfaces are installed
+
+- **WHEN** a user opens the generated command reference after initialization
+- **THEN** it MUST list each installed agent surface with its destination path and the agent tooling that reads it
+
+#### Scenario: a surface could not be written
+
+- **WHEN** a surface was preserved as a conflict instead of being written
+- **THEN** the listing MUST mark that surface as not installed and give the reason, rather than presenting it as available

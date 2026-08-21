@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commands · iris</title>
+    <link rel="stylesheet" href="./design/tokens.css" />
+    <link rel="stylesheet" href="./design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="./index.html">
+        <svg class="aperture-glyph tp-plan" viewBox="0 0 24 24" role="img" aria-label="iris" style="width: 1.5rem; height: 1.5rem"><circle cx="12" cy="12" r="8" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="./index.html" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" stroke-dasharray="30 10" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="./work.html" title="Work"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="5" height="16" rx="1" /><rect x="10" y="4" width="5" height="11" rx="1" /><rect x="17" y="4" width="4" height="7" rx="1" /></svg><span>Work</span><em class="nav-count">2</em></a></li><li><a class="nav-item" href="./spec.html" title="Spec"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6z" /><path d="M9 12h6M9 16h6M15 3v4h4" /></svg><span>Spec</span><em class="nav-count">9</em></a></li><li><a class="nav-item" href="./research.html" title="Research"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg><span>Research</span><em class="nav-count">1</em></a></li><li><a class="nav-item" href="./commands.html" aria-current="page" title="Commands"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m7 10 3 2-3 2M12 15h5" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="./project/overview.html" title="Overview"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m15 9-2.2 4.8L8 16l2.2-4.8z" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="./project/hld.html" title="HLD"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="3" width="6" height="5" rx="1" /><rect x="3" y="15" width="6" height="5" rx="1" /><rect x="15" y="15" width="6" height="5" rx="1" /><path d="M12 8v4M6 15v-3h12v3" /></svg><span>HLD</span></a></li><li><a class="nav-item" href="./project/lld.html" title="LLD"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16M3 10h6M13 9h5M13 13h5" /></svg><span>LLD</span></a></li><li><a class="nav-item" href="./project/erd.html" title="ERD"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="7" cy="6" rx="4" ry="2" /><path d="M3 6v5c0 1.1 1.8 2 4 2s4-.9 4-2V6" /><rect x="14" y="13" width="7" height="7" rx="1" /><path d="M11 11h1a2 2 0 0 1 2 2v2" /></svg><span>ERD</span></a></li><li><a class="nav-item" href="./project/decisions.html" title="Decisions"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18" /><path d="M5 7h9l2.5 2.5L14 12H5z" /><path d="M19 15h-9l-2.5-2.5" /></svg><span>Decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="button menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections">&#9776;</button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="./index.html">iris</a><span aria-hidden="true">/</span><b data-spec-crumb>Commands</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">theme <kbd>t</kbd></button>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <span class="eyebrow">reference</span>
+        <h1>Commands</h1>
+        <p>Generated from one command catalog — the same source as <code class="mono">iris --help</code>. Status is explicit: a command is never listed as available unless it is.</p>
+      </div>
+    </div>
+
+    <section class="strip" aria-label="command surface summary">
+      <div class="surface stat-tile"><span class="stat-value">15</span><span class="stat-label">commands</span></div>
+      <div class="surface stat-tile"><span class="stat-value">13</span><span class="stat-label">implemented</span></div>
+      <div class="surface stat-tile"><span class="stat-value">1</span><span class="stat-label">partial</span></div>
+      <div class="surface stat-tile"><span class="stat-value">1</span><span class="stat-label">stubbed</span></div>
+    </section>
+
+    <section aria-labelledby="commands-setup">
+      <div class="section-heading">
+        <div><span class="eyebrow">Set up the workspace</span><h2 id="commands-setup" class="visually-hidden">Set up the workspace</h2></div>
+        <span class="mono">4 commands</span>
+      </div>
+      <div class="command-grid"><article class="surface command-card">
+      <div class="command-card-head">
+        <code>init</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Create or safely upgrade the workspace, agent surfaces, OpenSpec snapshot, and generated pages.</p>
+      <pre class="command-usage"><code>iris init</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>update</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Refresh managed design assets, the editor task, and agent surfaces while preserving user content.</p>
+      <pre class="command-usage"><code>iris update</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>vendor</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Copy the pinned Mermaid runtime locally so diagrams render offline.</p>
+      <pre class="command-usage"><code>iris vendor</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>open</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Open the generated workspace in the default browser.</p>
+      <pre class="command-usage"><code>iris open</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article></div>
+    </section><section aria-labelledby="commands-content">
+      <div class="section-heading">
+        <div><span class="eyebrow">Record work</span><h2 id="commands-content" class="visually-hidden">Record work</h2></div>
+        <span class="mono">6 commands</span>
+      </div>
+      <div class="command-grid"><article class="surface command-card">
+      <div class="command-card-head">
+        <code>research</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Start a Markdown research page for an investigation, comparison, or written-up answer.</p>
+      <pre class="command-usage"><code>iris research &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/research/&lt;id&gt;/index.md</code></p>
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>report</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Draft a report contract summarizing a session or a review.</p>
+      <pre class="command-usage"><code>iris report &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/pages/&lt;id&gt;/data.json</code></p>
+      <div class="command-flags"><span class="pill">--json</span><span class="pill">--from-session &lt;path&gt;</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>bug</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Draft a bug contract with symptom, severity, and timeline.</p>
+      <pre class="command-usage"><code>iris bug &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/pages/&lt;id&gt;/data.json</code></p>
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>feature</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Draft a feature contract with problem, goal, and tasks.</p>
+      <pre class="command-usage"><code>iris feature &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/pages/&lt;id&gt;/data.json</code></p>
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>idea</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Draft an idea contract with current state, proposal, and effort/impact.</p>
+      <pre class="command-usage"><code>iris idea &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/pages/&lt;id&gt;/data.json</code></p>
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>plan</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Draft a plan contract with a goal and ordered steps.</p>
+      <pre class="command-usage"><code>iris plan &lt;id&gt;</code></pre>
+      <p class="mono">lands in <code>iris/pages/&lt;id&gt;/data.json</code></p>
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article></div>
+    </section><section aria-labelledby="commands-render">
+      <div class="section-heading">
+        <div><span class="eyebrow">Render</span><h2 id="commands-render" class="visually-hidden">Render</h2></div>
+        <span class="mono">1 command</span>
+      </div>
+      <div class="command-grid"><article class="surface command-card">
+      <div class="command-card-head">
+        <code>render</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Render contracts and research to HTML and refresh every section page; a full render also refreshes the OpenSpec snapshot.</p>
+      <pre class="command-usage"><code>iris render [&lt;id&gt;|--all]</code></pre>
+      <p class="mono">lands in <code>iris/index.html and the section pages</code></p>
+      <div class="command-flags"><span class="pill">--all</span><span class="pill">--json</span></div>
+    </article></div>
+    </section><section aria-labelledby="commands-lifecycle">
+      <div class="section-heading">
+        <div><span class="eyebrow">Lifecycle</span><h2 id="commands-lifecycle" class="visually-hidden">Lifecycle</h2></div>
+        <span class="mono">2 commands</span>
+      </div>
+      <div class="command-grid"><article class="surface command-card">
+      <div class="command-card-head">
+        <code>archive</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Move a page into the archive and refresh navigation.</p>
+      <pre class="command-usage"><code>iris archive &lt;id&gt;</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>promote</code>
+        <span class="status-chip status-stubbed">stubbed</span>
+      </div>
+      <p>Remap report sections into a promoted page and link both.</p>
+      <pre class="command-usage"><code>iris promote &lt;report-id&gt; &lt;feature|bug|idea&gt;</code></pre>
+
+      <div class="command-flags"><span class="pill">--json</span></div>
+    </article></div>
+    </section><section aria-labelledby="commands-share">
+      <div class="section-heading">
+        <div><span class="eyebrow">Share</span><h2 id="commands-share" class="visually-hidden">Share</h2></div>
+        <span class="mono">2 commands</span>
+      </div>
+      <div class="command-grid"><article class="surface command-card">
+      <div class="command-card-head">
+        <code>publish</code>
+        <span class="status-chip status-implemented">implemented</span>
+      </div>
+      <p>Write a portable standalone HTML artifact with workspace chrome removed.</p>
+      <pre class="command-usage"><code>iris publish [&lt;id&gt;] [--output path]</code></pre>
+
+      <div class="command-flags"><span class="pill">--output</span><span class="pill">--json</span></div>
+    </article><article class="surface command-card">
+      <div class="command-card-head">
+        <code>export</code>
+        <span class="status-chip status-partial">partial</span>
+      </div>
+      <p>Export standalone HTML. PNG and PDF remain unavailable until a deterministic browser policy is approved.</p>
+      <pre class="command-usage"><code>iris export &lt;id&gt; --single</code></pre>
+
+      <div class="command-flags"><span class="pill">--single</span><span class="pill">--png</span><span class="pill">--pdf</span><span class="pill">--output</span><span class="pill">--json</span></div>
+    </article></div>
+    </section>
+
+    <section id="agent-surfaces" aria-labelledby="agent-surfaces-title">
+      <div class="section-heading">
+        <div><span class="eyebrow">what iris installs</span><h2 id="agent-surfaces-title">Agent surfaces</h2></div>
+        <span class="mono">15 of 15 installed</span>
+      </div>
+      <div class="surface table-wrap">
+        <table class="work-table">
+          <thead><tr><th>Reads it</th><th>Destination</th><th>Status</th></tr></thead>
+          <tbody><tr>
+          <td>Generic / Codex</td>
+          <td class="mono">.agents/skills/iris-workspace/SKILL.md</td>
+          <td><span class="status-chip status-implemented">installed</span></td>
+        </tr><tr>
+          <td>Claude</td>
+          <td class="mono">.claude/skills/iris-workspace/SKILL.md</td>
+          <td><span class="status-chip status-implemented">installed</span></td>
+        </tr><tr>
+          <td>GitHub Copilot</td>
+          <td class="mono">.github/skills/iris-workspace/SKILL.md</td>
+          <td><span class="status-chip status-implemented">installed</span></td>
+        </tr><tr>
+          <td>Claude slash commands</td>
+          <td class="mono">.claude/commands/iris/research.md<br>.claude/commands/iris/bug.md<br>.claude/commands/iris/feature.md<br>.claude/commands/iris/idea.md<br>.claude/commands/iris/plan.md<br>.claude/commands/iris/report.md</td>
+          <td><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span></td>
+        </tr><tr>
+          <td>GitHub Copilot prompts</td>
+          <td class="mono">.github/prompts/iris-research.prompt.md<br>.github/prompts/iris-bug.prompt.md<br>.github/prompts/iris-feature.prompt.md<br>.github/prompts/iris-idea.prompt.md<br>.github/prompts/iris-plan.prompt.md<br>.github/prompts/iris-report.prompt.md</td>
+          <td><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span><br><span class="status-chip status-implemented">installed</span></td>
+        </tr></tbody>
+        </table>
+      </div>
+    </section>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="./design/components/base.js"></script>
+  </body>
+</html>

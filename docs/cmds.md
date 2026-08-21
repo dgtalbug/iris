@@ -7,15 +7,15 @@
 - Exit codes: `0` ok · `1` validation/user error · `2` environment error.
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
 - Agent surfaces: CLI `iris` plus the generated `iris-workspace` skill under `.agents/skills`, `.claude/skills`, and `.github/skills`.
-- Navigation contract: the dashboard links every rendered, archived, and project page; every page links back to the dashboard. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
-- Dashboard contract: peer Work/`Spec` tabs. Work retains briefing hero → health strip → architecture placeholder → work surface → project-docs strip. Spec contains overview, project/config context, canonical specs, active changes, structured archives, and legacy archives. `/` focuses the visible work filter, `t` toggles theme, arrow keys move work cards, and arrow/Home/End keys operate tablists; all remain classic-script, `file://`-safe interactions.
+- Navigation contract: every generated page carries the same workspace shell — a sidebar listing Overview, Work, Spec, Research, Commands, and the project docs, plus a breadcrumb top bar. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
+- Workspace contract: one page per section. `iris/index.html` is the Overview (briefing hero, section summary tiles, recent work, spec movement with task progress, architecture pane, project-docs strip) and links out rather than embedding each section. `iris/work.html` holds the dense List/Table/Kanban browser and the detail drawer, `iris/spec.html` the OpenSpec index plus a generated `iris/spec/data.js` bundle holding each record's detail, `iris/research.html` the Markdown research index, and `iris/commands.html` the generated command reference. `/` focuses the visible filter, `t` toggles theme, `b` collapses the sidebar, arrow keys move work items, and arrow/Home/End keys operate the layout tablist; all remain classic-script, `file://`-safe interactions. Theme and sidebar state persist per browser through local storage; the initial theme comes from `iris/config.yaml`.
 
 ## `iris init`
 
 - Synopsis: create or safely upgrade the complete local Iris workspace and agent setup.
 - Flags: `--json`.
 - Inputs: current project directory.
-- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, a deterministic `iris/spec.json` OpenSpec snapshot, and the rendered dashboard.
+- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, generated `/iris:*` command surfaces for Claude and Copilot, a deterministic `iris/spec.json` OpenSpec snapshot, and every rendered section page.
 - Exit codes: 0/1/2.
 - Example: `iris init`.
 - Surfaces: CLI + all generated skills.
@@ -26,13 +26,31 @@
 
 ## `iris render [<id>|--all]`
 
-- Synopsis: render contract data to page HTML and refresh the dashboard/feed; full renders also refresh the OpenSpec filesystem snapshot.
+- Synopsis: render contract and research sources to page HTML and refresh every section page; full renders also refresh the OpenSpec filesystem snapshot.
 - Flags: `--all`, `--json`.
-- Inputs: `iris/pages/<id>/data.json` or all pages.
-- Outputs: `page.html` artifacts and updated `iris/index.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot.
+- Inputs: `iris/pages/<id>/data.json`, `iris/research/<id>/index.md`, or all sources.
+- Outputs: `page.html` artifacts and updated `iris/index.html`, `work.html`, `spec.html`, `research.html`, and `commands.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot.
 - Exit codes: 0/1/2.
 - Example: `iris render --all`.
 - Surfaces: CLI + all generated skills.
+
+## `iris research <id>`
+
+- Synopsis: create a Markdown research page for an investigation or a written-up answer.
+- Flags: `--json`.
+- Inputs: a lowercase kebab-case page id that is not already used under `iris/pages`, `iris/research`, or `iris/archive`.
+- Outputs: `iris/research/<id>/index.md` containing front matter and Question, Findings, Evidence, and Next steps headings.
+- Exit codes: 0/1/2.
+- Example: `iris research cache-stampede-causes`.
+- Surfaces: CLI + the generated `iris-workspace` skill + the generated `/iris:research` command.
+
+### Research source contract
+
+The editable source is `iris/research/<id>/index.md`. Optional front matter supports `title`, `status` (`draft`, `active`, `done`, `archived`), `tags` (inline `[a, b]` or a block list), `agent`, and `updated` (ISO date). Missing values fall back to the first level-one heading or the id for the title, `draft` for status, and explicit `not set` labels elsewhere — never invented. Unsupported keys are ignored and malformed lines produce a path-specific warning shown on the Research page while the body still renders.
+
+Rendering is bounded and local: Iris reads only `iris/research/*/index.md`, sorted, refusing symlinks and path escapes, capping file size at 256 KB and directory count at 500. The body renders through the same safe Markdown pipeline as OpenSpec artifacts — embedded HTML, unsafe destinations, and active images disabled — plus generated heading ids and a table of contents when the body has two or more level-two or level-three headings. Exact `mermaid` fences become source-first diagram hosts.
+
+Research records join the Work browser as type `research` with status from front matter and priority reported as unavailable, and `iris archive`, `iris publish`, and `iris export --single` all accept a research id.
 
 ## `iris report|feature|bug|idea|plan <id>`
 
@@ -105,8 +123,8 @@ Published HTML includes the page CSS and has no local-file or network asset depe
 
 - Synopsis: move page to archive and update feed/index.
 - Flags: `--json`.
-- Inputs: page id.
-- Outputs: archived page + state update.
+- Inputs: page id from `iris/pages` or `iris/research`.
+- Outputs: archived page directory under `iris/archive/<id>/` + state update.
 - Exit codes: 0/1/2.
 - Example: `iris archive bug-cache-stampede`.
 - Surfaces: CLI + skills.
@@ -153,9 +171,23 @@ Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered o
 - Synopsis: refresh managed workspace assets and agent skills while preserving user-owned content.
 - Flags: `--json`.
 - Inputs: existing project configuration.
-- Outputs: refreshed design/project surfaces, editor task, dashboard, and intact managed agent-skill regions.
+- Outputs: refreshed design/project surfaces, editor task, section pages, and intact managed agent skill and command regions.
 - Exit codes: 0/1/2.
 - Example: `iris update`.
 - Surfaces: CLI.
-- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill regions update only when their ownership markers and digest remain valid.
+- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill and command regions update only when their ownership markers and digest remain valid. The retired `iris/project/commands.html` placeholder is removed only when it still carries the managed marker; a user-owned copy is preserved and reported.
 - Setup guidance: use `iris init` for first run and upgrades. `iris update` remains a compatible explicit refresh, not a required setup step.
+
+## Generated agent surfaces
+
+`iris init` and `iris update` generate every agent-facing instruction from two packaged templates:
+
+| Surface                                   | Source                               | Purpose                                                                                    |
+| ----------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `.agents/skills/iris-workspace/SKILL.md`  | `templates/agents/iris-workspace.md` | Codex and generic agents                                                                   |
+| `.claude/skills/iris-workspace/SKILL.md`  | `templates/agents/iris-workspace.md` | Claude Code                                                                                |
+| `.github/skills/iris-workspace/SKILL.md`  | `templates/agents/iris-workspace.md` | GitHub Copilot                                                                             |
+| `.claude/commands/iris/<action>.md`       | `templates/agents/iris-commands.md`  | `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, `/iris:report` |
+| `.github/prompts/iris-<action>.prompt.md` | `templates/agents/iris-commands.md`  | The same actions as Copilot prompts                                                        |
+
+The skill states when to reach for Iris in conversational terms and maps each intent to its command and generated destination, so finished work lands in the workspace without the user asking. Every generated file carries ownership, version, and a SHA-256 body digest between `IRIS:MANAGED` markers: an intact region is refreshed atomically while bytes outside it are preserved, and anything unmarked, half-marked, edited, symlinked, or escaping the repository is preserved and reported as a collision.
