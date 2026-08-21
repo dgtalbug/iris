@@ -141,6 +141,8 @@ Published HTML includes the page CSS and has no local-file or network asset depe
 
 Current limitation: the standalone HTML exporter is implemented, but PNG and PDF remain unavailable until the project approves and integrates a browser renderer. Requests for either mode fail explicitly; they never emit mislabeled HTML. The bundled CSS uses system font stacks, so no remote font files are required.
 
+Renderer decision (2026-08-21): `puppeteer-core` is the preferred future candidate because it can use an explicit system Chrome without downloading a browser. Implementation remains deferred because Puppeteer does not guarantee compatibility with arbitrary system Chrome, so the current deterministic-output contract cannot yet be claimed across machines or browser upgrades. Playwright was not selected: its supported pinned-browser path requires a separate browser install and a cache measured in hundreds of megabytes. Task 2.2 remains open; the existing error path is intentional.
+
 ## `iris vendor`
 
 - Synopsis: download pinned CDN assets into `design/vendor` and switch asset base.

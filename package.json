@@ -27,7 +27,8 @@
     "README.md"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "engines": {
     "node": ">=22.13.0"
@@ -43,7 +44,7 @@
     "html-check": "node ./scripts/html-check.mjs",
     "prepack": "npm run build",
     "smoke:install": "node ./scripts/install-smoke.mjs",
-    "release:check": "npm run smoke:install"
+    "release:check": "pnpm lint && pnpm token-lint && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
   },
   "runtimeDependencyRationale": {
     "ajv": "JSON Schema validation for strict contract enforcement"
