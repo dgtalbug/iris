@@ -28,6 +28,13 @@
   --warn-soft: #f0913e26;
   --danger-soft: #ef6a6a26;
   --info-soft: #5cb8f026;
+  --selected: #f2b24e1a;
+  --hover: #232936;
+  --backdrop: #05070bcc;
+  --priority-urgent: #ef6a6a;
+  --priority-high: #f0913e;
+  --priority-medium: #5cb8f0;
+  --priority-low: #a6adbf;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -90,6 +97,13 @@
   --warn-soft: #95470818;
   --danger-soft: #b62b3218;
   --info-soft: #126b9b18;
+  --selected: #b87a1614;
+  --hover: #ecebe7;
+  --backdrop: #191d2666;
+  --priority-urgent: #b62b32;
+  --priority-high: #954708;
+  --priority-medium: #126b9b;
+  --priority-low: #4b5163;
   --elevation-1: 0 0.25rem 0.75rem #6b625629;
 }
 
