@@ -7,39 +7,46 @@ Define the deterministic visual language and dashboard hierarchy that lets a new
 ## Requirements
 
 ### Requirement: Aperture token contract
-The system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.
+
+The system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, MUST validate text contrast at 4.5:1 or better, and MUST define navigation-shell surface, text, and selection tokens alongside the surface, text, accent, type, status, and priority tokens so that every generated page and the shell render from one token set.
 
 #### Scenario: generated styles are validated
+
 - **WHEN** a contributor runs the token validation command
-- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme
+- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme, including navigation-shell pairs
+
+#### Scenario: theme is switched
+
+- **WHEN** the user toggles the theme on any generated page
+- **THEN** that page and its navigation shell MUST render in the selected theme from the same tokens, and the preference MUST be restored on other generated pages in that browser when local storage is available
 
 ### Requirement: Aperture component language
 
-The system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.
+The system MUST provide generated component styles and semantic markup for aperture marks, the navigation shell, page headers, summary strip tiles, progress bars, command cards, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.
 
 #### Scenario: meaning is communicated accessibly
 
-- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, or motion
+- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, current-section marking, or motion
 - **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation
 
 ### Requirement: newcomer-first dashboard hierarchy
 
-The generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, dense List/Table/Kanban work browser, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.
+The generated workspace MUST consist of an Overview page at `iris/index.html`, a Work page with the dense List/Table/Kanban browser and detail drawer, a Spec page organized as overview, canonical specs, active changes with artifacts and delta specs, and archive, a Commands page, and the project docs, all reachable through the shared navigation shell; the Overview MUST preserve the briefing hero, per-section summary, architecture pane, and project-docs strip.
 
 #### Scenario: repository has no generated work pages
 
-- **WHEN** a newcomer opens the dashboard from `file://`
-- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request
+- **WHEN** a newcomer opens the Overview from `file://`
+- **THEN** it MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request
 
 #### Scenario: repository has generated work pages
 
-- **WHEN** a newcomer opens the Work view with one or more page contracts
-- **THEN** the dashboard MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from the dashboard
+- **WHEN** a newcomer opens the Work page with one or more page contracts
+- **THEN** the page MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from that page
 
 #### Scenario: user opens the Spec view
 
-- **WHEN** a user activates the top-level tab labelled `Spec`
-- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available
+- **WHEN** a user activates the `Spec` navigation entry
+- **THEN** the Spec page MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while the shell keeps every other section reachable
 
 #### Scenario: state is communicated in the Spec view
 
@@ -48,32 +55,37 @@ The generated dashboard MUST provide top-level Work and `Spec` views, preserve t
 
 ### Requirement: deterministic responsive interaction
 
-The generated dashboard MUST retain classic deferred-script interactions for top-level view selection, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation and MUST remain operable at a 360 px viewport.
+The generated workspace MUST retain classic deferred-script interactions for navigation-shell collapse, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation, MUST keep every page usable without JavaScript, and MUST remain operable at a 360 px viewport.
 
 #### Scenario: keyboard navigation is used
 
-- **WHEN** the user presses `/` or `t` outside an editable field
-- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets
+- **WHEN** the user presses `/`, `t`, or `b` outside an editable field
+- **THEN** `/` MUST focus the relevant visible filter, `t` MUST toggle the theme, and `b` MUST toggle the navigation shell, none of which loads external assets
 
 #### Scenario: top-level tabs are keyboard operated
 
-- **WHEN** focus is on the Work/Spec or List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys
-- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics
+- **WHEN** focus is on a navigation-shell entry and the user presses Tab or Enter, or focus is on the List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys
+- **THEN** section navigation MUST follow standard link behavior with visible focus, and the layout tablist MUST move focus and selection according to the tab pattern with correct tab/panel semantics
 
 #### Scenario: work items are keyboard operated
 
 - **WHEN** focus is on a work-item link and the user presses Enter or Space
 - **THEN** the corresponding detail drawer MUST open without navigating away
 
+#### Scenario: JavaScript is unavailable
+
+- **WHEN** a generated page opens without executing JavaScript
+- **THEN** the navigation shell MUST remain expanded and fully linked, the default Work List MUST remain readable, and every work item MUST keep its full-page link
+
 #### Scenario: narrow viewport is used
 
-- **WHEN** the dashboard viewport is 360 px wide
-- **THEN** Work List rows, the prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, warnings, and source fallbacks MUST remain readable without horizontal page overflow
+- **WHEN** any generated page viewport is 360 px wide
+- **THEN** the shell menu, Work List rows, prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, Commands cards, warnings, and source fallbacks MUST remain readable without horizontal page overflow
 
 #### Scenario: reduced motion is requested
 
 - **WHEN** the user enables reduced-motion preferences
-- **THEN** switching views, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss
+- **THEN** collapsing the shell, switching layouts, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss
 
 ### Requirement: dense context-preserving Work browser
 
@@ -122,3 +134,55 @@ Selecting a work item MUST open one right-side detail drawer that preserves the 
 
 - **WHEN** the viewport is 360 px wide and a work item is activated
 - **THEN** the drawer MUST occupy the viewport without horizontal page overflow and MUST keep its close and full-page actions reachable
+
+### Requirement: workspace navigation shell
+
+Every generated Iris HTML page MUST share one navigation shell that lists the workspace sections (Overview, Work, Spec, Commands, and the project docs group), marks the current section, links each section with a relative `file://`-safe path, and can be collapsed and restored without any network request.
+
+#### Scenario: user moves between sections
+
+- **WHEN** a user activates a navigation entry on any generated page
+- **THEN** the browser MUST open that section's own page and the shell on that page MUST mark it as current
+
+#### Scenario: sidebar is collapsed
+
+- **WHEN** the user activates the collapse control or presses `b` outside an editable field
+- **THEN** the shell MUST collapse to a compact rail in which every section remains reachable with an accessible label, and the same collapsed or expanded state MUST be restored on the next generated page opened in that browser when local storage is available
+
+#### Scenario: narrow viewport
+
+- **WHEN** the viewport is 360 px wide
+- **THEN** the shell MUST present the sections behind a menu control in the top bar and the page MUST have no horizontal overflow
+
+#### Scenario: artifact is published
+
+- **WHEN** a page is published or exported as a standalone artifact
+- **THEN** the navigation shell MUST be omitted and the page content MUST remain readable and self-contained
+
+### Requirement: generated command reference page
+
+The system MUST generate a Commands page that lists every CLI command from one command catalog, grouped by purpose, with synopsis, usage, and an explicit implementation status, and `iris --help` MUST present the same groups and commands from that catalog.
+
+#### Scenario: command surface changes
+
+- **WHEN** a command is added, removed, regrouped, or its status changes in the catalog
+- **THEN** the generated Commands page and `iris --help` MUST both reflect the change without a separate edit
+
+#### Scenario: command is not fully implemented
+
+- **WHEN** a catalog entry is partial or stubbed
+- **THEN** the Commands page MUST label it with a textual status and MUST NOT present it as fully available
+
+### Requirement: section summary strips
+
+Each section page MUST open with a summary strip of counts derived only from generated data for that section, and the Overview page MUST summarize every section with links to the owning section page rather than embedding that section's full content.
+
+#### Scenario: overview is opened
+
+- **WHEN** a newcomer opens `iris/index.html` from `file://`
+- **THEN** it MUST show the repository briefing, per-section counts, the most recently updated work records, active spec changes with task progress, and quick-start commands, each linking to the owning section page
+
+#### Scenario: section has no data
+
+- **WHEN** a section page has no records
+- **THEN** it MUST name the exact command that populates it instead of showing an empty area
