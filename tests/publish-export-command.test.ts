@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -93,6 +94,26 @@ describe('publish and export commands', () => {
         /no browser renderer meets the deterministic offline contract; use --single/,
       ),
     );
+    writeError.mockRestore();
+  });
+
+  it('writes no artifact when a deferred export mode is requested', async () => {
+    const cwd = await createTempDir();
+    const writeError = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+    expect(await runCli(['init'], cwd)).toBe(0);
+    expect(await runCli(['bug', 'deferred-mode'], cwd)).toBe(0);
+    expect(await runCli(['render', 'deferred-mode'], cwd)).toBe(0);
+
+    for (const [mode, output] of [
+      ['--png', 'out/deferred-mode.png'],
+      ['--pdf', 'out/deferred-mode.pdf'],
+    ]) {
+      expect(await runCli(['export', 'deferred-mode', mode, '--output', output], cwd)).toBe(1);
+      // A refused mode must leave nothing behind under the requested name.
+      expect(existsSync(path.join(cwd, output))).toBe(false);
+    }
+    expect(existsSync(path.join(cwd, 'out'))).toBe(false);
     writeError.mockRestore();
   });
 });

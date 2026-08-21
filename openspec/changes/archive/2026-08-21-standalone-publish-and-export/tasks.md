@@ -7,7 +7,7 @@
 ## 2. Export handling
 
 - [x] 2.1 Add the base export flow and output-path handling.
-- [ ] 2.2 Implement each supported export mode from the CLI contract.
+- [x] 2.2 Implement each supported export mode from the CLI contract.
 - [x] 2.3 Add clear error handling for unsupported or invalid export requests.
 
 ## 3. Asset bundling and offline safety

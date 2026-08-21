@@ -94,7 +94,9 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         await runVendorCommand(cwd);
         return 0;
       case 'promote':
-        process.stderr.write(`Command '${command}' is registered but not yet implemented in M0.\n`);
+        process.stderr.write(
+          `Command '${command}' is registered but not implemented yet; see iris/commands.html for the current status.\n`,
+        );
         return 1;
       case 'update':
         await runUpdateCommand(cwd);

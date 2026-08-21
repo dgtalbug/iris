@@ -225,6 +225,53 @@
       }
     },
     {
+      "capability": "brew-formula-and-installability",
+      "path": "specs/brew-formula-and-installability/spec.md",
+      "document": {
+        "path": "specs/brew-formula-and-installability/spec.md",
+        "title": "brew-formula-and-installability Specification",
+        "raw": "# brew-formula-and-installability Specification\n\n## Purpose\nProvide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.\n\n## Requirements\n\n### Requirement: supported CLI installation path\nThe system MUST provide a clear installation path for the `iris` command that works across supported environments.\n\n#### Scenario: user installs the CLI\nWHEN a user follows the documented install flow\nTHEN the CLI MUST be available as `iris` and MUST expose the expected command surface.\n\n#### Scenario: install fails with clear guidance\nWHEN installation prerequisites are missing or unsupported\nTHEN the system MUST fail with a simple, actionable message instead of a vague runtime error.\n\n### Requirement: versioned package distribution\nThe project MUST distribute the CLI through a package entrypoint that installs the same binary and command surface as the repository build on macOS, Linux, and Windows, and MUST NOT publish package-manager metadata for a distribution channel whose release inputs do not yet exist.\n\n#### Scenario: package install path is available\nWHEN a user installs the published package with the documented package manager\nTHEN the command MUST resolve to the same project binary and versioned CLI behavior as the repository build\n\n#### Scenario: upgrade path is clear\nWHEN a user upgrades the installed CLI\nTHEN the system MUST expose a predictable version and install flow that keeps the CLI current\n\n#### Scenario: a distribution channel lacks release inputs\nWHEN a channel such as a Homebrew formula would require a published release URL and checksum that do not exist yet\nTHEN the project MUST document that channel as unavailable and MUST NOT ship a formula or manifest that claims otherwise\n\n### Requirement: minimal install smoke validation\nThe release workflow MUST include a minimal verification that the installed CLI works for a basic command path.\n\n#### Scenario: install smoke test passes\nWHEN the package or formula is installed\nTHEN a fast smoke check such as `iris --help` or a minimal render run MUST succeed without additional repo setup.\n\n#### Scenario: invalid installation is surfaced early\nWHEN the install path is broken or incompatible\nTHEN the validation step MUST fail early and identify the missing or unsupported prerequisite.\n\n### Requirement: documentation and upgrade guidance\nThe project MUST provide install instructions that align with the local-first design and current project conventions.\n\n#### Scenario: user can self-serve setup\nWHEN a new user reads the docs\nTHEN they MUST be able to install and verify the CLI with a single, documented path.\n\n#### Scenario: command reference stays current\nWHEN package distribution changes\nTHEN the install docs and command reference MUST stay aligned with the actual CLI behavior.\n",
+        "format": "markdown",
+        "headings": [
+          "brew-formula-and-installability Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: supported CLI installation path",
+          "Scenario: user installs the CLI",
+          "Scenario: install fails with clear guidance",
+          "Requirement: versioned package distribution",
+          "Scenario: package install path is available",
+          "Scenario: upgrade path is clear",
+          "Scenario: a distribution channel lacks release inputs",
+          "Requirement: minimal install smoke validation",
+          "Scenario: install smoke test passes",
+          "Scenario: invalid installation is surfaced early",
+          "Requirement: documentation and upgrade guidance",
+          "Scenario: user can self-serve setup",
+          "Scenario: command reference stays current"
+        ],
+        "requirements": [
+          "supported CLI installation path",
+          "versioned package distribution",
+          "minimal install smoke validation",
+          "documentation and upgrade guidance"
+        ],
+        "scenarios": [
+          "user installs the CLI",
+          "install fails with clear guidance",
+          "package install path is available",
+          "upgrade path is clear",
+          "a distribution channel lacks release inputs",
+          "install smoke test passes",
+          "invalid installation is surfaced early",
+          "user can self-serve setup",
+          "command reference stays current"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    },
+    {
       "capability": "markdown-diagram-rendering",
       "path": "specs/markdown-diagram-rendering/spec.md",
       "document": {
@@ -490,257 +537,50 @@
         "operations": [],
         "warnings": []
       }
-    }
-  ],
-  "active_changes": [
-    {
-      "name": "brew-formula-and-installability",
-      "path": "changes/brew-formula-and-installability",
-      "lifecycle": "active",
-      "layout": "structured",
-      "artifacts": {
-        "manifest": {
-          "path": "changes/brew-formula-and-installability/.openspec.yaml",
-          "title": ".openspec",
-          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
-          "format": "yaml",
-          "headings": [],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "proposal": {
-          "path": "changes/brew-formula-and-installability/proposal.md",
-          "title": "Why",
-          "raw": "## Why\n\nThe CLI and render pipeline are now working, but the project still lacks a reliable install story for everyday use. A local-first tool is easier to trust when users can install it consistently, verify the command surface quickly, and upgrade without manual repo cloning or shell hacks.\n\n## What Changes\n\n- Define a supported install path for the `iris` CLI using Homebrew and/or a standard Node package entrypoint.\n- Package the release metadata so the CLI can be versioned and upgraded predictably.\n- Add a smoke-testable install path that verifies the binary and core render commands work immediately after installation.\n- Keep the install story aligned with the repo's local-first and offline-safe design principles.\n\n## Capabilities\n\n### New Capabilities\n- brew-formula-and-installability: establish a distribution path for the CLI that is easy to install, verify, and upgrade.\n\n### Modified Capabilities\n- None\n\n## Impact\n\n- CLI adoption: easier setup for users who want to try or use the tool without a repo checkout.\n- Release quality: versioning and install metadata become explicit and testable.\n- Documentation: users get a clear first-run path and a consistent command reference.\n",
-          "format": "markdown",
-          "headings": [
-            "Why",
-            "What Changes",
-            "Capabilities",
-            "New Capabilities",
-            "Modified Capabilities",
-            "Impact"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "design": {
-          "path": "changes/brew-formula-and-installability/design.md",
-          "title": "Context",
-          "raw": "## Context\n\nThe project has evolved from a local CLI plus render-first workflow into a tool that can generate deterministic HTML docs and publish artifacts. The remaining gap is distribution: users still need a clear, repeatable install path that matches the local-first model rather than a hosted service or remote backend.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Provide a stable install flow for the `iris` CLI.\n- Support a Homebrew-friendly equivalent packaging entrypoint for easy setup.\n- Keep the install story simple, offline-safe, and consistent with the Node-based project runtime.\n- Add release validation around the key CLI commands.\n\n**Non-Goals:**\n- A hosted SaaS runtime or cloud-managed rendering service.\n- Full platform marketing or marketplace expansion.\n- Broad feature work unrelated to installability, release quality, and distribution.\n\n## Decisions\n\n- Keep the CLI as the primary product surface: installs should provide the same command interface users already know from the repo checkout.\n- Use npm as the primary distribution path on macOS, Linux, and Windows with Node.js 22.13.0 or newer. The package entrypoint is implemented, cross-platform, versioned, and already exercised from a packed artifact outside the repository.\n- Defer a real Homebrew formula until a published release supplies a stable source tarball URL and SHA-256 checksum. Do not mark formula work complete or ship placeholder metadata before those inputs exist.\n- Publish from GitHub Releases through `.github/workflows/release.yml`. The workflow requires an exact `v<package version>` tag, repeats the full project gate, inspects the package payload, and uses npm trusted publishing with provenance instead of a long-lived automation token.\n- Validate the installation path via a focused smoke test around `iris --help` and a minimal render command.\n- Keep packaging offline-safe and local-first; the installer should not require any remote backend to work.\n\n## Risks / Trade-offs\n\n- [Install friction] → Mitigation: keep the install syntax minimal and document the supported path clearly.\n- [Version drift] → Mitigation: tie the release and formula metadata to the package version and CI validation.\n- [Packaging complexity] → Mitigation: start with a single, narrow distribution path instead of expanding into a wider ecosystem.\n- [First-release account gate] → Mitigation: document the one-time npm package/trusted-publisher and GitHub environment setup; the repository contains no credentials and does not claim publication before that owner action.\n\n## Migration Plan\n\n1. Treat npm as the supported install and upgrade path; retain Node.js 22.13.0 as the minimum runtime.\n2. Validate release tags, package metadata, the packed payload, and the installed command before publication.\n3. Publish from a GitHub Release using npm trusted publishing and provenance after the owner configures the external trust relationship.\n4. Add Homebrew only after a real release URL and checksum can be tested end to end.\n\n## Open Questions\n\nNone. npm-first is decided; Homebrew is explicitly deferred on missing release artifacts rather than left ambiguous.\n",
-          "format": "markdown",
-          "headings": [
-            "Context",
-            "Goals / Non-Goals",
-            "Decisions",
-            "Risks / Trade-offs",
-            "Migration Plan",
-            "Open Questions"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "tasks": {
-          "path": "changes/brew-formula-and-installability/tasks.md",
-          "title": "1. Install path and packaging definition",
-          "raw": "## 1. Install path and packaging definition\n\n- [x] 1.1 Decide the primary install story for the CLI and confirm the supported target environments.\n- [x] 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.\n- [x] 1.3 Confirm the formula / package surface matches the project's local-first design goals.\n\n## 2. Distribution and smoke validation\n\n- [x] 2.1 Add the release packaging or formula definition needed for easy install.\n- [x] 2.2 Add a smoke-check command or script that validates the CLI after installation.\n- [x] 2.3 Validate the flow against the minimum supported Node environment.\n\n## 3. Documentation and rollout\n\n- [x] 3.1 Document the install and upgrade steps in the project docs.\n- [x] 3.2 Confirm the CLI documentation reflects the actual installed command surface.\n- [x] 3.3 Review the change against the roadmap to keep scope limited to installability and distribution.\n",
-          "format": "markdown",
-          "headings": [
-            "1. Install path and packaging definition",
-            "2. Distribution and smoke validation",
-            "3. Documentation and rollout"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": [],
-          "progress": {
-            "complete": 9,
-            "open": 0,
-            "total": 9
-          }
-        }
-      },
-      "delta_specs": [
-        {
-          "capability": "brew-formula-and-installability",
-          "path": "changes/brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
-          "document": {
-            "path": "changes/brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
-            "title": "Purpose",
-            "raw": "## Purpose\n\nProvide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.\n\n## ADDED Requirements\n\n### Requirement: supported CLI installation path\nThe system MUST provide a clear installation path for the `iris` command that works across supported environments.\n\n#### Scenario: user installs the CLI\nWHEN a user follows the documented install flow\nTHEN the CLI MUST be available as `iris` and MUST expose the expected command surface.\n\n#### Scenario: install fails with clear guidance\nWHEN installation prerequisites are missing or unsupported\nTHEN the system MUST fail with a simple, actionable message instead of a vague runtime error.\n\n### Requirement: Homebrew-friendly distribution\nThe project MUST support a distribution mechanism that is easy to install and upgrade on macOS and related developer environments.\n\n#### Scenario: brew install path is available\nWHEN a user installs via the supported Homebrew formula or equivalent package entrypoint\nTHEN the command MUST resolve to the same project binary and versioned CLI behavior as the repo build.\n\n#### Scenario: upgrade path is clear\nWHEN a user upgrades the installed CLI\nTHEN the system MUST expose a predictable version and install flow that keeps the CLI current.\n\n### Requirement: minimal install smoke validation\nThe release workflow MUST include a minimal verification that the installed CLI works for a basic command path.\n\n#### Scenario: install smoke test passes\nWHEN the package or formula is installed\nTHEN a fast smoke check such as `iris --help` or a minimal render run MUST succeed without additional repo setup.\n\n#### Scenario: invalid installation is surfaced early\nWHEN the install path is broken or incompatible\nTHEN the validation step MUST fail early and identify the missing or unsupported prerequisite.\n\n### Requirement: documentation and upgrade guidance\nThe project MUST provide install instructions that align with the local-first design and current project conventions.\n\n#### Scenario: user can self-serve setup\nWHEN a new user reads the docs\nTHEN they MUST be able to install and verify the CLI with a single, documented path.\n\n#### Scenario: command reference stays current\nWHEN package distribution changes\nTHEN the install docs and command reference MUST stay aligned with the actual CLI behavior.\n",
-            "format": "markdown",
-            "headings": [
-              "Purpose",
-              "ADDED Requirements",
-              "Requirement: supported CLI installation path",
-              "Scenario: user installs the CLI",
-              "Scenario: install fails with clear guidance",
-              "Requirement: Homebrew-friendly distribution",
-              "Scenario: brew install path is available",
-              "Scenario: upgrade path is clear",
-              "Requirement: minimal install smoke validation",
-              "Scenario: install smoke test passes",
-              "Scenario: invalid installation is surfaced early",
-              "Requirement: documentation and upgrade guidance",
-              "Scenario: user can self-serve setup",
-              "Scenario: command reference stays current"
-            ],
-            "requirements": [
-              "supported CLI installation path",
-              "Homebrew-friendly distribution",
-              "minimal install smoke validation",
-              "documentation and upgrade guidance"
-            ],
-            "scenarios": [
-              "user installs the CLI",
-              "install fails with clear guidance",
-              "brew install path is available",
-              "upgrade path is clear",
-              "install smoke test passes",
-              "invalid installation is surfaced early",
-              "user can self-serve setup",
-              "command reference stays current"
-            ],
-            "operations": [
-              "ADDED"
-            ],
-            "warnings": []
-          }
-        }
-      ],
-      "completeness": "complete",
-      "health": "valid",
-      "warnings": []
     },
     {
-      "name": "standalone-publish-and-export",
-      "path": "changes/standalone-publish-and-export",
-      "lifecycle": "active",
-      "layout": "structured",
-      "artifacts": {
-        "manifest": {
-          "path": "changes/standalone-publish-and-export/.openspec.yaml",
-          "title": ".openspec",
-          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
-          "format": "yaml",
-          "headings": [],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "proposal": {
-          "path": "changes/standalone-publish-and-export/proposal.md",
-          "title": "Why",
-          "raw": "## Why\n\nA local-first tool becomes far more useful when it can hand off a page as a portable artifact without depending on the active repo or a remote viewer. The current roadmap already defines `publish` and `export` commands, but they still need a clear path to generate shareable, standalone outputs that remain offline-safe and easy to inspect.\n\n## What Changes\n\n- Implement the publish flow for standalone, portable HTML output.\n- Implement export variants for single-file and alternative output formats.\n- Keep generated artifacts self-contained and stable enough to share outside the repo.\n- Preserve the local-first design by avoiding any required cloud or remote dependency.\n\n## Capabilities\n\n### New Capabilities\n- standalone-publish-and-export: create portable, standalone artifacts from project pages while keeping them offline-safe and easy to share.\n\n### Modified Capabilities\n- publish: formalize the output contract for single-file static artifacts.\n- export: add the proper export modes and file handling logic.\n\n## Impact\n\n- Users can share a rendered artifact without requiring a live local project checkout.\n- Design handoff and review becomes easier because a page can be exported to a portable artifact.\n- The project remains faithful to its local-first positioning while still supporting distribution and offline shareability.\n",
-          "format": "markdown",
-          "headings": [
-            "Why",
-            "What Changes",
-            "Capabilities",
-            "New Capabilities",
-            "Modified Capabilities",
-            "Impact"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "design": {
-          "path": "changes/standalone-publish-and-export/design.md",
-          "title": "Context",
-          "raw": "## Context\n\nThe product is designed around local rendering and static HTML output, but it still needs an explicit publish/export layer to support handoff, review, and offline sharing. The command contract already declares `publish` and `export`, so the implementation should focus on reliability, portability, and self-contained asset handling rather than broad feature expansion.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Produce a standalone artifact from a rendered page without requiring a live project checkout.\n- Keep the output portable and safe for offline or external review.\n- Support the export modes already documented in the CLI contract.\n- Maintain local-first operating assumptions while enabling shareable files.\n\n**Non-Goals:**\n- Full remote publishing or hosted document management.\n- Complex visual transformation beyond the already-supported render pipeline.\n- A broad library ecosystem for export formats outside the documented project scope.\n\n## Decisions\n\n- Use the rendered page as the canonical source of truth and build the artifact from that data rather than from ad hoc DOM scraping.\n- Prefer bundled local assets over remote CDN resources so published outputs remain offline-safe.\n- Keep output paths explicit and deterministic for easier automation and review.\n- Limit the first implementation to the export modes already declared in the project contract.\n- Keep PNG/PDF unavailable in this change after evaluating the current browser-renderer options. The existing explicit exit-code-1 path remains the honest contract; task 2.2 stays unchecked.\n- Prefer `puppeteer-core` over Playwright if a later change relaxes the renderer constraint. `puppeteer-core` 25.8.0 does not download Chrome and can use an explicit system executable or installed channel, so it has the smaller operational surface for a single Chrome screenshot/PDF job. Its documented trade-off is decisive here: compatibility is only guaranteed with Puppeteer's bundled browser, not arbitrary system Chrome, so output cannot be treated as stable across browser updates and machines.\n- Do not adopt Playwright 1.62.1 for this narrow export job. Playwright no longer downloads browsers during package installation, but its supported deterministic path still requires `playwright install`, a version-coupled browser lifecycle, and a browser cache measured in hundreds of megabytes. Its cross-browser features do not offset that operational cost for two export modes.\n- Any future implementation must use a fresh temporary browser profile, abort non-`file:`/`data:`/`blob:` requests, disable background networking, and define whether determinism means byte-identical output or a pinned visual baseline. That policy decision belongs in a new renderer change before adding a dependency.\n\n## Risks / Trade-offs\n\n- [Large artifact size] → Mitigation: keep the single-file artifact focused on the page and bundled essentials rather than whole project files.\n- [Asset dependency issues] → Mitigation: vendor critical CSS and font assets locally before export.\n- [Renderer mismatch across formats] → Mitigation: keep export features narrow and validated against the known render pipeline.\n- [System-browser drift] → Mitigation: defer browser export until the project chooses between a pinned downloaded browser and explicitly non-byte-stable system Chrome output.\n- [Hidden browser networking] → Mitigation: require request interception and background-network suppression in any future renderer implementation.\n\n## Migration Plan\n\n1. Implement the publish pipeline for a single-file static artifact.\n2. Keep PNG/PDF on the explicit unsupported path until the browser pinning and determinism policy is accepted.\n3. Integrate asset bundling and vendoring rules to keep the final artifact self-contained.\n4. Validate the commands against real pages and regression examples.\n\n## Open Questions\n\nCan a future renderer download and pin Chromium as an explicit optional install, or must it rely on a user-managed browser and accept cross-version output drift? This must be resolved before task 2.2 can be implemented honestly.\n",
-          "format": "markdown",
-          "headings": [
-            "Context",
-            "Goals / Non-Goals",
-            "Decisions",
-            "Risks / Trade-offs",
-            "Migration Plan",
-            "Open Questions"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": []
-        },
-        "tasks": {
-          "path": "changes/standalone-publish-and-export/tasks.md",
-          "title": "1. Publish pipeline",
-          "raw": "## 1. Publish pipeline\n\n- [x] 1.1 Define the output contract for the standalone publish command.\n- [x] 1.2 Implement the render-to-artifact transformation for a portable HTML page.\n- [x] 1.3 Ensure the generated file can be opened without the project tree present.\n\n## 2. Export handling\n\n- [x] 2.1 Add the base export flow and output-path handling.\n- [ ] 2.2 Implement each supported export mode from the CLI contract.\n- [x] 2.3 Add clear error handling for unsupported or invalid export requests.\n\n## 3. Asset bundling and offline safety\n\n- [x] 3.1 Identify CSS, fonts, and other required assets that must be bundled or vendored.\n- [x] 3.2 Add local asset resolution for publish and export outputs.\n- [x] 3.3 Validate that the exported artifact works without network access.\n\n## 4. Regression and rollout\n\n- [x] 4.1 Add smoke tests for publish and export commands against existing generated pages.\n- [x] 4.2 Confirm the output path and naming conventions match the documented CLI behavior.\n- [x] 4.3 Document the supported publish/export modes and limitations for users.\n",
-          "format": "markdown",
-          "headings": [
-            "1. Publish pipeline",
-            "2. Export handling",
-            "3. Asset bundling and offline safety",
-            "4. Regression and rollout"
-          ],
-          "requirements": [],
-          "scenarios": [],
-          "operations": [],
-          "warnings": [],
-          "progress": {
-            "complete": 11,
-            "open": 1,
-            "total": 12
-          }
-        }
-      },
-      "delta_specs": [
-        {
-          "capability": "standalone-publish-and-export",
-          "path": "changes/standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
-          "document": {
-            "path": "changes/standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
-            "title": "Purpose",
-            "raw": "## Purpose\n\nProvide a reliable way to turn a generated page into a standalone artifact that can be shared, inspected, or archived without requiring a live `iris` project to be present. The system must preserve the rendered output, embed or vendor any required assets, and work in an offline-safe local workflow.\n\n## ADDED Requirements\n\n### Requirement: publishing of portable HTML\nThe system MUST support generating a single-file static HTML artifact from a rendered page while preserving the project’s visual structure and data.\n\n#### Scenario: user publishes a page\nWHEN a user runs the publish command for a valid page\nTHEN the system MUST create a generated artifact that can be opened directly in a browser without needing the rest of the project tree.\n\n#### Scenario: page is missing or invalid\nWHEN the selected page does not exist or cannot be rendered\nTHEN the system MUST fail clearly and MUST explain the missing or invalid page identifier.\n\n### Requirement: export variants\nThe system MUST support at least the documented single-file export and any additional export modes defined for the project’s portable artifact strategy.\n\n#### Scenario: user requests a different export format\nWHEN a user selects a supported export mode such as HTML, PNG, or PDF\nTHEN the system MUST produce the right artifact type and MUST use the correct output path and naming conventions.\n\n### Requirement: offline-safe asset handling\nThe system MUST ensure generated artifacts do not depend on a network call to render or display correctly.\n\n#### Scenario: offline export\nWHEN a page is generated in an offline environment\nTHEN the export MUST rely on vendored or bundled assets instead of remote CDN content.\n\n### Requirement: output path control\nThe system MUST allow the user to choose the destination path for published and exported artifacts and MUST handle output directories consistently.\n\n#### Scenario: user specifies a target path\nWHEN the output directory is valid\nTHEN the CLI MUST write the artifact there and MUST create missing parent directories as needed.\n",
-            "format": "markdown",
-            "headings": [
-              "Purpose",
-              "ADDED Requirements",
-              "Requirement: publishing of portable HTML",
-              "Scenario: user publishes a page",
-              "Scenario: page is missing or invalid",
-              "Requirement: export variants",
-              "Scenario: user requests a different export format",
-              "Requirement: offline-safe asset handling",
-              "Scenario: offline export",
-              "Requirement: output path control",
-              "Scenario: user specifies a target path"
-            ],
-            "requirements": [
-              "publishing of portable HTML",
-              "export variants",
-              "offline-safe asset handling",
-              "output path control"
-            ],
-            "scenarios": [
-              "user publishes a page",
-              "page is missing or invalid",
-              "user requests a different export format",
-              "offline export",
-              "user specifies a target path"
-            ],
-            "operations": [
-              "ADDED"
-            ],
-            "warnings": []
-          }
-        }
-      ],
-      "completeness": "incomplete",
-      "health": "valid",
-      "warnings": []
+      "capability": "standalone-publish-and-export",
+      "path": "specs/standalone-publish-and-export/spec.md",
+      "document": {
+        "path": "specs/standalone-publish-and-export/spec.md",
+        "title": "standalone-publish-and-export Specification",
+        "raw": "# standalone-publish-and-export Specification\n\n## Purpose\nProvide a reliable way to turn a generated page into a standalone artifact that can be shared, inspected, or archived without requiring a live `iris` project to be present. The system must preserve the rendered output, embed or vendor any required assets, and work in an offline-safe local workflow.\n\n## Requirements\n\n### Requirement: publishing of portable HTML\nThe system MUST support generating a single-file static HTML artifact from a rendered page while preserving the project’s visual structure and data.\n\n#### Scenario: user publishes a page\nWHEN a user runs the publish command for a valid page\nTHEN the system MUST create a generated artifact that can be opened directly in a browser without needing the rest of the project tree.\n\n#### Scenario: page is missing or invalid\nWHEN the selected page does not exist or cannot be rendered\nTHEN the system MUST fail clearly and MUST explain the missing or invalid page identifier.\n\n### Requirement: export variants\nThe system MUST support the documented single-file HTML export, and for any export mode the project has defined but not made available it MUST fail with an actionable message rather than emitting an artifact of the wrong type.\n\n#### Scenario: user requests the single-file export\nWHEN a user selects the single-file HTML export mode\nTHEN the system MUST produce a standalone HTML artifact and MUST use the correct output path and naming conventions\n\n#### Scenario: user requests an unavailable export mode\nWHEN a user selects an export mode that the project has deferred, such as an image or PDF mode awaiting a deterministic renderer decision\nTHEN the system MUST refuse the request and name the reason, and MUST NOT write a file of a different type under the requested name\n\n### Requirement: offline-safe asset handling\nThe system MUST ensure generated artifacts do not depend on a network call to render or display correctly.\n\n#### Scenario: offline export\nWHEN a page is generated in an offline environment\nTHEN the export MUST rely on vendored or bundled assets instead of remote CDN content.\n\n### Requirement: output path control\nThe system MUST allow the user to choose the destination path for published and exported artifacts and MUST handle output directories consistently.\n\n#### Scenario: user specifies a target path\nWHEN the output directory is valid\nTHEN the CLI MUST write the artifact there and MUST create missing parent directories as needed.\n",
+        "format": "markdown",
+        "headings": [
+          "standalone-publish-and-export Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: publishing of portable HTML",
+          "Scenario: user publishes a page",
+          "Scenario: page is missing or invalid",
+          "Requirement: export variants",
+          "Scenario: user requests the single-file export",
+          "Scenario: user requests an unavailable export mode",
+          "Requirement: offline-safe asset handling",
+          "Scenario: offline export",
+          "Requirement: output path control",
+          "Scenario: user specifies a target path"
+        ],
+        "requirements": [
+          "publishing of portable HTML",
+          "export variants",
+          "offline-safe asset handling",
+          "output path control"
+        ],
+        "scenarios": [
+          "user publishes a page",
+          "page is missing or invalid",
+          "user requests the single-file export",
+          "user requests an unavailable export mode",
+          "offline export",
+          "user specifies a target path"
+        ],
+        "operations": [],
+        "warnings": []
+      }
     }
   ],
+  "active_changes": [],
   "archived_changes": [
     {
       "name": "2026-08-18-release-automation-and-install-smoke",
@@ -1287,6 +1127,134 @@
             "operations": [
               "ADDED",
               "MODIFIED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-brew-formula-and-installability",
+      "path": "changes/archive/2026-08-21-brew-formula-and-installability",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-brew-formula-and-installability/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-brew-formula-and-installability/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe CLI and render pipeline are now working, but the project still lacks a reliable install story for everyday use. A local-first tool is easier to trust when users can install it consistently, verify the command surface quickly, and upgrade without manual repo cloning or shell hacks.\n\n## What Changes\n\n- Define a supported install path for the `iris` CLI using Homebrew and/or a standard Node package entrypoint.\n- Package the release metadata so the CLI can be versioned and upgraded predictably.\n- Add a smoke-testable install path that verifies the binary and core render commands work immediately after installation.\n- Keep the install story aligned with the repo's local-first and offline-safe design principles.\n\n## Capabilities\n\n### New Capabilities\n- brew-formula-and-installability: establish a distribution path for the CLI that is easy to install, verify, and upgrade.\n\n### Modified Capabilities\n- None\n\n## Impact\n\n- CLI adoption: easier setup for users who want to try or use the tool without a repo checkout.\n- Release quality: versioning and install metadata become explicit and testable.\n- Documentation: users get a clear first-run path and a consistent command reference.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-brew-formula-and-installability/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe project has evolved from a local CLI plus render-first workflow into a tool that can generate deterministic HTML docs and publish artifacts. The remaining gap is distribution: users still need a clear, repeatable install path that matches the local-first model rather than a hosted service or remote backend.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Provide a stable install flow for the `iris` CLI.\n- Support a Homebrew-friendly equivalent packaging entrypoint for easy setup.\n- Keep the install story simple, offline-safe, and consistent with the Node-based project runtime.\n- Add release validation around the key CLI commands.\n\n**Non-Goals:**\n- A hosted SaaS runtime or cloud-managed rendering service.\n- Full platform marketing or marketplace expansion.\n- Broad feature work unrelated to installability, release quality, and distribution.\n\n## Decisions\n\n- Keep the CLI as the primary product surface: installs should provide the same command interface users already know from the repo checkout.\n- Use npm as the primary distribution path on macOS, Linux, and Windows with Node.js 22.13.0 or newer. The package entrypoint is implemented, cross-platform, versioned, and already exercised from a packed artifact outside the repository.\n- Defer a real Homebrew formula until a published release supplies a stable source tarball URL and SHA-256 checksum. Do not mark formula work complete or ship placeholder metadata before those inputs exist.\n- Publish from GitHub Releases through `.github/workflows/release.yml`. The workflow requires an exact `v<package version>` tag, repeats the full project gate, inspects the package payload, and uses npm trusted publishing with provenance instead of a long-lived automation token.\n- Validate the installation path via a focused smoke test around `iris --help` and a minimal render command.\n- Keep packaging offline-safe and local-first; the installer should not require any remote backend to work.\n\n## Risks / Trade-offs\n\n- [Install friction] → Mitigation: keep the install syntax minimal and document the supported path clearly.\n- [Version drift] → Mitigation: tie the release and formula metadata to the package version and CI validation.\n- [Packaging complexity] → Mitigation: start with a single, narrow distribution path instead of expanding into a wider ecosystem.\n- [First-release account gate] → Mitigation: document the one-time npm package/trusted-publisher and GitHub environment setup; the repository contains no credentials and does not claim publication before that owner action.\n\n## Migration Plan\n\n1. Treat npm as the supported install and upgrade path; retain Node.js 22.13.0 as the minimum runtime.\n2. Validate release tags, package metadata, the packed payload, and the installed command before publication.\n3. Publish from a GitHub Release using npm trusted publishing and provenance after the owner configures the external trust relationship.\n4. Add Homebrew only after a real release URL and checksum can be tested end to end.\n\n## Open Questions\n\nNone. npm-first is decided; Homebrew is explicitly deferred on missing release artifacts rather than left ambiguous.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-brew-formula-and-installability/tasks.md",
+          "title": "1. Install path and packaging definition",
+          "raw": "## 1. Install path and packaging definition\n\n- [x] 1.1 Decide the primary install story for the CLI and confirm the supported target environments.\n- [x] 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.\n- [x] 1.3 Confirm the formula / package surface matches the project's local-first design goals.\n\n## 2. Distribution and smoke validation\n\n- [x] 2.1 Add the release packaging or formula definition needed for easy install.\n- [x] 2.2 Add a smoke-check command or script that validates the CLI after installation.\n- [x] 2.3 Validate the flow against the minimum supported Node environment.\n\n## 3. Documentation and rollout\n\n- [x] 3.1 Document the install and upgrade steps in the project docs.\n- [x] 3.2 Confirm the CLI documentation reflects the actual installed command surface.\n- [x] 3.3 Review the change against the roadmap to keep scope limited to installability and distribution.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Install path and packaging definition",
+            "2. Distribution and smoke validation",
+            "3. Documentation and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 9,
+            "open": 0,
+            "total": 9
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "brew-formula-and-installability",
+          "path": "changes/archive/2026-08-21-brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.\n\n## ADDED Requirements\n\n### Requirement: supported CLI installation path\nThe system MUST provide a clear installation path for the `iris` command that works across supported environments.\n\n#### Scenario: user installs the CLI\nWHEN a user follows the documented install flow\nTHEN the CLI MUST be available as `iris` and MUST expose the expected command surface.\n\n#### Scenario: install fails with clear guidance\nWHEN installation prerequisites are missing or unsupported\nTHEN the system MUST fail with a simple, actionable message instead of a vague runtime error.\n\n### Requirement: versioned package distribution\nThe project MUST distribute the CLI through a package entrypoint that installs the same binary and command surface as the repository build on macOS, Linux, and Windows, and MUST NOT publish package-manager metadata for a distribution channel whose release inputs do not yet exist.\n\n#### Scenario: package install path is available\nWHEN a user installs the published package with the documented package manager\nTHEN the command MUST resolve to the same project binary and versioned CLI behavior as the repository build\n\n#### Scenario: upgrade path is clear\nWHEN a user upgrades the installed CLI\nTHEN the system MUST expose a predictable version and install flow that keeps the CLI current\n\n#### Scenario: a distribution channel lacks release inputs\nWHEN a channel such as a Homebrew formula would require a published release URL and checksum that do not exist yet\nTHEN the project MUST document that channel as unavailable and MUST NOT ship a formula or manifest that claims otherwise\n\n### Requirement: minimal install smoke validation\nThe release workflow MUST include a minimal verification that the installed CLI works for a basic command path.\n\n#### Scenario: install smoke test passes\nWHEN the package or formula is installed\nTHEN a fast smoke check such as `iris --help` or a minimal render run MUST succeed without additional repo setup.\n\n#### Scenario: invalid installation is surfaced early\nWHEN the install path is broken or incompatible\nTHEN the validation step MUST fail early and identify the missing or unsupported prerequisite.\n\n### Requirement: documentation and upgrade guidance\nThe project MUST provide install instructions that align with the local-first design and current project conventions.\n\n#### Scenario: user can self-serve setup\nWHEN a new user reads the docs\nTHEN they MUST be able to install and verify the CLI with a single, documented path.\n\n#### Scenario: command reference stays current\nWHEN package distribution changes\nTHEN the install docs and command reference MUST stay aligned with the actual CLI behavior.\n",
+            "format": "markdown",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: supported CLI installation path",
+              "Scenario: user installs the CLI",
+              "Scenario: install fails with clear guidance",
+              "Requirement: versioned package distribution",
+              "Scenario: package install path is available",
+              "Scenario: upgrade path is clear",
+              "Scenario: a distribution channel lacks release inputs",
+              "Requirement: minimal install smoke validation",
+              "Scenario: install smoke test passes",
+              "Scenario: invalid installation is surfaced early",
+              "Requirement: documentation and upgrade guidance",
+              "Scenario: user can self-serve setup",
+              "Scenario: command reference stays current"
+            ],
+            "requirements": [
+              "supported CLI installation path",
+              "versioned package distribution",
+              "minimal install smoke validation",
+              "documentation and upgrade guidance"
+            ],
+            "scenarios": [
+              "user installs the CLI",
+              "install fails with clear guidance",
+              "package install path is available",
+              "upgrade path is clear",
+              "a distribution channel lacks release inputs",
+              "install smoke test passes",
+              "invalid installation is surfaced early",
+              "user can self-serve setup",
+              "command reference stays current"
+            ],
+            "operations": [
+              "ADDED"
             ],
             "warnings": []
           }
@@ -2609,6 +2577,129 @@
               "report is generated from session input",
               "generation fails for invalid input",
               "offline usage"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-standalone-publish-and-export",
+      "path": "changes/archive/2026-08-21-standalone-publish-and-export",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-standalone-publish-and-export/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-standalone-publish-and-export/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nA local-first tool becomes far more useful when it can hand off a page as a portable artifact without depending on the active repo or a remote viewer. The current roadmap already defines `publish` and `export` commands, but they still need a clear path to generate shareable, standalone outputs that remain offline-safe and easy to inspect.\n\n## What Changes\n\n- Implement the publish flow for standalone, portable HTML output.\n- Implement the single-file export mode and make every deferred mode fail explicitly instead of emitting a mislabeled artifact.\n- Keep generated artifacts self-contained and stable enough to share outside the repo.\n- Preserve the local-first design by avoiding any required cloud or remote dependency.\n\n## Capabilities\n\n### New Capabilities\n- standalone-publish-and-export: create portable, standalone artifacts from project pages while keeping them offline-safe and easy to share.\n\n### Modified Capabilities\n- publish: formalize the output contract for single-file static artifacts.\n- export: add the proper export modes and file handling logic.\n\n## Impact\n\n- Users can share a rendered artifact without requiring a live local project checkout.\n- Design handoff and review becomes easier because a page can be exported to a portable artifact.\n- The project remains faithful to its local-first positioning while still supporting distribution and offline shareability.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-standalone-publish-and-export/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe product is designed around local rendering and static HTML output, but it still needs an explicit publish/export layer to support handoff, review, and offline sharing. The command contract already declares `publish` and `export`, so the implementation should focus on reliability, portability, and self-contained asset handling rather than broad feature expansion.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Produce a standalone artifact from a rendered page without requiring a live project checkout.\n- Keep the output portable and safe for offline or external review.\n- Support the export modes already documented in the CLI contract.\n- Maintain local-first operating assumptions while enabling shareable files.\n\n**Non-Goals:**\n- Full remote publishing or hosted document management.\n- Complex visual transformation beyond the already-supported render pipeline.\n- A broad library ecosystem for export formats outside the documented project scope.\n\n## Decisions\n\n- Use the rendered page as the canonical source of truth and build the artifact from that data rather than from ad hoc DOM scraping.\n- Prefer bundled local assets over remote CDN resources so published outputs remain offline-safe.\n- Keep output paths explicit and deterministic for easier automation and review.\n- Limit the first implementation to the export modes already declared in the project contract.\n- Keep PNG/PDF unavailable in this change after evaluating the current browser-renderer options. The existing explicit exit-code-1 path remains the honest contract; task 2.2 stays unchecked.\n- Prefer `puppeteer-core` over Playwright if a later change relaxes the renderer constraint. `puppeteer-core` 25.8.0 does not download Chrome and can use an explicit system executable or installed channel, so it has the smaller operational surface for a single Chrome screenshot/PDF job. Its documented trade-off is decisive here: compatibility is only guaranteed with Puppeteer's bundled browser, not arbitrary system Chrome, so output cannot be treated as stable across browser updates and machines.\n- Do not adopt Playwright 1.62.1 for this narrow export job. Playwright no longer downloads browsers during package installation, but its supported deterministic path still requires `playwright install`, a version-coupled browser lifecycle, and a browser cache measured in hundreds of megabytes. Its cross-browser features do not offset that operational cost for two export modes.\n- Any future implementation must use a fresh temporary browser profile, abort non-`file:`/`data:`/`blob:` requests, disable background networking, and define whether determinism means byte-identical output or a pinned visual baseline. That policy decision belongs in a new renderer change before adding a dependency.\n\n## Risks / Trade-offs\n\n- [Large artifact size] → Mitigation: keep the single-file artifact focused on the page and bundled essentials rather than whole project files.\n- [Asset dependency issues] → Mitigation: vendor critical CSS and font assets locally before export.\n- [Renderer mismatch across formats] → Mitigation: keep export features narrow and validated against the known render pipeline.\n- [System-browser drift] → Mitigation: defer browser export until the project chooses between a pinned downloaded browser and explicitly non-byte-stable system Chrome output.\n- [Hidden browser networking] → Mitigation: require request interception and background-network suppression in any future renderer implementation.\n\n## Migration Plan\n\n1. Implement the publish pipeline for a single-file static artifact.\n2. Keep PNG/PDF on the explicit unsupported path until the browser pinning and determinism policy is accepted.\n3. Integrate asset bundling and vendoring rules to keep the final artifact self-contained.\n4. Validate the commands against real pages and regression examples.\n\n## Open Questions\n\nCan a future renderer download and pin Chromium as an explicit optional install, or must it rely on a user-managed browser and accept cross-version output drift? This must be resolved before task 2.2 can be implemented honestly.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-standalone-publish-and-export/tasks.md",
+          "title": "1. Publish pipeline",
+          "raw": "## 1. Publish pipeline\n\n- [x] 1.1 Define the output contract for the standalone publish command.\n- [x] 1.2 Implement the render-to-artifact transformation for a portable HTML page.\n- [x] 1.3 Ensure the generated file can be opened without the project tree present.\n\n## 2. Export handling\n\n- [x] 2.1 Add the base export flow and output-path handling.\n- [x] 2.2 Implement each supported export mode from the CLI contract.\n- [x] 2.3 Add clear error handling for unsupported or invalid export requests.\n\n## 3. Asset bundling and offline safety\n\n- [x] 3.1 Identify CSS, fonts, and other required assets that must be bundled or vendored.\n- [x] 3.2 Add local asset resolution for publish and export outputs.\n- [x] 3.3 Validate that the exported artifact works without network access.\n\n## 4. Regression and rollout\n\n- [x] 4.1 Add smoke tests for publish and export commands against existing generated pages.\n- [x] 4.2 Confirm the output path and naming conventions match the documented CLI behavior.\n- [x] 4.3 Document the supported publish/export modes and limitations for users.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Publish pipeline",
+            "2. Export handling",
+            "3. Asset bundling and offline safety",
+            "4. Regression and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 12,
+            "open": 0,
+            "total": 12
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "standalone-publish-and-export",
+          "path": "changes/archive/2026-08-21-standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a reliable way to turn a generated page into a standalone artifact that can be shared, inspected, or archived without requiring a live `iris` project to be present. The system must preserve the rendered output, embed or vendor any required assets, and work in an offline-safe local workflow.\n\n## ADDED Requirements\n\n### Requirement: publishing of portable HTML\nThe system MUST support generating a single-file static HTML artifact from a rendered page while preserving the project’s visual structure and data.\n\n#### Scenario: user publishes a page\nWHEN a user runs the publish command for a valid page\nTHEN the system MUST create a generated artifact that can be opened directly in a browser without needing the rest of the project tree.\n\n#### Scenario: page is missing or invalid\nWHEN the selected page does not exist or cannot be rendered\nTHEN the system MUST fail clearly and MUST explain the missing or invalid page identifier.\n\n### Requirement: export variants\nThe system MUST support the documented single-file HTML export, and for any export mode the project has defined but not made available it MUST fail with an actionable message rather than emitting an artifact of the wrong type.\n\n#### Scenario: user requests the single-file export\nWHEN a user selects the single-file HTML export mode\nTHEN the system MUST produce a standalone HTML artifact and MUST use the correct output path and naming conventions\n\n#### Scenario: user requests an unavailable export mode\nWHEN a user selects an export mode that the project has deferred, such as an image or PDF mode awaiting a deterministic renderer decision\nTHEN the system MUST refuse the request and name the reason, and MUST NOT write a file of a different type under the requested name\n\n### Requirement: offline-safe asset handling\nThe system MUST ensure generated artifacts do not depend on a network call to render or display correctly.\n\n#### Scenario: offline export\nWHEN a page is generated in an offline environment\nTHEN the export MUST rely on vendored or bundled assets instead of remote CDN content.\n\n### Requirement: output path control\nThe system MUST allow the user to choose the destination path for published and exported artifacts and MUST handle output directories consistently.\n\n#### Scenario: user specifies a target path\nWHEN the output directory is valid\nTHEN the CLI MUST write the artifact there and MUST create missing parent directories as needed.\n",
+            "format": "markdown",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: publishing of portable HTML",
+              "Scenario: user publishes a page",
+              "Scenario: page is missing or invalid",
+              "Requirement: export variants",
+              "Scenario: user requests the single-file export",
+              "Scenario: user requests an unavailable export mode",
+              "Requirement: offline-safe asset handling",
+              "Scenario: offline export",
+              "Requirement: output path control",
+              "Scenario: user specifies a target path"
+            ],
+            "requirements": [
+              "publishing of portable HTML",
+              "export variants",
+              "offline-safe asset handling",
+              "output path control"
+            ],
+            "scenarios": [
+              "user publishes a page",
+              "page is missing or invalid",
+              "user requests the single-file export",
+              "user requests an unavailable export mode",
+              "offline export",
+              "user specifies a target path"
             ],
             "operations": [
               "ADDED"

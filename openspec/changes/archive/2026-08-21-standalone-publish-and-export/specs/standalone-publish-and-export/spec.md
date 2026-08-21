@@ -16,11 +16,15 @@ WHEN the selected page does not exist or cannot be rendered
 THEN the system MUST fail clearly and MUST explain the missing or invalid page identifier.
 
 ### Requirement: export variants
-The system MUST support at least the documented single-file export and any additional export modes defined for the project’s portable artifact strategy.
+The system MUST support the documented single-file HTML export, and for any export mode the project has defined but not made available it MUST fail with an actionable message rather than emitting an artifact of the wrong type.
 
-#### Scenario: user requests a different export format
-WHEN a user selects a supported export mode such as HTML, PNG, or PDF
-THEN the system MUST produce the right artifact type and MUST use the correct output path and naming conventions.
+#### Scenario: user requests the single-file export
+WHEN a user selects the single-file HTML export mode
+THEN the system MUST produce a standalone HTML artifact and MUST use the correct output path and naming conventions
+
+#### Scenario: user requests an unavailable export mode
+WHEN a user selects an export mode that the project has deferred, such as an image or PDF mode awaiting a deterministic renderer decision
+THEN the system MUST refuse the request and name the reason, and MUST NOT write a file of a different type under the requested name
 
 ### Requirement: offline-safe asset handling
 The system MUST ensure generated artifacts do not depend on a network call to render or display correctly.

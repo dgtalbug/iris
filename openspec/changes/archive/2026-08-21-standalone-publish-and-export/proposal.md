@@ -5,7 +5,7 @@ A local-first tool becomes far more useful when it can hand off a page as a port
 ## What Changes
 
 - Implement the publish flow for standalone, portable HTML output.
-- Implement export variants for single-file and alternative output formats.
+- Implement the single-file export mode and make every deferred mode fail explicitly instead of emitting a mislabeled artifact.
 - Keep generated artifacts self-contained and stable enough to share outside the repo.
 - Preserve the local-first design by avoiding any required cloud or remote dependency.
 
