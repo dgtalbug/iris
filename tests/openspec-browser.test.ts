@@ -73,8 +73,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     );
     expect(await runCli(['init'], cwd)).toBe(0);
 
-    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
-    expect(dashboard).toContain('>Spec</button>');
+    const overview = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(overview).toContain('href="./spec.html"');
+    const dashboard = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
+    expect(dashboard).toContain('<span>Spec</span>');
     expect(dashboard).toContain('Canonical specs');
     expect(dashboard).toContain('Active changes');
     expect(dashboard).toContain('Project context');
@@ -115,7 +117,7 @@ describe('OpenSpec Spec browser orchestration', () => {
   it('generates accessible offline tabs and responsive reduced-motion styles', async () => {
     const cwd = await tempProject();
     expect(await runCli(['init'], cwd)).toBe(0);
-    const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const dashboard = await readFile(path.join(cwd, 'iris', 'spec.html'), 'utf8');
     const tokens = await readFile(path.join(cwd, 'iris', 'design', 'tokens.css'), 'utf8');
     const css = await readFile(path.join(cwd, 'iris', 'design', 'components', 'base.css'), 'utf8');
     const script = await readFile(
@@ -125,9 +127,9 @@ describe('OpenSpec Spec browser orchestration', () => {
     const ids = [...dashboard.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
 
     expect(new Set(ids).size).toBe(ids.length);
-    expect(dashboard).toContain('role="tablist" aria-label="dashboard sections"');
-    expect(dashboard).toContain('aria-controls="dashboard-panel-spec"');
-    expect(dashboard).toContain('role="tabpanel" aria-labelledby="dashboard-tab-spec"');
+    expect(dashboard).toContain('aria-label="Workspace sections"');
+    expect(dashboard).toContain('<a class="nav-item" href="./spec.html" aria-current="page"');
+    expect(dashboard).toContain('aria-label="Breadcrumb"');
     expect(dashboard).toContain('<script defer src="./design/components/base.js">');
     expect(dashboard).not.toContain('type="module"');
     expect(dashboard).not.toMatch(/(?:src|href)="https?:\/\//);
@@ -143,8 +145,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(script).not.toMatch(/https?:\/\//);
     expect(tokens).toContain("[data-theme='light']");
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(css).toContain('@media (max-width: 40rem)');
-    expect(css).toMatch(/spec-grid\s*\{\s*grid-template-columns:\s*minmax\(0, 1fr\)/);
+    expect(css).toContain('@media (max-width: 48rem)');
+    expect(css).toMatch(
+      /\.grid-2, \.doc-layout, \.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/,
+    );
     expect(css).toContain('.spec-document table');
     expect(css).toContain('.spec-document pre');
     expect(css).toContain('.spec-source-details');
@@ -154,14 +158,14 @@ describe('OpenSpec Spec browser orchestration', () => {
   it('renders distinct absent and empty OpenSpec states', async () => {
     const absent = await tempProject(false);
     expect(await runCli(['init'], absent)).toBe(0);
-    expect(await readFile(path.join(absent, 'iris', 'index.html'), 'utf8')).toContain(
+    expect(await readFile(path.join(absent, 'iris', 'spec.html'), 'utf8')).toContain(
       'No OpenSpec workspace detected',
     );
 
     const empty = await tempProject(false);
     await mkdir(path.join(empty, 'openspec'));
     expect(await runCli(['init'], empty)).toBe(0);
-    expect(await readFile(path.join(empty, 'iris', 'index.html'), 'utf8')).toContain(
+    expect(await readFile(path.join(empty, 'iris', 'spec.html'), 'utf8')).toContain(
       'OpenSpec workspace is empty',
     );
   });

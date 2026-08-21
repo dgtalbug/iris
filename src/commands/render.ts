@@ -4,18 +4,26 @@ import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
 import { loadOpenSpecSnapshot, writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
+import {
+  loadResearchWorkspace,
+  researchSourcePath,
+  type ResearchItem,
+} from '../lib/research-workspace.js';
 import { validateContract } from '../lib/schemas.js';
 import { loadProjectState, saveProjectState, statePath } from '../lib/project-state.js';
+import { PROJECT_DOC_NAMES, type DashboardPage } from '../templates/common.js';
+import { renderContractPage } from '../templates/pages/contract-page.js';
+import { researchDashboardPage } from '../templates/pages/research.js';
 import {
-  dashboardHtml,
-  PROJECT_DOC_NAMES,
-  renderContractPage,
-  type DashboardPage,
-} from '../templates/design.js';
+  renderSectionPages,
+  researchDocumentHtml,
+  workspaceContext,
+  type WorkspaceModel,
+} from '../templates/workspace.js';
 
-async function listPageIds(pagesRoot: string): Promise<string[]> {
+async function listDirectories(root: string): Promise<string[]> {
   try {
-    const entries = await readdir(pagesRoot, { withFileTypes: true });
+    const entries = await readdir(root, { withFileTypes: true });
     return entries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
@@ -40,6 +48,17 @@ function boundedText(value: string, limit: number): string {
   const normalized = value.replace(/\s+/g, ' ').trim();
   if (normalized.length <= limit) return normalized;
   return `${normalized.slice(0, Math.max(0, limit - 1)).trimEnd()}…`;
+}
+
+export async function loadWorkspaceTheme(cwd: string): Promise<string> {
+  try {
+    const config = await readFile(path.join(cwd, 'iris', 'config.yaml'), 'utf8');
+    const match = config.match(/^theme:[ \t]*(['"]?)([A-Za-z]+)\1[ \t]*$/m);
+    const theme = match?.[2]?.toLowerCase();
+    return theme === 'light' ? 'light' : 'dark';
+  } catch {
+    return 'dark';
+  }
 }
 
 function dashboardPageFromPayload(
@@ -121,83 +140,37 @@ function dashboardPageFromPayload(
   };
 }
 
-export async function runRenderCommand(
-  cwd: string,
-  id?: string,
-  options: { refreshOpenSpec?: boolean } = {},
-): Promise<void> {
-  if (options.refreshOpenSpec) await writeOpenSpecSnapshot(cwd);
-  const pagesRoot = path.join(cwd, 'iris', 'pages');
-  const allPageIds = await listPageIds(pagesRoot);
-  const pageIds = id ? [id] : allPageIds;
+type CollectedWorkspace = WorkspaceModel & {
+  contracts: Array<{ id: string; payload: Record<string, unknown> }>;
+};
 
-  if (pageIds.length === 0) {
-    await refreshDashboard(cwd);
-    process.stdout.write('rendered iris/index.html\n');
-    return;
-  }
-
-  for (const pageId of pageIds) {
-    const dataPath = path.join(pagesRoot, pageId, 'data.json');
-    if (!existsSync(dataPath)) {
-      throw new IrisError(1, `Missing data.json for page '${pageId}'`);
-    }
-
-    const raw = await readFile(dataPath, 'utf8');
-    const payload = JSON.parse(raw) as Record<string, unknown>;
-    const type = typeof payload.type === 'string' ? payload.type : undefined;
-    if (!type) {
-      throw new IrisError(1, `Page '${pageId}' is missing a contract type`);
-    }
-
-    await validateContract(type as any, payload, dataPath);
-
-    const pageHtmlPath = path.join(pagesRoot, pageId, 'page.html');
-    const html = renderContractPage(payload);
-    await writeAlways(pageHtmlPath, html);
-  }
-
-  if (existsSync(statePath(cwd))) {
-    const state = await loadProjectState(cwd);
-    for (const pageId of pageIds) {
-      const payload = JSON.parse(
-        await readFile(path.join(pagesRoot, pageId, 'data.json'), 'utf8'),
-      ) as Record<string, unknown>;
-      const prior = state.page_index[pageId];
-      state.page_index[pageId] = {
-        id: pageId,
-        type: typeof payload.type === 'string' ? payload.type : 'page',
-        title: typeof payload.title === 'string' ? payload.title : pageId,
-        status: prior?.status ?? 'active',
-      };
-    }
-    await saveProjectState(cwd, state);
-  }
-
-  await refreshDashboard(cwd);
-  process.stdout.write(`rendered ${pageIds.length} page(s)\n`);
-}
-
-export async function refreshDashboard(cwd: string): Promise<void> {
+async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
   const irisRoot = path.join(cwd, 'iris');
   const pagesRoot = path.join(irisRoot, 'pages');
-  const allPageIds = await listPageIds(pagesRoot);
-  const renderedPages: DashboardPage[] = [];
-  const state = existsSync(statePath(cwd)) ? await loadProjectState(cwd) : undefined;
-  for (const pageId of allPageIds) {
+  const contracts: Array<{ id: string; payload: Record<string, unknown> }> = [];
+  const pages: DashboardPage[] = [];
+
+  for (const pageId of await listDirectories(pagesRoot)) {
     const dataPath = path.join(pagesRoot, pageId, 'data.json');
     if (!existsSync(dataPath)) continue;
     const payload = JSON.parse(await readFile(dataPath, 'utf8')) as Record<string, unknown>;
     const type = typeof payload.type === 'string' ? payload.type : undefined;
     if (!type) continue;
-    await validateContract(type as any, payload, dataPath);
-    renderedPages.push(dashboardPageFromPayload(pageId, payload, `./pages/${pageId}/page.html`));
+    await validateContract(type as never, payload, dataPath);
+    contracts.push({ id: pageId, payload });
+    pages.push(dashboardPageFromPayload(pageId, payload, `./pages/${pageId}/page.html`));
   }
 
+  const research = await loadResearchWorkspace(cwd);
+  for (const item of research.items) {
+    pages.push(researchDashboardPage(item, `./research/${item.id}/page.html`));
+  }
+
+  const state = existsSync(statePath(cwd)) ? await loadProjectState(cwd) : undefined;
   for (const [pageId, entry] of Object.entries(state?.page_index ?? {})) {
     if (entry.status !== 'archived') continue;
     if (!existsSync(path.join(irisRoot, 'archive', pageId, 'page.html'))) continue;
-    renderedPages.push({
+    pages.push({
       id: pageId,
       type: entry.type,
       title: entry.title,
@@ -207,19 +180,132 @@ export async function refreshDashboard(cwd: string): Promise<void> {
       agent: 'not set',
       tags: [],
       priority: 'not set',
-      description: 'Archived contract details are available on the full page.',
+      description: 'Archived details are available on the full page.',
       evidence: 'Archived metadata is not retained in the dashboard index.',
     });
   }
 
-  const projectDocs = PROJECT_DOC_NAMES.filter((name) =>
-    existsSync(path.join(irisRoot, 'project', `${name}.html`)),
-  );
+  return {
+    projectName: path.basename(cwd),
+    theme: await loadWorkspaceTheme(cwd),
+    pages,
+    research: research.items,
+    researchWarnings: research.warnings,
+    openSpec: await loadOpenSpecSnapshot(cwd),
+    projectDocs: PROJECT_DOC_NAMES.filter((name) =>
+      existsSync(path.join(irisRoot, 'project', `${name}.html`)),
+    ),
+    contracts,
+  };
+}
 
-  const indexPath = path.join(irisRoot, 'index.html');
-  const openSpec = await loadOpenSpecSnapshot(cwd);
-  await writeAlways(
-    indexPath,
-    dashboardHtml(path.basename(cwd), renderedPages, projectDocs, openSpec),
+async function writeSectionPages(cwd: string, model: WorkspaceModel): Promise<void> {
+  const irisRoot = path.join(cwd, 'iris');
+  const files = renderSectionPages(model);
+  await Promise.all(
+    Object.entries(files).map(([name, html]) => writeAlways(path.join(irisRoot, name), html)),
   );
+}
+
+export async function refreshDashboard(cwd: string): Promise<void> {
+  const model = await collectWorkspace(cwd);
+  await writeSectionPages(cwd, model);
+}
+
+function researchItemById(model: CollectedWorkspace, id: string): ResearchItem | undefined {
+  return model.research.find((item) => item.id === id);
+}
+
+export async function runRenderCommand(
+  cwd: string,
+  id?: string,
+  options: { refreshOpenSpec?: boolean } = {},
+): Promise<void> {
+  if (options.refreshOpenSpec) await writeOpenSpecSnapshot(cwd);
+
+  const model = await collectWorkspace(cwd);
+  const context = workspaceContext(model);
+  const irisRoot = path.join(cwd, 'iris');
+
+  if (id) {
+    const contract = model.contracts.find((entry) => entry.id === id);
+    const research = researchItemById(model, id);
+    if (!contract && !research) {
+      if (existsSync(researchSourcePath(cwd, id))) {
+        throw new IrisError(1, `Research page '${id}' could not be read`);
+      }
+      throw new IrisError(1, `Missing data.json for page '${id}'`);
+    }
+    if (contract) {
+      await writeAlways(
+        path.join(irisRoot, 'pages', id, 'page.html'),
+        renderContractPage(contract.payload, context),
+      );
+    }
+    if (research) {
+      await writeAlways(
+        path.join(irisRoot, 'research', id, 'page.html'),
+        researchDocumentHtml(model, research),
+      );
+    }
+  } else {
+    await Promise.all([
+      ...model.contracts.map((entry) =>
+        writeAlways(
+          path.join(irisRoot, 'pages', entry.id, 'page.html'),
+          renderContractPage(entry.payload, context),
+        ),
+      ),
+      ...model.research.map((item) =>
+        writeAlways(
+          path.join(irisRoot, 'research', item.id, 'page.html'),
+          researchDocumentHtml(model, item),
+        ),
+      ),
+    ]);
+  }
+
+  if (existsSync(statePath(cwd))) {
+    const state = await loadProjectState(cwd);
+    const recorded = id
+      ? model.contracts
+          .filter((entry) => entry.id === id)
+          .map((entry) => ({ id: entry.id, type: entry.payload.type, title: entry.payload.title }))
+          .concat(
+            model.research
+              .filter((item) => item.id === id)
+              .map((item) => ({ id: item.id, type: 'research', title: item.title })),
+          )
+      : [
+          ...model.contracts.map((entry) => ({
+            id: entry.id,
+            type: entry.payload.type,
+            title: entry.payload.title,
+          })),
+          ...model.research.map((item) => ({
+            id: item.id,
+            type: 'research',
+            title: item.title,
+          })),
+        ];
+    for (const entry of recorded) {
+      const prior = state.page_index[entry.id];
+      state.page_index[entry.id] = {
+        id: entry.id,
+        type: typeof entry.type === 'string' ? entry.type : 'page',
+        title: typeof entry.title === 'string' ? entry.title : entry.id,
+        status: prior?.status ?? 'active',
+      };
+    }
+    await saveProjectState(cwd, state);
+  }
+
+  await writeSectionPages(cwd, model);
+
+  const rendered = id ? 1 : model.contracts.length + model.research.length;
+  if (rendered === 0) {
+    process.stdout.write('rendered iris/index.html\n');
+    return;
+  }
+  process.stdout.write(`rendered ${rendered} page(s)\n`);
 }

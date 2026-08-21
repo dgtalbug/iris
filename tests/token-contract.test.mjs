@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import { validateTokenContract } from '../scripts/token-contract.mjs';
 
-const designSource = await readFile(new URL('../src/templates/design.ts', import.meta.url), 'utf8');
+const designSource = await readFile(new URL('../src/templates/tokens.ts', import.meta.url), 'utf8');
 const tokenCss = designSource.match(/export const TOKENS_CSS = `([\s\S]*?)`;/)?.[1];
 
 describe('Aperture token contract', () => {
@@ -12,7 +12,7 @@ describe('Aperture token contract', () => {
   });
 
   it('rejects a low-contrast text pair', () => {
-    const invalid = (tokenCss ?? '').replace('--accent-text: #f2b24e;', '--accent-text: #232936;');
+    const invalid = (tokenCss ?? '').replace('--accent-text: #93a8ff;', '--accent-text: #242a3b;');
     expect(
       validateTokenContract(invalid).some((error) =>
         error.startsWith('dark contrast --accent-text on --bg is '),

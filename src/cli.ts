@@ -8,31 +8,11 @@ import { runPublishCommand } from './commands/publish.js';
 import { runRenderCommand } from './commands/render.js';
 import { runReportFromSessionCommand } from './commands/report.js';
 import { runVendorCommand } from './commands/vendor.js';
+import { helpText } from './lib/command-catalog.js';
 import { IrisError } from './lib/errors.js';
+import { packageVersion } from './lib/package-info.js';
 
-const ALL_COMMANDS = [
-  'init',
-  'render',
-  'report',
-  'publish',
-  'feature',
-  'bug',
-  'idea',
-  'plan',
-  'promote',
-  'archive',
-  'export',
-  'vendor',
-  'open',
-  'update',
-] as const;
-
-export const HELP_TEXT = `iris v0.1
-Usage: iris <command> [options]
-
-Commands:
-${ALL_COMMANDS.map((command) => `  - ${command}`).join('\n')}
-`;
+export const HELP_TEXT = helpText(packageVersion());
 
 export async function runCli(argv: string[], cwd = process.cwd()): Promise<number> {
   const parsed = parseArgs({
@@ -87,6 +67,7 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
       case 'bug':
       case 'idea':
       case 'plan':
+      case 'research':
         if (!id) {
           throw new IrisError(1, `Missing id for command '${command}'`);
         }

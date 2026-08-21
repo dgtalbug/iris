@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
 const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
@@ -20,6 +21,16 @@ if (packageJson.publishConfig?.access !== 'public') {
 for (const requiredFile of requiredFiles) {
   if (!packageJson.files?.includes(requiredFile)) {
     throw new Error(`Package payload is missing required files entry: ${requiredFile}`);
+  }
+}
+
+const requiredTemplates = [
+  'templates/agents/iris-workspace.md',
+  'templates/agents/iris-commands.md',
+];
+for (const template of requiredTemplates) {
+  if (!existsSync(new URL(`../${template}`, import.meta.url))) {
+    throw new Error(`Package payload is missing the generator template: ${template}`);
   }
 }
 

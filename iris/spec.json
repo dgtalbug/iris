@@ -121,7 +121,7 @@
       "document": {
         "path": "specs/aperture-design-system/spec.md",
         "title": "Aperture Design System Specification",
-        "raw": "# Aperture Design System Specification\n\n## Purpose\n\nDefine the deterministic visual language and dashboard hierarchy that lets a newcomer understand an iris-enabled repository from a single offline HTML entry point.\n\n## Requirements\n\n### Requirement: Aperture token contract\nThe system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.\n\n#### Scenario: generated styles are validated\n- **WHEN** a contributor runs the token validation command\n- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme\n\n### Requirement: Aperture component language\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, pills, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n- **WHEN** a generated page uses type or status color, interactive controls, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: user opens the Spec view\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, filtering, theme switching, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n- **WHEN** focus is on the Work/Spec tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: narrow viewport is used\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** the Work and Spec views, their navigation, summaries, artifact content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+        "raw": "# Aperture Design System Specification\n\n## Purpose\n\nDefine the deterministic visual language and dashboard hierarchy that lets a newcomer understand an iris-enabled repository from a single offline HTML entry point.\n\n## Requirements\n\n### Requirement: Aperture token contract\nThe system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.\n\n#### Scenario: generated styles are validated\n- **WHEN** a contributor runs the token validation command\n- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme\n\n### Requirement: Aperture component language\n\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n\n- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\n\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, dense List/Table/Kanban work browser, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: repository has generated work pages\n\n- **WHEN** a newcomer opens the Work view with one or more page contracts\n- **THEN** the dashboard MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from the dashboard\n\n#### Scenario: user opens the Spec view\n\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\n\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n\n- **WHEN** focus is on the Work/Spec or List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: work items are keyboard operated\n\n- **WHEN** focus is on a work-item link and the user presses Enter or Space\n- **THEN** the corresponding detail drawer MUST open without navigating away\n\n#### Scenario: narrow viewport is used\n\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** Work List rows, the prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n\n### Requirement: dense context-preserving Work browser\n\nThe generated Work surface MUST provide peer List, Table, and Kanban views over the same Iris page records, MUST share one text filter across all views, and MUST use only metadata available from validated contracts or explicit unavailable labels.\n\n#### Scenario: user changes Work layout\n\n- **WHEN** a user selects List, Table, or Kanban\n- **THEN** the corresponding view MUST present the same matching records with type, ID, title, status, and every supported optional field without changing source data\n\n#### Scenario: user filters work\n\n- **WHEN** a user enters text matching a title, ID, type, status, priority, agent, or tag\n- **THEN** every Work view MUST hide nonmatching records and report the matching unique-record count\n\n#### Scenario: optional metadata is unavailable\n\n- **WHEN** a page contract does not define priority or another requested field\n- **THEN** List, Table, Kanban, and detail views MUST use a neutral unavailable value and MUST NOT infer or fabricate data\n\n#### Scenario: JavaScript is unavailable\n\n- **WHEN** the generated dashboard opens without executing JavaScript\n- **THEN** every work item MUST retain a navigable full-page link and the default List view MUST remain readable\n\n### Requirement: accessible work-item detail drawer\n\nSelecting a work item MUST open one right-side detail drawer that preserves the current Work view, displays available contract metadata, description, evidence, and a full-page link, and provides deterministic close and focus behavior.\n\n#### Scenario: item is activated\n\n- **WHEN** a user clicks a work item or activates its link with Enter or Space\n- **THEN** the drawer MUST open with dialog semantics, identify the selected ID and title, move focus to its close control, and update a local hash that can reopen the same item\n\n#### Scenario: drawer is closed\n\n- **WHEN** the user presses Escape, activates the close control, activates the backdrop, or navigates back from the item hash\n- **THEN** the drawer MUST close, remove its modal state, and return focus to the item that opened it when that item remains available\n\n#### Scenario: focus moves within the drawer\n\n- **WHEN** the drawer is open and the user presses Tab or Shift+Tab at its focus boundaries\n- **THEN** focus MUST remain within the drawer until it is closed\n\n#### Scenario: narrow viewport opens a drawer\n\n- **WHEN** the viewport is 360 px wide and a work item is activated\n- **THEN** the drawer MUST occupy the viewport without horizontal page overflow and MUST keep its close and full-page actions reachable\n",
         "format": "markdown",
         "headings": [
           "Aperture Design System Specification",
@@ -133,30 +133,54 @@
           "Scenario: meaning is communicated accessibly",
           "Requirement: newcomer-first dashboard hierarchy",
           "Scenario: repository has no generated work pages",
+          "Scenario: repository has generated work pages",
           "Scenario: user opens the Spec view",
           "Scenario: state is communicated in the Spec view",
           "Requirement: deterministic responsive interaction",
           "Scenario: keyboard navigation is used",
           "Scenario: top-level tabs are keyboard operated",
+          "Scenario: work items are keyboard operated",
           "Scenario: narrow viewport is used",
-          "Scenario: reduced motion is requested"
+          "Scenario: reduced motion is requested",
+          "Requirement: dense context-preserving Work browser",
+          "Scenario: user changes Work layout",
+          "Scenario: user filters work",
+          "Scenario: optional metadata is unavailable",
+          "Scenario: JavaScript is unavailable",
+          "Requirement: accessible work-item detail drawer",
+          "Scenario: item is activated",
+          "Scenario: drawer is closed",
+          "Scenario: focus moves within the drawer",
+          "Scenario: narrow viewport opens a drawer"
         ],
         "requirements": [
           "Aperture token contract",
           "Aperture component language",
           "newcomer-first dashboard hierarchy",
-          "deterministic responsive interaction"
+          "deterministic responsive interaction",
+          "dense context-preserving Work browser",
+          "accessible work-item detail drawer"
         ],
         "scenarios": [
           "generated styles are validated",
           "meaning is communicated accessibly",
           "repository has no generated work pages",
+          "repository has generated work pages",
           "user opens the Spec view",
           "state is communicated in the Spec view",
           "keyboard navigation is used",
           "top-level tabs are keyboard operated",
+          "work items are keyboard operated",
           "narrow viewport is used",
-          "reduced motion is requested"
+          "reduced motion is requested",
+          "user changes Work layout",
+          "user filters work",
+          "optional metadata is unavailable",
+          "JavaScript is unavailable",
+          "item is activated",
+          "drawer is closed",
+          "focus moves within the drawer",
+          "narrow viewport opens a drawer"
         ],
         "operations": [],
         "warnings": []
@@ -326,6 +350,131 @@
   ],
   "active_changes": [
     {
+      "name": "agent-surface-triggers",
+      "path": "changes/agent-surface-triggers",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/agent-surface-triggers/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/agent-surface-triggers/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris installs one `iris-workspace` skill whose description — \"Use Iris to create and render intentional local visual workspace content\" — says what Iris is but never says _when_ to reach for it, so in ordinary conversation an agent finishes a bug fix, a plan, or a piece of research and the result stays in chat instead of landing on the dashboard. Claude Code and Copilot users also expect typed slash commands for frequent actions, and today Iris exposes none.\n\n## What Changes\n\n- Rewrite the canonical skill so its trigger is conversational: a description naming the moments that call for Iris (finished a fix, a feature, a plan, an idea, research, or a session) and a compact intent-to-command table mapping what a user says to the exact command and where it lands.\n- Generate typed slash commands from the same canonical source into `.claude/commands/iris/` and `.github/prompts/`, one per frequent content action (`report`, `research`, `bug`, `feature`, `idea`, `plan`, `render`), each a short create → fill → render → report-path instruction.\n- Apply the existing managed-region ownership rules to the generated command files: verifiable ownership markers with a body digest, atomic confined writes, refresh only an intact managed region, preserve and report anything unmarked, edited, malformed, symlinked, or escaping.\n- Keep the skill the single source of agent instructions; command files are generated projections of it, never independently maintained copies.\n\n## Capabilities\n\n### New Capabilities\n\nNone.\n\n### Modified Capabilities\n\n- `agent-first-initialization`: the canonical skill installation requirement gains conversational trigger and intent-mapping content obligations; a new requirement covers generated slash-command surfaces installed and preserved under the same managed-ownership rules.\n\n## Impact\n\n- `templates/agents/iris-workspace.md` is rewritten; a new packaged command template source and `src/lib/agent-skills.ts` gain command-file generation; `package.json` `files` must ship the new template assets and release verification must check them.\n- `src/commands/init.ts` and `src/commands/lifecycle.ts` report command-surface results alongside skill results.\n- Tests for skill content, command generation, collision preservation, and packaged payload; docs (`README.md`, `docs/cmds.md`, `docs/status.md`) updated.\n- Depends on `dashboard-shell-redesign` (command catalog and Commands page) and `research-markdown-pages` (the `research` command the skill and slash commands reference). No new dependency, network access, or runtime.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/agent-surface-triggers/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nSee proposal.md. `src/lib/agent-skills.ts` already implements the managed-surface machinery this change reuses: a packaged template read from the installed package root, front matter plus `IRIS:MANAGED:START/END` markers carrying template id, schema, version, and a SHA-256 body digest, symlink and confinement checks, and atomic temp-file writes. It installs three skill files today.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- An agent reading only the skill can decide whether Iris applies and which command to run.\n- Slash commands exist where users type them (Claude Code, Copilot) without a second source of truth.\n- Reuse the existing ownership, digest, confinement, and atomic-write rules verbatim.\n- Keep the skill small; the intent table is the payload, not prose.\n\n**Non-Goals:**\n\n- A Codex command surface (Codex consumes the skill directly).\n- Commands for setup or share actions (`init`, `update`, `vendor`, `open`, `publish`, `export`); the Commands page and `--help` cover those.\n- Auto-invocation, hooks, or watching. Iris still runs when an agent or user runs it.\n\n## Decisions\n\n### Generalize the installer over a surface descriptor\n\n`installAgentSkills` becomes `installAgentSurfaces`, iterating a list of `{ templateId, target, frontMatter, body }` descriptors instead of one hard-coded template. Marker parsing keys off the descriptor's template id rather than the literal `iris-workspace`, so skill and command files share one code path and one conflict-reporting shape. The public `SkillInstallResult` shape is unchanged so `assertSkillInstallComplete` and its callers keep working.\n\nAlternative: a second parallel installer for commands. Rejected — it duplicates the security-relevant marker and confinement logic, which is exactly the drift the agent-first change removed.\n\n### One packaged command template, projected per action\n\n`templates/agents/iris-commands.md` holds a table of actions (`report`, `research`, `bug`, `feature`, `idea`, `plan`, `render`) with the one-line body each generated command carries. The generator emits `.claude/commands/iris/<action>.md` and `.github/prompts/iris-<action>.prompt.md` from that single table, differing only in the front matter each host expects. Bodies stay ~8 lines: what it creates, what to edit, what to run, what to report back.\n\n### Conversational skill trigger\n\nThe skill's `description` changes to name the moments rather than the product, and the body opens with a \"When to use this\" intent table (user says → command → lands as). Everything already in the skill (setup, contract workflow, render semantics, preservation rules) stays but is compressed so the file does not grow materially; the intent table earns its ~150 tokens by being the part that fires in conversation.\n\n### Packaging and verification\n\n`package.json` `files` already ships `templates/agents`, so the new template is included by directory. `scripts/verify-release.mjs` gains an assertion for the command template so a missing asset fails the release rather than silently installing fewer surfaces.\n\n## Risks / Trade-offs\n\n- [More generated files to preserve safely] → Same marker, digest, confinement, and atomic-write path as skills; conflicts are reported, never overwritten.\n- [Slash commands could drift from the CLI] → Actions are derived from the command catalog introduced by `dashboard-shell-redesign`; a test asserts every generated command names a catalog entry that exists.\n- [A larger skill costs tokens on every agent turn] → The rewrite compresses existing prose to offset the intent table; a test asserts the rendered skill stays under a fixed byte budget.\n- [Copilot prompt front matter differs from Claude's] → Encoded per surface in the descriptor; unknown hosts are simply not targeted.\n\n## Migration Plan\n\n1. Generalize the installer and add descriptor-driven generation with tests, still installing only skills.\n2. Add the command template and the two command surfaces; extend init/update reporting.\n3. Rewrite the skill template; update packaging verification and docs.\n4. Run the release gate and regenerate local surfaces.\n\nRollback: revert; generated command files are inert Markdown that a later `iris init` no longer refreshes, and users may delete them.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Generalize the installer over a surface descriptor",
+            "One packaged command template, projected per action",
+            "Conversational skill trigger",
+            "Packaging and verification",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/agent-surface-triggers/tasks.md",
+          "title": "1. Surface installer",
+          "raw": "## 1. Surface installer\n\n- [ ] 1.1 Generalize the managed-surface installer over a surface descriptor (template id, target, front matter, body) while preserving marker, digest, confinement, symlink, and atomic-write behavior and the existing result shape.\n- [ ] 1.2 Add focused tests for descriptor-driven install, refresh, unchanged, edited-digest, unmarked, and escaping-target cases.\n\n## 2. Command surfaces\n\n- [ ] 2.1 Add the packaged `iris-commands` template describing the generated content actions and their one-line bodies.\n- [ ] 2.2 Generate `.claude/commands/iris/<action>.md` and `.github/prompts/iris-<action>.prompt.md` for each action with host-appropriate front matter; report results from init and update.\n- [ ] 2.3 Add tests that every generated command names an existing catalog command, that unrelated sibling commands are preserved, and that collisions are reported rather than overwritten.\n\n## 3. Conversational skill\n\n- [ ] 3.1 Rewrite the canonical skill description and body with a when-to-use intent table mapping user intent to command and generated destination, compressing existing prose to hold the size budget.\n- [ ] 3.2 Add tests asserting the intent table covers every content command and that the rendered skill stays within its byte budget.\n\n## 4. Verification and documentation\n\n- [ ] 4.1 Extend release verification to require the command template in the package payload.\n- [ ] 4.2 Update `README.md`, `docs/cmds.md`, and `docs/status.md` for the generated command surfaces and the skill's trigger contract.\n- [ ] 4.3 Run `openspec validate agent-surface-triggers --strict` and the full release gate; regenerate local agent surfaces.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Surface installer",
+            "2. Command surfaces",
+            "3. Conversational skill",
+            "4. Verification and documentation"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 0,
+            "open": 10,
+            "total": 10
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "agent-first-initialization",
+          "path": "changes/agent-surface-triggers/specs/agent-first-initialization/spec.md",
+          "document": {
+            "path": "changes/agent-surface-triggers/specs/agent-first-initialization/spec.md",
+            "title": "ADDED Requirements",
+            "raw": "## ADDED Requirements\n\n### Requirement: generated agent command surfaces\n\nThe system MUST generate typed command files for the supported agent surfaces from the same canonical Iris source that produces the skill, covering the frequent content actions, and MUST apply its managed-ownership rules to those files.\n\n#### Scenario: command surfaces are installed\n\n- **WHEN** `iris init` installs agent guidance\n- **THEN** it MUST generate one command file per supported content action into the Claude command directory and the GitHub prompt directory, each naming the exact Iris command, the file the agent edits, and the render step\n\n#### Scenario: generated command content is refreshed\n\n- **WHEN** a previously generated command file has valid ownership markers and its managed content matches the recorded digest\n- **THEN** initialization MUST update only that managed content and preserve user-authored bytes outside the managed boundary\n\n#### Scenario: command file was edited or is user-owned\n\n- **WHEN** a target command file is unmarked, partially marked, misordered, edited so its digest no longer matches, symlinked, or outside the repository boundary\n- **THEN** initialization MUST preserve the file, MUST NOT truncate or follow it, and MUST report the affected surface\n\n#### Scenario: unrelated command content exists\n\n- **WHEN** a supported command directory already contains unrelated commands or prompts\n- **THEN** initialization MUST leave that content unchanged\n\n## MODIFIED Requirements\n\n### Requirement: canonical multi-agent skill installation\n\nThe system MUST generate supported agent skill files from one canonical Iris-owned skill source rather than maintaining independent instruction copies, and that source MUST state when to use Iris in conversational terms and map common user intents to the exact command and generated destination.\n\n#### Scenario: supported skill surfaces are installed\n\n- **WHEN** `iris init` installs agent guidance\n- **THEN** it MUST provide the `iris-workspace` skill to the generic/Codex, Claude, and GitHub Copilot repository skill locations\n\n#### Scenario: unrelated agent content exists\n\n- **WHEN** a supported skill directory already contains sibling skills or unrelated files\n- **THEN** initialization MUST leave that content unchanged\n\n#### Scenario: agent decides whether Iris applies\n\n- **WHEN** an agent reads the installed skill while deciding how to record completed work\n- **THEN** the skill MUST name the situations that call for Iris and map each supported intent to its command and generated output location without requiring the agent to read any other file\n",
+            "format": "markdown",
+            "headings": [
+              "ADDED Requirements",
+              "Requirement: generated agent command surfaces",
+              "Scenario: command surfaces are installed",
+              "Scenario: generated command content is refreshed",
+              "Scenario: command file was edited or is user-owned",
+              "Scenario: unrelated command content exists",
+              "MODIFIED Requirements",
+              "Requirement: canonical multi-agent skill installation",
+              "Scenario: supported skill surfaces are installed",
+              "Scenario: unrelated agent content exists",
+              "Scenario: agent decides whether Iris applies"
+            ],
+            "requirements": [
+              "generated agent command surfaces",
+              "canonical multi-agent skill installation"
+            ],
+            "scenarios": [
+              "command surfaces are installed",
+              "generated command content is refreshed",
+              "command file was edited or is user-owned",
+              "unrelated command content exists",
+              "supported skill surfaces are installed",
+              "unrelated agent content exists",
+              "agent decides whether Iris applies"
+            ],
+            "operations": [
+              "ADDED",
+              "MODIFIED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "incomplete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
       "name": "brew-formula-and-installability",
       "path": "changes/brew-formula-and-installability",
       "lifecycle": "active",
@@ -452,13 +601,13 @@
       "warnings": []
     },
     {
-      "name": "redesign-work-board",
-      "path": "changes/redesign-work-board",
+      "name": "dashboard-shell-redesign",
+      "path": "changes/dashboard-shell-redesign",
       "lifecycle": "active",
       "layout": "structured",
       "artifacts": {
         "manifest": {
-          "path": "changes/redesign-work-board/.openspec.yaml",
+          "path": "changes/dashboard-shell-redesign/.openspec.yaml",
           "title": ".openspec",
           "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
           "format": "yaml",
@@ -469,9 +618,9 @@
           "warnings": []
         },
         "proposal": {
-          "path": "changes/redesign-work-board/proposal.md",
+          "path": "changes/dashboard-shell-redesign/proposal.md",
           "title": "Why",
-          "raw": "## Why\n\nIris's Work surface is visually spacious, exposes only coarse List/Board layouts, and navigates away from the dashboard before users can inspect an item. A denser, context-preserving work browser is needed so repositories with many agent-authored records remain quickly scannable across desktop and narrow screens.\n\n## What Changes\n\n- Replace the current List/Board switcher with peer List, Table, and Kanban views that share one filter and the same real Iris contract data.\n- Introduce compact work-item hierarchy for type, ID, title, status, priority, update time, and owner, while displaying unavailable fields honestly rather than inventing values.\n- Open work items in an accessible right-side detail drawer with description/evidence, an explicit full-page action, Escape/backdrop close behavior, focus containment and return, and a full-screen 360 px treatment.\n- Evolve Aperture semantic tokens and component styles for neutral density, selected/hover states, status, priority, work type, focus, and responsive column priority.\n- Preserve deterministic static HTML, `file://`, classic deferred JavaScript, both themes, reduced motion, no drag-and-drop, no remote assets, and no unsupported data mutation.\n\n## Capabilities\n\n### New Capabilities\n\nNone.\n\n### Modified Capabilities\n\n- `aperture-design-system`: Expand the Work surface and responsive interaction requirements to cover dense List/Table/Kanban presentation and an accessible side-detail drawer.\n\n## Impact\n\n- Changes generated dashboard markup, Aperture tokens/components, classic interaction script, navigation behavior, tests, design documentation, and checked-in Iris output.\n- Extends the internal dashboard page projection with bounded optional metadata derived from existing contracts; schemas and editable source contracts remain unchanged.\n- Adds no framework, dependency, network request, persistence layer, drag-and-drop behavior, or Jira-owned asset.\n",
+          "raw": "## Why\n\nThe dashboard packs every surface (briefing, health strip, architecture, Work browser, Spec browser, project docs) into one tabbed `index.html` that is already 5,800 lines with zero pages; as OpenSpec, command, and research content grows it becomes slow to scan, expensive for agents to read, and impossible to deep-link by section. Users want Jira/Trello-style organization: a persistent navigation shell, one page per section with its own summary strip, and a cleaner product palette.\n\n## What Changes\n\n- Replace the single tabbed dashboard with a multi-page workspace: `iris/index.html` (Overview), `iris/work.html` (Work), `iris/spec.html` (Spec), `iris/commands.html` (Commands), plus the existing contract pages and project docs, all sharing one generated navigation shell (collapsible sidebar + top bar).\n- Introduce Aperture 3 \"Electra\" tokens: cooler neutral surfaces, an electric indigo interactive accent, a white sidebar in the light theme, and light as a first-class peer of dark. The type, status, and priority spectrum is retained; a `research` type color is reserved for the follow-up research capability.\n- Add a generated Commands page driven by one command catalog (purpose groups, synopsis, usage, explicit status: implemented / partial / stubbed). `iris --help` is generated from the same catalog.\n- Every section page opens with its own summary strip. Overview shows cross-section summaries (briefing, counts, recent work, active spec movement, quick-start commands) and links out instead of embedding each section's full content.\n- Navigation shell: sidebar collapses to a rail (control + `b` key, persisted locally), top bar carries breadcrumb, filter when relevant, and theme toggle; at narrow widths the sections sit behind a menu control. The shell is stripped from published and exported artifacts.\n- **BREAKING** (generated output only): Work and Spec leave `index.html` for their own pages, and the managed `iris/project/commands.html` placeholder is retired in favor of `iris/commands.html`. Contracts, `state.json`, schemas, and CLI commands are unchanged; every page stays reachable from the dashboard and links back to it.\n\n## Capabilities\n\n### New Capabilities\n\nNone.\n\n### Modified Capabilities\n\n- `aperture-design-system`: token contract gains navigation-shell tokens and the Electra palette; component language gains the navigation shell, page header, summary strip, progress bar, and command card; the dashboard hierarchy becomes a multi-page workspace with an Overview page; deterministic interaction gains sidebar collapse, the `b` shortcut, cross-page theme persistence, and a narrow-width menu; new requirements cover the navigation shell, the generated command reference, and per-section summary strips.\n\n## Impact\n\n- `src/templates/design.ts` is split into tokens, shell, component CSS, classic script, and per-page generators; `src/commands/render.ts` writes the additional section pages; `src/commands/lifecycle.ts` retires the commands placeholder safely; `src/cli.ts` derives help from a new `src/lib/command-catalog.ts`.\n- `publish`/`export` strip the shell; `html-check` covers the new cross-page links; `token-lint`/`token-contract` validate the new token pairs.\n- Tests touching `index.html` structure (`html-navigation`, `work-board`, `openspec-browser`, `cli-help`, `publish-export`, `token-contract`) are updated; shell, overview, and commands-page tests are added.\n- Docs (`README`, `docs/cmds.md`, `docs/design-system.md`, `docs/status.md`, the canonical skill template's dashboard mention) and the checked-in `iris/` dogfood output are regenerated. No new runtime dependency, framework, network request, or server.\n- Sequencing: `redesign-work-board` modifies the same Aperture requirements and must be archived before this change so the delta applies on top of it.\n",
           "format": "markdown",
           "headings": [
             "Why",
@@ -487,19 +636,23 @@
           "warnings": []
         },
         "design": {
-          "path": "changes/redesign-work-board/design.md",
+          "path": "changes/dashboard-shell-redesign/design.md",
           "title": "Context",
-          "raw": "## Context\n\nThe Work surface currently projects each page into a minimal `DashboardPage` containing ID, type, title, status, and link, then duplicates a spacious card in List and Board views. The validated envelope also supplies agent, timestamps, and tags, while type-specific sections contain bounded description and evidence fields. The static output must remain deterministic, open from `file://`, use classic scripts, and preserve full-page links when JavaScript is unavailable.\n\nPublic Jira guidance supports the transferable interaction model: list views prioritize type/key/summary/status/priority/updated/assignee fields; boards map status to columns and expose selected fields on compact cards; compact density helps busy backlogs; and preview panels keep users in context with a full-page escape hatch. Iris will implement those principles through Aperture tokens and its own component language rather than copy Atlassian branding, fonts, icons, or exact styling.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Make 20–100 Iris records scannable without decorative card padding dominating the viewport.\n- Provide one data projection shared by List, Table, Kanban, filtering, and drawer detail.\n- Preserve navigation and source honesty when scripts fail or metadata is absent.\n- Meet keyboard, focus, reduced-motion, light/dark, print, and 360 px requirements.\n\n**Non-Goals:**\n\n- Drag-and-drop, inline editing, persistence, sorting, saved filters, pagination, or invented workflow transitions.\n- New contract fields, schema changes, user accounts, remote fonts, Jira assets, or a frontend framework.\n- Replacing the Spec view or redesigning full contract pages.\n\n## Decisions\n\n### Derive a bounded Work projection during generation\n\n`refreshDashboard` will derive updated date, agent, tags, description, evidence, and priority from validated contract payloads. Bug severity maps directly to display priority (`p0` urgent through `p3` low); other types report priority as unavailable because effort, impact, status, and type are not interchangeable with priority. Description and evidence strings are bounded before entering generated attributes.\n\nArchived state currently retains only ID/type/title/status/link, so optional fields remain unavailable instead of reading moved source opportunistically or inventing values.\n\nAlternative: expand the schema with owner and priority. Rejected because this redesign is a read-only presentation change and schema semantics require a separate capability decision.\n\n### Keep all three views in static semantic HTML\n\nList uses compact linked rows with a strong ID/title pair and one-line metadata. Table uses a real table with type, ID, title, status, priority, updated, and agent columns; responsive CSS hides agent, updated, priority, then type in that order before allowing page overflow. Kanban uses four fixed columns matching Iris's actual statuses: Draft, Active, Done, Archived. Cards stay compact and are not draggable.\n\nAll representations use full-page anchors. JavaScript intercepts activation for the detail drawer, while no-JS users follow the existing page link. A single filter hides matching representations across all views and computes unique results from the List representation.\n\nAlternative: render only the active layout and rebuild on tab changes. Rejected because it complicates no-JS behavior and introduces client-side templating into a deterministic static artifact.\n\n### Use one reusable modal side drawer\n\nThe dashboard emits one drawer after the main content. Activating any work anchor copies escaped data attributes into text-only drawer slots, updates `#work=<id>`, marks the dashboard main content inert, locks body scrolling, focuses Close, and traps Tab within the drawer. Escape, backdrop, Close, or hash removal closes it and restores the opener focus.\n\nThe drawer is `min(38rem, 52vw)` on wide screens and the full viewport below 40rem. Its content order is ID/type, title, status, metadata, description, evidence/tags, then actions. “Open full page” uses the original static link.\n\nAlternative: CSS `:target` only. Rejected because it cannot reliably trap/restore focus, populate one reusable drawer, or provide Escape behavior.\n\n### Evolve Aperture toward neutral compact density\n\nThe existing system stack remains. Work UI uses 0.75–0.875rem metadata/body text, 1.25rem section headings, 32–40 px interactive row targets, 4–8 px radii for compact elements, hairline separators, and neutral surfaces. Spectrum colors appear only in aperture/type, status, and priority signals, always paired with text. Hover, selected, and focus states use existing accent/border semantics.\n\n### Keep deep links local and deterministic\n\nThe drawer hash contains only the encoded work ID. On load or `hashchange`, the script opens a matching item; unknown IDs leave the dashboard unchanged. Closing uses history replacement for direct closes, while browser Back naturally removes a pushed hash. The full page remains the authoritative deep link and no data is serialized into the URL.\n\n## Risks / Trade-offs\n\n- [Three DOM representations increase generated HTML size] → Keep markup compact, reuse one drawer, and avoid client-side templates or duplicated descriptions.\n- [Data attributes can become large or unsafe] → Bound derived text and HTML-escape every attribute; populate drawer fields with `textContent` only.\n- [A modal drawer can create focus bugs] → Test initial focus, Tab boundaries, Escape, backdrop, hash navigation, focus return, and inert cleanup in a real browser.\n- [Responsive tables can hide useful context] → Preserve ID, title, and status longest; every row opens the drawer where all available metadata remains visible.\n- [The checked-in repository has no work pages] → Use temporary validated fixture contracts for visual/runtime proof; do not add demo records to user-owned `iris/pages/`.\n\n## Migration Plan\n\n1. Extend the dashboard projection and add focused generator tests for real and unavailable metadata.\n2. Replace Work markup and styles while preserving existing full-page links and empty state.\n3. Add shared filtering, drawer, hash, focus, and keyboard behavior in the classic base script.\n4. Regenerate managed output, validate at desktop and 360 px with temporary populated fixtures, and run the full release gate.\n\nRollback restores the prior projection and List/Board markup; contracts and state require no migration.\n",
+          "raw": "## Context\n\nSee proposal.md for motivation. Today `src/templates/design.ts` (1,522 lines) owns tokens, component CSS, the classic script, contract-page templates, and one `dashboardHtml()` that emits a single `index.html` with Work/Spec tabs. `refreshDashboard()` in `src/commands/render.ts` builds the `DashboardPage[]` projection and writes that one file. `redesign-work-board` (complete, not yet archived) already delivered the dense List/Table/Kanban browser and drawer inside that page.\n\nHard constraints that shape the approach: deterministic static HTML, opens from `file://`, classic deferred scripts only, no runtime framework or new dependency, token-only CSS enforced by `token-lint`/`token-contract`, generated link integrity enforced by `html-check`, and `publish`/`export --single` must stay self-contained with nav chrome stripped via `data-iris-nav`.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Each section is its own small HTML file with its own summary strip; Overview links out instead of embedding.\n- One shared shell generator so sidebar, top bar, breadcrumb, and theme behave identically on every page, including contract pages and project docs.\n- A cleaner \"Electra\" palette that still passes the contrast validator in both themes.\n- One command catalog that feeds `--help`, the Commands page, and (later) docs.\n- Smaller per-page HTML so agents that read generated output spend fewer tokens.\n\n**Non-Goals:**\n\n- Research/Markdown pages (separate change `research-markdown-pages`, which adds its own nav entry).\n- Search across pages, saved filters, drag-and-drop, persistence beyond theme and sidebar state.\n- Architecture projection and chart blocks (still roadmap step 5).\n- Changing contracts, schemas, `state.json` shape, or CLI command names.\n\n## Decisions\n\n### Multi-page static output, not a hash-routed single page\n\nEach section is a separate generated file (`index.html`, `work.html`, `spec.html`, `commands.html`). A hash-routed shell in one file was rejected: it reproduces the \"everything on the home page\" problem the user named, keeps one enormous file that agents must read whole, and complicates no-JS behavior and per-section publish.\n\n### One `renderShell()` wraps every page\n\nA single function takes `{ current, depth, title, crumbs, topbarSlot, content }` and returns the full document. `depth` drives relative asset and navigation paths (`./` at root, `../` for `project/`, `../../` for `pages/<id>/` and `archive/<id>/`). The sidebar and top bar are marked `data-iris-nav` so the existing publish stripper removes them; the published page body keeps its own heading and back link. Contract pages (`renderPageShell`) and project placeholders adopt the same shell so the app feels continuous.\n\nAlternative: keep contract pages on the old header-only layout. Rejected — inconsistent chrome is exactly what makes the current output feel assembled rather than designed.\n\n### Split `design.ts` into focused modules\n\n`src/templates/tokens.ts` (TOKENS_CSS), `shell.ts` (shell markup + nav model), `styles.ts` (component CSS), `script.ts` (classic JS), `pages/overview.ts`, `pages/work.ts`, `pages/spec.ts`, `pages/commands.ts`, `contract-page.ts`. `design.ts` becomes a thin re-export barrel so existing imports and tests keep working. `token-lint` is pointed at `tokens.ts`. This is the targeted cleanup the redesign needs; no unrelated refactor.\n\n### Electra palette (Aperture 3)\n\nDark stays the default; light becomes a true peer with a white sidebar on a cool gray ground (the Jira/Trello convention). Interactive accent moves from amber to electric indigo; amber is retained only as the `plan` type color. New tokens: `--nav-bg`, `--nav-text`, `--nav-active-bg`, `--nav-active-text`, `--accent-soft`, `--type-research`, `--type-research-soft`. Final literals are fixed in `tokens.ts` and validated by `token-contract`; the intended values are:\n\n| Token             | Dark      | Light     |\n| ----------------- | --------- | --------- |\n| `--bg`            | `#0e1117` | `#f4f5f7` |\n| `--surface-1`     | `#151923` | `#ffffff` |\n| `--surface-2`     | `#1b2030` | `#f1f2f4` |\n| `--surface-3`     | `#242a3b` | `#e4e6ea` |\n| `--line-1`        | `#2a3143` | `#dfe1e6` |\n| `--text-1`        | `#e7eaf2` | `#172b4d` |\n| `--text-2`        | `#a4adc2` | `#44546f` |\n| `--text-3`        | `#7a8399` | `#626f86` |\n| `--accent`        | `#6f8cff` | `#3b5bdb` |\n| `--accent-text`   | `#93a8ff` | `#2f4ac0` |\n| `--accent-ink`    | `#0b0e14` | `#ffffff` |\n| `--nav-bg`        | `#0a0d13` | `#ffffff` |\n| `--type-research` | `#2dd4bf` | `#0f766e` |\n\n`iris/config.yaml` already carries `theme:`; generated pages emit `data-theme` from it as the initial theme, and the existing `localStorage` toggle still overrides per browser.\n\n### Command catalog as the single source\n\n`src/lib/command-catalog.ts` exports groups (`setup`, `content`, `render`, `lifecycle`, `share`) of entries `{ name, usage, synopsis, flags, status }` with `status ∈ implemented | partial | stubbed`. `HELP_TEXT` is generated from it (grouped), `commands.html` renders one card per entry with a textual status chip, and the Overview quick-start reads the `content` group. `docs/cmds.md` stays the long-form reference.\n\n### Overview composition\n\nBriefing hero (aperture ring + repo name + one line + quick-start commands) → four summary tiles linking to Work, Spec, Commands, project docs → two columns: recent work (five most recently updated records by ISO `updated`, \"not set\" last) and spec movement (active changes with a task progress bar) → compact architecture pane (existing empty state) → project-docs strip. Every block ends in a link to its section page.\n\n### Work and Spec relocate unchanged\n\n`work.html` hosts exactly the `redesign-work-board` browser, toolbar, and drawer; `spec.html` hosts the existing `specView()`. Their stat strips come from the same projections. Only the wrapper and relative paths change, which keeps the drawer/keyboard test surface stable.\n\n### Sidebar state and theme persistence\n\n`iris-nav` (`expanded|collapsed`) and the existing `iris-theme` keys in `localStorage`. Browsers differ on whether `file://` pages in different directories share storage; the default (expanded, config theme) is always correct, so persistence is best-effort and never required for correctness. At `≤ 40rem` the sidebar becomes an overlay opened by a top-bar menu button; without JavaScript it renders expanded above the content.\n\n### Retiring the commands placeholder\n\n`PROJECT_DOC_NAMES` drops `commands`; `refreshProjectPlaceholders` removes `iris/project/commands.html` only when the file carries `data-iris-managed` (same ownership rule it already uses to refresh), otherwise leaves it and reports it.\n\n## Risks / Trade-offs\n\n- [Tests assert on the single-page structure] → Update `html-navigation`, `work-board`, `openspec-browser`, `cli-help`, `publish-export`, `token-contract`; add shell/overview/commands tests. Work-board drawer tests move to `work.html` with no behavioral change.\n- [More files to keep linked] → `html-check` already walks every generated file; add a test that every nav entry resolves at every depth.\n- [Publish strips the shell but page loses context] → Published body keeps its H1, type/status, and a plain back link (already the `data-iris-nav` pattern).\n- [Cross-page storage on `file://` varies by browser] → Correct defaults without storage; document as best-effort.\n- [Palette change invalidates screenshots/docs] → Regenerate dogfood and update `docs/design-system.md` tokens table in the same change.\n- [Aperture delta collides with `redesign-work-board`] → Archive that change first; this delta's MODIFIED blocks are written on top of its text.\n\n## Migration Plan\n\n1. Archive `redesign-work-board` (complete) so `openspec/specs/aperture-design-system` contains its requirements.\n2. Land tokens + module split with the existing single page still rendering (tests green).\n3. Add the shell and section pages; switch `refreshDashboard` to write all section files; retire the commands placeholder.\n4. Update tests, regenerate `iris/`, run the release gate, update docs.\n\nRollback: revert the change; `iris init`/`iris update` rewrite managed surfaces, and stale section files are harmless static HTML that the next render overwrites.\n",
           "format": "markdown",
           "headings": [
             "Context",
             "Goals / Non-Goals",
             "Decisions",
-            "Derive a bounded Work projection during generation",
-            "Keep all three views in static semantic HTML",
-            "Use one reusable modal side drawer",
-            "Evolve Aperture toward neutral compact density",
-            "Keep deep links local and deterministic",
+            "Multi-page static output, not a hash-routed single page",
+            "One `renderShell()` wraps every page",
+            "Split `design.ts` into focused modules",
+            "Electra palette (Aperture 3)",
+            "Command catalog as the single source",
+            "Overview composition",
+            "Work and Spec relocate unchanged",
+            "Sidebar state and theme persistence",
+            "Retiring the commands placeholder",
             "Risks / Trade-offs",
             "Migration Plan"
           ],
@@ -509,49 +662,53 @@
           "warnings": []
         },
         "tasks": {
-          "path": "changes/redesign-work-board/tasks.md",
-          "title": "1. Work data projection",
-          "raw": "## 1. Work data projection\n\n- [x] 1.1 Extend the generated dashboard page projection with bounded update, agent, tag, priority, description, and evidence metadata derived only from validated contracts.\n- [x] 1.2 Cover supported type-specific derivation and honest unavailable values with focused generator tests.\n\n## 2. Dense Work views\n\n- [x] 2.1 Replace the current List/Board markup with semantic List, Table, and Kanban representations that retain full-page links and share one filter.\n- [x] 2.2 Add Aperture tokens and compact responsive styles for work rows, table columns, Kanban columns/cards, type/status/priority signals, both themes, print, reduced motion, and 360 px layouts.\n- [x] 2.3 Implement shared filtering, unique result counts, layout tabs, and keyboard navigation without adding persistence, remote assets, or runtime modules.\n\n## 3. Work detail drawer\n\n- [x] 3.1 Emit one reusable detail drawer populated from escaped bounded data attributes with a full-page action and local item hash.\n- [x] 3.2 Implement click, Enter, Space, Escape, backdrop, hash, focus containment, focus return, inert cleanup, and responsive full-screen behavior.\n- [x] 3.3 Add focused markup and interaction tests for dialog semantics, keyboard behavior, no-JavaScript links, and offline dependency constraints.\n\n## 4. Documentation and verification\n\n- [x] 4.1 Record the Jira-inspired interaction research and Aperture implementation decisions without copying Jira branding or assets.\n- [x] 4.2 Regenerate checked-in output, inspect populated temporary fixture output in Safari and a 360 px WebKit rendering, and fix visible layout/accessibility defects.\n- [x] 4.3 Run strict OpenSpec validation and the full release gate, then reconcile task evidence with the implementation.\n",
+          "path": "changes/dashboard-shell-redesign/tasks.md",
+          "title": "1. Foundations",
+          "raw": "## 1. Foundations\n\n- [ ] 1.1 Archive the completed `redesign-work-board` change so the Aperture delta in this change applies on top of its requirements.\n- [ ] 1.2 Split `src/templates/design.ts` into `tokens.ts`, `shell.ts`, `styles.ts`, `script.ts`, `contract-page.ts`, and `pages/*.ts`, keeping `design.ts` as a re-export barrel; point `token-lint` at the new tokens module.\n- [ ] 1.3 Replace the token values with the Electra palette, add navigation-shell, accent-soft, and research type tokens in both themes, extend `token-contract` pairs, and make `token-lint` pass.\n- [ ] 1.4 Emit the initial `data-theme` from `iris/config.yaml` `theme:` on every generated page while keeping the local-storage toggle override.\n\n## 2. Navigation shell\n\n- [ ] 2.1 Implement `renderShell()` with the nav model (Overview, Work, Spec, Commands, project docs group), depth-aware relative paths, current-section marking, breadcrumb, top-bar slot, and `data-iris-nav` marking.\n- [ ] 2.2 Add shell CSS: sidebar, collapsed rail, top bar, page header, summary strip tiles, progress bar, command card, narrow-width overlay, print, reduced motion.\n- [ ] 2.3 Add classic-script behavior: collapse control, `b` shortcut, `iris-nav` persistence, narrow-width menu toggle, focus management; keep `/` and `t`.\n- [ ] 2.4 Adopt the shell in contract pages and project placeholders and verify publish/export strip it while the body keeps a heading and back link.\n\n## 3. Section pages\n\n- [ ] 3.1 Add `src/lib/command-catalog.ts` with grouped entries and statuses; generate `HELP_TEXT` from it and update the help test.\n- [ ] 3.2 Generate `iris/commands.html` from the catalog with grouped command cards and textual status chips.\n- [ ] 3.3 Move the Work browser, toolbar, and drawer to `iris/work.html` with a Work summary strip; keep behavior and data attributes unchanged.\n- [ ] 3.4 Move the Spec view to `iris/spec.html` with the existing overview counts as its summary strip.\n- [ ] 3.5 Generate the Overview at `iris/index.html`: briefing hero with quick-start commands, four section tiles, recent work, spec movement with progress bars, architecture pane, project-docs strip, all linking to section pages.\n- [ ] 3.6 Retire `iris/project/commands.html` from `PROJECT_DOC_NAMES`, remove it during init/update only when it carries the managed marker, and report unmanaged copies.\n\n## 4. Verification and documentation\n\n- [ ] 4.1 Update `html-navigation`, `work-board`, `openspec-browser`, `cli-help`, `publish-export`, and `token-contract` tests for the new page set; add tests for shell links at every depth, collapsed-state markup, commands-page statuses, overview summaries, and empty states.\n- [ ] 4.2 Regenerate the checked-in `iris/` output, run `pnpm html-check`, and inspect Overview, Work, Spec, Commands, and one contract page at desktop and 360 px in both themes.\n- [ ] 4.3 Update `README.md`, `docs/cmds.md`, `docs/design-system.md` (tokens, IA, component inventory), `docs/status.md`, and the canonical skill template's dashboard sentence.\n- [ ] 4.4 Run `openspec validate dashboard-shell-redesign --strict` and the full release gate; reconcile task evidence with the implementation.\n",
           "format": "markdown",
           "headings": [
-            "1. Work data projection",
-            "2. Dense Work views",
-            "3. Work detail drawer",
-            "4. Documentation and verification"
+            "1. Foundations",
+            "2. Navigation shell",
+            "3. Section pages",
+            "4. Verification and documentation"
           ],
           "requirements": [],
           "scenarios": [],
           "operations": [],
           "warnings": [],
           "progress": {
-            "complete": 11,
-            "open": 0,
-            "total": 11
+            "complete": 0,
+            "open": 18,
+            "total": 18
           }
         }
       },
       "delta_specs": [
         {
           "capability": "aperture-design-system",
-          "path": "changes/redesign-work-board/specs/aperture-design-system/spec.md",
+          "path": "changes/dashboard-shell-redesign/specs/aperture-design-system/spec.md",
           "document": {
-            "path": "changes/redesign-work-board/specs/aperture-design-system/spec.md",
+            "path": "changes/dashboard-shell-redesign/specs/aperture-design-system/spec.md",
             "title": "ADDED Requirements",
-            "raw": "## ADDED Requirements\n\n### Requirement: dense context-preserving Work browser\n\nThe generated Work surface MUST provide peer List, Table, and Kanban views over the same Iris page records, MUST share one text filter across all views, and MUST use only metadata available from validated contracts or explicit unavailable labels.\n\n#### Scenario: user changes Work layout\n\n- **WHEN** a user selects List, Table, or Kanban\n- **THEN** the corresponding view MUST present the same matching records with type, ID, title, status, and every supported optional field without changing source data\n\n#### Scenario: user filters work\n\n- **WHEN** a user enters text matching a title, ID, type, status, priority, agent, or tag\n- **THEN** every Work view MUST hide nonmatching records and report the matching unique-record count\n\n#### Scenario: optional metadata is unavailable\n\n- **WHEN** a page contract does not define priority or another requested field\n- **THEN** List, Table, Kanban, and detail views MUST use a neutral unavailable value and MUST NOT infer or fabricate data\n\n#### Scenario: JavaScript is unavailable\n\n- **WHEN** the generated dashboard opens without executing JavaScript\n- **THEN** every work item MUST retain a navigable full-page link and the default List view MUST remain readable\n\n### Requirement: accessible work-item detail drawer\n\nSelecting a work item MUST open one right-side detail drawer that preserves the current Work view, displays available contract metadata, description, evidence, and a full-page link, and provides deterministic close and focus behavior.\n\n#### Scenario: item is activated\n\n- **WHEN** a user clicks a work item or activates its link with Enter or Space\n- **THEN** the drawer MUST open with dialog semantics, identify the selected ID and title, move focus to its close control, and update a local hash that can reopen the same item\n\n#### Scenario: drawer is closed\n\n- **WHEN** the user presses Escape, activates the close control, activates the backdrop, or navigates back from the item hash\n- **THEN** the drawer MUST close, remove its modal state, and return focus to the item that opened it when that item remains available\n\n#### Scenario: focus moves within the drawer\n\n- **WHEN** the drawer is open and the user presses Tab or Shift+Tab at its focus boundaries\n- **THEN** focus MUST remain within the drawer until it is closed\n\n#### Scenario: narrow viewport opens a drawer\n\n- **WHEN** the viewport is 360 px wide and a work item is activated\n- **THEN** the drawer MUST occupy the viewport without horizontal page overflow and MUST keep its close and full-page actions reachable\n\n## MODIFIED Requirements\n\n### Requirement: Aperture component language\n\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n\n- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\n\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, dense List/Table/Kanban work browser, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: repository has generated work pages\n\n- **WHEN** a newcomer opens the Work view with one or more page contracts\n- **THEN** the dashboard MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from the dashboard\n\n#### Scenario: user opens the Spec view\n\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\n\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n\n- **WHEN** focus is on the Work/Spec or List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: work items are keyboard operated\n\n- **WHEN** focus is on a work-item link and the user presses Enter or Space\n- **THEN** the corresponding detail drawer MUST open without navigating away\n\n#### Scenario: narrow viewport is used\n\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** Work List rows, the prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+            "raw": "## ADDED Requirements\n\n### Requirement: workspace navigation shell\n\nEvery generated Iris HTML page MUST share one navigation shell that lists the workspace sections (Overview, Work, Spec, Commands, and the project docs group), marks the current section, links each section with a relative `file://`-safe path, and can be collapsed and restored without any network request.\n\n#### Scenario: user moves between sections\n\n- **WHEN** a user activates a navigation entry on any generated page\n- **THEN** the browser MUST open that section's own page and the shell on that page MUST mark it as current\n\n#### Scenario: sidebar is collapsed\n\n- **WHEN** the user activates the collapse control or presses `b` outside an editable field\n- **THEN** the shell MUST collapse to a compact rail in which every section remains reachable with an accessible label, and the same collapsed or expanded state MUST be restored on the next generated page opened in that browser when local storage is available\n\n#### Scenario: narrow viewport\n\n- **WHEN** the viewport is 360 px wide\n- **THEN** the shell MUST present the sections behind a menu control in the top bar and the page MUST have no horizontal overflow\n\n#### Scenario: artifact is published\n\n- **WHEN** a page is published or exported as a standalone artifact\n- **THEN** the navigation shell MUST be omitted and the page content MUST remain readable and self-contained\n\n### Requirement: generated command reference page\n\nThe system MUST generate a Commands page that lists every CLI command from one command catalog, grouped by purpose, with synopsis, usage, and an explicit implementation status, and `iris --help` MUST present the same groups and commands from that catalog.\n\n#### Scenario: command surface changes\n\n- **WHEN** a command is added, removed, regrouped, or its status changes in the catalog\n- **THEN** the generated Commands page and `iris --help` MUST both reflect the change without a separate edit\n\n#### Scenario: command is not fully implemented\n\n- **WHEN** a catalog entry is partial or stubbed\n- **THEN** the Commands page MUST label it with a textual status and MUST NOT present it as fully available\n\n### Requirement: section summary strips\n\nEach section page MUST open with a summary strip of counts derived only from generated data for that section, and the Overview page MUST summarize every section with links to the owning section page rather than embedding that section's full content.\n\n#### Scenario: overview is opened\n\n- **WHEN** a newcomer opens `iris/index.html` from `file://`\n- **THEN** it MUST show the repository briefing, per-section counts, the most recently updated work records, active spec changes with task progress, and quick-start commands, each linking to the owning section page\n\n#### Scenario: section has no data\n\n- **WHEN** a section page has no records\n- **THEN** it MUST name the exact command that populates it instead of showing an empty area\n\n## MODIFIED Requirements\n\n### Requirement: Aperture token contract\n\nThe system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, MUST validate text contrast at 4.5:1 or better, and MUST define navigation-shell surface, text, and selection tokens alongside the surface, text, accent, type, status, and priority tokens so that every generated page and the shell render from one token set.\n\n#### Scenario: generated styles are validated\n\n- **WHEN** a contributor runs the token validation command\n- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme, including navigation-shell pairs\n\n#### Scenario: theme is switched\n\n- **WHEN** the user toggles the theme on any generated page\n- **THEN** that page and its navigation shell MUST render in the selected theme from the same tokens, and the preference MUST be restored on other generated pages in that browser when local storage is available\n\n### Requirement: Aperture component language\n\nThe system MUST provide generated component styles and semantic markup for aperture marks, the navigation shell, page headers, summary strip tiles, progress bars, command cards, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n\n- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, current-section marking, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\n\nThe generated workspace MUST consist of an Overview page at `iris/index.html`, a Work page with the dense List/Table/Kanban browser and detail drawer, a Spec page organized as overview, canonical specs, active changes with artifacts and delta specs, and archive, a Commands page, and the project docs, all reachable through the shared navigation shell; the Overview MUST preserve the briefing hero, per-section summary, architecture pane, and project-docs strip.\n\n#### Scenario: repository has no generated work pages\n\n- **WHEN** a newcomer opens the Overview from `file://`\n- **THEN** it MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: repository has generated work pages\n\n- **WHEN** a newcomer opens the Work page with one or more page contracts\n- **THEN** the page MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from that page\n\n#### Scenario: user opens the Spec view\n\n- **WHEN** a user activates the `Spec` navigation entry\n- **THEN** the Spec page MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while the shell keeps every other section reachable\n\n#### Scenario: state is communicated in the Spec view\n\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\n\nThe generated workspace MUST retain classic deferred-script interactions for navigation-shell collapse, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation, MUST keep every page usable without JavaScript, and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n\n- **WHEN** the user presses `/`, `t`, or `b` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter, `t` MUST toggle the theme, and `b` MUST toggle the navigation shell, none of which loads external assets\n\n#### Scenario: top-level tabs are keyboard operated\n\n- **WHEN** focus is on a navigation-shell entry and the user presses Tab or Enter, or focus is on the List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys\n- **THEN** section navigation MUST follow standard link behavior with visible focus, and the layout tablist MUST move focus and selection according to the tab pattern with correct tab/panel semantics\n\n#### Scenario: work items are keyboard operated\n\n- **WHEN** focus is on a work-item link and the user presses Enter or Space\n- **THEN** the corresponding detail drawer MUST open without navigating away\n\n#### Scenario: JavaScript is unavailable\n\n- **WHEN** a generated page opens without executing JavaScript\n- **THEN** the navigation shell MUST remain expanded and fully linked, the default Work List MUST remain readable, and every work item MUST keep its full-page link\n\n#### Scenario: narrow viewport is used\n\n- **WHEN** any generated page viewport is 360 px wide\n- **THEN** the shell menu, Work List rows, prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, Commands cards, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** collapsing the shell, switching layouts, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
             "format": "markdown",
             "headings": [
               "ADDED Requirements",
-              "Requirement: dense context-preserving Work browser",
-              "Scenario: user changes Work layout",
-              "Scenario: user filters work",
-              "Scenario: optional metadata is unavailable",
-              "Scenario: JavaScript is unavailable",
-              "Requirement: accessible work-item detail drawer",
-              "Scenario: item is activated",
-              "Scenario: drawer is closed",
-              "Scenario: focus moves within the drawer",
-              "Scenario: narrow viewport opens a drawer",
+              "Requirement: workspace navigation shell",
+              "Scenario: user moves between sections",
+              "Scenario: sidebar is collapsed",
+              "Scenario: narrow viewport",
+              "Scenario: artifact is published",
+              "Requirement: generated command reference page",
+              "Scenario: command surface changes",
+              "Scenario: command is not fully implemented",
+              "Requirement: section summary strips",
+              "Scenario: overview is opened",
+              "Scenario: section has no data",
               "MODIFIED Requirements",
+              "Requirement: Aperture token contract",
+              "Scenario: generated styles are validated",
+              "Scenario: theme is switched",
               "Requirement: Aperture component language",
               "Scenario: meaning is communicated accessibly",
               "Requirement: newcomer-first dashboard hierarchy",
@@ -563,25 +720,30 @@
               "Scenario: keyboard navigation is used",
               "Scenario: top-level tabs are keyboard operated",
               "Scenario: work items are keyboard operated",
+              "Scenario: JavaScript is unavailable",
               "Scenario: narrow viewport is used",
               "Scenario: reduced motion is requested"
             ],
             "requirements": [
-              "dense context-preserving Work browser",
-              "accessible work-item detail drawer",
+              "workspace navigation shell",
+              "generated command reference page",
+              "section summary strips",
+              "Aperture token contract",
               "Aperture component language",
               "newcomer-first dashboard hierarchy",
               "deterministic responsive interaction"
             ],
             "scenarios": [
-              "user changes Work layout",
-              "user filters work",
-              "optional metadata is unavailable",
-              "JavaScript is unavailable",
-              "item is activated",
-              "drawer is closed",
-              "focus moves within the drawer",
-              "narrow viewport opens a drawer",
+              "user moves between sections",
+              "sidebar is collapsed",
+              "narrow viewport",
+              "artifact is published",
+              "command surface changes",
+              "command is not fully implemented",
+              "overview is opened",
+              "section has no data",
+              "generated styles are validated",
+              "theme is switched",
               "meaning is communicated accessibly",
               "repository has no generated work pages",
               "repository has generated work pages",
@@ -590,6 +752,7 @@
               "keyboard navigation is used",
               "top-level tabs are keyboard operated",
               "work items are keyboard operated",
+              "JavaScript is unavailable",
               "narrow viewport is used",
               "reduced motion is requested"
             ],
@@ -601,7 +764,7 @@
           }
         }
       ],
-      "completeness": "complete",
+      "completeness": "incomplete",
       "health": "valid",
       "warnings": []
     },
@@ -775,6 +938,149 @@
         }
       ],
       "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "research-markdown-pages",
+      "path": "changes/research-markdown-pages",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/research-markdown-pages/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/research-markdown-pages/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nCoding agents produce research, investigation, and hand-off output as Markdown, but Iris can only render JSON contracts with Markdown embedded in string fields — clumsy to write, escape, and review — so that output ends up as loose `.md` files with no index, navigation, or consistent rendering. OpenSpec already shows the right model: read Markdown files directly, render them deterministically, and organize them. Iris should do the same for agent research so the workspace, not a folder of Markdown, becomes the organized record.\n\n## What Changes\n\n- Add a `research` content type whose source is one Markdown file per item at `iris/research/<id>/index.md`, with optional front matter (`title`, `status`, `tags`, `agent`, `updated`) and a free Markdown body.\n- Add `iris research <id>` to create a compact skeleton (front matter plus Question / Findings / Evidence / Next steps headings) that agents fill in directly in Markdown.\n- Render each research item to `iris/research/<id>/page.html` with a document template: shared navigation shell, page header from front matter, generated table of contents, the existing safe Markdown renderer, Mermaid fences, callouts, print styles.\n- Generate `iris/research.html`: a Research section page with a summary strip, filterable list, and tag signals; add a Research entry to the navigation shell.\n- Include research records in the Work browser projection as type `research` (status from front matter, priority unavailable) so List/Table/Kanban, filter, and drawer cover them; extend archive, publish, and export to research pages.\n- Update the canonical `iris-workspace` skill with the research workflow in a few lines so agents know to write Markdown, not JSON, for research responses.\n\n## Capabilities\n\n### New Capabilities\n\n- `research-markdown-pages`: Markdown-sourced research pages — source contract, rendering, section page, navigation, work-browser inclusion, lifecycle, and agent guidance.\n\n### Modified Capabilities\n\nNone. Navigation and work-browser inclusion are stated as requirements of the new capability; the shell itself comes from `dashboard-shell-redesign`, which this change depends on.\n\n## Impact\n\n- New `src/lib/front-matter.ts` (bounded parser) and `src/lib/research-workspace.ts` (discovery, bounds, projection); new `src/templates/pages/research.ts` and document template; `draft.ts` gains `research`; `render.ts`, `lifecycle.ts` (archive), `publish.ts`, `export.ts` resolve research paths; `project-state.ts` records the source root per entry (additive, version stays 2); `command-catalog.ts` and `templates/agents/iris-workspace.md` gain the command.\n- `renderSafeMarkdown` gains an opt-in heading-id mode for the table of contents; OpenSpec rendering is unchanged.\n- Tests for parser, draft, render, projection, archive, publish, hostile input, and the skill template; docs (`README`, `docs/cmds.md`, `docs/status.md`, `docs/tech.md`) and regenerated `iris/` output.\n- No new dependency; reading stays inside `iris/research/`, sorted, bounded, symlink-refusing, and network-free. Depends on `dashboard-shell-redesign` for the shell and the Research nav entry.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/research-markdown-pages/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nSee proposal.md. Iris renders five JSON contract types from `iris/pages/<id>/data.json` and visualizes OpenSpec Markdown read directly from `openspec/` through a bounded walker plus `renderSafeMarkdown` (markdown-it, embedded HTML off, Mermaid fences as source-first hosts). `agent-first-initialization` deliberately removed implicit ingestion of `README.md`/`docs/**/*.md`. This change depends on `dashboard-shell-redesign` for `renderShell()`, the nav model, and section pages.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Agents write one Markdown file per research item; no JSON escaping.\n- Reuse the OpenSpec reading discipline (sorted, allowlisted, bounded, symlink-refusing) and the existing safe renderer.\n- Research joins the same Work projection so one browser, filter, and drawer cover everything.\n- Skill guidance stays a few lines; skeleton is small.\n\n**Non-Goals:**\n\n- Reading Markdown from outside `iris/research/` (for example `docs/agent-handoffs/*.md`). Explicit opt-in source globs in `config.yaml` are a possible later capability; implicit ingestion stays removed.\n- Images or attachments next to `index.md`, Markdown-to-contract promotion, full-text search, or editing in the browser.\n- A YAML dependency; the parser covers the documented subset only.\n\n## Decisions\n\n### Markdown file with front matter, not a sixth JSON contract\n\nA `research` JSON type with `sections.body.md` would reuse every existing code path but forces agents to escape Markdown inside JSON strings and makes diffs unreadable. A plain file matches how agents already produce research and how OpenSpec artifacts are authored; the price is a small front-matter parser and a second source root, both bounded.\n\n### Bounded hand-rolled front matter parser\n\n`src/lib/front-matter.ts` accepts a leading `---` block and parses `key: scalar`, `key: [a, b]`, and `key:` followed by `- item` lines; quotes are stripped, unknown keys ignored, duplicate keys last-wins, anything else yields a warning. Values are validated (`status` enum, `updated` `YYYY-MM-DD` prefix, tag strings bounded to 80 chars, at most 20 tags). No YAML library: the subset is tiny and determinism matters more than YAML fidelity.\n\n### Discovery mirrors the OpenSpec walker\n\n`src/lib/research-workspace.ts` lists `iris/research/*/index.md` sorted, refuses symlinks and path escapes, caps file bytes (256 KB) and item count, and returns `{ id, frontMatter, body, warnings }`. Warnings surface on the Research page and in `--json` output, not as failures.\n\n### Document template and table of contents\n\n`renderSafeMarkdown` gains an options object with `headingIds: true`; when set, heading tokens get deterministic slug ids (lowercased, non-alphanumerics collapsed to `-`, numeric suffix on collision) and the renderer returns the heading list alongside HTML. OpenSpec rendering keeps the default (no ids) so multiple documents on the Spec page cannot collide. The research page shows a right-rail TOC (sticky on wide screens, inline above the body at narrow widths) when two or more h2/h3 headings exist.\n\n### One projection, two source roots\n\n`refreshDashboard` builds `DashboardPage[]` from `pages/` (contracts) and `research/` (Markdown), tagging research entries `type: 'research'`, `priority: 'not set'`, `description` = first paragraph bounded to 1200 chars, `evidence` = `\"<n> headings · <m> words\"`. Work List/Table/Kanban, filter, and drawer need no change; `typeClass` gains `tp-research`. The Overview and Work summary strips count research.\n\n### Registry and lifecycle\n\n`PageRegistryEntry` gains optional `source: 'pages' | 'research'` (default `pages`); state stays version 2. `archive` resolves the source root from the entry (falling back to whichever directory exists), moves the whole folder under `iris/archive/<id>/`, and re-renders. `publish`/`export` resolve `page.html` across `pages/`, `research/`, and `archive/`. Research pages carry the same `data-iris-nav` shell so the existing stripper works.\n\n### Skill and catalog wording\n\n`templates/agents/iris-workspace.md` adds one numbered item (\"`iris research <id>` creates `iris/research/<id>/index.md`; write Markdown there, then `iris render --all`\") and one sentence on front matter keys. `command-catalog.ts` adds `research` to the `content` group with status `implemented`.\n\n## Risks / Trade-offs\n\n- [Two source roots complicate id uniqueness] → `draft`/`research` refuse an id that exists in `pages/`, `research/`, or `archive/`; the render reports duplicates and keeps the first.\n- [Front matter subset surprises users] → Warnings name the unsupported line; docs list the exact grammar.\n- [Heading ids could leak into Spec rendering] → Opt-in option only; a test asserts OpenSpec output has no ids.\n- [Large Markdown bloats work-item data attributes] → Description bounded before projection, as for contracts.\n- [Shell dependency] → Implement after `dashboard-shell-redesign`; if it slips, render research pages with the shell function stubbed to the current header to stay unblocked, then switch.\n\n## Migration Plan\n\n1. Land parser and discovery with tests (no output change).\n2. Add `iris research`, the document template, and the Research section page + nav entry; extend the projection.\n3. Extend archive/publish/export and the registry; update the skill template and catalog.\n4. Regenerate dogfood, run the release gate, update docs.\n\nRollback: remove the command and pages; existing `iris/research/` Markdown is left untouched as plain files.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Markdown file with front matter, not a sixth JSON contract",
+            "Bounded hand-rolled front matter parser",
+            "Discovery mirrors the OpenSpec walker",
+            "Document template and table of contents",
+            "One projection, two source roots",
+            "Registry and lifecycle",
+            "Skill and catalog wording",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/research-markdown-pages/tasks.md",
+          "title": "1. Source contract",
+          "raw": "## 1. Source contract\n\n- [ ] 1.1 Implement the bounded front-matter parser (scalar, inline list, block list; validation of status, updated, tags) with warnings and focused tests including malformed and hostile input.\n- [ ] 1.2 Implement research discovery under `iris/research/` (sorted, symlink-refusing, path-confined, size- and count-bounded) returning items plus path-specific warnings, with tests.\n- [ ] 1.3 Add `iris research <id>` to the draft command: kebab-case validation, duplicate check across pages/research/archive, compact skeleton with front matter and the four headings; add the catalog entry and CLI test.\n\n## 2. Rendering\n\n- [ ] 2.1 Add opt-in heading ids and heading extraction to `renderSafeMarkdown` without changing OpenSpec output; test slug determinism and collision handling.\n- [ ] 2.2 Implement the research document template inside the shared shell: header from front matter with unavailable labels, table of contents rule, safe body, Mermaid hosts, print and 360 px styles.\n- [ ] 2.3 Generate `iris/research.html` with summary strip, filterable list, tag signals, and the populate-command empty state; add the Research entry to the navigation model.\n- [ ] 2.4 Extend the dashboard projection with research records (type, status, bounded description, evidence) so Work views and drawer cover them; add `tp-research` styling and Overview/Work counts.\n\n## 3. Lifecycle\n\n- [ ] 3.1 Record the source root in the page registry (additive field, version 2 retained) and resolve it in archive; move research folders under `iris/archive/<id>/` and keep links working.\n- [ ] 3.2 Resolve research and archived research pages in publish and export; verify the standalone artifact omits the shell and stays self-contained.\n- [ ] 3.3 Update the canonical `iris-workspace` skill template with the research workflow and regenerate the installed skill surfaces.\n\n## 4. Verification and documentation\n\n- [ ] 4.1 Add end-to-end tests: skeleton creation, render with and without front matter, malformed front matter warning, hostile body, TOC presence, Work projection, filter/drawer attributes, archive, publish, and html-check integrity.\n- [ ] 4.2 Write a dogfood research page from the existing agent hand-off content under `iris/research/`, regenerate output, and inspect desktop and 360 px in both themes.\n- [ ] 4.3 Update `README.md`, `docs/cmds.md`, `docs/tech.md`, `docs/status.md`, and `docs/design-system.md` for the research contract and page.\n- [ ] 4.4 Run `openspec validate research-markdown-pages --strict` and the full release gate; reconcile task evidence with the implementation.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Source contract",
+            "2. Rendering",
+            "3. Lifecycle",
+            "4. Verification and documentation"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 0,
+            "open": 14,
+            "total": 14
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "research-markdown-pages",
+          "path": "changes/research-markdown-pages/specs/research-markdown-pages/spec.md",
+          "document": {
+            "path": "changes/research-markdown-pages/specs/research-markdown-pages/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nLet agents record research and investigation output as plain Markdown files that Iris reads directly and renders into organized, navigable, offline HTML pages with their own section, so research stops living as loose Markdown.\n\n## ADDED Requirements\n\n### Requirement: Markdown research source contract\n\nThe system MUST treat `iris/research/<id>/index.md` as the editable source of a research page, where `<id>` is lowercase kebab-case, the file MAY begin with front matter providing `title`, `status` (`draft`, `active`, `done`, `archived`), `tags` (list of strings), `agent`, and `updated` (ISO date), and the remainder is the Markdown body. Missing front matter values MUST fall back to the first level-one heading or the id for `title`, `draft` for `status`, and an explicit unavailable value for the rest; malformed front matter MUST produce a path-specific warning and defaults, never a failed render of other pages. Reading MUST stay inside `iris/research/`, MUST refuse symlinks, MUST bound file size, and MUST NOT execute or fetch anything referenced by the file.\n\n#### Scenario: agent creates a research skeleton\n\n- **WHEN** a user or agent runs `iris research <id>`\n- **THEN** the system MUST create `iris/research/<id>/index.md` with front matter for the supported keys and Question, Findings, Evidence, and Next steps headings, and MUST refuse an id that already exists or is not kebab-case\n\n#### Scenario: front matter is absent\n\n- **WHEN** a research file has no front matter\n- **THEN** the page MUST render with the first level-one heading or the id as its title, `draft` status, and unavailable tags, agent, and updated values\n\n#### Scenario: front matter is malformed\n\n- **WHEN** front matter cannot be parsed or contains an unsupported status value\n- **THEN** the system MUST render the page with defaults, report a warning naming the file, and continue rendering every other page\n\n#### Scenario: file exceeds bounds or is unsafe\n\n- **WHEN** `index.md` is larger than the configured bound, is a symlink, or escapes the research root\n- **THEN** the system MUST skip that item with a path-specific warning and MUST NOT read the target\n\n### Requirement: research document rendering\n\nEach research source MUST render to `iris/research/<id>/page.html` as a deterministic document page inside the shared navigation shell with a header showing title, type `research`, status, tags, agent, and updated, a generated table of contents when the body has two or more level-two or level-three headings, the body rendered by the safe Markdown renderer with embedded HTML, unsafe destinations, and active images disabled, Mermaid fences as source-first diagram hosts, and a print presentation.\n\n#### Scenario: body contains headings and a Mermaid fence\n\n- **WHEN** a research body has several level-two headings and an exact `mermaid` fence\n- **THEN** the rendered page MUST contain a table of contents linking to each heading and a diagram host that renders after `iris vendor` while keeping escaped source as fallback\n\n#### Scenario: body contains hostile content\n\n- **WHEN** the body contains raw HTML, script, remote image, or `javascript:` link Markdown\n- **THEN** the rendered page MUST show it as inert text or omit the active part and MUST NOT emit executable or network-loading markup\n\n#### Scenario: page is published standalone\n\n- **WHEN** `iris publish <id>` or `iris export <id> --single` targets a research page\n- **THEN** the artifact MUST be self-contained, omit the navigation shell, and keep the document readable\n\n### Requirement: research section page and navigation\n\nThe system MUST generate `iris/research.html` listing every research item with a summary strip (total and per-status counts), a filterable list showing title, id, status, tags, agent, and updated with unavailable values labelled, and MUST add a Research entry to the navigation shell on every generated page.\n\n#### Scenario: repository has research items\n\n- **WHEN** a user opens the Research section\n- **THEN** it MUST list every rendered research item with a link to its page and honest metadata, and the shell MUST mark Research as current\n\n#### Scenario: repository has no research items\n\n- **WHEN** the Research section has no items\n- **THEN** it MUST name `iris research <id>` and `iris render --all` as the commands that populate it\n\n### Requirement: research records in the work browser and lifecycle\n\nResearch items MUST appear in the Work browser projection as type `research` with status from front matter, priority unavailable, a bounded description from the first paragraph, and a full-page link, so List, Table, Kanban, filter, and the detail drawer cover them; `iris archive <id>` MUST move a research item into the archive while keeping its page reachable, and the Overview summary MUST count research items.\n\n#### Scenario: research item is filtered or opened from Work\n\n- **WHEN** a user filters by a research tag or activates a research row\n- **THEN** the matching research record MUST be shown with type `research` and its drawer MUST link to the research page\n\n#### Scenario: research item is archived\n\n- **WHEN** a user runs `iris archive <id>` for a research item\n- **THEN** the source and page MUST move under `iris/archive/<id>/`, the registry MUST mark it archived, and the dashboard MUST keep a working link\n\n### Requirement: agent guidance for research pages\n\nThe canonical `iris-workspace` skill MUST describe creating, writing, and rendering research pages as Markdown, naming the source path and the render command, so agents write Markdown rather than JSON for research responses.\n\n#### Scenario: skill is installed\n\n- **WHEN** `iris init` installs or refreshes the agent skill\n- **THEN** every generated skill surface MUST include the research workflow alongside the existing content commands\n",
+            "format": "markdown",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: Markdown research source contract",
+              "Scenario: agent creates a research skeleton",
+              "Scenario: front matter is absent",
+              "Scenario: front matter is malformed",
+              "Scenario: file exceeds bounds or is unsafe",
+              "Requirement: research document rendering",
+              "Scenario: body contains headings and a Mermaid fence",
+              "Scenario: body contains hostile content",
+              "Scenario: page is published standalone",
+              "Requirement: research section page and navigation",
+              "Scenario: repository has research items",
+              "Scenario: repository has no research items",
+              "Requirement: research records in the work browser and lifecycle",
+              "Scenario: research item is filtered or opened from Work",
+              "Scenario: research item is archived",
+              "Requirement: agent guidance for research pages",
+              "Scenario: skill is installed"
+            ],
+            "requirements": [
+              "Markdown research source contract",
+              "research document rendering",
+              "research section page and navigation",
+              "research records in the work browser and lifecycle",
+              "agent guidance for research pages"
+            ],
+            "scenarios": [
+              "agent creates a research skeleton",
+              "front matter is absent",
+              "front matter is malformed",
+              "file exceeds bounds or is unsafe",
+              "body contains headings and a Mermaid fence",
+              "body contains hostile content",
+              "page is published standalone",
+              "repository has research items",
+              "repository has no research items",
+              "research item is filtered or opened from Work",
+              "research item is archived",
+              "skill is installed"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "incomplete",
       "health": "valid",
       "warnings": []
     },
@@ -1760,6 +2066,160 @@
             ],
             "operations": [
               "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-redesign-work-board",
+      "path": "changes/archive/2026-08-21-redesign-work-board",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-redesign-work-board/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "format": "yaml",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-redesign-work-board/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris's Work surface is visually spacious, exposes only coarse List/Board layouts, and navigates away from the dashboard before users can inspect an item. A denser, context-preserving work browser is needed so repositories with many agent-authored records remain quickly scannable across desktop and narrow screens.\n\n## What Changes\n\n- Replace the current List/Board switcher with peer List, Table, and Kanban views that share one filter and the same real Iris contract data.\n- Introduce compact work-item hierarchy for type, ID, title, status, priority, update time, and owner, while displaying unavailable fields honestly rather than inventing values.\n- Open work items in an accessible right-side detail drawer with description/evidence, an explicit full-page action, Escape/backdrop close behavior, focus containment and return, and a full-screen 360 px treatment.\n- Evolve Aperture semantic tokens and component styles for neutral density, selected/hover states, status, priority, work type, focus, and responsive column priority.\n- Preserve deterministic static HTML, `file://`, classic deferred JavaScript, both themes, reduced motion, no drag-and-drop, no remote assets, and no unsupported data mutation.\n\n## Capabilities\n\n### New Capabilities\n\nNone.\n\n### Modified Capabilities\n\n- `aperture-design-system`: Expand the Work surface and responsive interaction requirements to cover dense List/Table/Kanban presentation and an accessible side-detail drawer.\n\n## Impact\n\n- Changes generated dashboard markup, Aperture tokens/components, classic interaction script, navigation behavior, tests, design documentation, and checked-in Iris output.\n- Extends the internal dashboard page projection with bounded optional metadata derived from existing contracts; schemas and editable source contracts remain unchanged.\n- Adds no framework, dependency, network request, persistence layer, drag-and-drop behavior, or Jira-owned asset.\n",
+          "format": "markdown",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-redesign-work-board/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe Work surface currently projects each page into a minimal `DashboardPage` containing ID, type, title, status, and link, then duplicates a spacious card in List and Board views. The validated envelope also supplies agent, timestamps, and tags, while type-specific sections contain bounded description and evidence fields. The static output must remain deterministic, open from `file://`, use classic scripts, and preserve full-page links when JavaScript is unavailable.\n\nPublic Jira guidance supports the transferable interaction model: list views prioritize type/key/summary/status/priority/updated/assignee fields; boards map status to columns and expose selected fields on compact cards; compact density helps busy backlogs; and preview panels keep users in context with a full-page escape hatch. Iris will implement those principles through Aperture tokens and its own component language rather than copy Atlassian branding, fonts, icons, or exact styling.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Make 20–100 Iris records scannable without decorative card padding dominating the viewport.\n- Provide one data projection shared by List, Table, Kanban, filtering, and drawer detail.\n- Preserve navigation and source honesty when scripts fail or metadata is absent.\n- Meet keyboard, focus, reduced-motion, light/dark, print, and 360 px requirements.\n\n**Non-Goals:**\n\n- Drag-and-drop, inline editing, persistence, sorting, saved filters, pagination, or invented workflow transitions.\n- New contract fields, schema changes, user accounts, remote fonts, Jira assets, or a frontend framework.\n- Replacing the Spec view or redesigning full contract pages.\n\n## Decisions\n\n### Derive a bounded Work projection during generation\n\n`refreshDashboard` will derive updated date, agent, tags, description, evidence, and priority from validated contract payloads. Bug severity maps directly to display priority (`p0` urgent through `p3` low); other types report priority as unavailable because effort, impact, status, and type are not interchangeable with priority. Description and evidence strings are bounded before entering generated attributes.\n\nArchived state currently retains only ID/type/title/status/link, so optional fields remain unavailable instead of reading moved source opportunistically or inventing values.\n\nAlternative: expand the schema with owner and priority. Rejected because this redesign is a read-only presentation change and schema semantics require a separate capability decision.\n\n### Keep all three views in static semantic HTML\n\nList uses compact linked rows with a strong ID/title pair and one-line metadata. Table uses a real table with type, ID, title, status, priority, updated, and agent columns; responsive CSS hides agent, updated, priority, then type in that order before allowing page overflow. Kanban uses four fixed columns matching Iris's actual statuses: Draft, Active, Done, Archived. Cards stay compact and are not draggable.\n\nAll representations use full-page anchors. JavaScript intercepts activation for the detail drawer, while no-JS users follow the existing page link. A single filter hides matching representations across all views and computes unique results from the List representation.\n\nAlternative: render only the active layout and rebuild on tab changes. Rejected because it complicates no-JS behavior and introduces client-side templating into a deterministic static artifact.\n\n### Use one reusable modal side drawer\n\nThe dashboard emits one drawer after the main content. Activating any work anchor copies escaped data attributes into text-only drawer slots, updates `#work=<id>`, marks the dashboard main content inert, locks body scrolling, focuses Close, and traps Tab within the drawer. Escape, backdrop, Close, or hash removal closes it and restores the opener focus.\n\nThe drawer is `min(38rem, 52vw)` on wide screens and the full viewport below 40rem. Its content order is ID/type, title, status, metadata, description, evidence/tags, then actions. “Open full page” uses the original static link.\n\nAlternative: CSS `:target` only. Rejected because it cannot reliably trap/restore focus, populate one reusable drawer, or provide Escape behavior.\n\n### Evolve Aperture toward neutral compact density\n\nThe existing system stack remains. Work UI uses 0.75–0.875rem metadata/body text, 1.25rem section headings, 32–40 px interactive row targets, 4–8 px radii for compact elements, hairline separators, and neutral surfaces. Spectrum colors appear only in aperture/type, status, and priority signals, always paired with text. Hover, selected, and focus states use existing accent/border semantics.\n\n### Keep deep links local and deterministic\n\nThe drawer hash contains only the encoded work ID. On load or `hashchange`, the script opens a matching item; unknown IDs leave the dashboard unchanged. Closing uses history replacement for direct closes, while browser Back naturally removes a pushed hash. The full page remains the authoritative deep link and no data is serialized into the URL.\n\n## Risks / Trade-offs\n\n- [Three DOM representations increase generated HTML size] → Keep markup compact, reuse one drawer, and avoid client-side templates or duplicated descriptions.\n- [Data attributes can become large or unsafe] → Bound derived text and HTML-escape every attribute; populate drawer fields with `textContent` only.\n- [A modal drawer can create focus bugs] → Test initial focus, Tab boundaries, Escape, backdrop, hash navigation, focus return, and inert cleanup in a real browser.\n- [Responsive tables can hide useful context] → Preserve ID, title, and status longest; every row opens the drawer where all available metadata remains visible.\n- [The checked-in repository has no work pages] → Use temporary validated fixture contracts for visual/runtime proof; do not add demo records to user-owned `iris/pages/`.\n\n## Migration Plan\n\n1. Extend the dashboard projection and add focused generator tests for real and unavailable metadata.\n2. Replace Work markup and styles while preserving existing full-page links and empty state.\n3. Add shared filtering, drawer, hash, focus, and keyboard behavior in the classic base script.\n4. Regenerate managed output, validate at desktop and 360 px with temporary populated fixtures, and run the full release gate.\n\nRollback restores the prior projection and List/Board markup; contracts and state require no migration.\n",
+          "format": "markdown",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Derive a bounded Work projection during generation",
+            "Keep all three views in static semantic HTML",
+            "Use one reusable modal side drawer",
+            "Evolve Aperture toward neutral compact density",
+            "Keep deep links local and deterministic",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-redesign-work-board/tasks.md",
+          "title": "1. Work data projection",
+          "raw": "## 1. Work data projection\n\n- [x] 1.1 Extend the generated dashboard page projection with bounded update, agent, tag, priority, description, and evidence metadata derived only from validated contracts.\n- [x] 1.2 Cover supported type-specific derivation and honest unavailable values with focused generator tests.\n\n## 2. Dense Work views\n\n- [x] 2.1 Replace the current List/Board markup with semantic List, Table, and Kanban representations that retain full-page links and share one filter.\n- [x] 2.2 Add Aperture tokens and compact responsive styles for work rows, table columns, Kanban columns/cards, type/status/priority signals, both themes, print, reduced motion, and 360 px layouts.\n- [x] 2.3 Implement shared filtering, unique result counts, layout tabs, and keyboard navigation without adding persistence, remote assets, or runtime modules.\n\n## 3. Work detail drawer\n\n- [x] 3.1 Emit one reusable detail drawer populated from escaped bounded data attributes with a full-page action and local item hash.\n- [x] 3.2 Implement click, Enter, Space, Escape, backdrop, hash, focus containment, focus return, inert cleanup, and responsive full-screen behavior.\n- [x] 3.3 Add focused markup and interaction tests for dialog semantics, keyboard behavior, no-JavaScript links, and offline dependency constraints.\n\n## 4. Documentation and verification\n\n- [x] 4.1 Record the Jira-inspired interaction research and Aperture implementation decisions without copying Jira branding or assets.\n- [x] 4.2 Regenerate checked-in output, inspect populated temporary fixture output in Safari and a 360 px WebKit rendering, and fix visible layout/accessibility defects.\n- [x] 4.3 Run strict OpenSpec validation and the full release gate, then reconcile task evidence with the implementation.\n",
+          "format": "markdown",
+          "headings": [
+            "1. Work data projection",
+            "2. Dense Work views",
+            "3. Work detail drawer",
+            "4. Documentation and verification"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 11,
+            "open": 0,
+            "total": 11
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "aperture-design-system",
+          "path": "changes/archive/2026-08-21-redesign-work-board/specs/aperture-design-system/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-redesign-work-board/specs/aperture-design-system/spec.md",
+            "title": "ADDED Requirements",
+            "raw": "## ADDED Requirements\n\n### Requirement: dense context-preserving Work browser\n\nThe generated Work surface MUST provide peer List, Table, and Kanban views over the same Iris page records, MUST share one text filter across all views, and MUST use only metadata available from validated contracts or explicit unavailable labels.\n\n#### Scenario: user changes Work layout\n\n- **WHEN** a user selects List, Table, or Kanban\n- **THEN** the corresponding view MUST present the same matching records with type, ID, title, status, and every supported optional field without changing source data\n\n#### Scenario: user filters work\n\n- **WHEN** a user enters text matching a title, ID, type, status, priority, agent, or tag\n- **THEN** every Work view MUST hide nonmatching records and report the matching unique-record count\n\n#### Scenario: optional metadata is unavailable\n\n- **WHEN** a page contract does not define priority or another requested field\n- **THEN** List, Table, Kanban, and detail views MUST use a neutral unavailable value and MUST NOT infer or fabricate data\n\n#### Scenario: JavaScript is unavailable\n\n- **WHEN** the generated dashboard opens without executing JavaScript\n- **THEN** every work item MUST retain a navigable full-page link and the default List view MUST remain readable\n\n### Requirement: accessible work-item detail drawer\n\nSelecting a work item MUST open one right-side detail drawer that preserves the current Work view, displays available contract metadata, description, evidence, and a full-page link, and provides deterministic close and focus behavior.\n\n#### Scenario: item is activated\n\n- **WHEN** a user clicks a work item or activates its link with Enter or Space\n- **THEN** the drawer MUST open with dialog semantics, identify the selected ID and title, move focus to its close control, and update a local hash that can reopen the same item\n\n#### Scenario: drawer is closed\n\n- **WHEN** the user presses Escape, activates the close control, activates the backdrop, or navigates back from the item hash\n- **THEN** the drawer MUST close, remove its modal state, and return focus to the item that opened it when that item remains available\n\n#### Scenario: focus moves within the drawer\n\n- **WHEN** the drawer is open and the user presses Tab or Shift+Tab at its focus boundaries\n- **THEN** focus MUST remain within the drawer until it is closed\n\n#### Scenario: narrow viewport opens a drawer\n\n- **WHEN** the viewport is 360 px wide and a work item is activated\n- **THEN** the drawer MUST occupy the viewport without horizontal page overflow and MUST keep its close and full-page actions reachable\n\n## MODIFIED Requirements\n\n### Requirement: Aperture component language\n\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, restrained status/type/priority indicators, compact work rows, structured tables, Kanban columns and cards, detail drawers, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n\n- **WHEN** a generated page uses type, status, or priority color, interactive controls, selection, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, semantic state, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\n\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, dense List/Table/Kanban work browser, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: repository has generated work pages\n\n- **WHEN** a newcomer opens the Work view with one or more page contracts\n- **THEN** the dashboard MUST provide compact List, Table, and Kanban representations plus a detail drawer without requiring navigation away from the dashboard\n\n#### Scenario: user opens the Spec view\n\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\n\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, Work layout selection, shared filtering, theme switching, detail-drawer behavior, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n\n- **WHEN** focus is on the Work/Spec or List/Table/Kanban tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: work items are keyboard operated\n\n- **WHEN** focus is on a work-item link and the user presses Enter or Space\n- **THEN** the corresponding detail drawer MUST open without navigating away\n\n#### Scenario: narrow viewport is used\n\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** Work List rows, the prioritized Table columns, stacked Kanban columns, full-screen drawer, Spec content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views, opening the drawer, and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+            "format": "markdown",
+            "headings": [
+              "ADDED Requirements",
+              "Requirement: dense context-preserving Work browser",
+              "Scenario: user changes Work layout",
+              "Scenario: user filters work",
+              "Scenario: optional metadata is unavailable",
+              "Scenario: JavaScript is unavailable",
+              "Requirement: accessible work-item detail drawer",
+              "Scenario: item is activated",
+              "Scenario: drawer is closed",
+              "Scenario: focus moves within the drawer",
+              "Scenario: narrow viewport opens a drawer",
+              "MODIFIED Requirements",
+              "Requirement: Aperture component language",
+              "Scenario: meaning is communicated accessibly",
+              "Requirement: newcomer-first dashboard hierarchy",
+              "Scenario: repository has no generated work pages",
+              "Scenario: repository has generated work pages",
+              "Scenario: user opens the Spec view",
+              "Scenario: state is communicated in the Spec view",
+              "Requirement: deterministic responsive interaction",
+              "Scenario: keyboard navigation is used",
+              "Scenario: top-level tabs are keyboard operated",
+              "Scenario: work items are keyboard operated",
+              "Scenario: narrow viewport is used",
+              "Scenario: reduced motion is requested"
+            ],
+            "requirements": [
+              "dense context-preserving Work browser",
+              "accessible work-item detail drawer",
+              "Aperture component language",
+              "newcomer-first dashboard hierarchy",
+              "deterministic responsive interaction"
+            ],
+            "scenarios": [
+              "user changes Work layout",
+              "user filters work",
+              "optional metadata is unavailable",
+              "JavaScript is unavailable",
+              "item is activated",
+              "drawer is closed",
+              "focus moves within the drawer",
+              "narrow viewport opens a drawer",
+              "meaning is communicated accessibly",
+              "repository has no generated work pages",
+              "repository has generated work pages",
+              "user opens the Spec view",
+              "state is communicated in the Spec view",
+              "keyboard navigation is used",
+              "top-level tabs are keyboard operated",
+              "work items are keyboard operated",
+              "narrow viewport is used",
+              "reduced motion is requested"
+            ],
+            "operations": [
+              "ADDED",
+              "MODIFIED"
             ],
             "warnings": []
           }

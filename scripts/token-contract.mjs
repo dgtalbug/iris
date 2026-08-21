@@ -15,6 +15,12 @@ export const REQUIRED_TOKENS = [
   'type-bug',
   'type-idea',
   'type-plan',
+  'type-research',
+  'nav-bg',
+  'nav-text',
+  'nav-active-bg',
+  'nav-active-text',
+  'accent-soft',
   'ok',
   'warn',
   'danger',
@@ -31,6 +37,8 @@ export const REQUIRED_TOKENS = [
   'leading-tight',
   'leading-body',
   'radius-full',
+  'nav-width',
+  'nav-rail',
   'duration-1',
   'duration-2',
   'duration-3',
@@ -54,6 +62,12 @@ const THEME_REQUIRED_TOKENS = [
   'type-bug',
   'type-idea',
   'type-plan',
+  'type-research',
+  'nav-bg',
+  'nav-text',
+  'nav-active-bg',
+  'nav-active-text',
+  'accent-soft',
   'ok',
   'warn',
   'danger',
@@ -76,6 +90,10 @@ const CONTRAST_PAIRS = [
   ['type-bug', 'surface-1'],
   ['type-idea', 'surface-1'],
   ['type-plan', 'surface-1'],
+  ['type-research', 'surface-1'],
+  ['nav-text', 'nav-bg'],
+  ['nav-active-text', 'nav-bg'],
+  ['text-1', 'nav-bg'],
   ['ok', 'surface-1'],
   ['warn', 'surface-1'],
   ['danger', 'surface-1'],
@@ -105,9 +123,7 @@ export function parseTokenThemes(css) {
 
 function channel(value) {
   const normalized = value / 255;
-  return normalized <= 0.04045
-    ? normalized / 12.92
-    : ((normalized + 0.055) / 1.055) ** 2.4;
+  return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
 }
 
 function luminance(hex) {

@@ -1,6 +1,6 @@
 ## Why
 
-Iris installs one `iris-workspace` skill whose description — "Use Iris to create and render intentional local visual workspace content" — says what Iris is but never says *when* to reach for it, so in ordinary conversation an agent finishes a bug fix, a plan, or a piece of research and the result stays in chat instead of landing on the dashboard. Claude Code and Copilot users also expect typed slash commands for frequent actions, and today Iris exposes none.
+Iris installs one `iris-workspace` skill whose description — "Use Iris to create and render intentional local visual workspace content" — says what Iris is but never says _when_ to reach for it, so in ordinary conversation an agent finishes a bug fix, a plan, or a piece of research and the result stays in chat instead of landing on the dashboard. Claude Code and Copilot users also expect typed slash commands for frequent actions, and today Iris exposes none.
 
 ## What Changes
 

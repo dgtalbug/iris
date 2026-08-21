@@ -24,8 +24,14 @@ describe('render commands', () => {
     expect(await runCli(['feature', 'feature-login-flow'], cwd)).toBe(0);
     expect(await runCli(['render', '--all'], cwd)).toBe(0);
 
-    const bugHtml = await readFile(path.join(cwd, 'iris', 'pages', 'bug-cache-stampede', 'page.html'), 'utf8');
-    const featureHtml = await readFile(path.join(cwd, 'iris', 'pages', 'feature-login-flow', 'page.html'), 'utf8');
+    const bugHtml = await readFile(
+      path.join(cwd, 'iris', 'pages', 'bug-cache-stampede', 'page.html'),
+      'utf8',
+    );
+    const featureHtml = await readFile(
+      path.join(cwd, 'iris', 'pages', 'feature-login-flow', 'page.html'),
+      'utf8',
+    );
     const dashboardHtml = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
 
     expect(bugHtml).toContain('Bug Cache Stampede');
@@ -54,11 +60,18 @@ describe('render commands', () => {
       'utf8',
     );
 
-    expect(await runCli(['report', '--from-session', './agent-session', 'session-review'], cwd)).toBe(0);
-    expect(await runCli(['publish', 'bug-cache-stampede', '--output', 'dist/published.html'], cwd)).toBe(0);
+    expect(
+      await runCli(['report', '--from-session', './agent-session', 'session-review'], cwd),
+    ).toBe(0);
+    expect(
+      await runCli(['publish', 'bug-cache-stampede', '--output', 'dist/published.html'], cwd),
+    ).toBe(0);
 
     const publishedHtml = await readFile(path.join(cwd, 'dist', 'published.html'), 'utf8');
-    const reportHtml = await readFile(path.join(cwd, 'iris', 'pages', 'session-review', 'page.html'), 'utf8');
+    const reportHtml = await readFile(
+      path.join(cwd, 'iris', 'pages', 'session-review', 'page.html'),
+      'utf8',
+    );
 
     expect(publishedHtml).toContain('Bug Cache Stampede');
     expect(reportHtml).toContain('Session Review');

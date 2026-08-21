@@ -41,20 +41,20 @@ Alternative: keep contract pages on the old header-only layout. Rejected — inc
 
 Dark stays the default; light becomes a true peer with a white sidebar on a cool gray ground (the Jira/Trello convention). Interactive accent moves from amber to electric indigo; amber is retained only as the `plan` type color. New tokens: `--nav-bg`, `--nav-text`, `--nav-active-bg`, `--nav-active-text`, `--accent-soft`, `--type-research`, `--type-research-soft`. Final literals are fixed in `tokens.ts` and validated by `token-contract`; the intended values are:
 
-| Token           | Dark      | Light     |
-| --------------- | --------- | --------- |
-| `--bg`          | `#0e1117` | `#f4f5f7` |
-| `--surface-1`   | `#151923` | `#ffffff` |
-| `--surface-2`   | `#1b2030` | `#f1f2f4` |
-| `--surface-3`   | `#242a3b` | `#e4e6ea` |
-| `--line-1`      | `#2a3143` | `#dfe1e6` |
-| `--text-1`      | `#e7eaf2` | `#172b4d` |
-| `--text-2`      | `#a4adc2` | `#44546f` |
-| `--text-3`      | `#7a8399` | `#626f86` |
-| `--accent`      | `#6f8cff` | `#3b5bdb` |
-| `--accent-text` | `#93a8ff` | `#2f4ac0` |
-| `--accent-ink`  | `#0b0e14` | `#ffffff` |
-| `--nav-bg`      | `#0a0d13` | `#ffffff` |
+| Token             | Dark      | Light     |
+| ----------------- | --------- | --------- |
+| `--bg`            | `#0e1117` | `#f4f5f7` |
+| `--surface-1`     | `#151923` | `#ffffff` |
+| `--surface-2`     | `#1b2030` | `#f1f2f4` |
+| `--surface-3`     | `#242a3b` | `#e4e6ea` |
+| `--line-1`        | `#2a3143` | `#dfe1e6` |
+| `--text-1`        | `#e7eaf2` | `#172b4d` |
+| `--text-2`        | `#a4adc2` | `#44546f` |
+| `--text-3`        | `#7a8399` | `#626f86` |
+| `--accent`        | `#6f8cff` | `#3b5bdb` |
+| `--accent-text`   | `#93a8ff` | `#2f4ac0` |
+| `--accent-ink`    | `#0b0e14` | `#ffffff` |
+| `--nav-bg`        | `#0a0d13` | `#ffffff` |
 | `--type-research` | `#2dd4bf` | `#0f766e` |
 
 `iris/config.yaml` already carries `theme:`; generated pages emit `data-theme` from it as the initial theme, and the existing `localStorage` toggle still overrides per browser.

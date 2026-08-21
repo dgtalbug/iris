@@ -44,7 +44,9 @@ describe('publish and export commands', () => {
     expect(html).toContain('Bug Cache Stampede');
     expect(html).toContain('<style data-iris-standalone>');
     expect(html).toContain('--bg:');
-    expect(html).toContain('.page-shell');
+    expect(html).toContain('.content {');
+    expect(html).not.toContain('class="sidebar"');
+    expect(html).not.toContain('<kbd>');
     expect(html).not.toMatch(/<link\b[^>]*\b(?:href|src)=/i);
     expect(html).not.toMatch(/<script\b[^>]*\bsrc=/i);
     expect(html).not.toContain('design/vendor/mermaid.min.js');

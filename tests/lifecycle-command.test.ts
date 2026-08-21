@@ -91,7 +91,11 @@ describe('project lifecycle commands', () => {
     expect(await runCli(['init'], cwd)).toBe(1);
     expect(await readFile(target, 'utf8')).toBe('user-owned skill\n');
     expect(existsSync(path.join(cwd, 'iris', 'index.html'))).toBe(true);
-    expect(existsSync(path.join(cwd, '.claude', 'skills', 'iris-workspace', 'SKILL.md'))).toBe(true);
-    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('agent skill setup is incomplete'));
+    expect(existsSync(path.join(cwd, '.claude', 'skills', 'iris-workspace', 'SKILL.md'))).toBe(
+      true,
+    );
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining('agent surface setup is incomplete'),
+    );
   });
 });

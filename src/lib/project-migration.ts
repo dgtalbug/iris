@@ -18,7 +18,11 @@ export type ProjectMigrationResult = {
 
 function safeMarkdownSource(sourcePath: string): boolean {
   const posix = sourcePath.replaceAll('\\', '/');
-  if (path.posix.isAbsolute(posix) || path.posix.normalize(posix) !== posix || posix.includes('\0')) {
+  if (
+    path.posix.isAbsolute(posix) ||
+    path.posix.normalize(posix) !== posix ||
+    posix.includes('\0')
+  ) {
     return false;
   }
   return posix === 'README.md' || /^docs\/(?:[^/]+\/)*[^/]+\.md$/i.test(posix);

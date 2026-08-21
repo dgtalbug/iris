@@ -33,6 +33,7 @@ export async function runInitCommand(cwd: string): Promise<void> {
     'design/gallery',
     'project',
     'pages',
+    'research',
     'archive',
   ];
   await Promise.all(dirs.map((dir) => ensureDir(path.join(irisRoot, dir))));
@@ -47,7 +48,7 @@ export async function runInitCommand(cwd: string): Promise<void> {
     '/* Mermaid runtime not installed. Run `iris vendor` to enable diagram previews. */\n',
   );
   const migration = await migrateProjectState(cwd);
-  const skills = await updateManagedSurfaces(cwd);
+  const surfaces = await updateManagedSurfaces(cwd);
   await writeOpenSpecSnapshot(cwd);
   await refreshDashboard(cwd);
 
@@ -63,14 +64,20 @@ export async function runInitCommand(cwd: string): Promise<void> {
   for (const id of migration.preserved) {
     process.stderr.write(`preserved ambiguous legacy adopted page ${id}; review it manually\n`);
   }
+  for (const retired of surfaces.retiredProjectDocs) {
+    process.stdout.write(`removed retired managed page ${retired}\n`);
+  }
+  for (const preserved of surfaces.preservedProjectDocs) {
+    process.stderr.write(`preserved user-owned ${preserved}; it is no longer generated\n`);
+  }
   try {
-    assertSkillInstallComplete(skills);
+    assertSkillInstallComplete(surfaces.skills);
   } catch (error) {
     if (error instanceof IrisError) throw error;
     throw new IrisError(1, (error as Error).message);
   }
 
   process.stdout.write('iris initialized\n');
-  process.stdout.write('next: iris report <id>\n');
+  process.stdout.write('next: iris research <id> or iris bug <id>\n');
   process.stdout.write('open: iris open\n');
 }

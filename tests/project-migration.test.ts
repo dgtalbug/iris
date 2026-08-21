@@ -96,9 +96,15 @@ describe('project state migration', () => {
   });
 
   it.each([
-    ['edited data hash', (state: any) => (state.page_index['doc-readme'].data_hash = '0'.repeat(64))],
+    [
+      'edited data hash',
+      (state: any) => (state.page_index['doc-readme'].data_hash = '0'.repeat(64)),
+    ],
     ['missing provenance', (state: any) => delete state.page_index['doc-readme'].source],
-    ['unsafe source path', (state: any) => (state.page_index['doc-readme'].source.path = '../README.md')],
+    [
+      'unsafe source path',
+      (state: any) => (state.page_index['doc-readme'].source.path = '../README.md'),
+    ],
     ['mismatched id', (state: any) => (state.page_index['doc-readme'].id = 'other')],
   ])('preserves a candidate with %s', async (_label, mutate) => {
     const cwd = await tempProject();
@@ -125,14 +131,26 @@ describe('project state migration', () => {
       last_synced_sha: null,
       page_index: {
         'doc-user': {
-          id: 'doc-user', type: 'report', title: 'User', status: 'active', data_hash: lookalikeDigest,
+          id: 'doc-user',
+          type: 'report',
+          title: 'User',
+          status: 'active',
+          data_hash: lookalikeDigest,
         },
         'doc-malformed': {
-          id: 'doc-malformed', type: 'report', title: 'Malformed', status: 'active', data_hash: malformedDigest,
+          id: 'doc-malformed',
+          type: 'report',
+          title: 'Malformed',
+          status: 'active',
+          data_hash: malformedDigest,
           source: { kind: 'markdown', path: 'docs/malformed.md', hash: 'source' },
         },
         'doc-archive': {
-          id: 'doc-archive', type: 'report', title: 'Archive', status: 'archived', data_hash: archivedDigest,
+          id: 'doc-archive',
+          type: 'report',
+          title: 'Archive',
+          status: 'archived',
+          data_hash: archivedDigest,
           source: { kind: 'markdown', path: 'docs/archive.md', hash: 'source' },
         },
       },
@@ -157,22 +175,25 @@ describe('project state migration', () => {
     expect(result.state.page_index['doc-archive'].status).toBe('archived');
   });
 
-  it.skipIf(process.platform === 'win32')('does not follow a symlinked page directory', async () => {
-    const cwd = await tempProject();
-    const outside = await mkdtemp(path.join(os.tmpdir(), 'iris-migration-outside-'));
-    tempDirs.push(outside);
-    const raw = adoptedData();
-    await writeFile(path.join(outside, 'data.json'), raw);
-    await symlink(outside, path.join(cwd, 'iris', 'pages', 'doc-readme'));
-    await writeFile(
-      path.join(cwd, 'iris', 'state.json'),
-      `${JSON.stringify(legacyState('doc-readme', raw), null, 2)}\n`,
-    );
+  it.skipIf(process.platform === 'win32')(
+    'does not follow a symlinked page directory',
+    async () => {
+      const cwd = await tempProject();
+      const outside = await mkdtemp(path.join(os.tmpdir(), 'iris-migration-outside-'));
+      tempDirs.push(outside);
+      const raw = adoptedData();
+      await writeFile(path.join(outside, 'data.json'), raw);
+      await symlink(outside, path.join(cwd, 'iris', 'pages', 'doc-readme'));
+      await writeFile(
+        path.join(cwd, 'iris', 'state.json'),
+        `${JSON.stringify(legacyState('doc-readme', raw), null, 2)}\n`,
+      );
 
-    const result = await migrateProjectState(cwd);
-    expect(result.removed).toEqual([]);
-    expect(existsSync(path.join(outside, 'data.json'))).toBe(true);
-  });
+      const result = await migrateProjectState(cwd);
+      expect(result.removed).toEqual([]);
+      expect(existsSync(path.join(outside, 'data.json'))).toBe(true);
+    },
+  );
 
   it('rejects unsupported state versions without rewriting the file', async () => {
     const cwd = await tempProject();

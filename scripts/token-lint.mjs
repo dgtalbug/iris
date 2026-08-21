@@ -21,7 +21,7 @@ async function walk(dir) {
 }
 
 let failed = false;
-const designPath = path.normalize('src/templates/design.ts');
+const designPath = path.normalize('src/templates/tokens.ts');
 const designSource = await readFile(designPath, 'utf8');
 const tokenTemplate = designSource.match(/export const TOKENS_CSS = `([\s\S]*?)`;/);
 if (!tokenTemplate) {
