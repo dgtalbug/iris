@@ -6,6 +6,12 @@
       "type": "research",
       "title": "Agent-first workspace decisions",
       "status": "active"
+    },
+    "redesign-work-board": {
+      "id": "redesign-work-board",
+      "type": "feature",
+      "title": "Redesign Work Board",
+      "status": "active"
     }
   }
 }
