@@ -4,12 +4,26 @@ import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
 import { validateContract } from '../lib/schemas.js';
-import { dashboardHtml, renderContractPage, type DashboardPage } from '../templates/design.js';
+import {
+  hashContent,
+  loadProjectState,
+  saveProjectState,
+  statePath,
+} from '../lib/project-state.js';
+import {
+  dashboardHtml,
+  PROJECT_DOC_NAMES,
+  renderContractPage,
+  type DashboardPage,
+} from '../templates/design.js';
 
 async function listPageIds(pagesRoot: string): Promise<string[]> {
   try {
     const entries = await readdir(pagesRoot, { withFileTypes: true });
-    return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+    return entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .sort();
   } catch {
     return [];
   }
@@ -17,16 +31,14 @@ async function listPageIds(pagesRoot: string): Promise<string[]> {
 
 export async function runRenderCommand(cwd: string, id?: string): Promise<void> {
   const pagesRoot = path.join(cwd, 'iris', 'pages');
-  const pageIds = id ? [id] : await listPageIds(pagesRoot);
+  const allPageIds = await listPageIds(pagesRoot);
+  const pageIds = id ? [id] : allPageIds;
 
   if (pageIds.length === 0) {
-    const indexPath = path.join(cwd, 'iris', 'index.html');
-    await writeAlways(indexPath, dashboardHtml('iris project'));
+    await refreshDashboard(cwd);
     process.stdout.write('rendered iris/index.html\n');
     return;
   }
-
-  const renderedPages: DashboardPage[] = [];
 
   for (const pageId of pageIds) {
     const dataPath = path.join(pagesRoot, pageId, 'data.json');
@@ -46,16 +58,67 @@ export async function runRenderCommand(cwd: string, id?: string): Promise<void> 
     const pageHtmlPath = path.join(pagesRoot, pageId, 'page.html');
     const html = renderContractPage(payload);
     await writeAlways(pageHtmlPath, html);
+  }
 
+  if (existsSync(statePath(cwd))) {
+    const state = await loadProjectState(cwd);
+    for (const pageId of pageIds) {
+      const raw = await readFile(path.join(pagesRoot, pageId, 'data.json'), 'utf8');
+      const payload = JSON.parse(raw) as Record<string, unknown>;
+      const prior = state.page_index[pageId];
+      state.page_index[pageId] = {
+        id: pageId,
+        type: typeof payload.type === 'string' ? payload.type : 'page',
+        title: typeof payload.title === 'string' ? payload.title : pageId,
+        status: prior?.status ?? 'active',
+        data_hash: hashContent(raw),
+        source: prior?.source,
+      };
+      state.content_hashes[`pages/${pageId}/data.json`] = hashContent(raw);
+    }
+    await saveProjectState(cwd, state);
+  }
+
+  await refreshDashboard(cwd);
+  process.stdout.write(`rendered ${pageIds.length} page(s)\n`);
+}
+
+export async function refreshDashboard(cwd: string): Promise<void> {
+  const irisRoot = path.join(cwd, 'iris');
+  const pagesRoot = path.join(irisRoot, 'pages');
+  const allPageIds = await listPageIds(pagesRoot);
+  const renderedPages: DashboardPage[] = [];
+  const state = existsSync(statePath(cwd)) ? await loadProjectState(cwd) : undefined;
+  for (const pageId of allPageIds) {
+    const dataPath = path.join(pagesRoot, pageId, 'data.json');
+    if (!existsSync(dataPath)) continue;
+    const payload = JSON.parse(await readFile(dataPath, 'utf8')) as Record<string, unknown>;
     renderedPages.push({
       id: pageId,
-      type,
+      type: typeof payload.type === 'string' ? payload.type : 'page',
       title: typeof payload.title === 'string' ? payload.title : pageId,
       status: typeof payload.status === 'string' ? payload.status : 'draft',
+      stale: state?.page_index[pageId]?.status === 'stale',
+      href: `./pages/${pageId}/page.html`,
     });
   }
 
-  const indexPath = path.join(cwd, 'iris', 'index.html');
-  await writeAlways(indexPath, dashboardHtml('iris project', renderedPages));
-  process.stdout.write(`rendered ${pageIds.length} page(s)\n`);
+  for (const [pageId, entry] of Object.entries(state?.page_index ?? {})) {
+    if (entry.status !== 'archived') continue;
+    if (!existsSync(path.join(irisRoot, 'archive', pageId, 'page.html'))) continue;
+    renderedPages.push({
+      id: pageId,
+      type: entry.type,
+      title: entry.title,
+      status: 'archived',
+      href: `./archive/${pageId}/page.html`,
+    });
+  }
+
+  const projectDocs = PROJECT_DOC_NAMES.filter((name) =>
+    existsSync(path.join(irisRoot, 'project', `${name}.html`)),
+  );
+
+  const indexPath = path.join(irisRoot, 'index.html');
+  await writeAlways(indexPath, dashboardHtml('iris project', renderedPages, projectDocs));
 }
