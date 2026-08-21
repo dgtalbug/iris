@@ -53,7 +53,7 @@ export function assetPrefix(depth: number): string {
   return depth <= 0 ? './' : '../'.repeat(depth);
 }
 
-function icon(name: string): string {
+export function icon(name: string): string {
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] ?? ICONS.doc}</svg>`;
 }
 

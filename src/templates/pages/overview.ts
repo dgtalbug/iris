@@ -8,6 +8,7 @@ import {
   statTile,
   type DashboardPage,
 } from '../common.js';
+import { icon } from '../shell.js';
 import { workListItem, workStatusCounts } from './work.js';
 import type { SpecCounts } from './spec.js';
 
@@ -24,9 +25,15 @@ export function recentPages(pages: DashboardPage[]): DashboardPage[] {
     .slice(0, RECENT_LIMIT);
 }
 
-function specMovement(changes: OpenSpecChange[]): string {
+function specMovement(changes: OpenSpecChange[], spec: SpecCounts): string {
   if (changes.length === 0) {
-    return '<div class="empty-state">No active OpenSpec changes. Add one under <code>openspec/changes/</code>, then run <code>iris render --all</code>.</div>';
+    if (spec.canonical + spec.archived === 0) {
+      return '<div class="empty-state">No OpenSpec records found. Add one under <code>openspec/</code>, then run <code>iris render --all</code>.</div>';
+    }
+    return `<div class="spec-holdings">
+        <p class="spec-holdings-line"><b>${spec.canonical}</b> canonical ${spec.canonical === 1 ? 'spec' : 'specs'} · <b>${spec.archived}</b> archived ${spec.archived === 1 ? 'change' : 'changes'} · <b>${spec.tasksComplete}</b> tasks complete</p>
+        <p class="work-meta">No change is active right now. Add one under <code>openspec/changes/</code>, then run <code>iris render --all</code>.</p>
+      </div>`;
   }
   return changes
     .map((change) => {
@@ -71,12 +78,18 @@ export function overviewPageContent({
   const projectStrip =
     projectDocs.length === 0
       ? `<section class="surface empty-state"><h2>Project docs are not initialized</h2><p>Create the managed overview, HLD, LLD, ERD, and decisions pages with <code>iris init</code>.</p></section>`
-      : `<section class="surface project-strip">
-          <span class="eyebrow">project docs</span>
-          <nav class="project-links" aria-label="Project documents">
-            ${projectDocs.map((name) => `<a href="./project/${escapeHtml(name)}.html">${escapeHtml(projectDocMeta(name).label)}</a>`).join('\n            ')}
-          </nav>
-        </section>`;
+      : `<div class="doc-grid">
+          ${projectDocs
+            .map((name) => {
+              const meta = projectDocMeta(name);
+              return `<a class="surface doc-card" href="./project/${escapeHtml(name)}.html">
+                <span class="doc-card-icon">${icon(meta.icon)}</span>
+                <span class="doc-card-label">${escapeHtml(meta.label)}</span>
+                <span class="doc-card-purpose">${escapeHtml(meta.purpose)}</span>
+              </a>`;
+            })
+            .join('\n          ')}
+        </div>`;
 
   return `<section class="surface briefing-hero" aria-labelledby="briefing-title">
       ${apertureRing(pages)}
@@ -112,7 +125,7 @@ export function overviewPageContent({
           <div><span class="eyebrow">openspec</span><h2 id="spec-movement-title">Spec movement</h2></div>
           <a href="./spec.html">Open Spec &rarr;</a>
         </div>
-        <div class="card-body">${specMovement(activeChanges)}</div>
+        <div class="card-body">${specMovement(activeChanges, spec)}</div>
       </section>
     </div>
 
@@ -121,7 +134,7 @@ export function overviewPageContent({
         <div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div>
         ${projectDocs.includes('hld') ? '<a href="./project/hld.html">Open HLD &rarr;</a>' : '<span class="mono">hld page missing</span>'}
       </div>
-      <div class="empty-state architecture-pane">No architecture diagram is projected here yet. Mermaid fences render inside Markdown after <code>iris vendor</code>; automatic HLD projection into this pane remains separate work.</div>
+      <div class="empty-state architecture-pane"><p>No architecture diagram is projected here yet. Mermaid fences render inside Markdown after <code>iris vendor</code>. Automatic HLD projection into this pane remains separate work.</p></div>
     </section>
 
     <section id="project-docs" aria-labelledby="project-docs-title">

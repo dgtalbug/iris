@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCli } from '../src/cli.js';
 import { COMMAND_GROUPS, helpText } from '../src/lib/command-catalog.js';
 
@@ -206,5 +206,59 @@ describe('retired project docs', () => {
     await writeFile(userOwned, '<!doctype html><title>mine</title>\n', 'utf8');
     expect(await runCli(['init'], cwd)).toBe(0);
     expect(await readFile(userOwned, 'utf8')).toBe('<!doctype html><title>mine</title>\n');
+  });
+});
+
+describe('openspec signal', () => {
+  it('counts the Spec badge from canonical specs when no change is active', async () => {
+    const cwd = await createTempDir();
+    await mkdir(path.join(cwd, 'openspec', 'specs', 'sample-capability'), { recursive: true });
+    await writeFile(
+      path.join(cwd, 'openspec', 'specs', 'sample-capability', 'spec.md'),
+      '# sample-capability\n\n## Requirements\n\n### Requirement: A thing\n\nIt MUST hold.\n\n#### Scenario: it holds\n\n- **WHEN** asked\n- **THEN** it MUST hold\n',
+    );
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    const spec = await readFile(path.join(cwd, 'iris', 'spec.json'), 'utf8');
+    expect(JSON.parse(spec).active_changes).toHaveLength(0);
+
+    const index = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const badge = index.match(/Spec<\/span><em class="nav-count">(\d+)</)?.[1];
+    expect(badge).toBe('1');
+    expect(index).toContain('canonical');
+    expect(index).not.toMatch(/No OpenSpec records found/);
+  });
+
+  it('omits derived tool detection from the generated configuration', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    const config = await readFile(path.join(cwd, 'iris', 'config.yaml'), 'utf8');
+    expect(config).not.toContain('detected_tools');
+  });
+});
+
+describe('agent surface reporting', () => {
+  it('reports how many surfaces initialization installed', async () => {
+    const cwd = await createTempDir();
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    try {
+      expect(await runCli(['init'], cwd)).toBe(0);
+      const written = stdout.mock.calls.map((call) => String(call[0])).join('');
+      expect(written).toMatch(/agent surfaces: \d+ installed \(\d+ created, \d+ updated, \d+ unchanged\)/);
+    } finally {
+      stdout.mockRestore();
+    }
+  });
+
+  it('lists every installed surface and its destination on the commands page', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    const commands = await readFile(path.join(cwd, 'iris', 'commands.html'), 'utf8');
+    expect(commands).toContain('Agent surfaces');
+    for (const target of ['.agents/skills', '.claude/skills', '.github/skills']) {
+      expect(commands).toContain(target);
+    }
+    expect(commands).toContain('Generic / Codex');
+    expect(commands).toContain('GitHub Copilot');
   });
 });

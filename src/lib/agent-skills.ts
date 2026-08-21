@@ -256,3 +256,41 @@ export async function installAgentSurfaces(cwd: string): Promise<SkillInstallRes
 
 export const AGENT_SKILL_TARGETS = SKILL_TARGETS;
 export { installAgentSurfaces as installAgentSkills };
+
+export type AgentSurfaceStatus = 'installed' | 'missing' | 'unmanaged';
+
+export type AgentSurfaceReport = {
+  relativePath: string;
+  templateId: string;
+  status: AgentSurfaceStatus;
+};
+
+/**
+ * Reads the surfaces back off disk instead of reporting what installation
+ * intended, so a file a user later took ownership of is reported as theirs
+ * rather than as an Iris surface.
+ */
+export async function inspectAgentSurfaces(cwd: string): Promise<AgentSurfaceReport[]> {
+  const descriptors = await loadSurfaceDescriptors();
+  const reports: AgentSurfaceReport[] = [];
+  for (const descriptor of descriptors) {
+    const target = path.resolve(cwd, descriptor.relativePath);
+    let status: AgentSurfaceStatus = 'missing';
+    if (existsSync(target)) {
+      try {
+        const content = await readFile(target, 'utf8');
+        status = content.includes(`${START_PREFIX} template=${descriptor.templateId}`)
+          ? 'installed'
+          : 'unmanaged';
+      } catch {
+        status = 'unmanaged';
+      }
+    }
+    reports.push({
+      relativePath: descriptor.relativePath,
+      templateId: descriptor.templateId,
+      status,
+    });
+  }
+  return reports;
+}

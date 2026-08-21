@@ -67,7 +67,7 @@ The system MUST parse OpenSpec as untrusted local content using deterministic so
 - **THEN** the parser MUST preserve successfully read entries and report the isolated failure rather than crashing the entire dashboard refresh
 
 ### Requirement: graceful unknown and empty states
-The system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces.
+The system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces, and MUST keep a detected workspace visually distinguishable from an absent one wherever it is summarized.
 
 #### Scenario: repository has no OpenSpec directory
 - **WHEN** the dashboard snapshot is generated without an `openspec/` directory
@@ -80,6 +80,10 @@ The system MUST render readable fallback states for absent, empty, malformed, un
 #### Scenario: artifact is malformed or unknown
 - **WHEN** a recognized path contains malformed Markdown or an unsupported layout
 - **THEN** the Spec tab MUST render escaped readable source when available, identify the affected path, and show an actionable warning without hiding other valid records
+
+#### Scenario: a detected workspace has no active changes
+- **WHEN** the snapshot records a detected OpenSpec workspace that holds canonical specs or archived changes but no active change
+- **THEN** every summary of it MUST report the canonical and archived totals it holds, and MUST NOT reduce to a message whose only content is the absence of active changes
 
 ### Requirement: offline runtime independence
 The system MUST generate and operate the Spec view without requiring the OpenSpec CLI, a server, network access, runtime ES modules, telemetry, or general project-document ingestion.

@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
@@ -19,9 +18,6 @@ export async function runInitCommand(cwd: string): Promise<void> {
       `project: ${path.basename(cwd)}`,
       'theme: dark',
       'asset_base: local',
-      'detected_tools:',
-      `  openspec: ${existsSync(path.join(cwd, 'openspec'))}`,
-      '  gitnexus: false',
       'budgets:',
       '  text_words_per_block: 120',
     ].join('\n') + '\n',
@@ -75,6 +71,15 @@ export async function runInitCommand(cwd: string): Promise<void> {
   } catch (error) {
     if (error instanceof IrisError) throw error;
     throw new IrisError(1, (error as Error).message);
+  }
+
+  const skills = surfaces.skills;
+  const installed = skills.created.length + skills.updated.length + skills.unchanged.length;
+  process.stdout.write(
+    `agent surfaces: ${installed} installed (${skills.created.length} created, ${skills.updated.length} updated, ${skills.unchanged.length} unchanged)\n`,
+  );
+  for (const conflict of skills.conflicts) {
+    process.stderr.write(`agent surface not written: ${conflict.path} — ${conflict.reason}\n`);
   }
 
   process.stdout.write('iris initialized\n');

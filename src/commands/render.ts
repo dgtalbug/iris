@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
+import { inspectAgentSurfaces } from '../lib/agent-skills.js';
 import { loadOpenSpecSnapshot, writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import {
   loadResearchWorkspace,
@@ -195,6 +196,7 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
     projectDocs: PROJECT_DOC_NAMES.filter((name) =>
       existsSync(path.join(irisRoot, 'project', `${name}.html`)),
     ),
+    agentSurfaces: await inspectAgentSurfaces(cwd),
     contracts,
   };
 }

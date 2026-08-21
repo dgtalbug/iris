@@ -1,5 +1,6 @@
 import type { OpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import type { ResearchItem, ResearchWarning } from '../lib/research-workspace.js';
+import type { AgentSurfaceReport } from '../lib/agent-skills.js';
 import { COMMAND_GROUPS } from '../lib/command-catalog.js';
 import type { DashboardPage } from './common.js';
 import { renderShell, type NavCounts } from './shell.js';
@@ -27,6 +28,7 @@ export type WorkspaceModel = {
   researchWarnings: ResearchWarning[];
   openSpec: OpenSpecSnapshot;
   projectDocs: readonly string[];
+  agentSurfaces: AgentSurfaceReport[];
 };
 
 export function emptyWorkspaceModel(projectName = 'iris project'): WorkspaceModel {
@@ -38,13 +40,14 @@ export function emptyWorkspaceModel(projectName = 'iris project'): WorkspaceMode
     researchWarnings: [],
     openSpec: EMPTY_OPENSPEC_SNAPSHOT,
     projectDocs: [],
+    agentSurfaces: [],
   };
 }
 
 export function navCounts(model: WorkspaceModel): NavCounts {
   return {
     work: model.pages.length,
-    spec: model.openSpec.active_changes.length,
+    spec: model.openSpec.canonical_specs.length + model.openSpec.active_changes.length,
     research: model.research.length,
     commands: COMMAND_GROUPS.reduce((total, group) => total + group.entries.length, 0),
   };
@@ -145,7 +148,7 @@ export function commandsHtml(model: WorkspaceModel): string {
     current: 'commands',
     title: 'Commands',
     crumbLabel: 'Commands',
-    content: commandsPageContent(),
+    content: commandsPageContent(model.agentSurfaces),
   });
 }
 
