@@ -33,9 +33,11 @@ iris open
 
 `iris init` is the complete setup and upgrade command. It creates or safely refreshes the workspace, installs `iris-workspace` skills for generic/Codex agents, Claude, and GitHub Copilot, and renders the dashboard. It never copies or monitors `README.md` or `docs/**/*.md`. These commands work against local files and do not require a hosted Iris service. See [the command reference](docs/cmds.md) for the complete installed command surface and preservation rules.
 
+When a repository contains `openspec/`, the dashboard's top-level `Spec` tab visualizes canonical specs, active changes, structured and legacy archives, artifacts, delta specs, and real task-checkbox progress. `iris init`, bare `iris render`, and `iris render --all` explicitly refresh the generated `iris/spec.json` snapshot; page-specific renders and other lifecycle commands reuse it. The parser reads files directly without requiring the OpenSpec CLI, a server, or network access.
+
 ## How it runs
 
-iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json`, validates them against the schemas in `schemas/`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
+iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json`, validates them against the schemas in `schemas/`, snapshots supported OpenSpec filesystem evidence into `iris/spec.json`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
 
 Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`. The generated files all describe the same CLI workflow. Iris refreshes only an intact hash-verified managed region, preserves user content outside it, and refuses to overwrite unmarked or edited targets.
 

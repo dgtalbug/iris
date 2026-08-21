@@ -149,7 +149,13 @@ describe('generated HTML navigation', () => {
       'utf8',
     );
 
-    const orderedLabels = ['what this repo is', 'repository health', 'Architecture', 'Work', 'Project docs'];
+    const orderedLabels = [
+      'what this repo is',
+      'repository health',
+      'Architecture',
+      'id="work-title">Work',
+      'Project docs',
+    ];
     const offsets = orderedLabels.map((label) => dashboard.indexOf(label));
     expect(offsets.every((offset) => offset >= 0)).toBe(true);
     expect(offsets).toEqual([...offsets].sort((left, right) => left - right));

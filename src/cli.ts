@@ -65,7 +65,9 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         if (parsed.values.all && id) {
           throw new IrisError(1, "Choose either '<id>' or '--all' for the render command");
         }
-        await runRenderCommand(cwd, parsed.values.all ? undefined : id);
+        await runRenderCommand(cwd, parsed.values.all ? undefined : id, {
+          refreshOpenSpec: parsed.values.all || !id,
+        });
         return 0;
       case 'publish':
         await runPublishCommand(cwd, id, parsed.values.output);

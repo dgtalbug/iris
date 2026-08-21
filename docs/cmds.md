@@ -8,27 +8,28 @@
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
 - Agent surfaces: CLI `iris` plus the generated `iris-workspace` skill under `.agents/skills`, `.claude/skills`, and `.github/skills`.
 - Navigation contract: the dashboard links every rendered, archived, and project page; every page links back to the dashboard. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
-- Dashboard contract: briefing hero → health strip → architecture placeholder → work surface → project-docs strip. `/` focuses the work filter, `t` toggles theme, and arrow keys move between focused work cards; all remain classic-script, `file://`-safe interactions.
+- Dashboard contract: peer Work/`Spec` tabs. Work retains briefing hero → health strip → architecture placeholder → work surface → project-docs strip. Spec contains overview, project/config context, canonical specs, active changes, structured archives, and legacy archives. `/` focuses the visible work filter, `t` toggles theme, arrow keys move work cards, and arrow/Home/End keys operate tablists; all remain classic-script, `file://`-safe interactions.
 
 ## `iris init`
 
 - Synopsis: create or safely upgrade the complete local Iris workspace and agent setup.
 - Flags: `--json`.
 - Inputs: current project directory.
-- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, and the rendered dashboard.
+- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, a deterministic `iris/spec.json` OpenSpec snapshot, and the rendered dashboard.
 - Exit codes: 0/1/2.
 - Example: `iris init`.
 - Surfaces: CLI + all generated skills.
 - Preservation: existing configuration, user pages, archives, unrelated editor tasks, sibling skills, unmarked files, and edited managed skill content are retained. A skill collision is reported as an incomplete setup instead of being overwritten.
 - Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
 - Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
+- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
 
 ## `iris render [<id>|--all]`
 
-- Synopsis: render contract data to page HTML and refresh dashboard/feed.
+- Synopsis: render contract data to page HTML and refresh the dashboard/feed; full renders also refresh the OpenSpec filesystem snapshot.
 - Flags: `--all`, `--json`.
 - Inputs: `iris/pages/<id>/data.json` or all pages.
-- Outputs: `page.html` artifacts and updated `iris/index.html`; each page is linked from the dashboard and links back to it.
+- Outputs: `page.html` artifacts and updated `iris/index.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot.
 - Exit codes: 0/1/2.
 - Example: `iris render --all`.
 - Surfaces: CLI + all generated skills.

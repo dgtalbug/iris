@@ -1,0 +1,1559 @@
+{
+  "version": 1,
+  "detected": true,
+  "generated_at": null,
+  "context": {
+    "project": {
+      "path": "project.md",
+      "title": "OpenSpec Project Identity",
+      "raw": "# OpenSpec Project Identity\n\n- Product: iris\n- Package: @dgtalbug/iris\n- Mission: convert AI coding-agent thinking into visual, versioned HTML docs that work offline from file://.\n- Prime directive: minimize prose and maximize meaningful visuals.\n- Milestone flow: one change per milestone (propose -> apply -> archive).\n",
+      "headings": [
+        "OpenSpec Project Identity"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    },
+    "config": {
+      "path": "config.yaml",
+      "title": "Project context (optional)",
+      "raw": "schema: spec-driven\ngithubCopilot:\n  cloudAgent: false\n\n# Project context (optional)\n# This is shown to AI when creating artifacts.\n# Add your tech stack, conventions, style guides, domain knowledge, etc.\n# Example:\n#   context: |\n#     Tech stack: TypeScript, React, Node.js\n#     We use conventional commits\n#     Domain: e-commerce platform\n\n# Per-artifact rules (optional)\n# Add custom rules for specific artifacts.\n# Example:\n#   rules:\n#     proposal:\n#       - Keep proposals under 500 words\n#       - Always include a \"Non-goals\" section\n#     tasks:\n#       - Break tasks into chunks of max 2 hours\n\n# Per-operation guidance (optional)\n# Add advisory guidance for how apply and archive work should be conducted.\n# This is separate from artifact rules above.\n# Example:\n#   operations:\n#     apply:\n#       guidance:\n#         - Keep test summaries concise\n#     archive:\n#       guidance:\n#         - Summarize the archive outcome before finishing\n",
+      "headings": [
+        "Project context (optional)",
+        "This is shown to AI when creating artifacts.",
+        "Add your tech stack, conventions, style guides, domain knowledge, etc.",
+        "Example:",
+        "context: |",
+        "Tech stack: TypeScript, React, Node.js",
+        "We use conventional commits",
+        "Domain: e-commerce platform",
+        "Per-artifact rules (optional)",
+        "Add custom rules for specific artifacts.",
+        "Example:",
+        "rules:",
+        "proposal:",
+        "- Keep proposals under 500 words",
+        "- Always include a \"Non-goals\" section",
+        "tasks:",
+        "- Break tasks into chunks of max 2 hours",
+        "Per-operation guidance (optional)",
+        "Add advisory guidance for how apply and archive work should be conducted.",
+        "This is separate from artifact rules above.",
+        "Example:",
+        "operations:",
+        "apply:",
+        "guidance:",
+        "- Keep test summaries concise",
+        "archive:",
+        "guidance:",
+        "- Summarize the archive outcome before finishing"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    }
+  },
+  "canonical_specs": [
+    {
+      "capability": "agent-first-initialization",
+      "path": "specs/agent-first-initialization/spec.md",
+      "document": {
+        "path": "specs/agent-first-initialization/spec.md",
+        "title": "Agent-First Initialization Specification",
+        "raw": "# Agent-First Initialization Specification\n\n## Purpose\n\nMake a single installed Iris command establish and safely upgrade the local visual workspace and its agent-facing instructions without requiring repository-document ingestion or network access.\n\n## Requirements\n\n### Requirement: one-command agent-first setup\nThe system MUST make `iris init` the complete project setup and upgrade flow for an installed Iris CLI.\n\n#### Scenario: first initialization\n- **WHEN** a user runs `iris init` in a repository with no Iris workspace\n- **THEN** the system MUST create the usable local workspace, install the supported agent-facing Iris skill surfaces, and render the dashboard in that operation\n\n#### Scenario: repeated initialization\n- **WHEN** a user runs `iris init` again in an initialized repository\n- **THEN** the system MUST refresh Iris-managed outputs idempotently without requiring `iris update`, `iris adopt`, or `iris sync` as a setup step\n\n#### Scenario: initialized repository has content commands\n- **WHEN** initialization completes successfully\n- **THEN** agents and users MUST still be able to use the existing draft, render, report, archive, publish, export, and open commands\n\n### Requirement: canonical multi-agent skill installation\nThe system MUST generate supported agent skill files from one canonical Iris-owned skill source rather than maintaining independent instruction copies.\n\n#### Scenario: supported skill surfaces are installed\n- **WHEN** `iris init` installs agent guidance\n- **THEN** it MUST provide the `iris-workspace` skill to the generic/Codex, Claude, and GitHub Copilot repository skill locations\n\n#### Scenario: unrelated agent content exists\n- **WHEN** a supported skill directory already contains sibling skills or unrelated files\n- **THEN** initialization MUST leave that content unchanged\n\n### Requirement: managed skill preservation\nThe system MUST identify its generated skill content with verifiable managed ownership metadata and fail safely around user-owned or modified content.\n\n#### Scenario: managed content is intact\n- **WHEN** a generated Iris skill has valid ownership markers and its managed content matches the recorded digest\n- **THEN** initialization MUST update only that managed content and preserve user-authored bytes outside the managed boundary\n\n#### Scenario: managed content was edited\n- **WHEN** the managed content no longer matches its recorded digest\n- **THEN** initialization MUST preserve the file and report an actionable collision instead of overwriting the edit\n\n#### Scenario: target is unmarked or malformed\n- **WHEN** the target skill file is user-owned, unmarked, partially marked, misordered, unsafe, or outside the repository boundary\n- **THEN** initialization MUST not truncate, replace, or follow it and MUST report the affected surface\n\n### Requirement: packaged offline initialization\nThe installed Iris package MUST contain every template and runtime file required for initialization after the package itself has been obtained.\n\n#### Scenario: installed package initializes offline\n- **WHEN** a user runs `iris init` from a packed or globally installed Iris package with no repository checkout or network access\n- **THEN** the command MUST generate the workspace and agent skills entirely from packaged local assets\n\n#### Scenario: package payload is verified\n- **WHEN** the release package is built\n- **THEN** release verification MUST fail if the canonical agent template or its installed generator is absent from the package payload\n\n### Requirement: safe retirement of adopted document records\nThe system MUST remove a legacy adopted-document page only when Iris can positively prove that the exact record remains an unmodified generated mirror.\n\n#### Scenario: legacy generated mirror is proven\n- **WHEN** legacy state provenance, a safe README or docs source path, page identity, generated metadata, and stored and current content digests all agree\n- **THEN** initialization MAY remove that exact generated page and normalize the state before rendering\n\n#### Scenario: ownership proof is incomplete\n- **WHEN** any ownership, path, identity, metadata, or digest check is missing or mismatched\n- **THEN** initialization MUST preserve the page and report it for manual review\n\n#### Scenario: arbitrary user page resembles an adopted page\n- **WHEN** a user-created page has a `doc-` prefix, an `adopted-doc` tag, source-like prose, or only some legacy fields\n- **THEN** initialization MUST NOT treat those hints alone as permission to delete the page\n",
+        "headings": [
+          "Agent-First Initialization Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: one-command agent-first setup",
+          "Scenario: first initialization",
+          "Scenario: repeated initialization",
+          "Scenario: initialized repository has content commands",
+          "Requirement: canonical multi-agent skill installation",
+          "Scenario: supported skill surfaces are installed",
+          "Scenario: unrelated agent content exists",
+          "Requirement: managed skill preservation",
+          "Scenario: managed content is intact",
+          "Scenario: managed content was edited",
+          "Scenario: target is unmarked or malformed",
+          "Requirement: packaged offline initialization",
+          "Scenario: installed package initializes offline",
+          "Scenario: package payload is verified",
+          "Requirement: safe retirement of adopted document records",
+          "Scenario: legacy generated mirror is proven",
+          "Scenario: ownership proof is incomplete",
+          "Scenario: arbitrary user page resembles an adopted page"
+        ],
+        "requirements": [
+          "one-command agent-first setup",
+          "canonical multi-agent skill installation",
+          "managed skill preservation",
+          "packaged offline initialization",
+          "safe retirement of adopted document records"
+        ],
+        "scenarios": [
+          "first initialization",
+          "repeated initialization",
+          "initialized repository has content commands",
+          "supported skill surfaces are installed",
+          "unrelated agent content exists",
+          "managed content is intact",
+          "managed content was edited",
+          "target is unmarked or malformed",
+          "installed package initializes offline",
+          "package payload is verified",
+          "legacy generated mirror is proven",
+          "ownership proof is incomplete",
+          "arbitrary user page resembles an adopted page"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    },
+    {
+      "capability": "aperture-design-system",
+      "path": "specs/aperture-design-system/spec.md",
+      "document": {
+        "path": "specs/aperture-design-system/spec.md",
+        "title": "Aperture Design System Specification",
+        "raw": "# Aperture Design System Specification\n\n## Purpose\n\nDefine the deterministic visual language and dashboard hierarchy that lets a newcomer understand an iris-enabled repository from a single offline HTML entry point.\n\n## Requirements\n\n### Requirement: Aperture token contract\nThe system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.\n\n#### Scenario: generated styles are validated\n- **WHEN** a contributor runs the token validation command\n- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme\n\n### Requirement: Aperture component language\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, pills, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n- **WHEN** a generated page uses type or status color, interactive controls, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: user opens the Spec view\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, filtering, theme switching, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n- **WHEN** focus is on the Work/Spec tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: narrow viewport is used\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** the Work and Spec views, their navigation, summaries, artifact content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+        "headings": [
+          "Aperture Design System Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: Aperture token contract",
+          "Scenario: generated styles are validated",
+          "Requirement: Aperture component language",
+          "Scenario: meaning is communicated accessibly",
+          "Requirement: newcomer-first dashboard hierarchy",
+          "Scenario: repository has no generated work pages",
+          "Scenario: user opens the Spec view",
+          "Scenario: state is communicated in the Spec view",
+          "Requirement: deterministic responsive interaction",
+          "Scenario: keyboard navigation is used",
+          "Scenario: top-level tabs are keyboard operated",
+          "Scenario: narrow viewport is used",
+          "Scenario: reduced motion is requested"
+        ],
+        "requirements": [
+          "Aperture token contract",
+          "Aperture component language",
+          "newcomer-first dashboard hierarchy",
+          "deterministic responsive interaction"
+        ],
+        "scenarios": [
+          "generated styles are validated",
+          "meaning is communicated accessibly",
+          "repository has no generated work pages",
+          "user opens the Spec view",
+          "state is communicated in the Spec view",
+          "keyboard navigation is used",
+          "top-level tabs are keyboard operated",
+          "narrow viewport is used",
+          "reduced motion is requested"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    },
+    {
+      "capability": "openspec-spec-browser",
+      "path": "specs/openspec-spec-browser/spec.md",
+      "document": {
+        "path": "specs/openspec-spec-browser/spec.md",
+        "title": "OpenSpec Spec Browser Specification",
+        "raw": "# OpenSpec Spec Browser Specification\n\n## Purpose\n\nProvide a deterministic, offline dashboard view of the repository's complete OpenSpec filesystem so users and agents can inspect specifications, change artifacts, and real task progress without running OpenSpec.\n\n## Requirements\n\n### Requirement: explicit OpenSpec workspace snapshots\nThe system MUST detect and read the repository's `openspec/` workspace during `iris init` and `iris render --all`, and MUST NOT introduce implicit synchronization, background monitoring, or a separate refresh command for the same operation.\n\n#### Scenario: repository is initialized with OpenSpec\n- **WHEN** a user runs `iris init` in a repository containing `openspec/`\n- **THEN** the generated dashboard MUST contain a snapshot of that workspace from the files read during initialization\n\n#### Scenario: user explicitly refreshes all output\n- **WHEN** a user runs `iris render --all` after OpenSpec files change\n- **THEN** the dashboard MUST re-read the current OpenSpec filesystem and replace the previous generated snapshot\n\n#### Scenario: user renders one work page\n- **WHEN** a user runs `iris render <id>`\n- **THEN** the system MUST render that page without treating the operation as an OpenSpec workspace refresh\n\n### Requirement: complete normalized workspace view\nThe system MUST represent canonical specs, active changes, structured archived changes, legacy archived Markdown, project/config context, proposal, design, tasks, and change-local delta specs while keeping canonical, active, archived, legacy, invalid, and incomplete states distinct.\n\n#### Scenario: repository contains current structured layouts\n- **WHEN** canonical specs and structured active or archived changes are present\n- **THEN** the Spec view MUST preserve their repository-relative identities, lifecycle state, artifact availability, requirements, scenarios, and delta-operation labels\n\n#### Scenario: capability path is nested\n- **WHEN** a canonical or change-local spec exists below a nested capability path\n- **THEN** the Spec view MUST preserve and display the complete capability path without flattening ambiguous names\n\n#### Scenario: archive contains a legacy Markdown record\n- **WHEN** `openspec/changes/archive/` contains an archived single Markdown file rather than a structured change directory\n- **THEN** the Spec view MUST identify it as legacy archive content and keep it separate from structured archived changes\n\n### Requirement: evidence-based task and artifact status\nThe system MUST derive task totals only from actual Markdown task checkboxes and MUST keep task progress, artifact completeness, lifecycle state, and parser health as independent dimensions.\n\n#### Scenario: tasks contain checked and unchecked items\n- **WHEN** a structured change has task list items using supported Markdown checkbox syntax outside fenced code\n- **THEN** the Spec view MUST report completed, open, and total task counts from those items without inferring completion from the directory name or archive location\n\n#### Scenario: change is partially complete\n- **WHEN** a change is missing an expected artifact or contains open tasks\n- **THEN** the Spec view MUST label the available evidence and incompleteness without presenting the change as invalid or complete by assumption\n\n#### Scenario: checkbox-like text appears in a code fence\n- **WHEN** an artifact contains checkbox syntax inside fenced source examples\n- **THEN** that text MUST NOT contribute to task progress\n\n### Requirement: safe bounded filesystem parsing\nThe system MUST parse OpenSpec as untrusted local content using deterministic sorted traversal, repository confinement, bounded input, and symlink refusal, and MUST never execute file content.\n\n#### Scenario: content contains active markup or script text\n- **WHEN** an OpenSpec file contains HTML, script text, or other executable-looking content\n- **THEN** every rendered representation MUST escape the content so opening the dashboard cannot execute it\n\n#### Scenario: path is unsafe or input exceeds a bound\n- **WHEN** traversal encounters a symlink, path escape, unsupported file location, excessive depth, excessive file count, or oversized file\n- **THEN** the parser MUST skip the unsafe input, retain the rest of the workspace, and expose a path-specific actionable warning\n\n#### Scenario: filesystem entry cannot be read\n- **WHEN** one OpenSpec file or directory produces a filesystem error\n- **THEN** the parser MUST preserve successfully read entries and report the isolated failure rather than crashing the entire dashboard refresh\n\n### Requirement: graceful unknown and empty states\nThe system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces.\n\n#### Scenario: repository has no OpenSpec directory\n- **WHEN** the dashboard snapshot is generated without an `openspec/` directory\n- **THEN** the Spec tab MUST explain that no OpenSpec workspace was detected without suggesting general-document ingestion\n\n#### Scenario: OpenSpec workspace is empty\n- **WHEN** `openspec/` exists but contains no supported project, spec, or change records\n- **THEN** the Spec tab MUST show a distinct empty-workspace state\n\n#### Scenario: artifact is malformed or unknown\n- **WHEN** a recognized path contains malformed Markdown or an unsupported layout\n- **THEN** the Spec tab MUST render escaped readable source when available, identify the affected path, and show an actionable warning without hiding other valid records\n\n### Requirement: offline runtime independence\nThe system MUST generate and operate the Spec view without requiring the OpenSpec CLI, a server, network access, runtime ES modules, telemetry, or general project-document ingestion.\n\n#### Scenario: dashboard opens directly from disk\n- **WHEN** a user opens `iris/index.html` through `file://` after generation\n- **THEN** the Spec view MUST remain navigable and readable using only local generated assets and classic deferred scripts with zero network requests\n\n#### Scenario: OpenSpec executable is unavailable\n- **WHEN** Iris initializes or renders in a repository whose `openspec/` files exist but no OpenSpec CLI is installed\n- **THEN** the filesystem snapshot and Spec view MUST still be generated successfully\n",
+        "headings": [
+          "OpenSpec Spec Browser Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: explicit OpenSpec workspace snapshots",
+          "Scenario: repository is initialized with OpenSpec",
+          "Scenario: user explicitly refreshes all output",
+          "Scenario: user renders one work page",
+          "Requirement: complete normalized workspace view",
+          "Scenario: repository contains current structured layouts",
+          "Scenario: capability path is nested",
+          "Scenario: archive contains a legacy Markdown record",
+          "Requirement: evidence-based task and artifact status",
+          "Scenario: tasks contain checked and unchecked items",
+          "Scenario: change is partially complete",
+          "Scenario: checkbox-like text appears in a code fence",
+          "Requirement: safe bounded filesystem parsing",
+          "Scenario: content contains active markup or script text",
+          "Scenario: path is unsafe or input exceeds a bound",
+          "Scenario: filesystem entry cannot be read",
+          "Requirement: graceful unknown and empty states",
+          "Scenario: repository has no OpenSpec directory",
+          "Scenario: OpenSpec workspace is empty",
+          "Scenario: artifact is malformed or unknown",
+          "Requirement: offline runtime independence",
+          "Scenario: dashboard opens directly from disk",
+          "Scenario: OpenSpec executable is unavailable"
+        ],
+        "requirements": [
+          "explicit OpenSpec workspace snapshots",
+          "complete normalized workspace view",
+          "evidence-based task and artifact status",
+          "safe bounded filesystem parsing",
+          "graceful unknown and empty states",
+          "offline runtime independence"
+        ],
+        "scenarios": [
+          "repository is initialized with OpenSpec",
+          "user explicitly refreshes all output",
+          "user renders one work page",
+          "repository contains current structured layouts",
+          "capability path is nested",
+          "archive contains a legacy Markdown record",
+          "tasks contain checked and unchecked items",
+          "change is partially complete",
+          "checkbox-like text appears in a code fence",
+          "content contains active markup or script text",
+          "path is unsafe or input exceeds a bound",
+          "filesystem entry cannot be read",
+          "repository has no OpenSpec directory",
+          "OpenSpec workspace is empty",
+          "artifact is malformed or unknown",
+          "dashboard opens directly from disk",
+          "OpenSpec executable is unavailable"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    },
+    {
+      "capability": "project-lifecycle-automation",
+      "path": "specs/project-lifecycle-automation/spec.md",
+      "document": {
+        "path": "specs/project-lifecycle-automation/spec.md",
+        "title": "Project Lifecycle Automation Specification",
+        "raw": "# Project Lifecycle Automation Specification\n\n## Purpose\n\nMake the `iris` project lifecycle explicit and reproducible by aligning the generated dashboard and page registry with the repository state and user workflow. The system must provide a safe path for boosting, syncing, archiving, and updating local project artifacts while preserving user-owned content outside managed blocks.\n\n## Requirements\n\n### Requirement: lifecycle-aware project bootstrap\nThe system MUST provide one project bootstrap flow that creates or refreshes the local structure needed for page generation, dashboard rendering, managed updates, and supported agent skill use without ingesting general repository documentation.\n\n#### Scenario: user initializes the project\nWHEN a user runs `iris init` in a repository\nTHEN the system MUST create or safely refresh the required `iris/` structure, scaffold managed task metadata, install supported agent skills, and render the dashboard.\n\n#### Scenario: repository contains README or docs markdown\nWHEN a user runs `iris init` in a repository containing `README.md` or `docs/**/*.md`\nTHEN the system MUST NOT automatically copy, mirror, hash, monitor, or create Iris page records from those files.\n\n### Requirement: archival and cleanup\nThe system MUST provide a clear archiving path that removes a user-selected page from the active feed while preserving its historical generated artifact and registry navigation.\n\n#### Scenario: a page becomes outdated\nWHEN a user runs the archive command for an existing active page\nTHEN the archive command MUST move that exact page into the archive state and update the page registry and dashboard consistently.\n\n### Requirement: managed updates without user-content loss\nThe system MUST support update actions that refresh generated shims or managed file blocks without clobbering user-authored content outside those managed boundaries.\n\n#### Scenario: a project is updated after scaffold generation\nWHEN a user runs the update flow\nTHEN the system MUST preserve user edits outside managed sections and refresh only the managed integration points.\n",
+        "headings": [
+          "Project Lifecycle Automation Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: lifecycle-aware project bootstrap",
+          "Scenario: user initializes the project",
+          "Scenario: repository contains README or docs markdown",
+          "Requirement: archival and cleanup",
+          "Scenario: a page becomes outdated",
+          "Requirement: managed updates without user-content loss",
+          "Scenario: a project is updated after scaffold generation"
+        ],
+        "requirements": [
+          "lifecycle-aware project bootstrap",
+          "archival and cleanup",
+          "managed updates without user-content loss"
+        ],
+        "scenarios": [
+          "user initializes the project",
+          "repository contains README or docs markdown",
+          "a page becomes outdated",
+          "a project is updated after scaffold generation"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    },
+    {
+      "capability": "session-ingestion-and-reporting",
+      "path": "specs/session-ingestion-and-reporting/spec.md",
+      "document": {
+        "path": "specs/session-ingestion-and-reporting/spec.md",
+        "title": "Session Ingestion and Reporting Specification",
+        "raw": "# Session Ingestion and Reporting Specification\n\n## Purpose\n\nProvide a reliable local-first path for converting session history into a visual, versioned report page. The system must preserve evidence from the user session, translate it into the project report schema, and render it in a way that remains useful for later review and sharing.\n\n## Requirements\n\n### Requirement: session discovery and normalization\nThe system MUST support ingesting session data from a local directory or exported session bundle and MUST normalize the relevant files into a single report dataset.\n\n#### Scenario: user points the CLI at a session directory\nWHEN a user runs the report workflow with a session source\nTHEN the CLI MUST discover session metadata, turns, checkpoints, references, and file activity and MUST ignore irrelevant files unless they are part of the session dataset.\n\n#### Scenario: session data is partial or noisy\nWHEN session data is incomplete or contains extra non-session artifacts\nTHEN the system MUST still build a usable report while preserving only the evidence that can be mapped to the report contract.\n\n### Requirement: report content derived from session evidence\nThe system MUST turn session metadata into a report summary that includes the workstream, branch, status, changed files, and notable references.\n\n#### Scenario: session shows completed work\nWHEN a session contains concrete work, notes, or checkpoints\nTHEN the generated report MUST summarize the outcome in a concise, reviewable form and MUST keep the underlying evidence attached to the page.\n\n#### Scenario: a session includes PR or issue references\nWHEN evidence contains a linked PR, issue, or commit reference\nTHEN the report MUST surface the reference in a way that is searchable and visible in the generated contract.\n\n### Requirement: rendered page output\nThe system MUST create or update a page record and render the resulting report so it appears in the local dashboard or page registry.\n\n#### Scenario: report is generated from session input\nWHEN the report pipeline succeeds\nTHEN the CLI MUST emit a rendered page artifact and the page SHOULD be discoverable through the same dashboard workflow as other iris pages.\n\n#### Scenario: generation fails for invalid input\nWHEN the source input does not contain valid session evidence\nTHEN the system MUST stop with a clear validation error and MUST describe the missing or unsupported input format.\n\n### Requirement: local-first, offline-safe operation\nThe ingestion and reporting flow MUST require no external service call to generate the page and MUST operate purely from local files or a local session export.\n\n#### Scenario: offline usage\nWHEN a user runs the tool without network access\nTHEN the session ingestion workflow MUST still create a report contract and rendered output from local data.\n",
+        "headings": [
+          "Session Ingestion and Reporting Specification",
+          "Purpose",
+          "Requirements",
+          "Requirement: session discovery and normalization",
+          "Scenario: user points the CLI at a session directory",
+          "Scenario: session data is partial or noisy",
+          "Requirement: report content derived from session evidence",
+          "Scenario: session shows completed work",
+          "Scenario: a session includes PR or issue references",
+          "Requirement: rendered page output",
+          "Scenario: report is generated from session input",
+          "Scenario: generation fails for invalid input",
+          "Requirement: local-first, offline-safe operation",
+          "Scenario: offline usage"
+        ],
+        "requirements": [
+          "session discovery and normalization",
+          "report content derived from session evidence",
+          "rendered page output",
+          "local-first, offline-safe operation"
+        ],
+        "scenarios": [
+          "user points the CLI at a session directory",
+          "session data is partial or noisy",
+          "session shows completed work",
+          "a session includes PR or issue references",
+          "report is generated from session input",
+          "generation fails for invalid input",
+          "offline usage"
+        ],
+        "operations": [],
+        "warnings": []
+      }
+    }
+  ],
+  "active_changes": [
+    {
+      "name": "brew-formula-and-installability",
+      "path": "changes/brew-formula-and-installability",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/brew-formula-and-installability/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/brew-formula-and-installability/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe CLI and render pipeline are now working, but the project still lacks a reliable install story for everyday use. A local-first tool is easier to trust when users can install it consistently, verify the command surface quickly, and upgrade without manual repo cloning or shell hacks.\n\n## What Changes\n\n- Define a supported install path for the `iris` CLI using Homebrew and/or a standard Node package entrypoint.\n- Package the release metadata so the CLI can be versioned and upgraded predictably.\n- Add a smoke-testable install path that verifies the binary and core render commands work immediately after installation.\n- Keep the install story aligned with the repo's local-first and offline-safe design principles.\n\n## Capabilities\n\n### New Capabilities\n- brew-formula-and-installability: establish a distribution path for the CLI that is easy to install, verify, and upgrade.\n\n### Modified Capabilities\n- None\n\n## Impact\n\n- CLI adoption: easier setup for users who want to try or use the tool without a repo checkout.\n- Release quality: versioning and install metadata become explicit and testable.\n- Documentation: users get a clear first-run path and a consistent command reference.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/brew-formula-and-installability/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe project has evolved from a local CLI plus render-first workflow into a tool that can generate deterministic HTML docs and publish artifacts. The remaining gap is distribution: users still need a clear, repeatable install path that matches the local-first model rather than a hosted service or remote backend.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Provide a stable install flow for the `iris` CLI.\n- Support a Homebrew-friendly equivalent packaging entrypoint for easy setup.\n- Keep the install story simple, offline-safe, and consistent with the Node-based project runtime.\n- Add release validation around the key CLI commands.\n\n**Non-Goals:**\n- A hosted SaaS runtime or cloud-managed rendering service.\n- Full platform marketing or marketplace expansion.\n- Broad feature work unrelated to installability, release quality, and distribution.\n\n## Decisions\n\n- Keep the CLI as the primary product surface: installs should provide the same command interface users already know from the repo checkout.\n- Use npm as the primary distribution path on macOS, Linux, and Windows with Node.js 22.13.0 or newer. The package entrypoint is implemented, cross-platform, versioned, and already exercised from a packed artifact outside the repository.\n- Defer a real Homebrew formula until a published release supplies a stable source tarball URL and SHA-256 checksum. Do not mark formula work complete or ship placeholder metadata before those inputs exist.\n- Publish from GitHub Releases through `.github/workflows/release.yml`. The workflow requires an exact `v<package version>` tag, repeats the full project gate, inspects the package payload, and uses npm trusted publishing with provenance instead of a long-lived automation token.\n- Validate the installation path via a focused smoke test around `iris --help` and a minimal render command.\n- Keep packaging offline-safe and local-first; the installer should not require any remote backend to work.\n\n## Risks / Trade-offs\n\n- [Install friction] → Mitigation: keep the install syntax minimal and document the supported path clearly.\n- [Version drift] → Mitigation: tie the release and formula metadata to the package version and CI validation.\n- [Packaging complexity] → Mitigation: start with a single, narrow distribution path instead of expanding into a wider ecosystem.\n- [First-release account gate] → Mitigation: document the one-time npm package/trusted-publisher and GitHub environment setup; the repository contains no credentials and does not claim publication before that owner action.\n\n## Migration Plan\n\n1. Treat npm as the supported install and upgrade path; retain Node.js 22.13.0 as the minimum runtime.\n2. Validate release tags, package metadata, the packed payload, and the installed command before publication.\n3. Publish from a GitHub Release using npm trusted publishing and provenance after the owner configures the external trust relationship.\n4. Add Homebrew only after a real release URL and checksum can be tested end to end.\n\n## Open Questions\n\nNone. npm-first is decided; Homebrew is explicitly deferred on missing release artifacts rather than left ambiguous.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/brew-formula-and-installability/tasks.md",
+          "title": "1. Install path and packaging definition",
+          "raw": "## 1. Install path and packaging definition\n\n- [x] 1.1 Decide the primary install story for the CLI and confirm the supported target environments.\n- [x] 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.\n- [x] 1.3 Confirm the formula / package surface matches the project's local-first design goals.\n\n## 2. Distribution and smoke validation\n\n- [x] 2.1 Add the release packaging or formula definition needed for easy install.\n- [x] 2.2 Add a smoke-check command or script that validates the CLI after installation.\n- [x] 2.3 Validate the flow against the minimum supported Node environment.\n\n## 3. Documentation and rollout\n\n- [x] 3.1 Document the install and upgrade steps in the project docs.\n- [x] 3.2 Confirm the CLI documentation reflects the actual installed command surface.\n- [x] 3.3 Review the change against the roadmap to keep scope limited to installability and distribution.\n",
+          "headings": [
+            "1. Install path and packaging definition",
+            "2. Distribution and smoke validation",
+            "3. Documentation and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 9,
+            "open": 0,
+            "total": 9
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "brew-formula-and-installability",
+          "path": "changes/brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
+          "document": {
+            "path": "changes/brew-formula-and-installability/specs/brew-formula-and-installability/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.\n\n## ADDED Requirements\n\n### Requirement: supported CLI installation path\nThe system MUST provide a clear installation path for the `iris` command that works across supported environments.\n\n#### Scenario: user installs the CLI\nWHEN a user follows the documented install flow\nTHEN the CLI MUST be available as `iris` and MUST expose the expected command surface.\n\n#### Scenario: install fails with clear guidance\nWHEN installation prerequisites are missing or unsupported\nTHEN the system MUST fail with a simple, actionable message instead of a vague runtime error.\n\n### Requirement: Homebrew-friendly distribution\nThe project MUST support a distribution mechanism that is easy to install and upgrade on macOS and related developer environments.\n\n#### Scenario: brew install path is available\nWHEN a user installs via the supported Homebrew formula or equivalent package entrypoint\nTHEN the command MUST resolve to the same project binary and versioned CLI behavior as the repo build.\n\n#### Scenario: upgrade path is clear\nWHEN a user upgrades the installed CLI\nTHEN the system MUST expose a predictable version and install flow that keeps the CLI current.\n\n### Requirement: minimal install smoke validation\nThe release workflow MUST include a minimal verification that the installed CLI works for a basic command path.\n\n#### Scenario: install smoke test passes\nWHEN the package or formula is installed\nTHEN a fast smoke check such as `iris --help` or a minimal render run MUST succeed without additional repo setup.\n\n#### Scenario: invalid installation is surfaced early\nWHEN the install path is broken or incompatible\nTHEN the validation step MUST fail early and identify the missing or unsupported prerequisite.\n\n### Requirement: documentation and upgrade guidance\nThe project MUST provide install instructions that align with the local-first design and current project conventions.\n\n#### Scenario: user can self-serve setup\nWHEN a new user reads the docs\nTHEN they MUST be able to install and verify the CLI with a single, documented path.\n\n#### Scenario: command reference stays current\nWHEN package distribution changes\nTHEN the install docs and command reference MUST stay aligned with the actual CLI behavior.\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: supported CLI installation path",
+              "Scenario: user installs the CLI",
+              "Scenario: install fails with clear guidance",
+              "Requirement: Homebrew-friendly distribution",
+              "Scenario: brew install path is available",
+              "Scenario: upgrade path is clear",
+              "Requirement: minimal install smoke validation",
+              "Scenario: install smoke test passes",
+              "Scenario: invalid installation is surfaced early",
+              "Requirement: documentation and upgrade guidance",
+              "Scenario: user can self-serve setup",
+              "Scenario: command reference stays current"
+            ],
+            "requirements": [
+              "supported CLI installation path",
+              "Homebrew-friendly distribution",
+              "minimal install smoke validation",
+              "documentation and upgrade guidance"
+            ],
+            "scenarios": [
+              "user installs the CLI",
+              "install fails with clear guidance",
+              "brew install path is available",
+              "upgrade path is clear",
+              "install smoke test passes",
+              "invalid installation is surfaced early",
+              "user can self-serve setup",
+              "command reference stays current"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "standalone-publish-and-export",
+      "path": "changes/standalone-publish-and-export",
+      "lifecycle": "active",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/standalone-publish-and-export/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/standalone-publish-and-export/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nA local-first tool becomes far more useful when it can hand off a page as a portable artifact without depending on the active repo or a remote viewer. The current roadmap already defines `publish` and `export` commands, but they still need a clear path to generate shareable, standalone outputs that remain offline-safe and easy to inspect.\n\n## What Changes\n\n- Implement the publish flow for standalone, portable HTML output.\n- Implement export variants for single-file and alternative output formats.\n- Keep generated artifacts self-contained and stable enough to share outside the repo.\n- Preserve the local-first design by avoiding any required cloud or remote dependency.\n\n## Capabilities\n\n### New Capabilities\n- standalone-publish-and-export: create portable, standalone artifacts from project pages while keeping them offline-safe and easy to share.\n\n### Modified Capabilities\n- publish: formalize the output contract for single-file static artifacts.\n- export: add the proper export modes and file handling logic.\n\n## Impact\n\n- Users can share a rendered artifact without requiring a live local project checkout.\n- Design handoff and review becomes easier because a page can be exported to a portable artifact.\n- The project remains faithful to its local-first positioning while still supporting distribution and offline shareability.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/standalone-publish-and-export/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe product is designed around local rendering and static HTML output, but it still needs an explicit publish/export layer to support handoff, review, and offline sharing. The command contract already declares `publish` and `export`, so the implementation should focus on reliability, portability, and self-contained asset handling rather than broad feature expansion.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Produce a standalone artifact from a rendered page without requiring a live project checkout.\n- Keep the output portable and safe for offline or external review.\n- Support the export modes already documented in the CLI contract.\n- Maintain local-first operating assumptions while enabling shareable files.\n\n**Non-Goals:**\n- Full remote publishing or hosted document management.\n- Complex visual transformation beyond the already-supported render pipeline.\n- A broad library ecosystem for export formats outside the documented project scope.\n\n## Decisions\n\n- Use the rendered page as the canonical source of truth and build the artifact from that data rather than from ad hoc DOM scraping.\n- Prefer bundled local assets over remote CDN resources so published outputs remain offline-safe.\n- Keep output paths explicit and deterministic for easier automation and review.\n- Limit the first implementation to the export modes already declared in the project contract.\n- Keep PNG/PDF unavailable in this change after evaluating the current browser-renderer options. The existing explicit exit-code-1 path remains the honest contract; task 2.2 stays unchecked.\n- Prefer `puppeteer-core` over Playwright if a later change relaxes the renderer constraint. `puppeteer-core` 25.8.0 does not download Chrome and can use an explicit system executable or installed channel, so it has the smaller operational surface for a single Chrome screenshot/PDF job. Its documented trade-off is decisive here: compatibility is only guaranteed with Puppeteer's bundled browser, not arbitrary system Chrome, so output cannot be treated as stable across browser updates and machines.\n- Do not adopt Playwright 1.62.1 for this narrow export job. Playwright no longer downloads browsers during package installation, but its supported deterministic path still requires `playwright install`, a version-coupled browser lifecycle, and a browser cache measured in hundreds of megabytes. Its cross-browser features do not offset that operational cost for two export modes.\n- Any future implementation must use a fresh temporary browser profile, abort non-`file:`/`data:`/`blob:` requests, disable background networking, and define whether determinism means byte-identical output or a pinned visual baseline. That policy decision belongs in a new renderer change before adding a dependency.\n\n## Risks / Trade-offs\n\n- [Large artifact size] → Mitigation: keep the single-file artifact focused on the page and bundled essentials rather than whole project files.\n- [Asset dependency issues] → Mitigation: vendor critical CSS and font assets locally before export.\n- [Renderer mismatch across formats] → Mitigation: keep export features narrow and validated against the known render pipeline.\n- [System-browser drift] → Mitigation: defer browser export until the project chooses between a pinned downloaded browser and explicitly non-byte-stable system Chrome output.\n- [Hidden browser networking] → Mitigation: require request interception and background-network suppression in any future renderer implementation.\n\n## Migration Plan\n\n1. Implement the publish pipeline for a single-file static artifact.\n2. Keep PNG/PDF on the explicit unsupported path until the browser pinning and determinism policy is accepted.\n3. Integrate asset bundling and vendoring rules to keep the final artifact self-contained.\n4. Validate the commands against real pages and regression examples.\n\n## Open Questions\n\nCan a future renderer download and pin Chromium as an explicit optional install, or must it rely on a user-managed browser and accept cross-version output drift? This must be resolved before task 2.2 can be implemented honestly.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/standalone-publish-and-export/tasks.md",
+          "title": "1. Publish pipeline",
+          "raw": "## 1. Publish pipeline\n\n- [x] 1.1 Define the output contract for the standalone publish command.\n- [x] 1.2 Implement the render-to-artifact transformation for a portable HTML page.\n- [x] 1.3 Ensure the generated file can be opened without the project tree present.\n\n## 2. Export handling\n\n- [x] 2.1 Add the base export flow and output-path handling.\n- [ ] 2.2 Implement each supported export mode from the CLI contract.\n- [x] 2.3 Add clear error handling for unsupported or invalid export requests.\n\n## 3. Asset bundling and offline safety\n\n- [x] 3.1 Identify CSS, fonts, and other required assets that must be bundled or vendored.\n- [x] 3.2 Add local asset resolution for publish and export outputs.\n- [x] 3.3 Validate that the exported artifact works without network access.\n\n## 4. Regression and rollout\n\n- [x] 4.1 Add smoke tests for publish and export commands against existing generated pages.\n- [x] 4.2 Confirm the output path and naming conventions match the documented CLI behavior.\n- [x] 4.3 Document the supported publish/export modes and limitations for users.\n",
+          "headings": [
+            "1. Publish pipeline",
+            "2. Export handling",
+            "3. Asset bundling and offline safety",
+            "4. Regression and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 11,
+            "open": 1,
+            "total": 12
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "standalone-publish-and-export",
+          "path": "changes/standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
+          "document": {
+            "path": "changes/standalone-publish-and-export/specs/standalone-publish-and-export/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a reliable way to turn a generated page into a standalone artifact that can be shared, inspected, or archived without requiring a live `iris` project to be present. The system must preserve the rendered output, embed or vendor any required assets, and work in an offline-safe local workflow.\n\n## ADDED Requirements\n\n### Requirement: publishing of portable HTML\nThe system MUST support generating a single-file static HTML artifact from a rendered page while preserving the project’s visual structure and data.\n\n#### Scenario: user publishes a page\nWHEN a user runs the publish command for a valid page\nTHEN the system MUST create a generated artifact that can be opened directly in a browser without needing the rest of the project tree.\n\n#### Scenario: page is missing or invalid\nWHEN the selected page does not exist or cannot be rendered\nTHEN the system MUST fail clearly and MUST explain the missing or invalid page identifier.\n\n### Requirement: export variants\nThe system MUST support at least the documented single-file export and any additional export modes defined for the project’s portable artifact strategy.\n\n#### Scenario: user requests a different export format\nWHEN a user selects a supported export mode such as HTML, PNG, or PDF\nTHEN the system MUST produce the right artifact type and MUST use the correct output path and naming conventions.\n\n### Requirement: offline-safe asset handling\nThe system MUST ensure generated artifacts do not depend on a network call to render or display correctly.\n\n#### Scenario: offline export\nWHEN a page is generated in an offline environment\nTHEN the export MUST rely on vendored or bundled assets instead of remote CDN content.\n\n### Requirement: output path control\nThe system MUST allow the user to choose the destination path for published and exported artifacts and MUST handle output directories consistently.\n\n#### Scenario: user specifies a target path\nWHEN the output directory is valid\nTHEN the CLI MUST write the artifact there and MUST create missing parent directories as needed.\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: publishing of portable HTML",
+              "Scenario: user publishes a page",
+              "Scenario: page is missing or invalid",
+              "Requirement: export variants",
+              "Scenario: user requests a different export format",
+              "Requirement: offline-safe asset handling",
+              "Scenario: offline export",
+              "Requirement: output path control",
+              "Scenario: user specifies a target path"
+            ],
+            "requirements": [
+              "publishing of portable HTML",
+              "export variants",
+              "offline-safe asset handling",
+              "output path control"
+            ],
+            "scenarios": [
+              "user publishes a page",
+              "page is missing or invalid",
+              "user requests a different export format",
+              "offline export",
+              "user specifies a target path"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "incomplete",
+      "health": "valid",
+      "warnings": []
+    }
+  ],
+  "archived_changes": [
+    {
+      "name": "2026-08-18-release-automation-and-install-smoke",
+      "path": "changes/archive/2026-08-18-release-automation-and-install-smoke",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe project now has a working local render pipeline, but it still lacks a repeatable install and release story. A tool that must be run from a repo checkout or shell-specific setup path is harder to trust, harder to validate, and harder to keep consistent across environments. This change establishes a predictable install and smoke-validation flow so the `iris` CLI can be installed, verified, and upgraded with confidence.\n\n## What Changes\n\n- Define the supported install path for the `iris` CLI and the package or distribution surface it relies on.\n- Add release metadata and automation needed to ship versioned artifacts cleanly.\n- Add a smoke-check path that validates the installed command in a clean environment before release.\n- Keep the install flow aligned with the project’s offline-safe, local-first design.\n\n## Capabilities\n\n### New Capabilities\n- `release-automation-and-install-smoke`: establish a repeatable package, install, and validation path for the CLI.\n\n### Modified Capabilities\n- None\n\n## Impact\n\n- CLI adoption: users can install the tool without repo-specific setup or shell tricks.\n- Release quality: packaging and versioning become explicit and testable.\n- Validation: the project can verify the installed command surface before shipping or documenting it.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe project already has a working local-first CLI and deterministic HTML render flow. The gap is productization: users need a stable install story, release metadata, and a validation path that confirms the binary works after installation.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Define the primary install path for the CLI.\n- Ensure the package or release artifact exposes consistent version information.\n- Add a repeatable smoke check for post-install verification.\n- Keep the install story aligned with the project’s offline-safe approach.\n\n**Non-Goals:**\n- Remote hosted publishing or SaaS delivery.\n- Broad platform or framework changes outside the installability/release slice.\n- Reworking the render pipeline itself.\n\n## Decisions\n\n- Install path first: prefer a single clear install story over multiple overlapping options. This reduces confusion and keeps documentation honest.\n- Versioned package metadata: every install path should expose a release and upgrade model, not just a local repo checkout.\n- Smoke-check as a release gate: validate the installed binary in a clean environment before it is treated as a supported path.\n- Keep the workflow local-first: installation should not require the user to hand-hold a remote service or rely on hosted infrastructure for the core workflow.\n\n## Risks / Trade-offs\n\n- [Ambiguous supported environments] → Mitigation: document the minimum supported Node/runtime environment and validate it explicitly.\n- [Packaging drift] → Mitigation: use a single package metadata source and verify install checks against the produced artifact.\n- [Installer complexity] → Mitigation: keep the release surface narrow and avoid adding hidden remote dependencies for basic use.\n\n## Migration Plan\n\n1. Choose the primary install story and versioning surface for the CLI.\n2. Add or formalize the release metadata needed for packaging and upgrades.\n3. Add the smoke-check command or script that validates a clean install.\n4. Document the install, upgrade, and validation path for users and release maintainers.\n\n## Open Questions\n\nNone at this stage; the problem is narrow and the scope is kept to installation and release validation.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/tasks.md",
+          "title": "1. Install path and release definition",
+          "raw": "## 1. Install path and release definition\n\n- [x] 1.1 Choose the primary install surface for the `iris` CLI and confirm the supported target environments.\n- [x] 1.2 Add or formalize the package metadata needed for a repeatable install and upgrade flow.\n- [x] 1.3 Document the supported installation and upgrade steps for end users.\n\n## 2. Smoke validation and release automation\n\n- [x] 2.1 Add a smoke-check command or script that validates the installed CLI in a clean environment.\n- [x] 2.2 Wire release automation or packaging metadata to produce versioned install artifacts consistently.\n- [x] 2.3 Confirm the release path remains compatible with the project’s offline-safe, local-first model.\n\n## 3. Review and rollout\n\n- [x] 3.1 Verify the install path works against the minimum supported Node version.\n- [x] 3.2 Review the documentation and release outputs for clarity and version consistency.\n- [x] 3.3 Keep the change scoped to installability and distribution, not broader product changes.\n",
+          "headings": [
+            "1. Install path and release definition",
+            "2. Smoke validation and release automation",
+            "3. Review and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 9,
+            "open": 0,
+            "total": 9
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "release-automation-and-install-smoke",
+          "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/specs/release-automation-and-install-smoke/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-18-release-automation-and-install-smoke/specs/release-automation-and-install-smoke/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nDefine a repeatable install and release path for the `iris` CLI so it can be installed, verified, and upgraded predictably without repo-specific workarounds.\n\n## ADDED Requirements\n\n### Requirement: Reliable install path\nThe system SHALL provide a documented install path for the `iris` CLI that works in a clean environment and clearly identifies the supported package or distribution method.\n\n#### Scenario: Fresh install in a supported environment\n- **WHEN** a user installs `iris` in a clean terminal environment\n- **THEN** the CLI SHALL be available as a command with the expected help output and core commands\n\n### Requirement: Versioned release artifact\nThe project SHALL expose a versioned distribution artifact or package metadata so users can install a specific release and upgrade intentionally.\n\n#### Scenario: Release version lookup\n- **WHEN** a user inspects the package or release metadata\n- **THEN** the system SHALL expose a version identifier and a repeatable installation route\n\n### Requirement: Install smoke validation\nThe project SHALL provide a smoke-check validation flow that proves the installed CLI can initialize a project and run a minimal render command.\n\n#### Scenario: Post-install validation\n- **WHEN** a user or release process runs the install smoke check\n- **THEN** the command SHALL fail clearly on genuine issues and pass only when the CLI can start and execute core functionality\n\n### Requirement: Offline-safe documentation\nThe install and release documentation SHALL describe a local-first workflow and avoid requiring remote services for basic use.\n\n#### Scenario: Local use after install\n- **WHEN** a user follows the install instructions in a network-restricted environment\n- **THEN** the CLI SHALL still support the local project initialization and rendering flow described by the main product\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: Reliable install path",
+              "Scenario: Fresh install in a supported environment",
+              "Requirement: Versioned release artifact",
+              "Scenario: Release version lookup",
+              "Requirement: Install smoke validation",
+              "Scenario: Post-install validation",
+              "Requirement: Offline-safe documentation",
+              "Scenario: Local use after install"
+            ],
+            "requirements": [
+              "Reliable install path",
+              "Versioned release artifact",
+              "Install smoke validation",
+              "Offline-safe documentation"
+            ],
+            "scenarios": [
+              "Fresh install in a supported environment",
+              "Release version lookup",
+              "Post-install validation",
+              "Local use after install"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-18-typed-templates-and-distribution",
+      "path": "changes/archive/2026-08-18-typed-templates-and-distribution",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-18-typed-templates-and-distribution/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-18-typed-templates-and-distribution/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe project already has a deterministic CLI, strict JSON schema validation, and a tokenized offline dashboard, but it still lacks the type-aware rendering and distribution layer that turns those contracts into shareable, reliable outputs. Without a typed template registry and publish/report path, the tool remains a local scaffold instead of a usable documentation workflow.\n\n## What Changes\n\n- Add a typed template registry for the core report, feature, bug, idea, and plan contract types.\n- Make rendering schema-driven and deterministic, with validation failures preventing partial page output.\n- Add a local publish/export flow for standalone HTML artifacts that work without a server.\n- Add supporting report extraction from local agent session data.\n- Keep the install and publish story local-first and offline-safe.\n\n## Capabilities\n\n### New Capabilities\n- typed-templates-and-distribution: define the contract-driven template mapping, deterministic rendering flow, and local distribution/reporting workflow for iris pages.\n\n### Modified Capabilities\n- None\n\n## Impact\n\n- CLI surface: render, publish, and report flows under `iris`\n- Runtime behavior: validation gates before page generation and offline-safe artifact export\n- Repo structure: template registry, page rendering rules, and docs for command usage\n- Distribution model: static, portable outputs without remote render or server dependencies\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-18-typed-templates-and-distribution/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe repo already enforces strict contract envelopes and a tokenized dashboard model. The missing layer is a typed registry that maps each page contract to a fixed template and a distribution path that turns rendered output into shareable local artifacts. This change keeps the existing local-first model while adding predictable render logic and portable export flows.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Define a contract-to-template registry for the supported page types.\n- Validate all contract inputs before render output is written.\n- Keep generated pages deterministic and visually consistent with the existing design tokens.\n- Add local publish/export and session-based report workflows.\n\n**Non-Goals:**\n- Remote rendering or hosted publishing.\n- Authenticated user accounts or SaaS features.\n- A broad platform rewrite beyond the render/distribution slice.\n\n## Decisions\n\n- Registry-first rendering: each supported contract type resolves through a single canonical template entry. This keeps the render path explicit and easy to test.\n- Validation as a hard gate: rendering starts only after a contract passes schema validation. This prevents partial HTML and keeps error handling deterministic.\n- Static artifact output: publish/export generates a portable local artifact rather than a server-backed asset. This preserves the repo's offline-first design philosophy.\n- Session extraction stays local and structured: report generation should operate on structured local session data and then re-enter the normal validation/render pipeline instead of bypassing it.\n\n## Risks / Trade-offs\n\n- [Template drift] → Mitigation: keep each template tied to a fixed contract shape and add render tests for every supported type.\n- [Publish complexity] → Mitigation: prefer a narrow single-file static artifact path over a broader remote distribution platform.\n- [Session ingest ambiguity] → Mitigation: normalize to the report contract schema early and reject malformed input before generation.\n\n## Migration Plan\n\n1. Add the template registry and map contract types to their rendering templates.\n2. Wire the render CLI to validate contracts before writing HTML output.\n3. Add local publish/export and session report generation behind the same validation model.\n4. Update docs and validation fixtures to cover the new contract-to-template flow.\n\n## Open Questions\n\nNone at this stage; the chosen approach is narrow and grounded in the existing CLI and schema contracts.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-18-typed-templates-and-distribution/tasks.md",
+          "title": "1. Template and registry foundation",
+          "raw": "## 1. Template and registry foundation\n\n- [x] 1.1 Define the template registry and contract-to-template mapping for report, feature, bug, idea, and plan types.\n- [x] 1.2 Add validation gating so invalid contracts fail before any page output is written.\n- [x] 1.3 Implement the first core templates and ensure they respect the existing tokenized design system.\n\n## 2. Render pipeline and tests\n\n- [x] 2.1 Update the render command to read the registry and produce deterministic page HTML.\n- [x] 2.2 Refresh the dashboard and page-index output when pages are rendered.\n- [x] 2.3 Add render tests for template selection, validation failures, and stable output snapshots.\n\n## 3. Distribution and report features\n\n- [x] 3.1 Implement local publish/export artifact generation for a portable static page.\n- [x] 3.2 Add session-derived report extraction for local agent artifacts.\n- [x] 3.3 Document the publish/report command surface and install story.\n\n## 4. Verification and review\n\n- [x] 4.1 Run lint, typecheck, and relevant tests for the new rendering flow.\n- [x] 4.2 Review the change against the acceptance criteria and keep scope limited to the M2 slice.\n",
+          "headings": [
+            "1. Template and registry foundation",
+            "2. Render pipeline and tests",
+            "3. Distribution and report features",
+            "4. Verification and review"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 11,
+            "open": 0,
+            "total": 11
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "typed-templates-and-distribution",
+          "path": "changes/archive/2026-08-18-typed-templates-and-distribution/specs/typed-templates-and-distribution/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-18-typed-templates-and-distribution/specs/typed-templates-and-distribution/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a consistent, contract-driven rendering and distribution workflow for iris pages so agent output is deterministic, inspectable, and shareable without requiring a remote service.\n\n## ADDED Requirements\n\n### Requirement: typed template registry\nThe system MUST resolve each supported contract type to a single canonical template definition.\n\n#### Scenario: contract renders via the correct template\nWHEN a valid report, feature, bug, idea, or plan contract is passed to the render pipeline\nTHEN the system MUST select the matching template and render the page using the contract's declared sections.\n\n#### Scenario: unsupported contract type rejects cleanly\nWHEN a contract type is not recognized by the registry\nTHEN the system MUST stop with a clear validation or render error and MUST NOT emit a partial page.\n\n### Requirement: schema-first render failures\nThe system MUST validate each contract before writing any page output.\n\n#### Scenario: invalid contract blocks render\nWHEN required fields or section structure are missing\nTHEN the system MUST fail before writing output and MUST surface schema errors.\n\n#### Scenario: valid contract renders deterministically\nWHEN the same valid contract is rendered twice\nTHEN the output MUST be stable and use the same template structure and tokenized styling.\n\n### Requirement: local distribution artifact output\nThe system MUST support producing a portable local artifact that can be shared without a live server.\n\n#### Scenario: publish creates a single artifact\nWHEN a user runs the publish flow for a page\nTHEN the system MUST generate a standalone artifact from the rendered HTML or packaged output.\n\n#### Scenario: publish remains offline-safe\nWHEN the user runs a publish/export flow\nTHEN the system MUST not depend on remote services or live network access to generate the artifact.\n\n### Requirement: session-derived report extraction\nThe system MUST support turning local agent session content into a contract-ready report page.\n\n#### Scenario: report extraction uses structured inputs\nWHEN a user imports session data for a report\nTHEN the system MUST normalize it into the report contract and pass it through the existing validation/render pipeline.\n\n#### Scenario: report extraction without valid session data rejects\nWHEN session content is missing or malformed\nTHEN the system MUST fail clearly and MUST NOT create a page with incomplete metadata.\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: typed template registry",
+              "Scenario: contract renders via the correct template",
+              "Scenario: unsupported contract type rejects cleanly",
+              "Requirement: schema-first render failures",
+              "Scenario: invalid contract blocks render",
+              "Scenario: valid contract renders deterministically",
+              "Requirement: local distribution artifact output",
+              "Scenario: publish creates a single artifact",
+              "Scenario: publish remains offline-safe",
+              "Requirement: session-derived report extraction",
+              "Scenario: report extraction uses structured inputs",
+              "Scenario: report extraction without valid session data rejects"
+            ],
+            "requirements": [
+              "typed template registry",
+              "schema-first render failures",
+              "local distribution artifact output",
+              "session-derived report extraction"
+            ],
+            "scenarios": [
+              "contract renders via the correct template",
+              "unsupported contract type rejects cleanly",
+              "invalid contract blocks render",
+              "valid contract renders deterministically",
+              "publish creates a single artifact",
+              "publish remains offline-safe",
+              "report extraction uses structured inputs",
+              "report extraction without valid session data rejects"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-agent-first-initialization",
+      "path": "changes/archive/2026-08-21-agent-first-initialization",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-agent-first-initialization/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-agent-first-initialization/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris currently requires repository-document adoption and synchronization to make its dashboard useful, while its advertised agent surfaces are not shipped by the installed package. Project setup should instead be one local, deterministic `iris init` operation that installs agent guidance and preserves user-owned work without copying or monitoring general documentation.\n\n## What Changes\n\n- **BREAKING** remove the Iris CLI commands `iris adopt` and `iris sync`, including their help entries, document-mirroring behavior, adopted-source hashes, stale-source states, tests, documentation, and generated dashboard copy.\n- Make `iris init` the complete first-run and upgrade flow: scaffold or refresh the Iris workspace, safely migrate proven legacy adopted pages, install supported agent skills, and render the usable dashboard.\n- Ship one canonical `iris-workspace` skill template in the npm package and generate managed skill files for generic/Codex agents, Claude, and GitHub Copilot without a network request after package installation.\n- Preserve user configuration, pages, archives, unrelated editor tasks, sibling skills, unmarked files, and user-edited managed skill content; refresh only positively identified intact Iris-managed regions.\n- Preserve all existing content commands and lifecycle behavior for `archive` and `update`; do not change OpenSpec `/opsx:sync` or `openspec-sync-specs` tooling.\n- Remove this repository's proven generated `adopted-doc` dogfood records through the CLI migration/generation path and regenerate all CLI-owned HTML and state.\n- Update the canonical requirements and product documentation to describe agent-first initialization and retire product document adoption/synchronization.\n\n## Capabilities\n\n### New Capabilities\n\n- `agent-first-initialization`: One-command local workspace and agent-skill installation, including managed ownership, offline packaging, idempotence, upgrade, and preservation behavior.\n\n### Modified Capabilities\n\n- `project-lifecycle-automation`: Retire document adoption, incremental product synchronization, adopted-source metadata, and stale-source states while preserving bootstrap, archive, managed updates, and explicit rendering.\n\n## Impact\n\n- CLI routing and help in `src/cli.ts`; initialization, lifecycle, rendering, project-state, filesystem, and design-template code under `src/`.\n- Npm package payload and installed smoke verification in `package.json`, release scripts, and tests.\n- Generated agent surfaces under `.agents/skills`, `.claude/skills`, and `.github/skills` from one packaged canonical template.\n- Tracked dogfood under `iris/`, regenerated only through the built CLI.\n- Lifecycle, navigation, packaging, migration-safety, and documentation tests plus `README.md` and `docs/` command/technical/design/status references.\n- Canonical OpenSpec lifecycle requirements; OpenSpec's own sync workflow and historical archives remain unchanged.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-agent-first-initialization/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nSee `proposal.md` for motivation and the two delta specs for observable behavior. Today `init` scaffolds the workspace and managed design/editor files, while `adopt` creates README/docs report mirrors and `sync` owns page/source hashes and stale states. The npm allowlist omits all agent templates.\n\nThe locally installed OpenSpec 1.9.0 implementation is the reference for agent setup: its initializer uses a canonical workflow template registry, resolves tool skill directories, transforms tool-specific references, and writes packaged generated skills. Its skill writer replaces complete generated files, so Iris needs a stricter preservation boundary to satisfy this change's user-edit requirements.\n\nThe installed Iris CLI must remain framework-free and locally deterministic. Initialization cannot depend on the OpenSpec package, a server, runtime network access, background monitoring, or repository-only ignored files.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Make first run and upgrades converge through `iris init`.\n- Keep one auditable agent instruction source and small generated surfaces.\n- Prove ownership before updating skills or deleting legacy generated pages.\n- Reduce project state to data still used by render/archive navigation.\n- Keep every generated dogfood file reproducible from source and the CLI.\n\n**Non-Goals:**\n\n- Adding new content commands, agent runtimes, prompt/slash-command adapters, network discovery, telemetry, watchers, or OpenSpec runtime integration.\n- Removing or renaming `iris update`; it remains a compatible explicit managed-surface refresh, but it is no longer required for setup.\n- Changing OpenSpec's `/opsx:sync`, `openspec-sync-specs`, active changes, or historical archive artifacts.\n- Deleting archived adopted pages automatically; an explicit archive is treated as user-selected history.\n\n## Decisions\n\n### 1. One packaged canonical skill with three repository targets\n\nStore the canonical skill template at `templates/agents/iris-workspace.md`, include `templates/agents` in the npm `files` allowlist, and resolve it relative to the installed package at runtime. Generate:\n\n- `.agents/skills/iris-workspace/SKILL.md`\n- `.claude/skills/iris-workspace/SKILL.md`\n- `.github/skills/iris-workspace/SKILL.md`\n\nThe template describes the existing Iris workflow and content commands. Surface adapters may transform invocation wording or frontmatter, but they cannot carry separately authored workflow instructions.\n\nThis follows OpenSpec's canonical-template pipeline while keeping Iris's supported set deliberately small. Generating `.claude/commands` or `.github/prompts` was rejected because these are optional command-adapter surfaces, duplicate the skill contract, and are unnecessary for agent-first setup.\n\n### 2. Hash-verified managed regions preserve user ownership\n\nEach generated skill contains one start marker with template id, schema version, package version, and SHA-256 of the normalized managed body, plus one end marker. The installer parses markers without executing content.\n\n- Missing target: atomically create the complete generated skill.\n- Valid markers and matching body digest: replace only the managed region, preserving all prefix/suffix bytes.\n- Identical desired output: do not rewrite the file.\n- Unmarked target, malformed/nested/misordered markers, digest mismatch, symlink, or confinement failure: preserve the file, accumulate an actionable conflict, and continue inspecting other targets.\n- After workspace generation, any conflict makes `init` return a user-error status so incomplete skill setup is observable; successfully updated surfaces and user data remain intact for a safe rerun.\n\nAtomic sibling-temporary-file plus rename writes prevent partial truncation. This is stricter than OpenSpec's whole-file replacement and is required because Iris explicitly promises edit preservation.\n\n### 3. `init` orchestrates migration, managed surfaces, skills, and rendering\n\nUse this order:\n\n1. Create missing workspace directories and user-owned baseline files.\n2. Load either legacy state version 1 or normalized version 2.\n3. Classify and remove only proven active generated adopted pages.\n4. Save normalized state version 2 containing only `page_index` identity/type/title and active/archived status.\n5. Refresh managed design assets, safe project placeholders, and the single VS Code task.\n6. Install or refresh the three agent skills.\n7. Render the dashboard and validate required readable outputs.\n8. Report preserved legacy pages and skill collisions; return failure if agent setup is incomplete.\n\n`update` reuses managed-surface and skill installation functions for compatibility, while documentation tells users to rerun `init` for setup and upgrades. A separate hidden update phase was rejected because it recreates the multi-command setup this change removes.\n\n### 4. Legacy cleanup requires a complete positive proof\n\nOnly an active `iris/pages/<id>` directory is eligible. The migration requires all of:\n\n- a legacy state entry whose source kind is Markdown;\n- a normalized, repository-relative source exactly `README.md` or below `docs/` with a Markdown extension and no traversal;\n- a non-symlink page directory confined below `iris/pages`;\n- parseable `data.json` whose `id` equals the registry id and whose tags contain `adopted-doc`;\n- a valid page id;\n- registry `data_hash` and `content_hashes[\"pages/<id>/data.json\"]` both matching SHA-256 of the exact current data bytes.\n\nThe migration removes only that page directory, registry entry, and corresponding legacy hashes. Missing fields, malformed data, unsafe paths, or any mismatch preserves the page and emits a warning. Prefixes, titles, prose, or tags alone never prove ownership. Archived records are normalized but preserved.\n\nThis narrow conjunction trades aggressive cleanup for data safety. Users can manually archive or remove a preserved ambiguous page after review.\n\n### 5. Remove product sync state without weakening ordinary rendering\n\nVersion 2 state keeps `page_index` because rendering registers active pages and archive navigation needs historical entries. Remove `source`, `data_hash`, `content_hashes`, `last_synced_sha`, and the `stale` status after migration. Rendering writes registry identity/status directly and `archive` retains only ordinary registry metadata.\n\nRemove README briefing extraction and stale display/count logic from the dashboard template. Empty-state and project-placeholder copy points to `iris init`, agent skills, and explicit content/render commands. Generic report Markdown fields and session-ingestion source evidence remain unrelated and unchanged.\n\n### 6. Package and generated-output verification are release contracts\n\nExtend package verification and the installed smoke test to inspect `npm pack --json`, install the tarball into an unrelated temporary directory, run `iris init` without the source checkout as an asset provider, and assert the canonical template plus all three generated skills exist. The smoke test also reruns init and uses an existing content command to prove the installed workflow remains usable.\n\nTracked `iris/` dogfood is regenerated by building the CLI and running its migration/init/render path. No generated HTML, CSS, JavaScript, state, or adopted page is hand-edited.\n\n## Risks / Trade-offs\n\n- [Ambiguous legacy record survives] → Preserve it with an actionable warning; data safety outranks cosmetic cleanup.\n- [State migration fails after partial filesystem work] → Classify before deletion, use exact confined targets, save normalized state after successful removals, and cover rerun idempotence.\n- [Skill collision leaves setup incomplete] → Preserve the file, finish safe independent work, return a user error, and name the exact resolution path.\n- [Three generated files drift] → Generate all from one packaged template and test normalized surface parity.\n- [Ignored repository agent files hide package omissions] → Treat the packed tarball file list and installed smoke as the release evidence.\n- [Broad sync removal damages OpenSpec tooling] → Scope code/docs searches to the `iris sync` product surface and assert OpenSpec skill/command files remain present.\n- [Generated dogfood deletions resemble hand editing] → Perform them only through the built CLI migration and verify the final tree with tests and HTML integrity checks.\n\n## Migration Plan\n\n1. Add version-tolerant state loading and conservative adopted-page classification tests before removing legacy metadata consumers.\n2. Add the packaged canonical skill and managed-region installer with collision, atomicity, confinement, rerun, and upgrade tests.\n3. Reorder `init` around migration, skill installation, and final render; keep `update` delegating to the shared safe refresh path.\n4. Remove CLI routes, adoption/sync implementation, stale/source/hash state, template copy, and coupled tests while retaining archive/update behavior.\n5. Update documentation and package verification.\n6. Build the CLI, run `iris init` against this repository to migrate the six proven active dogfood mirrors, and run `iris render --all`; inspect the resulting diff instead of editing generated files.\n7. Run focused tests, strict OpenSpec verification, spec sync/archive, and the complete repository gate before the single commit and PR.\n\nRollback before merge is the branch diff. After release, a preserved legacy page can be recovered from version control; user-owned or ambiguous pages are never automatically deleted. Version 2 state intentionally cannot recreate retired adopted-source monitoring, so rollback to an older CLI requires restoring the previous state file from version control or backup.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "1. One packaged canonical skill with three repository targets",
+            "2. Hash-verified managed regions preserve user ownership",
+            "3. `init` orchestrates migration, managed surfaces, skills, and rendering",
+            "4. Legacy cleanup requires a complete positive proof",
+            "5. Remove product sync state without weakening ordinary rendering",
+            "6. Package and generated-output verification are release contracts",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-agent-first-initialization/tasks.md",
+          "title": "1. Lock migration and state safety",
+          "raw": "## 1. Lock migration and state safety\n\n- [x] 1.1 Add version-tolerant state parsing and tests for normalized version 2 registry data while retaining the legacy fields needed during migration.\n- [x] 1.2 Implement confined positive-proof classification for active adopted-document records and cover proven removal, hash mismatch, partial metadata, malformed data, unsafe paths, symlinks, user-created lookalikes, and archived-record preservation.\n- [x] 1.3 Normalize migrated state to the minimal page registry and verify repeated migration is idempotent.\n\n## 2. Package and install the canonical agent skill\n\n- [x] 2.1 Add one canonical packaged `iris-workspace` skill template describing the supported content workflow without product adopt/sync instructions.\n- [x] 2.2 Implement the three-surface skill generator with ownership/version/digest markers, confinement and symlink guards, atomic writes, and canonical-body parity.\n- [x] 2.3 Add tests for first install, unchanged rerun, managed upgrade, outside-marker preservation, edited-body collision, unmarked/malformed targets, sibling preservation, and isolated write failure.\n\n## 3. Make init the complete setup flow\n\n- [x] 3.1 Reorder `iris init` to scaffold, migrate, normalize state, refresh managed workspace surfaces, install skills, render, validate outputs, and report incomplete setup conflicts.\n- [x] 3.2 Keep `iris update` compatible by reusing the safe managed-surface and skill installer while making `iris init` the documented setup and upgrade command.\n- [x] 3.3 Extend lifecycle/init tests for first run, rerun, user configuration/pages/archive preservation, unrelated VS Code tasks, and continued use of ordinary content commands.\n\n## 4. Retire product adoption and synchronization\n\n- [x] 4.1 Remove `adopt` and `sync` from CLI routing and help and assert both names are rejected as unknown Iris commands.\n- [x] 4.2 Remove adoption/sync implementation and adopted-source/hash/stale contracts while retaining archive, update, render registration, session-source evidence, and generic report Markdown support.\n- [x] 4.3 Remove stale/adopted README assumptions from dashboard data and Aperture templates and update navigation/accessibility assertions for the agent-first empty state.\n- [x] 4.4 Assert OpenSpec `/opsx:sync` and `openspec-sync-specs` instruction surfaces remain present and unchanged in purpose.\n\n## 5. Verify installed packaging and offline behavior\n\n- [x] 5.1 Add the canonical template path to the npm allowlist and release-package required-file checks.\n- [x] 5.2 Extend the packed-install smoke test to inspect the tarball payload, initialize in an unrelated temporary repository, verify all three skills, rerun idempotently, and create/render an ordinary page without source-checkout assets or runtime network access.\n- [x] 5.3 Run focused packaging and installed smoke checks and resolve any path differences across the supported Node platforms.\n\n## 6. Update documentation and regenerate dogfood\n\n- [x] 6.1 Update `README.md`, `docs/cmds.md`, `docs/tech.md`, `docs/design-system.md`, and `docs/status.md` for the one-command flow, installed surfaces, preservation policy, explicit rendering, and removal of product adoption/synchronization.\n- [x] 6.2 Build the CLI and run its migration/init/render path against this repository to remove only the six proven active adopted dogfood pages and regenerate state, design assets, project placeholders, and dashboard HTML.\n- [x] 6.3 Inspect the generated diff and run HTML/link integrity checks to prove no generated file was hand-edited and no user-owned page or archive was lost.\n\n## 7. Complete change verification\n\n- [x] 7.1 Run lint, token lint, typecheck, the full Vitest suite, HTML integrity, and packed-install smoke as the complete repository gate.\n- [x] 7.2 Run strict OpenSpec validation and the verification workflow, reconcile every requirement and scenario with code/test evidence, and leave no incomplete implementation task before spec sync and archive.\n",
+          "headings": [
+            "1. Lock migration and state safety",
+            "2. Package and install the canonical agent skill",
+            "3. Make init the complete setup flow",
+            "4. Retire product adoption and synchronization",
+            "5. Verify installed packaging and offline behavior",
+            "6. Update documentation and regenerate dogfood",
+            "7. Complete change verification"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 21,
+            "open": 0,
+            "total": 21
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "agent-first-initialization",
+          "path": "changes/archive/2026-08-21-agent-first-initialization/specs/agent-first-initialization/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-agent-first-initialization/specs/agent-first-initialization/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nMake a single installed Iris command establish and safely upgrade the local visual workspace and its agent-facing instructions without requiring repository-document ingestion or network access.\n\n## ADDED Requirements\n\n### Requirement: one-command agent-first setup\nThe system MUST make `iris init` the complete project setup and upgrade flow for an installed Iris CLI.\n\n#### Scenario: first initialization\n- **WHEN** a user runs `iris init` in a repository with no Iris workspace\n- **THEN** the system MUST create the usable local workspace, install the supported agent-facing Iris skill surfaces, and render the dashboard in that operation\n\n#### Scenario: repeated initialization\n- **WHEN** a user runs `iris init` again in an initialized repository\n- **THEN** the system MUST refresh Iris-managed outputs idempotently without requiring `iris update`, `iris adopt`, or `iris sync` as a setup step\n\n#### Scenario: initialized repository has content commands\n- **WHEN** initialization completes successfully\n- **THEN** agents and users MUST still be able to use the existing draft, render, report, archive, publish, export, and open commands\n\n### Requirement: canonical multi-agent skill installation\nThe system MUST generate supported agent skill files from one canonical Iris-owned skill source rather than maintaining independent instruction copies.\n\n#### Scenario: supported skill surfaces are installed\n- **WHEN** `iris init` installs agent guidance\n- **THEN** it MUST provide the `iris-workspace` skill to the generic/Codex, Claude, and GitHub Copilot repository skill locations\n\n#### Scenario: unrelated agent content exists\n- **WHEN** a supported skill directory already contains sibling skills or unrelated files\n- **THEN** initialization MUST leave that content unchanged\n\n### Requirement: managed skill preservation\nThe system MUST identify its generated skill content with verifiable managed ownership metadata and fail safely around user-owned or modified content.\n\n#### Scenario: managed content is intact\n- **WHEN** a generated Iris skill has valid ownership markers and its managed content matches the recorded digest\n- **THEN** initialization MUST update only that managed content and preserve user-authored bytes outside the managed boundary\n\n#### Scenario: managed content was edited\n- **WHEN** the managed content no longer matches its recorded digest\n- **THEN** initialization MUST preserve the file and report an actionable collision instead of overwriting the edit\n\n#### Scenario: target is unmarked or malformed\n- **WHEN** the target skill file is user-owned, unmarked, partially marked, misordered, unsafe, or outside the repository boundary\n- **THEN** initialization MUST not truncate, replace, or follow it and MUST report the affected surface\n\n### Requirement: packaged offline initialization\nThe installed Iris package MUST contain every template and runtime file required for initialization after the package itself has been obtained.\n\n#### Scenario: installed package initializes offline\n- **WHEN** a user runs `iris init` from a packed or globally installed Iris package with no repository checkout or network access\n- **THEN** the command MUST generate the workspace and agent skills entirely from packaged local assets\n\n#### Scenario: package payload is verified\n- **WHEN** the release package is built\n- **THEN** release verification MUST fail if the canonical agent template or its installed generator is absent from the package payload\n\n### Requirement: safe retirement of adopted document records\nThe system MUST remove a legacy adopted-document page only when Iris can positively prove that the exact record remains an unmodified generated mirror.\n\n#### Scenario: legacy generated mirror is proven\n- **WHEN** legacy state provenance, a safe README or docs source path, page identity, generated metadata, and stored and current content digests all agree\n- **THEN** initialization MAY remove that exact generated page and normalize the state before rendering\n\n#### Scenario: ownership proof is incomplete\n- **WHEN** any ownership, path, identity, metadata, or digest check is missing or mismatched\n- **THEN** initialization MUST preserve the page and report it for manual review\n\n#### Scenario: arbitrary user page resembles an adopted page\n- **WHEN** a user-created page has a `doc-` prefix, an `adopted-doc` tag, source-like prose, or only some legacy fields\n- **THEN** initialization MUST NOT treat those hints alone as permission to delete the page\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: one-command agent-first setup",
+              "Scenario: first initialization",
+              "Scenario: repeated initialization",
+              "Scenario: initialized repository has content commands",
+              "Requirement: canonical multi-agent skill installation",
+              "Scenario: supported skill surfaces are installed",
+              "Scenario: unrelated agent content exists",
+              "Requirement: managed skill preservation",
+              "Scenario: managed content is intact",
+              "Scenario: managed content was edited",
+              "Scenario: target is unmarked or malformed",
+              "Requirement: packaged offline initialization",
+              "Scenario: installed package initializes offline",
+              "Scenario: package payload is verified",
+              "Requirement: safe retirement of adopted document records",
+              "Scenario: legacy generated mirror is proven",
+              "Scenario: ownership proof is incomplete",
+              "Scenario: arbitrary user page resembles an adopted page"
+            ],
+            "requirements": [
+              "one-command agent-first setup",
+              "canonical multi-agent skill installation",
+              "managed skill preservation",
+              "packaged offline initialization",
+              "safe retirement of adopted document records"
+            ],
+            "scenarios": [
+              "first initialization",
+              "repeated initialization",
+              "initialized repository has content commands",
+              "supported skill surfaces are installed",
+              "unrelated agent content exists",
+              "managed content is intact",
+              "managed content was edited",
+              "target is unmarked or malformed",
+              "installed package initializes offline",
+              "package payload is verified",
+              "legacy generated mirror is proven",
+              "ownership proof is incomplete",
+              "arbitrary user page resembles an adopted page"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        },
+        {
+          "capability": "project-lifecycle-automation",
+          "path": "changes/archive/2026-08-21-agent-first-initialization/specs/project-lifecycle-automation/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-agent-first-initialization/specs/project-lifecycle-automation/spec.md",
+            "title": "MODIFIED Requirements",
+            "raw": "## MODIFIED Requirements\n\n### Requirement: lifecycle-aware project bootstrap\nThe system MUST provide one project bootstrap flow that creates or refreshes the local structure needed for page generation, dashboard rendering, managed updates, and supported agent skill use without ingesting general repository documentation.\n\n#### Scenario: user initializes the project\nWHEN a user runs `iris init` in a repository\nTHEN the system MUST create or safely refresh the required `iris/` structure, scaffold managed task metadata, install supported agent skills, and render the dashboard.\n\n#### Scenario: repository contains README or docs markdown\nWHEN a user runs `iris init` in a repository containing `README.md` or `docs/**/*.md`\nTHEN the system MUST NOT automatically copy, mirror, hash, monitor, or create Iris page records from those files.\n\n### Requirement: archival and cleanup\nThe system MUST provide a clear archiving path that removes a user-selected page from the active feed while preserving its historical generated artifact and registry navigation.\n\n#### Scenario: a page becomes outdated\nWHEN a user runs the archive command for an existing active page\nTHEN the archive command MUST move that exact page into the archive state and update the page registry and dashboard consistently.\n\n## REMOVED Requirements\n\n### Requirement: incremental sync and stale-state awareness\n**Reason**: Explicit `iris init` and `iris render --all` operations replace product synchronization; adopted-source monitoring and stale-source state no longer belong in the agent-first workspace.\n\n**Migration**: Run `iris init` once to migrate legacy state and then use `iris render --all` when page contracts or repository-backed explicit views need regeneration.\n\n### Requirement: doc adoption and mirroring\n**Reason**: Iris no longer ingests general project documentation, and agents use installed skills plus explicit content commands instead of README/docs mirrors.\n\n**Migration**: Preserve user-owned pages, allow `iris init` to remove only positively proven unmodified generated mirrors, and create intentional Iris content with the existing report, feature, bug, idea, or plan commands.\n",
+            "headings": [
+              "MODIFIED Requirements",
+              "Requirement: lifecycle-aware project bootstrap",
+              "Scenario: user initializes the project",
+              "Scenario: repository contains README or docs markdown",
+              "Requirement: archival and cleanup",
+              "Scenario: a page becomes outdated",
+              "REMOVED Requirements",
+              "Requirement: incremental sync and stale-state awareness",
+              "Requirement: doc adoption and mirroring"
+            ],
+            "requirements": [
+              "lifecycle-aware project bootstrap",
+              "archival and cleanup",
+              "incremental sync and stale-state awareness",
+              "doc adoption and mirroring"
+            ],
+            "scenarios": [
+              "user initializes the project",
+              "repository contains README or docs markdown",
+              "a page becomes outdated"
+            ],
+            "operations": [
+              "MODIFIED",
+              "REMOVED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-design-system-aperture",
+      "path": "changes/archive/2026-08-21-design-system-aperture",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-design-system-aperture/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-design-system-aperture/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe generated dashboard is functional but visually generic and leads with an empty work list instead of the repository briefing a newcomer needs. Aperture establishes an offline-safe visual identity and information hierarchy while preserving deterministic `file://` rendering.\n\n## What Changes\n\n- Replace the generated token palette and typography/motion values with the Aperture Tokens 2.0 contract, including automated contrast checks for both themes.\n- Restyle and extend the generated base component set with aperture marks, stat tiles, pills, callouts, timelines, keyboard hints, and command-specific empty states.\n- Reorder the generated dashboard into briefing hero, health strip, architecture placeholder, work surface, and project-docs strip.\n- Preserve keyboard shortcuts, visible focus, reduced-motion behavior, 360 px responsiveness, classic deferred scripts, and zero network requests.\n- Exclude vendored assets, Mermaid rendering, and chart blocks; those remain later changes.\n\n## Capabilities\n\n### New Capabilities\n- `aperture-design-system`: deterministic tokens, components, accessibility behavior, and dashboard information architecture for generated iris HTML.\n\n### Modified Capabilities\n\nNone.\n\n## Impact\n\n- Affects `src/templates/design.ts`, `src/commands/init.ts`, token validation, generated `iris/design/*`, generated dashboard/project HTML, and focused tests.\n- Adds no runtime dependency or network request and does not change page data contracts.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-design-system-aperture/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe generated HTML already uses a token stylesheet, a shared base stylesheet, and one classic deferred script. The redesign must preserve those boundaries, work from `file://`, and regenerate the checked-in `iris/` dogfood output from source templates rather than editing output by hand.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Make dark theme the source palette and derive a contrast-safe light theme.\n- Keep every generated CSS literal in the token stylesheet and strengthen validation around the expanded contract.\n- Establish the Aperture component vocabulary and newcomer-first dashboard sequence without changing page contracts.\n- Preserve deterministic markup, keyboard behavior, reduced-motion fallback, and narrow-screen usability.\n\n**Non-Goals:**\n- Implement `iris vendor`, load tier-1 fonts, or introduce third-party assets.\n- Add Mermaid execution, diagram snapshots, chart contracts, or chart renderers.\n- Add a browser renderer or change PNG/PDF export behavior.\n\n## Decisions\n\n- Keep `src/templates/design.ts` as the sole source for generated tokens, component CSS/JS, and HTML. This preserves the current generator contract and avoids a second styling pipeline.\n- Expand token lint with a declared-token reference pass plus explicit WCAG contrast pairs for both themes. A generic CSS engine would add disproportionate dependency and maintenance cost for a fixed token contract.\n- Render the architecture area as a semantic placeholder that names `iris vendor` and the later diagram workflow. Fabricating a diagram would blur the intentionally deferred step 4–5 boundary.\n- Derive briefing copy from deterministic local project metadata and adopted README presence; use an instructional fallback when no adopted source exists. No prose generation or network access is introduced.\n- Use CSS transforms only for the one-time aperture opening cue, with segments already visible in the reduced-motion static frame. All routine transitions use motion tokens.\n- Keep `/` and `t` in the existing classic script, and represent their shortcuts with visible `kbd` hints. No module script or framework is introduced.\n\n## Risks / Trade-offs\n\n- [Fixed contrast-pair validation can miss future component combinations] → Validate every foreground/background pairing introduced by this change and require new pairs to be registered alongside new tokens.\n- [Dashboard briefing has limited source data] → Prefer explicit local metadata and command-specific empty states over inferred prose.\n- [Generated dogfood drift] → Re-run the source CLI against this repository and retain HTML/link/token checks in the phase gate.\n- [Animation obscures content] → Keep the ring readable at frame zero and disable animation/transitions under reduced motion.\n\n## Migration Plan\n\n1. Replace generated token values and extend token validation.\n2. Replace generated component styles/markup and preserve existing interactions.\n3. Reorder dashboard markup and add deterministic briefing/health/architecture content.\n4. Regenerate checked-in dogfood output and run the full phase gate.\n5. Roll back by reverting the phase commit; page contracts and state remain compatible.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-design-system-aperture/tasks.md",
+          "title": "1. Tokens 2.0",
+          "raw": "## 1. Tokens 2.0\n\n- [x] 1.1 Replace the generated dark/light palette, spectrum, type, radius, leading, elevation, and motion tokens with the Aperture contract.\n- [x] 1.2 Extend token lint to validate declared references and 4.5:1 contrast pairs in both themes.\n- [x] 1.3 Add regression coverage for the expanded token contract and contrast failures.\n\n## 2. Components 2.0\n\n- [x] 2.1 Restyle the shared base components and add aperture, stat-tile, pill, callout, timeline, kbd, and command-specific empty-state styles.\n- [x] 2.2 Update page/dashboard markup so type and status color always has a text, icon, or position signal.\n- [x] 2.3 Preserve visible focus, reduced-motion static presentation, classic-script behavior, and print styling.\n\n## 3. Dashboard information architecture\n\n- [x] 3.1 Reorder the dashboard into briefing hero, health strip, architecture placeholder, work surface, and docs strip.\n- [x] 3.2 Preserve `/` filter and `t` theme shortcuts and make the layout usable at 360 px.\n- [x] 3.3 Update initialization/render inputs and tests for deterministic briefing and empty-state content.\n\n## 4. Dogfood and verification\n\n- [x] 4.1 Regenerate the checked-in `iris/` tree through the CLI without hand-editing generated output.\n- [x] 4.2 Verify OpenSpec, token lint, HTML integrity, tests, and install smoke gates.\n",
+          "headings": [
+            "1. Tokens 2.0",
+            "2. Components 2.0",
+            "3. Dashboard information architecture",
+            "4. Dogfood and verification"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 11,
+            "open": 0,
+            "total": 11
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "aperture-design-system",
+          "path": "changes/archive/2026-08-21-design-system-aperture/specs/aperture-design-system/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-design-system-aperture/specs/aperture-design-system/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nDefine the deterministic visual language and dashboard hierarchy that lets a newcomer understand an iris-enabled repository from a single offline HTML entry point.\n\n## ADDED Requirements\n\n### Requirement: Aperture token contract\nThe system MUST generate dark and light themes from the Aperture token contract, MUST keep style literals confined to the generated token stylesheet, and MUST validate text contrast at 4.5:1 or better.\n\n#### Scenario: generated styles are validated\n- **WHEN** a contributor runs the token validation command\n- **THEN** the validator MUST reject undeclared token names, forbidden style literals outside the token stylesheet, and configured foreground/background pairs below 4.5:1 in either theme\n\n### Requirement: Aperture component language\nThe system MUST provide generated component styles and semantic markup for aperture marks, stat tiles, pills, callouts, timelines, keyboard hints, and command-specific empty states.\n\n#### Scenario: meaning is communicated accessibly\n- **WHEN** a generated page uses type or status color, interactive controls, or motion\n- **THEN** the page MUST provide a non-color signal, visible keyboard focus, and a static reduced-motion presentation\n\n### Requirement: newcomer-first dashboard hierarchy\nThe generated dashboard MUST order its primary content as briefing hero, health strip, architecture pane, work surface, and project-docs strip.\n\n#### Scenario: repository has no generated work pages\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n### Requirement: deterministic responsive interaction\nThe generated dashboard MUST retain classic deferred-script interactions for filtering and theme switching and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the work filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: narrow viewport is used\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** the hero, health strip, architecture pane, work surface, and docs strip MUST remain readable without horizontal page overflow\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: Aperture token contract",
+              "Scenario: generated styles are validated",
+              "Requirement: Aperture component language",
+              "Scenario: meaning is communicated accessibly",
+              "Requirement: newcomer-first dashboard hierarchy",
+              "Scenario: repository has no generated work pages",
+              "Requirement: deterministic responsive interaction",
+              "Scenario: keyboard navigation is used",
+              "Scenario: narrow viewport is used"
+            ],
+            "requirements": [
+              "Aperture token contract",
+              "Aperture component language",
+              "newcomer-first dashboard hierarchy",
+              "deterministic responsive interaction"
+            ],
+            "scenarios": [
+              "generated styles are validated",
+              "meaning is communicated accessibly",
+              "repository has no generated work pages",
+              "keyboard navigation is used",
+              "narrow viewport is used"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-openspec-spec-browser",
+      "path": "changes/archive/2026-08-21-openspec-spec-browser",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-21\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nIris can render intentional work pages, but its dashboard does not expose the repository's actual OpenSpec workspace. Agents and maintainers need an offline, deterministic view of canonical specs and change progress without running OpenSpec, ingesting general documentation, or introducing background synchronization.\n\n## What Changes\n\n- Add a top-level dashboard tab labelled `Spec` that summarizes canonical specs, active changes, archived changes, project/config context, artifact availability, delta specs, and real Markdown task progress.\n- Parse the `openspec/` filesystem directly during `iris init` and `iris render --all`; keep single-page renders focused on page output and avoid a new refresh command because the existing explicit full-render flow has a clear user-facing purpose.\n- Support the repository's structured active/archive layouts and legacy archived Markdown while preserving nested capability paths and representing invalid, incomplete, or unknown layouts with escaped source and path-specific warnings.\n- Extend the Aperture dashboard hierarchy with accessible Work/Spec top-level navigation that remains deterministic, token-only, keyboard-operable, theme-safe, reduced-motion-safe, responsive at 360 px, and functional from `file://` without network requests or runtime modules.\n- Add bounded, symlink-safe filesystem traversal and fixture coverage for every observed layout plus nested capabilities and all delta-operation headings.\n- Regenerate Iris dogfood only through the CLI and update the user/technical/design documentation for the new surface and refresh contract.\n\n## Capabilities\n\n### New Capabilities\n\n- `openspec-spec-browser`: Deterministic parsing, normalization, refresh, fallback, and offline visualization of a repository's complete OpenSpec workspace.\n\n### Modified Capabilities\n\n- `aperture-design-system`: Extend the dashboard interaction and responsive hierarchy with a top-level accessible `Spec` tab while retaining the existing Work experience.\n\n## Impact\n\n- Affects initialization and full-render orchestration, dashboard view data, generated HTML/CSS/classic-script behavior, tests/fixtures, dogfood output, and project documentation.\n- Adds no runtime dependency on OpenSpec, no server, no framework, no network request, no watcher, and no new content-ingestion command.\n- OpenSpec files remain repository-owned inputs; Iris writes only its generated `iris/` output.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nSee `proposal.md` for motivation and the two delta specs for observable behavior. The current renderer rebuilds `iris/index.html` after page operations from page registry data, but it has no durable generated representation of OpenSpec. A single-page render, archive, report, or update may refresh the dashboard even though Phase 2 permits OpenSpec filesystem reads only during explicit workspace refreshes.\n\nThe repository currently proves four forms: canonical `specs/**/spec.md`, structured active change directories, structured archive directories, and legacy archived single Markdown files. Current capability paths are flat and current delta files primarily use `ADDED Requirements`; nested paths and the other delta operations need contract fixtures rather than claims of observed use.\n\n## Goals / Non-Goals\n\n**Goals:**\n\n- Define one versioned normalized snapshot shared by parsing, rendering, and tests.\n- Keep filesystem reads deterministic, bounded, confined, symlink-safe, and tolerant of isolated failures.\n- Preserve the exact repository-relative identity of every supported OpenSpec record.\n- Make Work and Spec peer dashboard views without regressing file-based navigation or accessibility.\n- Make refresh ownership explicit so unrelated page operations reuse the last generated Spec snapshot.\n\n**Non-Goals:**\n\n- Semantic validation equivalent to `openspec validate` or use of private OpenSpec APIs.\n- A full Markdown engine, editable spec UI, search index, watcher, server, or dedicated refresh command.\n- Mermaid, charts, browser rendering, or general repository-document ingestion.\n\n## Decisions\n\n### 1. Persist a generated `iris/spec.json` snapshot\n\nAdd a versioned derived snapshot below `iris/` rather than re-reading `openspec/` every time the dashboard is regenerated. `iris init` and an explicit full render (`iris render --all`, plus the existing compatible bare `iris render` form) parse and atomically replace the snapshot before rendering the dashboard. Single-page render, report, archive, and update paths load the existing snapshot without touching OpenSpec. A missing snapshot normalizes to an undetected/empty view until the next authorized refresh.\n\nThis keeps the refresh contract observable and testable. Re-parsing inside the dashboard renderer was rejected because that renderer is called by operations that are not OpenSpec refresh actions. Extracting state back out of old HTML was rejected because generated markup is an output, not a data store.\n\nThe snapshot shape is deliberately UI-neutral:\n\n```ts\ntype OpenSpecSnapshot = {\n  version: 1;\n  detected: boolean;\n  generated_at: null;\n  context: { project?: SourceDocument; config?: SourceDocument };\n  canonical_specs: CapabilityRecord[];\n  active_changes: ChangeRecord[];\n  archived_changes: ChangeRecord[];\n  legacy_archives: SourceDocument[];\n  warnings: ParseWarning[];\n};\n\ntype ChangeRecord = {\n  name: string;\n  path: string;\n  lifecycle: 'active' | 'archived';\n  layout: 'structured' | 'legacy';\n  artifacts: { proposal?: SourceDocument; design?: SourceDocument; tasks?: TaskDocument };\n  delta_specs: CapabilityRecord[];\n  completeness: 'complete' | 'incomplete' | 'unknown';\n  health: 'valid' | 'warning' | 'invalid';\n};\n```\n\n`generated_at` stays `null`; timestamps would make unchanged renders nondeterministic. Arrays and warnings sort by normalized repository-relative path. Lifecycle, completeness, task progress, and parser health are never collapsed into one status.\n\n### 2. Traverse only a documented allowlist with hard resource bounds\n\nImplement a framework-free parser module that begins at the lexical and real `openspec/` root, uses `lstat`, refuses symlinks at every visited component, and never follows entries outside that root. It recognizes only:\n\n- `config.yaml` and `project.md`;\n- `specs/**/spec.md` with the full relative capability path;\n- `changes/<name>/.openspec.yaml`, `proposal.md`, `design.md`, `tasks.md`, and `specs/**/spec.md`;\n- the same structured files below `changes/archive/<dated-name>/`;\n- top-level `changes/archive/*.md` as legacy records.\n\nTraversal is sorted and capped by named constants for depth, supported file count, and bytes per file. The implementation will start with depth 16, 1,000 supported files, and 1 MiB per file; hitting a bound yields a warning and preserves records already read. Unrecognized files remain untouched and are not treated as general documentation.\n\nRecursive convenience APIs and glob libraries were rejected: neither provides the required per-component symlink checks and bounded failure reporting as clearly as a small explicit walker.\n\n### 3. Use a conservative line parser, not a Markdown runtime\n\nParse only structural evidence Iris needs: headings, requirement/scenario headings, delta section labels, artifact presence, and task list items. A fence state machine excludes checkbox-like lines inside backtick or tilde fences. Supported task markers are Markdown list items with `[ ]`, `[x]`, or `[X]`; directory names and archive location never affect counts.\n\nEvery source document retains its bounded raw text for a readable fallback. The renderer escapes text and attribute values before inserting them into templates. It may turn recognized structures into semantic HTML, but it never passes raw source through as HTML and never evaluates YAML, Markdown, scripts, links, or code fences. YAML is displayed as escaped source and used only for simple presence/context labels; OpenSpec semantic validity remains outside Iris's claim.\n\nAdding a Markdown package was rejected because the required view is structural, not a general documentation renderer, and plugin/sanitizer policy would add dependency and execution surface for little benefit.\n\n### 4. Recover per path and make unknowns visible\n\nParsing returns records plus warnings instead of throwing for content problems. Missing expected artifacts make a structured change incomplete. Malformed headings, unreadable files, unsafe paths, bounds, and unsupported layouts attach stable warning codes and repository-relative paths. If raw text was read safely, the UI exposes it in an escaped `<pre>` disclosure. A failure to read one file cannot remove other valid records.\n\nOnly inability to write the CLI-owned snapshot/dashboard remains a command-level error. This separates untrusted input quality from Iris output integrity.\n\n### 5. Add peer Work/Spec tab panels to the generated dashboard\n\nExtend `dashboardHtml` to accept the normalized snapshot and render:\n\n```text\nWork | Spec\n       Overview: canonical, active, archived, open/completed tasks, warnings\n       Canonical specs\n       Active changes: proposal, design, tasks, delta specs\n       Archive: structured changes, then legacy Markdown\n```\n\nWithin Spec, native headings, lists, links/anchors, and `<details>` disclosures provide most navigation without JavaScript. The existing classic deferred script owns only tab selection, roving keyboard focus, filter focus, and theme state. Work and Spec use `role=\"tablist\"`, `role=\"tab\"`, and linked `tabpanel` elements; List/Board remains nested inside Work with unique control ids. Color is paired with lifecycle labels, warning text/icons, and section position.\n\nSpec styles extend the existing generated token/component strings and introduce no literal outside `TOKENS_CSS`. Long paths and source blocks wrap or scroll inside their component without causing page-level overflow at 360 px. Reduced motion disables view transitions while retaining immediate state changes.\n\nA separate `iris/spec.html` was rejected because the user contract calls for a top-level dashboard tab and a second entry point would fragment navigation and offline integrity checks.\n\n### 6. Verify with real-layout copies plus synthetic contract fixtures\n\nCreate temporary-repository fixtures for every observed layout: project/config, canonical specs, both current structured active states, structured archives, and legacy archive Markdown. Add synthetic fixtures for nested capabilities; ADDED, MODIFIED, REMOVED, and RENAMED sections; fenced fake checkboxes; absent/empty workspaces; partial/malformed changes; unsafe symlinks; oversized/deep/excess entries; unreadable paths where portable; and executable-looking source.\n\nParser tests assert normalized values and deterministic ordering. Orchestration tests prove only init/full render refresh the snapshot. Template/navigation tests assert escaping, unique ARIA relationships, keyboard behavior contracts, both themes, reduced-motion CSS, 360 px containment hooks, classic deferred scripts, and no remote URL. Dogfood is regenerated through the built CLI and checked by the existing HTML/link gate.\n\n## Risks / Trade-offs\n\n- [OpenSpec formats evolve beyond the recognized subset] → retain escaped source, stable unknown-layout warnings, and path identity so the dashboard degrades honestly.\n- [Large workspaces make initialization slow or output huge] → enforce explicit bounds, skip only excess inputs, and report what was omitted.\n- [Persisted snapshots become stale after manual spec edits] → label refresh behavior in the UI/docs and refresh only on `init` or a full render as specified.\n- [Nested tab behavior creates duplicate ids or confusing focus] → namespace Work/Spec and List/Board controls and cover ARIA/keyboard behavior in generated HTML tests.\n- [Platform filesystem permissions differ] → keep portable parser fixtures primary and conditionally test permission-specific failures where the platform supports them.\n- [Raw fallback text enlarges `iris/index.html`] → bound every source file and total file count; prefer collapsed disclosures and deterministic truncation warnings if the aggregate render budget is reached.\n\n## Migration Plan\n\n1. Add the parser, normalized model, atomic snapshot writer/loader, and fixtures without changing dashboard output.\n2. Wire snapshot refresh to init and full-render entry points while other render callers reuse the stored snapshot.\n3. Add Work/Spec information architecture, safe artifact rendering, and classic-script accessibility behavior.\n4. Update documentation and regenerate `iris/spec.json` plus `iris/index.html` through the built CLI.\n5. Verify the delta requirements, sync canonical specs, archive the change, and run the complete repository/install gate.\n\nRollback removes the parser/snapshot integration and regenerates `iris/` with the prior CLI. `openspec/` is read-only throughout, so no source migration or recovery is required.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "1. Persist a generated `iris/spec.json` snapshot",
+            "2. Traverse only a documented allowlist with hard resource bounds",
+            "3. Use a conservative line parser, not a Markdown runtime",
+            "4. Recover per path and make unknowns visible",
+            "5. Add peer Work/Spec tab panels to the generated dashboard",
+            "6. Verify with real-layout copies plus synthetic contract fixtures",
+            "Risks / Trade-offs",
+            "Migration Plan"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/tasks.md",
+          "title": "1. Build the normalized OpenSpec parser",
+          "raw": "## 1. Build the normalized OpenSpec parser\n\n- [x] 1.1 Define the versioned snapshot, source-document, capability, change, task-progress, artifact-completeness, lifecycle, health, and warning types with deterministic empty defaults.\n- [x] 1.2 Implement sorted allowlisted discovery for project/config, canonical specs, structured active/archive changes, change-local specs, and legacy archive Markdown while preserving nested capability paths.\n- [x] 1.3 Add per-component confinement and symlink refusal plus explicit depth, supported-file-count, per-file-size, and aggregate-output bounds with stable path-specific warnings.\n- [x] 1.4 Implement conservative line parsing for headings, requirements, scenarios, delta operations, and Markdown task checkboxes while excluding fenced examples.\n- [x] 1.5 Preserve bounded raw source for fallback rendering and isolate malformed, unreadable, unknown, or partial inputs without losing valid sibling records.\n\n## 2. Persist and orchestrate explicit snapshots\n\n- [x] 2.1 Add deterministic atomic write/load handling for the CLI-owned `iris/spec.json` snapshot without timestamps or OpenSpec runtime dependencies.\n- [x] 2.2 Refresh the snapshot during `iris init` before dashboard generation and represent missing or empty `openspec/` distinctly.\n- [x] 2.3 Refresh the snapshot for explicit full renders, including `iris render --all` and the compatible bare full-render form, before rebuilding the dashboard.\n- [x] 2.4 Make single-page render, report, archive, and update paths reuse the stored snapshot without reading `openspec/`.\n\n## 3. Implement the Work and Spec information architecture\n\n- [x] 3.1 Extend dashboard view data and templates with peer Work/`Spec` tab panels and unique nested List/Board control identities.\n- [x] 3.2 Render Spec overview counts, canonical specs, active changes with proposal/design/tasks/delta specs, structured archives, and legacy archives in deterministic order.\n- [x] 3.3 Render lifecycle, completeness, task progress, and parser health with independent textual/structural indicators and command-specific absent, empty, malformed, and partial states.\n- [x] 3.4 Escape every source and attribute value, expose readable fallback source in bounded disclosures, and prove executable-looking content cannot become active markup.\n- [x] 3.5 Extend the token-owned Aperture CSS and classic deferred script for tab semantics, roving keyboard focus, visible focus, theme parity, reduced-motion fallback, long-path handling, and 360 px responsiveness.\n\n## 4. Cover real and adversarial filesystem layouts\n\n- [x] 4.1 Add fixtures matching every repository-observed OpenSpec layout: project/config, canonical specs, structured active changes, structured archives, and legacy archived Markdown.\n- [x] 4.2 Add synthetic contract fixtures for nested capability paths and ADDED, MODIFIED, REMOVED, and RENAMED delta sections without presenting them as repository-observed formats.\n- [x] 4.3 Add parser tests for deterministic ordering, artifact availability, independent status dimensions, real checkbox totals, fenced fake checkboxes, malformed Markdown, and partial changes.\n- [x] 4.4 Add safety tests for symlinks, traversal/confinement, depth/count/size bounds, isolated filesystem failures where portable, raw-source escaping, and no content execution.\n- [x] 4.5 Add orchestration tests proving init/full render refresh snapshots while single-page render, report, archive, and update preserve the prior snapshot with no implicit OpenSpec read.\n- [x] 4.6 Extend generated-HTML tests for Work/Spec navigation, ARIA relationships, keyboard contracts, both themes, reduced motion, classic deferred scripts, zero remote requests, 360 px layout hooks, and `file://` link integrity.\n\n## 5. Document and dogfood the Spec browser\n\n- [x] 5.1 Update `README.md`, `docs/cmds.md`, `docs/tech.md`, `docs/design-system.md`, `docs/status.md`, and the installed `iris-workspace` skill for supported layouts, fallback limits, explicit refresh behavior, and OpenSpec CLI independence.\n- [x] 5.2 Build the CLI and regenerate this repository's `iris/spec.json`, managed assets, and dashboard through `iris init` and `iris render --all` without hand-editing generated output.\n- [x] 5.3 Inspect the generated diff and run HTML/link integrity checks to confirm readable Spec navigation, retained Work behavior, and no unexpected repository-document ingestion.\n\n## 6. Complete lifecycle verification\n\n- [x] 6.1 Run lint, token lint, typecheck, the full Vitest suite, HTML integrity, and packed-install smoke as the complete repository gate.\n- [x] 6.2 Run strict OpenSpec validation and the verification workflow, reconcile every requirement and scenario with code/test evidence, and leave no incomplete task before spec sync and archive.\n",
+          "headings": [
+            "1. Build the normalized OpenSpec parser",
+            "2. Persist and orchestrate explicit snapshots",
+            "3. Implement the Work and Spec information architecture",
+            "4. Cover real and adversarial filesystem layouts",
+            "5. Document and dogfood the Spec browser",
+            "6. Complete lifecycle verification"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 25,
+            "open": 0,
+            "total": 25
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "aperture-design-system",
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/specs/aperture-design-system/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-openspec-spec-browser/specs/aperture-design-system/spec.md",
+            "title": "MODIFIED Requirements",
+            "raw": "## MODIFIED Requirements\n\n### Requirement: newcomer-first dashboard hierarchy\nThe generated dashboard MUST provide top-level Work and `Spec` views, preserve the Work view's briefing hero, health strip, architecture pane, work surface, and project-docs strip, and organize the Spec view as overview, canonical specs, active changes with artifacts and delta specs, and archive.\n\n#### Scenario: repository has no generated work pages\n- **WHEN** a newcomer opens the dashboard from `file://`\n- **THEN** the dashboard MUST remain useful by naming the commands that populate the briefing, architecture, and work areas without making a network request\n\n#### Scenario: user opens the Spec view\n- **WHEN** a user activates the top-level tab labelled `Spec`\n- **THEN** the dashboard MUST show OpenSpec overview counts and navigable canonical, active-change, and archive sections while keeping the Work view available\n\n#### Scenario: state is communicated in the Spec view\n- **WHEN** canonical, active, archived, legacy, incomplete, or invalid records are displayed\n- **THEN** each state MUST have a textual or structural indicator in addition to any color encoding\n\n### Requirement: deterministic responsive interaction\nThe generated dashboard MUST retain classic deferred-script interactions for top-level view selection, filtering, theme switching, and keyboard navigation and MUST remain operable at a 360 px viewport.\n\n#### Scenario: keyboard navigation is used\n- **WHEN** the user presses `/` or `t` outside an editable field\n- **THEN** `/` MUST focus the relevant visible filter and `t` MUST toggle the theme without loading external assets\n\n#### Scenario: top-level tabs are keyboard operated\n- **WHEN** focus is on the Work/Spec tablist and the user presses supported arrow, Home, or End keys\n- **THEN** focus and selection MUST move according to the tab pattern with visible focus and correct tab/panel semantics\n\n#### Scenario: narrow viewport is used\n- **WHEN** the dashboard viewport is 360 px wide\n- **THEN** the Work and Spec views, their navigation, summaries, artifact content, warnings, and source fallbacks MUST remain readable without horizontal page overflow\n\n#### Scenario: reduced motion is requested\n- **WHEN** the user enables reduced-motion preferences\n- **THEN** switching views and revealing Spec content MUST have an equivalent static presentation without meaning-bearing information loss\n",
+            "headings": [
+              "MODIFIED Requirements",
+              "Requirement: newcomer-first dashboard hierarchy",
+              "Scenario: repository has no generated work pages",
+              "Scenario: user opens the Spec view",
+              "Scenario: state is communicated in the Spec view",
+              "Requirement: deterministic responsive interaction",
+              "Scenario: keyboard navigation is used",
+              "Scenario: top-level tabs are keyboard operated",
+              "Scenario: narrow viewport is used",
+              "Scenario: reduced motion is requested"
+            ],
+            "requirements": [
+              "newcomer-first dashboard hierarchy",
+              "deterministic responsive interaction"
+            ],
+            "scenarios": [
+              "repository has no generated work pages",
+              "user opens the Spec view",
+              "state is communicated in the Spec view",
+              "keyboard navigation is used",
+              "top-level tabs are keyboard operated",
+              "narrow viewport is used",
+              "reduced motion is requested"
+            ],
+            "operations": [
+              "MODIFIED"
+            ],
+            "warnings": []
+          }
+        },
+        {
+          "capability": "openspec-spec-browser",
+          "path": "changes/archive/2026-08-21-openspec-spec-browser/specs/openspec-spec-browser/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-openspec-spec-browser/specs/openspec-spec-browser/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a deterministic, offline dashboard view of the repository's complete OpenSpec filesystem so users and agents can inspect specifications, change artifacts, and real task progress without running OpenSpec.\n\n## ADDED Requirements\n\n### Requirement: explicit OpenSpec workspace snapshots\nThe system MUST detect and read the repository's `openspec/` workspace during `iris init` and `iris render --all`, and MUST NOT introduce implicit synchronization, background monitoring, or a separate refresh command for the same operation.\n\n#### Scenario: repository is initialized with OpenSpec\n- **WHEN** a user runs `iris init` in a repository containing `openspec/`\n- **THEN** the generated dashboard MUST contain a snapshot of that workspace from the files read during initialization\n\n#### Scenario: user explicitly refreshes all output\n- **WHEN** a user runs `iris render --all` after OpenSpec files change\n- **THEN** the dashboard MUST re-read the current OpenSpec filesystem and replace the previous generated snapshot\n\n#### Scenario: user renders one work page\n- **WHEN** a user runs `iris render <id>`\n- **THEN** the system MUST render that page without treating the operation as an OpenSpec workspace refresh\n\n### Requirement: complete normalized workspace view\nThe system MUST represent canonical specs, active changes, structured archived changes, legacy archived Markdown, project/config context, proposal, design, tasks, and change-local delta specs while keeping canonical, active, archived, legacy, invalid, and incomplete states distinct.\n\n#### Scenario: repository contains current structured layouts\n- **WHEN** canonical specs and structured active or archived changes are present\n- **THEN** the Spec view MUST preserve their repository-relative identities, lifecycle state, artifact availability, requirements, scenarios, and delta-operation labels\n\n#### Scenario: capability path is nested\n- **WHEN** a canonical or change-local spec exists below a nested capability path\n- **THEN** the Spec view MUST preserve and display the complete capability path without flattening ambiguous names\n\n#### Scenario: archive contains a legacy Markdown record\n- **WHEN** `openspec/changes/archive/` contains an archived single Markdown file rather than a structured change directory\n- **THEN** the Spec view MUST identify it as legacy archive content and keep it separate from structured archived changes\n\n### Requirement: evidence-based task and artifact status\nThe system MUST derive task totals only from actual Markdown task checkboxes and MUST keep task progress, artifact completeness, lifecycle state, and parser health as independent dimensions.\n\n#### Scenario: tasks contain checked and unchecked items\n- **WHEN** a structured change has task list items using supported Markdown checkbox syntax outside fenced code\n- **THEN** the Spec view MUST report completed, open, and total task counts from those items without inferring completion from the directory name or archive location\n\n#### Scenario: change is partially complete\n- **WHEN** a change is missing an expected artifact or contains open tasks\n- **THEN** the Spec view MUST label the available evidence and incompleteness without presenting the change as invalid or complete by assumption\n\n#### Scenario: checkbox-like text appears in a code fence\n- **WHEN** an artifact contains checkbox syntax inside fenced source examples\n- **THEN** that text MUST NOT contribute to task progress\n\n### Requirement: safe bounded filesystem parsing\nThe system MUST parse OpenSpec as untrusted local content using deterministic sorted traversal, repository confinement, bounded input, and symlink refusal, and MUST never execute file content.\n\n#### Scenario: content contains active markup or script text\n- **WHEN** an OpenSpec file contains HTML, script text, or other executable-looking content\n- **THEN** every rendered representation MUST escape the content so opening the dashboard cannot execute it\n\n#### Scenario: path is unsafe or input exceeds a bound\n- **WHEN** traversal encounters a symlink, path escape, unsupported file location, excessive depth, excessive file count, or oversized file\n- **THEN** the parser MUST skip the unsafe input, retain the rest of the workspace, and expose a path-specific actionable warning\n\n#### Scenario: filesystem entry cannot be read\n- **WHEN** one OpenSpec file or directory produces a filesystem error\n- **THEN** the parser MUST preserve successfully read entries and report the isolated failure rather than crashing the entire dashboard refresh\n\n### Requirement: graceful unknown and empty states\nThe system MUST render readable fallback states for absent, empty, malformed, unsupported, or partially complete OpenSpec workspaces.\n\n#### Scenario: repository has no OpenSpec directory\n- **WHEN** the dashboard snapshot is generated without an `openspec/` directory\n- **THEN** the Spec tab MUST explain that no OpenSpec workspace was detected without suggesting general-document ingestion\n\n#### Scenario: OpenSpec workspace is empty\n- **WHEN** `openspec/` exists but contains no supported project, spec, or change records\n- **THEN** the Spec tab MUST show a distinct empty-workspace state\n\n#### Scenario: artifact is malformed or unknown\n- **WHEN** a recognized path contains malformed Markdown or an unsupported layout\n- **THEN** the Spec tab MUST render escaped readable source when available, identify the affected path, and show an actionable warning without hiding other valid records\n\n### Requirement: offline runtime independence\nThe system MUST generate and operate the Spec view without requiring the OpenSpec CLI, a server, network access, runtime ES modules, telemetry, or general project-document ingestion.\n\n#### Scenario: dashboard opens directly from disk\n- **WHEN** a user opens `iris/index.html` through `file://` after generation\n- **THEN** the Spec view MUST remain navigable and readable using only local generated assets and classic deferred scripts with zero network requests\n\n#### Scenario: OpenSpec executable is unavailable\n- **WHEN** Iris initializes or renders in a repository whose `openspec/` files exist but no OpenSpec CLI is installed\n- **THEN** the filesystem snapshot and Spec view MUST still be generated successfully\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: explicit OpenSpec workspace snapshots",
+              "Scenario: repository is initialized with OpenSpec",
+              "Scenario: user explicitly refreshes all output",
+              "Scenario: user renders one work page",
+              "Requirement: complete normalized workspace view",
+              "Scenario: repository contains current structured layouts",
+              "Scenario: capability path is nested",
+              "Scenario: archive contains a legacy Markdown record",
+              "Requirement: evidence-based task and artifact status",
+              "Scenario: tasks contain checked and unchecked items",
+              "Scenario: change is partially complete",
+              "Scenario: checkbox-like text appears in a code fence",
+              "Requirement: safe bounded filesystem parsing",
+              "Scenario: content contains active markup or script text",
+              "Scenario: path is unsafe or input exceeds a bound",
+              "Scenario: filesystem entry cannot be read",
+              "Requirement: graceful unknown and empty states",
+              "Scenario: repository has no OpenSpec directory",
+              "Scenario: OpenSpec workspace is empty",
+              "Scenario: artifact is malformed or unknown",
+              "Requirement: offline runtime independence",
+              "Scenario: dashboard opens directly from disk",
+              "Scenario: OpenSpec executable is unavailable"
+            ],
+            "requirements": [
+              "explicit OpenSpec workspace snapshots",
+              "complete normalized workspace view",
+              "evidence-based task and artifact status",
+              "safe bounded filesystem parsing",
+              "graceful unknown and empty states",
+              "offline runtime independence"
+            ],
+            "scenarios": [
+              "repository is initialized with OpenSpec",
+              "user explicitly refreshes all output",
+              "user renders one work page",
+              "repository contains current structured layouts",
+              "capability path is nested",
+              "archive contains a legacy Markdown record",
+              "tasks contain checked and unchecked items",
+              "change is partially complete",
+              "checkbox-like text appears in a code fence",
+              "content contains active markup or script text",
+              "path is unsafe or input exceeds a bound",
+              "filesystem entry cannot be read",
+              "repository has no OpenSpec directory",
+              "OpenSpec workspace is empty",
+              "artifact is malformed or unknown",
+              "dashboard opens directly from disk",
+              "OpenSpec executable is unavailable"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-project-lifecycle-automation",
+      "path": "changes/archive/2026-08-21-project-lifecycle-automation",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-project-lifecycle-automation/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-project-lifecycle-automation/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe CLI contract already includes lifecycle operations such as `sync`, `adopt`, `archive`, `update`, `vendor`, and `open`, but the project still treats most of these as planned work rather than a connected operational flow. Without an explicit lifecycle layer, the generated dashboard and page set can drift from the repo, the docs, and the user’s real working state.\n\n## What Changes\n\n- Implement the project lifecycle commands that keep the generated `iris` structure aligned with the repository.\n- Add a sync path for incremental updates and stale-state detection.\n- Add a doc-adoption flow for mirroring README and related markdown artifacts into managed pages.\n- Add archive and update steps for keeping the dashboard clean while preserving historical context.\n\n## Capabilities\n\n### New Capabilities\n- project-lifecycle-automation: manage the local project surface, dashboard state, and page lifecycle without manual drift.\n\n### Modified Capabilities\n- init: expand the bootstrap flow to set up a more complete lifecycle-aware project skeleton.\n- sync: formalize the incremental update behavior for feed, stale marks, and re-render decisions.\n- adopt: add a concrete doc-mirroring workflow for markdown assets.\n- archive: define when a page is archived and how the registry is updated.\n\n## Impact\n\n- The project gains a coherent operational loop rather than isolated one-off commands.\n- Local documentation and generated pages stay closer to the actual repo state.\n- Users can manage the dashboard and generated artifact set without manually editing page metadata.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-project-lifecycle-automation/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe project has a clear product identity and a documented command surface, but several lifecycle commands are intentionally stubbed out. The design goal is to keep the generated `iris` workspace active, up-to-date, and understandable without forcing users to manually maintain page metadata, dashboard links, or markdown-derived pages.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Turn the CLI lifecycle commands into a coherent operational model.\n- Keep the generated project state aligned with repo files and documentation updates.\n- Archive stale pages without losing the underlying page data.\n- Maintain managed content boundaries so generated blocks do not wipe user work.\n\n**Non-Goals:**\n- Full multi-repo orchestration or remote sync.\n- Automatic opinionated content rewriting beyond the project’s own lifecycle operations.\n- A hosted backup or SaaS-driven project lifecycle.\n\n## Decisions\n\n- Treat lifecycle commands as the project’s operational layer rather than separate feature hacks.\n- Keep `iris` pages and the dashboard as the canonical project memory, with repo markdown and other artifacts providing data inputs.\n- Prefer selective refresh and stale-state toggles over broad re-renders after every shell event.\n- Preserve user-authored files outside managed boundaries while updating generated integration code or scaffolding.\n\n## Risks / Trade-offs\n\n- [Project drift] → Mitigation: add sync and stale-state checks before re-rendering or archiving pages.\n- [User edits getting clobbered] → Mitigation: keep managed/unmanaged boundaries explicit and update only managed blocks.\n- [Lack of strong lifecycle semantics] → Mitigation: define a narrow set of lifecycle commands and keep them modest and deterministic.\n\n## Migration Plan\n\n1. Complete the project scaffold and baseline lifecycle configuration.\n2. Implement the sync and stale-state decisions for the existing dashboard and page registry.\n3. Add the adopt flow for README/docs-driven pages.\n4. Add archive and update actions with boundary-safe behavior.\n5. Validate the lifecycle flow with a real repo example and smoke tests.\n\n## Open Questions\n\nNone at this stage; the command set is already defined in the CLI contract and should guide the implementation.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-project-lifecycle-automation/tasks.md",
+          "title": "1. Lifecycle scaffold and setup",
+          "raw": "## 1. Lifecycle scaffold and setup\n\n- [x] 1.1 Define the baseline `iris` project structure created by `init`.\n- [x] 1.2 Ensure the scaffold includes the page registry, dashboard surfaces, and lifecycle metadata needed for future commands.\n- [x] 1.3 Add a minimal validation pass for a fresh project init.\n\n## 2. Sync and stale-state detection\n\n- [x] 2.1 Implement the project sync rule set for incremental updates and stale marks.\n- [x] 2.2 Decide when a page should be refreshed versus left alone.\n- [x] 2.3 Add CLI output to make the state transitions discoverable.\n\n## 3. Document adoption and mirroring\n\n- [x] 3.1 Define the docs-to-page adoption contract for README and markdown assets.\n- [x] 3.2 Add the `adopt` flow so generated pages are created from repo documentation.\n- [x] 3.3 Ensure adopted content remains traceable back to the source document.\n\n## 4. Archive and update management\n\n- [x] 4.1 Add the archive flow for stale or superseded pages.\n- [x] 4.2 Implement the update flow for managed blocks without clobbering user content.\n- [x] 4.3 Keep dashboard and registry state consistent after lifecycle actions.\n\n## 5. Validation and rollout\n\n- [x] 5.1 Add smoke tests covering init, sync, adopt, archive, and update.\n- [x] 5.2 Document the command usage and expected lifecycle behavior.\n- [x] 5.3 Review the change against the project roadmap to confirm it stays scoped to lifecycle automation.\n",
+          "headings": [
+            "1. Lifecycle scaffold and setup",
+            "2. Sync and stale-state detection",
+            "3. Document adoption and mirroring",
+            "4. Archive and update management",
+            "5. Validation and rollout"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 15,
+            "open": 0,
+            "total": 15
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "project-lifecycle-automation",
+          "path": "changes/archive/2026-08-21-project-lifecycle-automation/specs/project-lifecycle-automation/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-project-lifecycle-automation/specs/project-lifecycle-automation/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nMake the `iris` project lifecycle explicit and reproducible by aligning the generated dashboard and page registry with the repository state and user workflow. The system must provide a safe path for boosting, syncing, archiving, and updating local project artifacts while preserving user-owned content outside managed blocks.\n\n## ADDED Requirements\n\n### Requirement: lifecycle-aware project bootstrap\nThe system MUST provide a project bootstrap flow that creates the local structure needed for page generation, dashboard rendering, and managed updates.\n\n#### Scenario: user initializes the project\nWHEN a user runs the init flow in a repository\nTHEN the system MUST create the required `iris/` structure, scaffold task metadata, and establish the baseline workflow for later lifecycle commands.\n\n### Requirement: incremental sync and stale-state awareness\nThe system MUST support a sync workflow that detects drift between repository state and the generated dashboard or page artifacts.\n\n#### Scenario: repo changes after a page was generated\nWHEN a project changes or a document is updated\nTHEN the sync flow MUST decide whether to refresh, flag stale state, or skip re-rendering when the data has not meaningfully changed.\n\n### Requirement: doc adoption and mirroring\nThe system MUST provide a workflow for adopting repository markdown or docs into managed page records without losing the original source.\n\n#### Scenario: user runs adopt on the project root\nWHEN the project contains markdown docs or starter README content\nTHEN the CLI MUST create or update the corresponding pages and keep them in the dashboard with the right metadata.\n\n### Requirement: archival and cleanup\nThe system MUST provide a clear archiving path that removes stale pages from the active feed while preserving historical references and generated artifacts.\n\n#### Scenario: a page becomes outdated\nWHEN a page is no longer relevant to the active workflow\nTHEN the archive command MUST move it into an archive state and update the page registry or index consistently.\n\n### Requirement: managed updates without user-content loss\nThe system MUST support update actions that refresh generated shims or managed file blocks without clobbering user-authored content outside those managed boundaries.\n\n#### Scenario: a project is updated after scaffold generation\nWHEN a user runs the update flow\nTHEN the system MUST preserve user edits outside managed sections and refresh only the managed integration points.\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: lifecycle-aware project bootstrap",
+              "Scenario: user initializes the project",
+              "Requirement: incremental sync and stale-state awareness",
+              "Scenario: repo changes after a page was generated",
+              "Requirement: doc adoption and mirroring",
+              "Scenario: user runs adopt on the project root",
+              "Requirement: archival and cleanup",
+              "Scenario: a page becomes outdated",
+              "Requirement: managed updates without user-content loss",
+              "Scenario: a project is updated after scaffold generation"
+            ],
+            "requirements": [
+              "lifecycle-aware project bootstrap",
+              "incremental sync and stale-state awareness",
+              "doc adoption and mirroring",
+              "archival and cleanup",
+              "managed updates without user-content loss"
+            ],
+            "scenarios": [
+              "user initializes the project",
+              "repo changes after a page was generated",
+              "user runs adopt on the project root",
+              "a page becomes outdated",
+              "a project is updated after scaffold generation"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    },
+    {
+      "name": "2026-08-21-session-ingestion-and-reporting",
+      "path": "changes/archive/2026-08-21-session-ingestion-and-reporting",
+      "lifecycle": "archived",
+      "layout": "structured",
+      "artifacts": {
+        "manifest": {
+          "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/.openspec.yaml",
+          "title": ".openspec",
+          "raw": "schema: spec-driven\ncreated: 2026-08-18\n",
+          "headings": [],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "proposal": {
+          "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/proposal.md",
+          "title": "Why",
+          "raw": "## Why\n\nThe project already models the page lifecycle around structured reports, but the workflow still depends on manual curation for session-derived work. Users are generating meaningful session artifacts locally yet the CLI does not fully convert that evidence into a reusable report contract, dashboard entry, or rendered artifact.\n\n## What Changes\n\n- Add a session ingestion path that turns local session data into a consistent report contract.\n- Normalize session metadata, checkpoint summaries, and tool activity into a report-friendly structure.\n- Attach file and reference evidence so the generated page is traceable back to the original work.\n- Render the resulting report in the same dashboard-first flow used by other `iris` pages.\n\n## Capabilities\n\n### New Capabilities\n- session-ingestion-and-reporting: import session history into a structured page and render the output in the project dashboard.\n\n### Modified Capabilities\n- report: expand the report workflow to accept session-derived input in addition to manual page creation.\n\n## Impact\n\n- Session-to-report conversion becomes repeatable instead of ad hoc.\n- Users can preserve and review AI work without losing evidence from prompts, tools, and checkpoints.\n- Reports become more trustworthy because they are grounded in actual work artifacts and branch context.\n",
+          "headings": [
+            "Why",
+            "What Changes",
+            "Capabilities",
+            "New Capabilities",
+            "Modified Capabilities",
+            "Impact"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "design": {
+          "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/design.md",
+          "title": "Context",
+          "raw": "## Context\n\nThe repository already defines a report contract and exposes a `report --from-session` command in the CLI contract docs. The missing work is the implementation path: turning session evidence into a normalized report, grounding the output in session files or checkpoints, and keeping the output in the same local-first rendering pipeline as other `iris` pages.\n\n## Goals / Non-Goals\n\n**Goals:**\n- Parse one or more session sources into a normal report record.\n- Extract branch names, work summaries, files touched, and references without requiring a PR to exist.\n- Keep the output deterministic and reviewable for later rendering.\n- Integrate the report into the existing page registry and dashboard flow.\n\n**Non-Goals:**\n- Remote session syncing or SaaS ingestion.\n- Full AI summarization beyond local, rule-based evidence extraction.\n- Replacing the manual report path when a user prefers to author a page by hand.\n\n## Decisions\n\n- Keep the ingestion pipeline local-first and file-based; support directories, dumped session JSON, and known session metadata tables.\n- Normalize the data into a canonical report schema before rendering so the rest of the engine can stay mostly unchanged.\n- Prefer factual extraction from session metadata over high-risk inference; the generated summary should be concise and evidence-backed.\n- Treat file paths, references, and checkpoints as first-class evidence rather than optional notes.\n\n## Risks / Trade-offs\n\n- [Noisy session data] → Mitigation: filter to known session tables and ignore irrelevant files while keeping the evidence path visible.\n- [Over-aggressive summarization] → Mitigation: use deterministic summaries based on session metadata and selective evidence, not freeform AI generation.\n- [Diverse session input formats] → Mitigation: support a small set of canonical adapters rather than a broad, unstable import matrix.\n\n## Migration Plan\n\n1. Map the session source format to a canonical internal report structure.\n2. Add metadata extraction for branch, summary, files, and references.\n3. Implement summary generation and validation rules for the resulting page contract.\n4. Render and register the report in the standard page output flow.\n5. Validate the CLI command with real session inputs and regression tests.\n\n## Open Questions\n\nNone at this stage; the implementation should remain narrow and evidence-driven.\n",
+          "headings": [
+            "Context",
+            "Goals / Non-Goals",
+            "Decisions",
+            "Risks / Trade-offs",
+            "Migration Plan",
+            "Open Questions"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": []
+        },
+        "tasks": {
+          "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/tasks.md",
+          "title": "1. Session source parsing",
+          "raw": "## 1. Session source parsing\n\n- [x] 1.1 Define the supported input shapes for the session ingestion workflow.\n- [x] 1.2 Implement a source adapter for local session directories and exported session dumps.\n- [x] 1.3 Validate that the parser can discover session metadata, turns, checkpoints, and references without requiring a remote service.\n\n## 2. Report normalization\n\n- [x] 2.1 Map session evidence into a canonical report contract.\n- [x] 2.2 Preserve branch, repo, timestamps, files touched, and reference links as structured fields.\n- [x] 2.3 Add a clean fallback for incomplete or partial data.\n\n## 3. Summary generation and validation\n\n- [x] 3.1 Build concise summary logic from session checkpoints and tool activity.\n- [x] 3.2 Surface workstream, status, and notable evidence in the report output.\n- [x] 3.3 Add validation rules to reject empty or malformed session sources.\n\n## 4. Rendering and registration\n\n- [x] 4.1 Generate or update the page record in the local registry.\n- [x] 4.2 Render the session-derived report through the normal HTML pipeline.\n- [x] 4.3 Verify the resulting page is discoverable in the generated dashboard or index.\n\n## 5. CLI and regression coverage\n\n- [x] 5.1 Wire the `report --from-session` command to the new adapter and output path.\n- [x] 5.2 Add regression tests for supported session inputs and bad input handling.\n- [x] 5.3 Document the expected usage and output contract for the session import flow.\n",
+          "headings": [
+            "1. Session source parsing",
+            "2. Report normalization",
+            "3. Summary generation and validation",
+            "4. Rendering and registration",
+            "5. CLI and regression coverage"
+          ],
+          "requirements": [],
+          "scenarios": [],
+          "operations": [],
+          "warnings": [],
+          "progress": {
+            "complete": 15,
+            "open": 0,
+            "total": 15
+          }
+        }
+      },
+      "delta_specs": [
+        {
+          "capability": "session-ingestion-and-reporting",
+          "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/specs/session-ingestion-and-reporting/spec.md",
+          "document": {
+            "path": "changes/archive/2026-08-21-session-ingestion-and-reporting/specs/session-ingestion-and-reporting/spec.md",
+            "title": "Purpose",
+            "raw": "## Purpose\n\nProvide a reliable local-first path for converting session history into a visual, versioned report page. The system must preserve evidence from the user session, translate it into the project report schema, and render it in a way that remains useful for later review and sharing.\n\n## ADDED Requirements\n\n### Requirement: session discovery and normalization\nThe system MUST support ingesting session data from a local directory or exported session bundle and MUST normalize the relevant files into a single report dataset.\n\n#### Scenario: user points the CLI at a session directory\nWHEN a user runs the report workflow with a session source\nTHEN the CLI MUST discover session metadata, turns, checkpoints, references, and file activity and MUST ignore irrelevant files unless they are part of the session dataset.\n\n#### Scenario: session data is partial or noisy\nWHEN session data is incomplete or contains extra non-session artifacts\nTHEN the system MUST still build a usable report while preserving only the evidence that can be mapped to the report contract.\n\n### Requirement: report content derived from session evidence\nThe system MUST turn session metadata into a report summary that includes the workstream, branch, status, changed files, and notable references.\n\n#### Scenario: session shows completed work\nWHEN a session contains concrete work, notes, or checkpoints\nTHEN the generated report MUST summarize the outcome in a concise, reviewable form and MUST keep the underlying evidence attached to the page.\n\n#### Scenario: a session includes PR or issue references\nWHEN evidence contains a linked PR, issue, or commit reference\nTHEN the report MUST surface the reference in a way that is searchable and visible in the generated contract.\n\n### Requirement: rendered page output\nThe system MUST create or update a page record and render the resulting report so it appears in the local dashboard or page registry.\n\n#### Scenario: report is generated from session input\nWHEN the report pipeline succeeds\nTHEN the CLI MUST emit a rendered page artifact and the page SHOULD be discoverable through the same dashboard workflow as other iris pages.\n\n#### Scenario: generation fails for invalid input\nWHEN the source input does not contain valid session evidence\nTHEN the system MUST stop with a clear validation error and MUST describe the missing or unsupported input format.\n\n### Requirement: local-first, offline-safe operation\nThe ingestion and reporting flow MUST require no external service call to generate the page and MUST operate purely from local files or a local session export.\n\n#### Scenario: offline usage\nWHEN a user runs the tool without network access\nTHEN the session ingestion workflow MUST still create a report contract and rendered output from local data.\n",
+            "headings": [
+              "Purpose",
+              "ADDED Requirements",
+              "Requirement: session discovery and normalization",
+              "Scenario: user points the CLI at a session directory",
+              "Scenario: session data is partial or noisy",
+              "Requirement: report content derived from session evidence",
+              "Scenario: session shows completed work",
+              "Scenario: a session includes PR or issue references",
+              "Requirement: rendered page output",
+              "Scenario: report is generated from session input",
+              "Scenario: generation fails for invalid input",
+              "Requirement: local-first, offline-safe operation",
+              "Scenario: offline usage"
+            ],
+            "requirements": [
+              "session discovery and normalization",
+              "report content derived from session evidence",
+              "rendered page output",
+              "local-first, offline-safe operation"
+            ],
+            "scenarios": [
+              "user points the CLI at a session directory",
+              "session data is partial or noisy",
+              "session shows completed work",
+              "a session includes PR or issue references",
+              "report is generated from session input",
+              "generation fails for invalid input",
+              "offline usage"
+            ],
+            "operations": [
+              "ADDED"
+            ],
+            "warnings": []
+          }
+        }
+      ],
+      "completeness": "complete",
+      "health": "valid",
+      "warnings": []
+    }
+  ],
+  "legacy_archives": [
+    {
+      "path": "changes/archive/2026-08-18-m0-scaffold.md",
+      "title": "M0 scaffold (archived)",
+      "raw": "# M0 scaffold (archived)\n\n- Proposed: bootstrap Node22.13 ESM TS strict CLI with schema validation, tests, docs, and CI.\n- Applied: package/tooling scaffold, command registry with init/render functional stubs, envelope + 5 type schemas, sad-path tests.\n- Archived: complete for milestone M0 acceptance baseline.\n",
+      "headings": [
+        "M0 scaffold (archived)"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    },
+    {
+      "path": "changes/archive/2026-08-18-m1-design-system.md",
+      "title": "M1 design system (archived)",
+      "raw": "# M1 design system (archived)\n\n- Proposed: establish tokenized design system and dashboard foundation with reduced-motion behavior.\n- Applied: tokens.css dark/light, base components (tabs/timeline/code-card/metrics/table/chart/mermaid wrappers), dashboard LIST|BOARD + signature canvas, token-lint in CI.\n- Archived: complete for milestone M1 baseline.\n",
+      "headings": [
+        "M1 design system (archived)"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    },
+    {
+      "path": "changes/archive/2026-08-18-m2-merge-friendly-branching.md",
+      "title": "M2 merge-friendly branching (archived)",
+      "raw": "# M2 merge-friendly branching (archived)\n\n- Proposed: establish a merge-friendly milestone workflow for this repo so the work can be merged incrementally and split into parallel branches without creating a large, hard-to-review change set.\n- Applied: captured a milestone plan with explicit acceptance criteria, a narrow foundation branch from main for shared groundwork, a sequence for merging that branch first, and follow-on parallel branches by concern (for example CLI behavior, rendering/templates, tests/docs). The plan also calls for small merge-ready PRs, rebase-on-main discipline, and milestone archival once the work is complete.\n- Archived: complete for milestone M2 branch orchestration baseline.\n",
+      "headings": [
+        "M2 merge-friendly branching (archived)"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    },
+    {
+      "path": "changes/archive/2026-08-18-m2-typed-templates-and-distribution.md",
+      "title": "M2 typed templates + distribution",
+      "raw": "# M2 typed templates + distribution\n\n- Proposed: move iris from scaffold/design-system baseline into a typed, contract-first rendering layer with distribution tooling for local publishing and shareable artifacts.\n- Status: proposed\n\n## Problem\n\nThe repo now has a strict CLI shell, valid JSON contract envelopes, and a tokenized offline dashboard. That foundation is sufficient to render deterministic HTML, but the project still lacks the template layer that turns each contract type into a reliable visual structure and the distribution surface that makes the render useful outside a single local repo.\n\n## Scope\n\n1. Typed template registry\n   - Define the canonical contract-to-template mapping for the core page types already modeled in the schema set.\n   - Ensure every template is deterministic, offline, and driven by contract data rather than ad hoc HTML.\n   - Require a contract schema validation gate before render.\n\n2. Template authoring model\n   - Add a reusable `template` abstraction with fixed section slots for text, metrics, timeline, code, charts, markdown, and flow views.\n   - Keep layout decisions in versioned template files instead of generator logic.\n   - Preserve reduced-motion behavior and the existing tokens-first design system.\n\n3. Distribution tooling\n   - Deliver a CLI path for publishing a rendered page as a portable static artifact.\n   - Add a local `iris publish` flow for gist-like or single-file publish targets without requiring a server.\n   - Support `iris report --from-session` as a structured extraction workflow for agent session artifacts.\n\n4. Package and installability\n   - Harden the local distribution story for a CLI install workflow (`brew` and local package install path).\n   - Keep all rendering and publish steps fully offline and file:// compatible.\n\n5. Quality gates\n   - Add contract-based template tests for each major type.\n   - Add snapshot-style render validation to prevent template regressions.\n   - Keep the existing token lint and typecheck gates in CI.\n\n## Acceptance criteria\n\n- Every supported contract type resolves to one typed template with a fixed, documented section structure.\n- Rendering fails fast when a contract is invalid, with clear schema errors and no partial output.\n- A published page can be generated as a standalone artifact without any server-side dependency.\n- `iris publish` and `iris report --from-session` are documented and runnable from a clean repo state.\n- The package install story remains local-first and offline-safe.\n- Dashboard, archive, and report outputs all use the same tokenized foundation and visual language.\n\n## Out of scope\n\n- SaaS hosting or remote render services.\n- Authentication or user accounts.\n- Telemetry or remote analytics.\n- Generic AI analysis engine features.\n- Any feature that depends on a live network at render time.\n\n## Dependencies\n\n- Completed M0 scaffold and schema validation baseline.\n- Completed M1 tokenized design system and dashboard foundation.\n- Existing contract schemas and CLI command structure.\n\n## Notes\n\nThis milestone should stay narrow: the goal is not a big platform rewrite, but a clean contract-to-template rendering layer that makes iris genuinely sharable and distributable without abandoning the local-first design philosophy.\n",
+      "headings": [
+        "M2 typed templates + distribution",
+        "Problem",
+        "Scope",
+        "Acceptance criteria",
+        "Out of scope",
+        "Dependencies",
+        "Notes"
+      ],
+      "requirements": [],
+      "scenarios": [],
+      "operations": [],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

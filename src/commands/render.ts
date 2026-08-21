@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
+import { loadOpenSpecSnapshot, writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import { validateContract } from '../lib/schemas.js';
 import { loadProjectState, saveProjectState, statePath } from '../lib/project-state.js';
 import {
@@ -24,7 +25,12 @@ async function listPageIds(pagesRoot: string): Promise<string[]> {
   }
 }
 
-export async function runRenderCommand(cwd: string, id?: string): Promise<void> {
+export async function runRenderCommand(
+  cwd: string,
+  id?: string,
+  options: { refreshOpenSpec?: boolean } = {},
+): Promise<void> {
+  if (options.refreshOpenSpec) await writeOpenSpecSnapshot(cwd);
   const pagesRoot = path.join(cwd, 'iris', 'pages');
   const allPageIds = await listPageIds(pagesRoot);
   const pageIds = id ? [id] : allPageIds;
@@ -112,5 +118,6 @@ export async function refreshDashboard(cwd: string): Promise<void> {
   );
 
   const indexPath = path.join(irisRoot, 'index.html');
-  await writeAlways(indexPath, dashboardHtml(path.basename(cwd), renderedPages, projectDocs));
+  const openSpec = await loadOpenSpecSnapshot(cwd);
+  await writeAlways(indexPath, dashboardHtml(path.basename(cwd), renderedPages, projectDocs, openSpec));
 }

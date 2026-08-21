@@ -15,6 +15,14 @@ Envelope schema plus per-type schemas; rendering is blocked on invalid contracts
 
 Data in (`data.json`) to deterministic html out (`page.html`); dashboard is static file://-compatible HTML.
 
+## OpenSpec filesystem model
+
+Iris reads OpenSpec as bounded, untrusted local input without invoking the OpenSpec CLI. A sorted allowlisted walker recognizes `project.md`, `config.yaml`, canonical `specs/**/spec.md`, structured active/archive change artifacts and delta specs, and legacy archive Markdown. It preserves nested capability paths, refuses symlinks and escapes, caps depth/file count/file bytes/aggregate bytes, and isolates errors by path.
+
+The parser extracts headings, requirements, scenarios, delta-operation labels, and task checkboxes outside fenced examples. It does not evaluate YAML, execute Markdown/HTML, or claim OpenSpec semantic validation. Unsupported or malformed inputs retain bounded escaped source and actionable warnings.
+
+`iris/spec.json` is a versioned deterministic generated snapshot with no timestamp. `iris init`, bare `iris render`, and `iris render --all` replace it atomically. Single-page render, report, archive, publish preparation, and update reuse the stored snapshot, so there is no watcher or hidden synchronization.
+
 ## Initialization and state model
 
 `iris init` is the single setup and upgrade operation. Version 2 state stores only the page registry needed for active/archive navigation. Explicit `iris render <id>|--all` regenerates page HTML and the dashboard; there is no document mirroring, source monitoring, stale-source state, watcher, or background synchronization.
@@ -64,3 +72,4 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-21 | Make npm the primary install path and gate publication on an exact release tag, full checks, OIDC trusted publishing, and provenance | The cross-platform packed CLI is already verified; Homebrew lacks the release URL and checksum required for an honest formula |
 | 2026-08-21 | Defer PNG/PDF export; prefer puppeteer-core only after accepting a browser-pinning and determinism policy | System Chrome avoids downloads but is not version-stable; Playwright's supported pinned browser adds a separate large download lifecycle |
 | 2026-08-21 | Make `iris init` the complete agent-first setup and upgrade operation | Removes document ingestion and hidden lifecycle coupling while shipping one canonical offline agent skill safely to three supported surfaces |
+| 2026-08-21 | Persist a bounded OpenSpec snapshot for the dashboard Spec tab | Keeps explicit refresh semantics while allowing every dashboard regeneration to remain deterministic and offline |

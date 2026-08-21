@@ -1,3 +1,10 @@
+import type {
+  OpenSpecCapability,
+  OpenSpecChange,
+  OpenSpecSnapshot,
+  OpenSpecSourceDocument,
+} from '../lib/openspec-workspace.js';
+
 export const TOKENS_CSS = `:root {
   --bg: #0b0e14;
   --surface-1: #12161f;
@@ -174,6 +181,8 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .architecture-pane .empty-state { max-width: 38rem; text-align: center; }
 .work-surface { display: grid; gap: var(--space-3); }
 
+.primary-tabs { margin-bottom: var(--space-4); padding: var(--space-2); width: fit-content; }
+.dashboard-panel { min-width: 0; }
 .toolbar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
 .tabs { display: flex; gap: var(--space-2); }
 .tab-button { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: var(--radius-1); padding: var(--space-2) var(--space-3); cursor: pointer; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
@@ -193,6 +202,24 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .card-id { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); overflow-wrap: anywhere; }
 .empty-state { padding: var(--space-5); color: var(--text-2); }
 .empty-state code { font-family: var(--font-mono); color: var(--accent-text); }
+
+.spec-stack { display: grid; gap: var(--space-5); min-width: 0; }
+.spec-overview { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-3); }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--space-3); }
+.spec-card { display: grid; gap: var(--space-3); padding: var(--space-4); min-width: 0; }
+.spec-card h3 { margin: 0; font-size: var(--size-3); }
+.spec-card-header, .spec-meta { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.spec-path { color: var(--text-2); overflow-wrap: anywhere; }
+.spec-artifacts { display: grid; gap: var(--space-2); }
+.spec-artifact { border-top: var(--border-1); padding-top: var(--space-2); min-width: 0; }
+.spec-artifact summary { cursor: pointer; color: var(--text-1); font-weight: var(--weight-medium); }
+.spec-source { max-height: calc(var(--space-6) * 8); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: var(--space-3); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); }
+.spec-list { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.spec-warning { border-left: calc(var(--space-1) / 2) solid var(--warn); padding-left: var(--space-3); }
+.spec-warning code { overflow-wrap: anywhere; }
+.health-valid { color: var(--ok); }
+.health-warning { color: var(--warn); }
+.health-invalid { color: var(--danger); }
 
 .board { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-3); }
 .board-col { display: grid; gap: var(--space-3); align-content: start; }
@@ -228,7 +255,7 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 @keyframes aperture-open { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .aperture .seg { animation: none; stroke-dashoffset: 0; }
-  .page-card, .stat-tile, .theme-toggle, .tab-button { transition: none; }
+  .page-card, .stat-tile, .theme-toggle, .tab-button, .dashboard-panel { transition: none; }
   .page-card:hover { transform: none; }
 }
 @media (max-width: 40rem) {
@@ -236,6 +263,9 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
   .briefing-hero { grid-template-columns: 1fr; }
   .aperture { justify-self: start; }
   .health-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .spec-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .spec-grid { grid-template-columns: minmax(0, 1fr); }
+  .primary-tabs { width: auto; }
   .toolbar, .filter-wrap { align-items: stretch; }
   .filter-wrap { width: 100%; }
   .filter-input { min-width: 0; width: 100%; }
@@ -254,33 +284,35 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 export const BASE_COMPONENTS_JS = `
 function setupTabs() {
   for (const group of document.querySelectorAll('[data-tabs]')) {
-    const buttons = group.querySelectorAll('[role="tab"]');
-    const panels = document.querySelectorAll('[data-tab-group="' + group.getAttribute('data-tabs') + '"]');
+    const buttons = Array.from(group.querySelectorAll('[role="tab"]'));
+    const groupId = group.getAttribute('data-tabs');
+    const panels = document.querySelectorAll('[data-tab-group="' + groupId + '"]');
+    const activate = (button, moveFocus) => {
+      buttons.forEach((it) => {
+        const selected = it === button;
+        it.setAttribute('aria-selected', String(selected));
+        it.setAttribute('tabindex', selected ? '0' : '-1');
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
+      });
+      if (moveFocus) button.focus();
+    };
     buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttons.forEach((it) => it.setAttribute('aria-selected', String(it === button)));
-        panels.forEach((panel) => {
-          panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
-        });
+      button.addEventListener('click', () => activate(button, false));
+      button.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const current = buttons.indexOf(button);
+        const next = event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? buttons.length - 1
+            : (current + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+        activate(buttons[next], true);
       });
     });
   }
-}
-
-function setupViewToggle() {
-  const listBtn = document.querySelector('[data-view="list"]');
-  const boardBtn = document.querySelector('[data-view="board"]');
-  const list = document.querySelector('[data-dashboard-list]');
-  const board = document.querySelector('[data-dashboard-board]');
-  if (!listBtn || !boardBtn || !list || !board) return;
-  const setView = (view) => {
-    list.hidden = view !== 'list';
-    board.hidden = view !== 'board';
-    listBtn.setAttribute('aria-selected', String(view === 'list'));
-    boardBtn.setAttribute('aria-selected', String(view === 'board'));
-  };
-  listBtn.addEventListener('click', () => setView('list'));
-  boardBtn.addEventListener('click', () => setView('board'));
 }
 
 function setupFilter() {
@@ -302,7 +334,8 @@ function setupKeyboardShortcuts() {
     );
     if (editing || event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.key === '/') {
-      const input = document.querySelector('[data-filter-input]');
+      const input = Array.from(document.querySelectorAll('[data-filter-input]'))
+        .find((candidate) => !candidate.closest('[hidden]'));
       if (input instanceof HTMLElement) {
         event.preventDefault();
         input.focus();
@@ -346,7 +379,6 @@ function setupTheme() {
 }
 
 setupTabs();
-setupViewToggle();
 setupFilter();
 setupTheme();
 setupKeyboardShortcuts();
@@ -819,10 +851,133 @@ function summaryLine(pages: DashboardPage[]): string {
   return pages.length === 1 ? '1 page' : `${pages.length} pages`;
 }
 
+function sourceDetails(label: string, document?: OpenSpecSourceDocument): string {
+  if (!document) return `<div class="spec-artifact"><span class="status-chip health-warning">missing ${escapeHtml(label)}</span></div>`;
+  const operations = document.operations
+    .map((operation) => `<span class="pill">${escapeHtml(operation)}</span>`)
+    .join('');
+  const summary = [
+    document.requirements.length > 0 ? `${document.requirements.length} requirements` : '',
+    document.scenarios.length > 0 ? `${document.scenarios.length} scenarios` : '',
+  ].filter(Boolean).join(' · ');
+  return `<details class="spec-artifact">
+    <summary>${escapeHtml(label)} · <span class="mono spec-path">${escapeHtml(document.path)}</span></summary>
+    <div class="spec-meta"><span class="mono">${escapeHtml(summary || 'readable source')}</span><span>${operations}</span></div>
+    <pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>
+  </details>`;
+}
+
+function capabilityCard(capability: OpenSpecCapability, label: string): string {
+  const health = capability.document.warnings.some((item) => item.code === 'malformed-spec')
+    ? 'invalid'
+    : capability.document.warnings.length > 0
+      ? 'warning'
+      : 'valid';
+  return `<article class="surface spec-card">
+    <div class="spec-card-header">
+      <div><span class="eyebrow">${escapeHtml(label)}</span><h3>${escapeHtml(capability.capability)}</h3></div>
+      <span class="status-chip health-${health}">${health}</span>
+    </div>
+    <span class="mono spec-path">${escapeHtml(capability.path)}</span>
+    <div class="spec-meta"><span>${capability.document.requirements.length} requirements</span><span>${capability.document.scenarios.length} scenarios</span></div>
+    ${sourceDetails('spec', capability.document)}
+  </article>`;
+}
+
+function changeCard(change: OpenSpecChange): string {
+  const tasks = change.artifacts.tasks?.progress;
+  const progress = tasks ? `${tasks.complete}/${tasks.total} tasks · ${tasks.open} open` : 'tasks unavailable';
+  return `<article class="surface spec-card">
+    <div class="spec-card-header">
+      <div><span class="eyebrow">${escapeHtml(change.lifecycle)} · structured</span><h3>${escapeHtml(change.name)}</h3></div>
+      <span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span>
+    </div>
+    <span class="mono spec-path">${escapeHtml(change.path)}</span>
+    <div class="spec-meta"><span class="pill">${escapeHtml(change.completeness)}</span><span class="mono">${escapeHtml(progress)}</span></div>
+    <div class="spec-artifacts">
+      ${sourceDetails('manifest', change.artifacts.manifest)}
+      ${sourceDetails('proposal', change.artifacts.proposal)}
+      ${sourceDetails('design', change.artifacts.design)}
+      ${sourceDetails('tasks', change.artifacts.tasks)}
+      ${change.delta_specs.map((capability) => capabilityCard(capability, 'delta spec')).join('')}
+    </div>
+  </article>`;
+}
+
+function warningList(snapshot: OpenSpecSnapshot): string {
+  if (snapshot.warnings.length === 0) return '';
+  return `<section aria-labelledby="spec-warnings-title">
+    <div class="section-heading"><div><span class="eyebrow">parser health</span><h2 id="spec-warnings-title">Warnings</h2></div><span class="status-chip health-warning">${snapshot.warnings.length} warnings</span></div>
+    <ul class="surface spec-card spec-list">
+      ${snapshot.warnings.map((item) => `<li class="spec-warning"><strong>${escapeHtml(item.code)}</strong> · <code>${escapeHtml(item.path)}</code><br />${escapeHtml(item.message)}</li>`).join('')}
+    </ul>
+  </section>`;
+}
+
+function specView(snapshot: OpenSpecSnapshot): string {
+  const changes = [...snapshot.active_changes, ...snapshot.archived_changes];
+  const taskProgress = changes.reduce(
+    (total, change) => ({
+      complete: total.complete + (change.artifacts.tasks?.progress.complete ?? 0),
+      open: total.open + (change.artifacts.tasks?.progress.open ?? 0),
+    }),
+    { complete: 0, open: 0 },
+  );
+  const supportedCount = snapshot.canonical_specs.length + changes.length + snapshot.legacy_archives.length;
+  const emptyState = !snapshot.detected
+    ? '<article class="surface empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
+    : supportedCount === 0
+      ? '<article class="surface empty-state"><h2>OpenSpec workspace is empty</h2><p>No supported canonical specs, active changes, or archive records were found. Refresh after adding OpenSpec artifacts with <code>iris render --all</code>.</p></article>'
+      : '';
+  const contextDocuments = [snapshot.context.project, snapshot.context.config].filter(
+    (document): document is OpenSpecSourceDocument => Boolean(document),
+  );
+
+  return `<div class="spec-stack">
+    <section aria-labelledby="spec-overview-title">
+      <div class="section-heading"><div><span class="eyebrow">filesystem snapshot</span><h2 id="spec-overview-title">Overview</h2></div><span class="pill">explicit refresh</span></div>
+      <div class="spec-overview" aria-label="OpenSpec overview">
+        <div class="surface stat-tile"><span class="stat-value">${snapshot.canonical_specs.length}</span><span class="stat-label">canonical</span></div>
+        <div class="surface stat-tile"><span class="stat-value">${snapshot.active_changes.length}</span><span class="stat-label">active changes</span></div>
+        <div class="surface stat-tile"><span class="stat-value">${snapshot.archived_changes.length + snapshot.legacy_archives.length}</span><span class="stat-label">archived</span></div>
+        <div class="surface stat-tile"><span class="stat-value">${taskProgress.complete}</span><span class="stat-label">tasks complete</span></div>
+        <div class="surface stat-tile"><span class="stat-value">${taskProgress.open}</span><span class="stat-label">tasks open</span></div>
+      </div>
+      <p class="mono">Snapshot refreshes during <code>iris init</code> or <code>iris render --all</code>. OpenSpec CLI is not required.</p>
+    </section>
+    ${emptyState}
+    ${contextDocuments.length === 0 ? '' : `<section aria-labelledby="spec-context-title"><div class="section-heading"><div><span class="eyebrow">workspace identity</span><h2 id="spec-context-title">Project context</h2></div></div><div class="spec-grid">${contextDocuments.map((document) => `<article class="surface spec-card"><h3>${escapeHtml(document.title)}</h3>${sourceDetails('source', document)}</article>`).join('')}</div></section>`}
+    <section aria-labelledby="canonical-specs-title">
+      <div class="section-heading"><div><span class="eyebrow">source of truth</span><h2 id="canonical-specs-title">Canonical specs</h2></div><span class="pill">${snapshot.canonical_specs.length}</span></div>
+      ${snapshot.canonical_specs.length === 0 ? '<div class="surface empty-state">No canonical specs found.</div>' : `<div class="spec-grid">${snapshot.canonical_specs.map((capability) => capabilityCard(capability, 'canonical')).join('')}</div>`}
+    </section>
+    <section aria-labelledby="active-changes-title">
+      <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="active-changes-title">Active changes</h2></div><span class="pill">${snapshot.active_changes.length}</span></div>
+      ${snapshot.active_changes.length === 0 ? '<div class="surface empty-state">No active changes found.</div>' : `<div class="spec-grid">${snapshot.active_changes.map(changeCard).join('')}</div>`}
+    </section>
+    <section aria-labelledby="archive-title">
+      <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="pill">${snapshot.archived_changes.length + snapshot.legacy_archives.length}</span></div>
+      ${snapshot.archived_changes.length === 0 && snapshot.legacy_archives.length === 0 ? '<div class="surface empty-state">No archived changes found.</div>' : `<div class="spec-grid">${snapshot.archived_changes.map(changeCard).join('')}${snapshot.legacy_archives.map((document) => `<article class="surface spec-card"><div class="spec-card-header"><div><span class="eyebrow">archived · legacy</span><h3>${escapeHtml(document.title)}</h3></div><span class="status-chip">legacy</span></div>${sourceDetails('archived source', document)}</article>`).join('')}</div>`}
+    </section>
+    ${warningList(snapshot)}
+  </div>`;
+}
+
 export function dashboardHtml(
   projectName = 'iris project',
   pages: DashboardPage[] = [],
   projectDocs: string[] = [],
+  openSpec: OpenSpecSnapshot = {
+    version: 1,
+    detected: false,
+    generated_at: null,
+    context: {},
+    canonical_specs: [],
+    active_changes: [],
+    archived_changes: [],
+    legacy_archives: [],
+    warnings: [],
+  },
 ): string {
   const activeCount = pages.filter((page) => !['done', 'archived'].includes(page.status)).length;
   const archivedCount = pages.filter((page) => page.status === 'archived').length;
@@ -890,6 +1045,12 @@ export function dashboardHtml(
         </section>
       </header>
 
+      <nav class="surface tabs primary-tabs" role="tablist" aria-label="dashboard sections" data-tabs="dashboard-primary">
+        <button id="dashboard-tab-work" role="tab" class="tab-button" aria-controls="dashboard-panel-work" aria-selected="true" tabindex="0" data-tab-id="work">Work</button>
+        <button id="dashboard-tab-spec" role="tab" class="tab-button" aria-controls="dashboard-panel-spec" aria-selected="false" tabindex="-1" data-tab-id="spec">Spec</button>
+      </nav>
+
+      <section id="dashboard-panel-work" class="dashboard-panel" role="tabpanel" aria-labelledby="dashboard-tab-work" data-tab-group="dashboard-primary" data-tab-id="work">
       <div class="dashboard-stack">
         <section class="health-strip" aria-label="repository health">
           <a class="surface stat-tile" href="#work"><span class="stat-value">${pages.length}</span><span class="stat-label">pages</span></a>
@@ -908,18 +1069,18 @@ export function dashboardHtml(
         <section class="work-surface" id="work" aria-labelledby="work-title">
           <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="work-title">Work</h2></div><span class="mono">${escapeHtml(summaryLine(pages))}</span></div>
           <div class="surface toolbar">
-            <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
-              <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">List</button>
-              <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">Board</button>
+            <div class="tabs" role="tablist" aria-label="work layout" data-tabs="work-layout">
+              <button id="work-layout-tab-list" role="tab" class="tab-button" aria-controls="work-layout-panel-list" aria-selected="true" tabindex="0" data-tab-id="list">List</button>
+              <button id="work-layout-tab-board" role="tab" class="tab-button" aria-controls="work-layout-panel-board" aria-selected="false" tabindex="-1" data-tab-id="board">Board</button>
             </div>
             <label class="filter-wrap"><span class="eyebrow">filter</span><input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" /><kbd>/</kbd></label>
           </div>
 
-          <section class="list" data-dashboard-list>
+          <section id="work-layout-panel-list" class="list" role="tabpanel" aria-labelledby="work-layout-tab-list" data-tab-group="work-layout" data-tab-id="list" data-dashboard-list>
             ${listCards}
           </section>
 
-          <section class="board" data-dashboard-board hidden>
+          <section id="work-layout-panel-board" class="board" role="tabpanel" aria-labelledby="work-layout-tab-board" data-tab-group="work-layout" data-tab-id="board" data-dashboard-board hidden>
             ${columns}
           </section>
         </section>
@@ -929,6 +1090,11 @@ export function dashboardHtml(
           ${projectStrip}
         </section>
       </div>
+      </section>
+
+      <section id="dashboard-panel-spec" class="dashboard-panel" role="tabpanel" aria-labelledby="dashboard-tab-spec" data-tab-group="dashboard-primary" data-tab-id="spec" hidden>
+        ${specView(openSpec)}
+      </section>
       <footer class="footer"><span>generated by iris · works offline from file://</span><span><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>↑</kbd><kbd>↓</kbd> move</span></footer>
     </main>
     <script defer src="./design/components/base.js"></script>

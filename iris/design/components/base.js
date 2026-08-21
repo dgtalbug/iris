@@ -1,33 +1,35 @@
 
 function setupTabs() {
   for (const group of document.querySelectorAll('[data-tabs]')) {
-    const buttons = group.querySelectorAll('[role="tab"]');
-    const panels = document.querySelectorAll('[data-tab-group="' + group.getAttribute('data-tabs') + '"]');
+    const buttons = Array.from(group.querySelectorAll('[role="tab"]'));
+    const groupId = group.getAttribute('data-tabs');
+    const panels = document.querySelectorAll('[data-tab-group="' + groupId + '"]');
+    const activate = (button, moveFocus) => {
+      buttons.forEach((it) => {
+        const selected = it === button;
+        it.setAttribute('aria-selected', String(selected));
+        it.setAttribute('tabindex', selected ? '0' : '-1');
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
+      });
+      if (moveFocus) button.focus();
+    };
     buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttons.forEach((it) => it.setAttribute('aria-selected', String(it === button)));
-        panels.forEach((panel) => {
-          panel.hidden = panel.getAttribute('data-tab-id') !== button.getAttribute('data-tab-id');
-        });
+      button.addEventListener('click', () => activate(button, false));
+      button.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const current = buttons.indexOf(button);
+        const next = event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? buttons.length - 1
+            : (current + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+        activate(buttons[next], true);
       });
     });
   }
-}
-
-function setupViewToggle() {
-  const listBtn = document.querySelector('[data-view="list"]');
-  const boardBtn = document.querySelector('[data-view="board"]');
-  const list = document.querySelector('[data-dashboard-list]');
-  const board = document.querySelector('[data-dashboard-board]');
-  if (!listBtn || !boardBtn || !list || !board) return;
-  const setView = (view) => {
-    list.hidden = view !== 'list';
-    board.hidden = view !== 'board';
-    listBtn.setAttribute('aria-selected', String(view === 'list'));
-    boardBtn.setAttribute('aria-selected', String(view === 'board'));
-  };
-  listBtn.addEventListener('click', () => setView('list'));
-  boardBtn.addEventListener('click', () => setView('board'));
 }
 
 function setupFilter() {
@@ -49,7 +51,8 @@ function setupKeyboardShortcuts() {
     );
     if (editing || event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.key === '/') {
-      const input = document.querySelector('[data-filter-input]');
+      const input = Array.from(document.querySelectorAll('[data-filter-input]'))
+        .find((candidate) => !candidate.closest('[hidden]'));
       if (input instanceof HTMLElement) {
         event.preventDefault();
         input.focus();
@@ -93,7 +96,6 @@ function setupTheme() {
 }
 
 setupTabs();
-setupViewToggle();
 setupFilter();
 setupTheme();
 setupKeyboardShortcuts();
