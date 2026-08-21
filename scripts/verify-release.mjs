@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 const releaseTag = process.argv[2];
 const expectedTag = `v${packageJson.version}`;
-const requiredFiles = ['dist/src', 'schemas', 'README.md'];
+const requiredFiles = ['dist/src', 'schemas', 'templates/agents', 'README.md'];
 
 if (!releaseTag) {
   throw new Error(`Missing release tag; expected ${expectedTag}`);

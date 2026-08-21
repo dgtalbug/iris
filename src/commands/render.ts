@@ -4,12 +4,7 @@ import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
 import { validateContract } from '../lib/schemas.js';
-import {
-  hashContent,
-  loadProjectState,
-  saveProjectState,
-  statePath,
-} from '../lib/project-state.js';
+import { loadProjectState, saveProjectState, statePath } from '../lib/project-state.js';
 import {
   dashboardHtml,
   PROJECT_DOC_NAMES,
@@ -27,36 +22,6 @@ async function listPageIds(pagesRoot: string): Promise<string[]> {
   } catch {
     return [];
   }
-}
-
-function briefingFromReadme(payload: Record<string, unknown>): string | undefined {
-  const sections =
-    payload.sections && typeof payload.sections === 'object' && !Array.isArray(payload.sections)
-      ? (payload.sections as Record<string, unknown>)
-      : {};
-  const openItems =
-    sections.open_items &&
-    typeof sections.open_items === 'object' &&
-    !Array.isArray(sections.open_items)
-      ? (sections.open_items as Record<string, unknown>)
-      : {};
-  if (typeof openItems.md !== 'string') return undefined;
-
-  const paragraph = openItems.md
-    .split(/\n\s*\n/)
-    .map((block) => block.replace(/\s+/g, ' ').trim())
-    .find(
-      (block) =>
-        block.length > 0 &&
-        !/^(?:#|!|\[!|```|---|<|[-*]\s)/.test(block),
-    );
-  if (!paragraph) return undefined;
-  const plain = paragraph
-    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/[*_`>#]/g, '')
-    .trim();
-  return plain.length > 240 ? `${plain.slice(0, 237).trimEnd()}…` : plain;
 }
 
 export async function runRenderCommand(cwd: string, id?: string): Promise<void> {
@@ -93,18 +58,16 @@ export async function runRenderCommand(cwd: string, id?: string): Promise<void> 
   if (existsSync(statePath(cwd))) {
     const state = await loadProjectState(cwd);
     for (const pageId of pageIds) {
-      const raw = await readFile(path.join(pagesRoot, pageId, 'data.json'), 'utf8');
-      const payload = JSON.parse(raw) as Record<string, unknown>;
+      const payload = JSON.parse(
+        await readFile(path.join(pagesRoot, pageId, 'data.json'), 'utf8'),
+      ) as Record<string, unknown>;
       const prior = state.page_index[pageId];
       state.page_index[pageId] = {
         id: pageId,
         type: typeof payload.type === 'string' ? payload.type : 'page',
         title: typeof payload.title === 'string' ? payload.title : pageId,
         status: prior?.status ?? 'active',
-        data_hash: hashContent(raw),
-        source: prior?.source,
       };
-      state.content_hashes[`pages/${pageId}/data.json`] = hashContent(raw);
     }
     await saveProjectState(cwd, state);
   }
@@ -128,9 +91,7 @@ export async function refreshDashboard(cwd: string): Promise<void> {
       type: typeof payload.type === 'string' ? payload.type : 'page',
       title: typeof payload.title === 'string' ? payload.title : pageId,
       status: typeof payload.status === 'string' ? payload.status : 'draft',
-      stale: state?.page_index[pageId]?.status === 'stale',
       href: `./pages/${pageId}/page.html`,
-      briefing: pageId === 'doc-readme' ? briefingFromReadme(payload) : undefined,
     });
   }
 

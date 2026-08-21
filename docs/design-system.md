@@ -1,6 +1,6 @@
 # iris design system 2.0 — "Aperture"
 
-> Direction document, 2026-08-21. Research + specification only; no code changed. Supersedes the current `iris/design/tokens.css` direction when implemented.
+> Implemented direction, updated 2026-08-21 for the agent-first workspace. Generated design output remains owned by `src/templates/design.ts`.
 
 ## 1. The one goal
 
@@ -16,7 +16,7 @@ A newcomer runs `iris` in any repo, opens one HTML file, and understands the rep
 | Mintlify | Docs-as-code SaaS, MDX in Git | Polished reading experience, docs merge with code | No server, no account, no build pipeline |
 | Backstage TechDocs | Self-hosted portal, Markdown → central hub | Single pane for a whole org | Zero infrastructure; per-repo, file:// only |
 | GitBook / Docusaurus / Starlight | Doc sites | Beautiful typography, strong IA | No site build; agents write JSON contracts, not prose |
-| Swimm | IDE-coupled doc sync | Docs validated against code changes | Renderer-agnostic contracts; `sync` stale-marking is file-hash based, no plugin |
+| Swimm | IDE-coupled doc monitoring | Docs validated against code changes | Explicit agent-authored contracts and rendering with no plugin or background watcher |
 
 The gap iris occupies: **local-first, agent-writable, zero-infrastructure visual docs**. Nobody else renders straight from disk with no server. The UI must make that feel like a feature (instant, private, portable) rather than a limitation (plain, static).
 
@@ -75,7 +75,7 @@ Used exclusively for page types, statuses, and chart series. Never for decoratio
 | `--type-bug` | `#EF6A6A` | bug pages / series 3 |
 | `--type-idea` | `#A78BFA` | idea pages / series 4 |
 | `--type-plan` | `#F2B24E` | plan pages / series 5 |
-| `--ok` / `--warn` / `--danger` / `--info` | `#4FC98C` / `#F0913E` / `#EF6A6A` / `#5CB8F0` | statuses (`stale`, render errors, etc.) |
+| `--ok` / `--warn` / `--danger` / `--info` | `#4FC98C` / `#F0913E` / `#EF6A6A` / `#5CB8F0` | statuses, warnings, and render errors |
 
 Rule: a type color always appears with a second channel (label, icon, or position) — color is never the only signal (color-blind safety).
 
@@ -110,11 +110,11 @@ The current dashboard leads with an empty list. The redesign leads with answers,
 │ ◔ iris · <repo name>                      [theme] [⌕ /]  │  identity bar
 ├──────────────────────────────────────────────────────────┤
 │  ╭───────╮   WHAT THIS REPO IS                           │
-│  │ ◔ 12  │   One-paragraph mission (from adopt/overview) │  briefing hero
+│  │ ◔ 12  │   Agent-first workspace guidance              │  briefing hero
 │  │ pages │   run: `pnpm dev` · test: `pnpm test`         │  + aperture ring
 │  ╰───────╯   entry points: src/cli.ts · docs/            │
 ├──────────────────────────────────────────────────────────┤
-│  [ 12 pages ] [ 2 stale ] [ 4 open tasks ] [ synced 2h ] │  health strip
+│  [ 12 pages ] [ 2 archived ] [ 4 active ] [ 6 project ]  │  health strip
 ├──────────────────────────────────────────────────────────┤
 │  ARCHITECTURE                                            │
 │  ┌────────────────────────────────────────────────────┐  │  hld diagram
@@ -122,7 +122,7 @@ The current dashboard leads with an empty list. The redesign leads with answers,
 │  └────────────────────────────────────────────────────┘  │
 ├──────────────────────────────────────────────────────────┤
 │  WORK   [List | Board]                 filter…           │
-│  ◔ bug-cache-stampede   bug    stale   2026-08-19        │  work surface
+│  ◔ bug-cache-stampede   bug    active  2026-08-19        │  work surface
 │  ◔ session-review       report ok     2026-08-18        │
 ├──────────────────────────────────────────────────────────┤
 │  project docs: overview · hld · lld · erd · commands …   │  docs strip
@@ -130,7 +130,7 @@ The current dashboard leads with an empty list. The redesign leads with answers,
 └──────────────────────────────────────────────────────────┘
 ```
 
-- **Briefing hero** is the "one shot": mission sentence, how to run/test (from adopted README), entry points. If nothing is adopted yet, the empty state *is instructions*: the three commands that fill it, phrased as an invitation ("Adopt your README: `iris adopt`").
+- **Briefing hero** is the "one shot": agent-first workspace guidance plus explicit content/render commands. The empty state points to an intentional page command and `iris render --all`; general repository documentation is not ingested.
 - **Health strip**: four stat tiles maximum. Numbers in display face; each tile links to its filtered view.
 - **Architecture pane** renders the HLD page's diagram inline when it exists; otherwise a one-line empty state.
 - **Work surface** keeps today's List/Board tabs and filter; cards gain the type-colored aperture glyph, status pill, and relative date.
@@ -168,7 +168,7 @@ Hard constraints these decisions obey: deterministic render, works from `file://
 | **Mermaid** | **Yes — adopt.** | Vendor the standalone `mermaid.min.js` (~2.8 MB, works from file:// as a classic script) into `design/vendor/` via the `iris vendor` command (already spec'd, currently stubbed). Diagram blocks store mermaid source in the contract; the page initializes mermaid with theme variables mapped from tokens. Covers flowcharts (HLD/LLD), sequence, state, and ER — replacing hand-built diagram markup for the project pages. Fallback when vendor assets are absent: render the source in a `code` block with a "run `iris vendor`" callout. |
 | **React Flow** | **No — rejected.** | It is a React library: requires the React runtime, a bundler, and client-side state. That breaks the zero-build, framework-free, deterministic model (same grounds Reaviz was rejected on in `docs/tech.md`). If an interactive draggable node graph is ever genuinely needed, the framework-free path is vendored Cytoscape.js (~400 KB UMD) — but mermaid flowcharts cover the actual v1 use cases. |
 | **Charts** | **Yes — CLI-generated SVG first.** | The chart block's primary renderer is deterministic inline SVG produced at `iris render` time from the contract data (bar, line, donut; spectrum tokens for series; `<title>` elements for accessibility). Zero runtime, works in published single-file artifacts, diffs cleanly in git. A vendored uPlot (~50 KB) can layer tooltips/zoom onto the same data later as progressive enhancement — the SVG remains the no-JS fallback. This preserves the "Reaviz swap behind chart contract" backlog idea: the contract is the interface, renderers are swappable. |
-| **Animations** | **Yes — CSS only, meaning-bearing.** | Existing policy in `docs/tech.md` stands: animation only where it carries meaning, `prefers-reduced-motion` falls back to frame zero. Budget: the aperture opening sweep on dashboard load; 120 ms hover/focus transitions on cards, tabs, pills; stale-pill attention pulse (2 cycles, then static). Nothing else. No scroll-triggered effects, no parallax, no JS animation libraries. |
+| **Animations** | **Yes — CSS only, meaning-bearing.** | Existing policy in `docs/tech.md` stands: animation only where it carries meaning, `prefers-reduced-motion` falls back to frame zero. Budget: the aperture opening sweep on dashboard load and 120 ms hover/focus transitions on cards, tabs, and pills. Nothing else. No scroll-triggered effects, no parallax, no JS animation libraries. |
 
 Publish/export note: `iris publish` output must stay self-contained. Charts are already inline SVG, so they survive. For diagram blocks, publish inlines the pre-rendered SVG snapshot if one was captured at render time, else the source in a code block — the 2.8 MB mermaid script is not embedded in shared artifacts.
 
@@ -185,10 +185,10 @@ Publish/export note: `iris publish` output must stay self-contained. Charts are 
 
 1. **Tokens 2.0** — replace `tokens.css` values with §4; extend `token-lint` for the new names + contrast check. Everything else keeps working.
 2. **Components 2.0** — restyle `base.css` to §6; add stat-tile, pill, callout, timeline, kbd. Update `src/templates/design.ts` markup accordingly; `html-check` guards links.
-3. **Dashboard IA** — reorder `index.html` template to §5 (briefing hero, health strip, work surface); wire hero content from adopted README data.
+3. **Dashboard IA** — reorder `index.html` template to §5 (briefing hero, health strip, work surface); use agent-first guidance rather than inferred repository-document content.
 4. **`iris vendor`** — implement the stubbed command: mermaid.min.js, Lucide sprite, tier-1 fonts, pinned versions + checksums from `src/cdn.ts`.
 5. **Diagram + chart blocks** — mermaid host block on project pages; CLI-side SVG chart renderer behind the chart contract.
-6. **Dogfood** — re-run `iris init`/`render`/`adopt` on this repo so the shipped `iris/` tree shows the new system with real content.
+6. **Dogfood** — run `iris init` and `iris render --all` so the shipped `iris/` tree is generated from intentional page contracts without repository-document ingestion.
 
 Each step is an OpenSpec change; each keeps CI green independently.
 

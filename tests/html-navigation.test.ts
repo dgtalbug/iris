@@ -70,7 +70,7 @@ describe('generated HTML navigation', () => {
     expect(dashboard).toContain('href="./project/decisions.html"');
   });
 
-  it('reports real page counts instead of placeholder sync copy', async () => {
+  it('reports real page counts without retired lifecycle copy', async () => {
     const cwd = await createTempDir();
 
     expect(await runCli(['init'], cwd)).toBe(0);
@@ -80,8 +80,8 @@ describe('generated HTML navigation', () => {
 
     const dashboard = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
     expect(dashboard).toContain('2 pages');
-    expect(dashboard).not.toContain('not yet synced');
-    expect(dashboard).not.toContain('stale state: fresh');
+    expect(dashboard).not.toContain('iris adopt');
+    expect(dashboard).not.toContain('iris sync');
   });
 
   it('scaffolds project placeholders as styled navigable pages, not bare stubs', async () => {
@@ -153,7 +153,7 @@ describe('generated HTML navigation', () => {
     const offsets = orderedLabels.map((label) => dashboard.indexOf(label));
     expect(offsets.every((offset) => offset >= 0)).toBe(true);
     expect(offsets).toEqual([...offsets].sort((left, right) => left - right));
-    expect(dashboard).toContain('iris adopt');
+    expect(dashboard).toContain('Agent-first workspace ready');
     expect(dashboard).toContain('iris vendor');
     expect(dashboard).toContain('<kbd>/</kbd>');
     expect(baseJs).toContain("event.key === '/'");

@@ -158,10 +158,8 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .st-active { color: var(--info); }
 .st-done { color: var(--ok); }
 .st-archived { color: var(--text-2); }
-.st-stale { color: var(--danger); }
 .status-chip.st-active { background: var(--info-soft); }
 .status-chip.st-done { background: var(--ok-soft); }
-.status-chip.st-stale { background: var(--danger-soft); }
 
 .health-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
 .stat-tile { display: grid; gap: var(--space-1); padding: var(--space-4); color: inherit; text-decoration: none; transition: border-color var(--duration-1) var(--easing), background var(--duration-1) var(--easing); }
@@ -362,8 +360,6 @@ export type DashboardPage = {
   title: string;
   status: string;
   href: string;
-  stale?: boolean;
-  briefing?: string;
 };
 
 export const PROJECT_DOC_NAMES = [
@@ -433,8 +429,7 @@ function markdownToHtml(value: string): string {
     .join('');
 }
 
-function statusClass(status: string, stale?: boolean): string {
-  if (stale) return 'st-stale';
+function statusClass(status: string): string {
   return ['draft', 'active', 'done', 'archived'].includes(status) ? `st-${status}` : 'st-active';
 }
 
@@ -786,7 +781,7 @@ function apertureRing(pages: DashboardPage[]): string {
             const dash = Math.max(share - gap, 1).toFixed(2);
             const rest = (circumference - Number(dash)).toFixed(2);
             const angle = ((360 / shown.length) * index - 90).toFixed(2);
-            return `<circle class="seg ${typeClass(page.type)}" cx="${center}" cy="${center}" r="${radius}" stroke-dasharray="${dash} ${rest}" transform="rotate(${angle} ${center} ${center})"><title>${escapeHtml(page.title)} · ${escapeHtml(page.type)} · ${escapeHtml(page.stale ? 'stale' : page.status)}</title></circle>`;
+            return `<circle class="seg ${typeClass(page.type)}" cx="${center}" cy="${center}" r="${radius}" stroke-dasharray="${dash} ${rest}" transform="rotate(${angle} ${center} ${center})"><title>${escapeHtml(page.title)} · ${escapeHtml(page.type)} · ${escapeHtml(page.status)}</title></circle>`;
           })
           .join('');
 
@@ -798,7 +793,6 @@ function apertureRing(pages: DashboardPage[]): string {
 }
 
 function dashboardCard(page: DashboardPage): string {
-  const staleSuffix = page.stale ? ' · stale' : '';
   return `
     <a class="surface page-card" data-page-card href="${escapeHtml(page.href)}">
       ${apertureGlyph(page.type)}
@@ -807,7 +801,7 @@ function dashboardCard(page: DashboardPage): string {
         <span class="card-title">${escapeHtml(page.title)}</span>
         <span class="card-id">${escapeHtml(page.id)}</span>
       </span>
-      <span class="status-chip ${statusClass(page.status, page.stale)}">${escapeHtml(page.status)}${staleSuffix}</span>
+      <span class="status-chip ${statusClass(page.status)}">${escapeHtml(page.status)}</span>
     </a>
   `;
 }
@@ -822,9 +816,7 @@ function boardColumn(label: string, pages: DashboardPage[]): string {
 
 function summaryLine(pages: DashboardPage[]): string {
   if (pages.length === 0) return 'no pages yet';
-  const staleCount = pages.filter((page) => page.stale).length;
-  const pageLabel = pages.length === 1 ? '1 page' : `${pages.length} pages`;
-  return staleCount > 0 ? `${pageLabel} · ${staleCount} stale` : pageLabel;
+  return pages.length === 1 ? '1 page' : `${pages.length} pages`;
 }
 
 export function dashboardHtml(
@@ -832,14 +824,9 @@ export function dashboardHtml(
   pages: DashboardPage[] = [],
   projectDocs: string[] = [],
 ): string {
-  const staleCount = pages.filter((page) => page.stale).length;
-  const activeCount = pages.filter(
-    (page) => !page.stale && !['done', 'archived'].includes(page.status),
-  ).length;
-  const adoptedReadme = pages.find((page) => page.id === 'doc-readme');
-  const briefing =
-    adoptedReadme?.briefing ??
-    'Adopt your README for a source-grounded repository briefing: iris adopt.';
+  const activeCount = pages.filter((page) => !['done', 'archived'].includes(page.status)).length;
+  const archivedCount = pages.filter((page) => page.status === 'archived').length;
+  const briefing = 'Agent-first workspace ready. Create intentional visual content with the installed Iris skill and explicit content commands.';
   const listCards =
     pages.length === 0
       ? `<article class="surface empty-state"><h2>No pages yet</h2><p>Create one with <code>iris bug my-first-bug</code>, then run <code>iris render --all</code>.</p></article>`
@@ -906,7 +893,7 @@ export function dashboardHtml(
       <div class="dashboard-stack">
         <section class="health-strip" aria-label="repository health">
           <a class="surface stat-tile" href="#work"><span class="stat-value">${pages.length}</span><span class="stat-label">pages</span></a>
-          <a class="surface stat-tile" href="#work"><span class="stat-value">${staleCount}</span><span class="stat-label">stale</span></a>
+          <a class="surface stat-tile" href="#work"><span class="stat-value">${archivedCount}</span><span class="stat-label">archived</span></a>
           <a class="surface stat-tile" href="#work"><span class="stat-value">${activeCount}</span><span class="stat-label">active</span></a>
           <a class="surface stat-tile" href="#project-docs"><span class="stat-value">${projectDocs.length}</span><span class="stat-label">project docs</span></a>
         </section>
@@ -980,9 +967,9 @@ export function projectPlaceholderHtml(name: string): string {
      </header>
      <article class="surface empty-state">
        <h2>This page is not generated yet</h2>
-       <p>Adopt repository documentation with <code>iris adopt</code>, then refresh this ${escapeHtml(name)} surface with <code>iris render --all</code>. Rendered pages live on the <a href="../index.html">dashboard</a>.</p>
+       <p>Create intentional content with the installed Iris skill and content commands, then refresh with <code>iris render --all</code>. Rendered pages live on the <a href="../index.html">dashboard</a>.</p>
      </article>
-     <footer class="footer">managed by iris · regenerated by iris update</footer>
+     <footer class="footer">managed by iris · regenerated by iris init or iris update</footer>
    </main>
    <script defer src="../design/components/base.js"></script>
  </body>

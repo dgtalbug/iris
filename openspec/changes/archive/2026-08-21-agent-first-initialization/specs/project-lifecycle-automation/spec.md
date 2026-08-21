@@ -1,10 +1,4 @@
-# Project Lifecycle Automation Specification
-
-## Purpose
-
-Make the `iris` project lifecycle explicit and reproducible by aligning the generated dashboard and page registry with the repository state and user workflow. The system must provide a safe path for boosting, syncing, archiving, and updating local project artifacts while preserving user-owned content outside managed blocks.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: lifecycle-aware project bootstrap
 The system MUST provide one project bootstrap flow that creates or refreshes the local structure needed for page generation, dashboard rendering, managed updates, and supported agent skill use without ingesting general repository documentation.
@@ -24,9 +18,14 @@ The system MUST provide a clear archiving path that removes a user-selected page
 WHEN a user runs the archive command for an existing active page
 THEN the archive command MUST move that exact page into the archive state and update the page registry and dashboard consistently.
 
-### Requirement: managed updates without user-content loss
-The system MUST support update actions that refresh generated shims or managed file blocks without clobbering user-authored content outside those managed boundaries.
+## REMOVED Requirements
 
-#### Scenario: a project is updated after scaffold generation
-WHEN a user runs the update flow
-THEN the system MUST preserve user edits outside managed sections and refresh only the managed integration points.
+### Requirement: incremental sync and stale-state awareness
+**Reason**: Explicit `iris init` and `iris render --all` operations replace product synchronization; adopted-source monitoring and stale-source state no longer belong in the agent-first workspace.
+
+**Migration**: Run `iris init` once to migrate legacy state and then use `iris render --all` when page contracts or repository-backed explicit views need regeneration.
+
+### Requirement: doc adoption and mirroring
+**Reason**: Iris no longer ingests general project documentation, and agents use installed skills plus explicit content commands instead of README/docs mirrors.
+
+**Migration**: Preserve user-owned pages, allow `iris init` to remove only positively proven unmodified generated mirrors, and create intentional Iris content with the existing report, feature, bug, idea, or plan commands.

@@ -39,9 +39,18 @@ assertSupportedNode();
 const packOutput = run('npm', ['pack', '--json']);
 const packInfo = JSON.parse(packOutput);
 const tarballName = packInfo[0]?.filename;
+const packedFiles = new Set(packInfo[0]?.files?.map((file) => file.path) ?? []);
 
 if (!tarballName) {
   throw new Error('npm pack did not return a tarball filename');
+}
+for (const requiredPath of [
+  'dist/src/lib/agent-skills.js',
+  'templates/agents/iris-workspace.md',
+]) {
+  if (!packedFiles.has(requiredPath)) {
+    throw new Error(`Packed CLI is missing required initialization asset: ${requiredPath}`);
+  }
 }
 
 const tarballPath = path.join(repoRoot, tarballName);
@@ -75,7 +84,23 @@ try {
     throw new Error('Installed command help does not match the repository CLI interface');
   }
 
-  execFileSync(binaryPath, ['init'], { cwd: projectDir, stdio: 'inherit' });
+  const offlineRuntimeEnv = {
+    ...process.env,
+    HTTP_PROXY: 'http://127.0.0.1:1',
+    HTTPS_PROXY: 'http://127.0.0.1:1',
+    ALL_PROXY: 'http://127.0.0.1:1',
+    NO_PROXY: '',
+  };
+  execFileSync(binaryPath, ['init'], {
+    cwd: projectDir,
+    stdio: 'inherit',
+    env: offlineRuntimeEnv,
+  });
+  execFileSync(binaryPath, ['init'], {
+    cwd: projectDir,
+    stdio: 'inherit',
+    env: offlineRuntimeEnv,
+  });
   execFileSync(binaryPath, ['bug', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
   execFileSync(binaryPath, ['render', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
 
@@ -89,6 +114,12 @@ try {
     'the rendered page',
   );
   assertFile(path.join(projectDir, 'iris', 'index.html'), 'the rendered dashboard');
+  for (const skillRoot of ['.agents', '.claude', '.github']) {
+    assertFile(
+      path.join(projectDir, skillRoot, 'skills', 'iris-workspace', 'SKILL.md'),
+      `${skillRoot} Iris agent skill`,
+    );
+  }
 
   console.log(
     `install smoke passed for ${packageJson.name}@${packageJson.version} on Node.js ${process.versions.node}`,
