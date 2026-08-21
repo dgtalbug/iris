@@ -1,5 +1,92 @@
 {
+  "version": 1,
   "last_synced_sha": null,
-  "page_index": {},
-  "content_hashes": {}
+  "page_index": {
+    "doc-readme": {
+      "id": "doc-readme",
+      "type": "report",
+      "title": "README",
+      "status": "active",
+      "data_hash": "4c46b76f28c35e06b09d4da51eb22cefb405ceb1ba5ffe9c3f5f4a903cb971f1",
+      "source": {
+        "kind": "markdown",
+        "path": "README.md",
+        "hash": "ba70b82332d01346c70b47a5502cd7534bad2823e18b034f3acbf7c67bb33687"
+      }
+    },
+    "doc-docs-cmds": {
+      "id": "doc-docs-cmds",
+      "type": "report",
+      "title": "Docs Cmds",
+      "status": "active",
+      "data_hash": "1ccf6a97b0c5148b1e675e7abdb744e0a831ac7f294973b01f727e89e15398f7",
+      "source": {
+        "kind": "markdown",
+        "path": "docs/cmds.md",
+        "hash": "9b1d61211a53281be2c09e9c47891a2de218d5532d2ee0e23e0d60813d1030c9"
+      }
+    },
+    "doc-docs-design-system": {
+      "id": "doc-docs-design-system",
+      "type": "report",
+      "title": "Docs Design System",
+      "status": "active",
+      "data_hash": "79d14f7a4d79b20ac09c218f0427be7329a4779c0812125941c8d80924e2f09c",
+      "source": {
+        "kind": "markdown",
+        "path": "docs/design-system.md",
+        "hash": "3cf8b5483ea141b4c58a839094a738a6de71f55d2c986831bda6a4ca444d5fba"
+      }
+    },
+    "doc-docs-project": {
+      "id": "doc-docs-project",
+      "type": "report",
+      "title": "Docs Project",
+      "status": "active",
+      "data_hash": "710ce71447ff5e76e0a91db404d12cf7b0a91216d8964ecd4494cbcf4d8dcb0c",
+      "source": {
+        "kind": "markdown",
+        "path": "docs/project.md",
+        "hash": "b41ed60923b091959833d5c779312ed3a942371ec7a27b9d6c76fedf1c11eba7"
+      }
+    },
+    "doc-docs-status": {
+      "id": "doc-docs-status",
+      "type": "report",
+      "title": "Docs Status",
+      "status": "active",
+      "data_hash": "572007ffea048d0939ef6091b04b0dcf5b2fa7b8eb9c6d6346e4478b135d0bdb",
+      "source": {
+        "kind": "markdown",
+        "path": "docs/status.md",
+        "hash": "e735fea805eabdfa2fdb84421af44c9e9b35ac1bd38569b04774359310675c99"
+      }
+    },
+    "doc-docs-tech": {
+      "id": "doc-docs-tech",
+      "type": "report",
+      "title": "Docs Tech",
+      "status": "active",
+      "data_hash": "39a4cb332e57d98901a14ec8ac1f8de171ad29df7114da8af5e2f153539583e9",
+      "source": {
+        "kind": "markdown",
+        "path": "docs/tech.md",
+        "hash": "f9f119d087d9f63cf9f19b62d494ad8a2344b887c71f31b78038af1e872f9458"
+      }
+    }
+  },
+  "content_hashes": {
+    "README.md": "ba70b82332d01346c70b47a5502cd7534bad2823e18b034f3acbf7c67bb33687",
+    "pages/doc-readme/data.json": "4c46b76f28c35e06b09d4da51eb22cefb405ceb1ba5ffe9c3f5f4a903cb971f1",
+    "docs/cmds.md": "9b1d61211a53281be2c09e9c47891a2de218d5532d2ee0e23e0d60813d1030c9",
+    "pages/doc-docs-cmds/data.json": "1ccf6a97b0c5148b1e675e7abdb744e0a831ac7f294973b01f727e89e15398f7",
+    "docs/design-system.md": "3cf8b5483ea141b4c58a839094a738a6de71f55d2c986831bda6a4ca444d5fba",
+    "pages/doc-docs-design-system/data.json": "79d14f7a4d79b20ac09c218f0427be7329a4779c0812125941c8d80924e2f09c",
+    "docs/project.md": "b41ed60923b091959833d5c779312ed3a942371ec7a27b9d6c76fedf1c11eba7",
+    "pages/doc-docs-project/data.json": "710ce71447ff5e76e0a91db404d12cf7b0a91216d8964ecd4494cbcf4d8dcb0c",
+    "docs/status.md": "e735fea805eabdfa2fdb84421af44c9e9b35ac1bd38569b04774359310675c99",
+    "pages/doc-docs-status/data.json": "572007ffea048d0939ef6091b04b0dcf5b2fa7b8eb9c6d6346e4478b135d0bdb",
+    "docs/tech.md": "f9f119d087d9f63cf9f19b62d494ad8a2344b887c71f31b78038af1e872f9458",
+    "pages/doc-docs-tech/data.json": "39a4cb332e57d98901a14ec8ac1f8de171ad29df7114da8af5e2f153539583e9"
+  }
 }

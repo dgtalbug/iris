@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>Docs Cmds · iris</title>
+   <link rel="stylesheet" href="../../design/tokens.css" />
+   <link rel="stylesheet" href="../../design/components/base.css" />
+ </head>
+ <body>
+   <main class="page-shell">
+     <header class="header">
+       <div class="topbar">
+         <nav class="crumbs"><a data-iris-nav href="../../index.html">&larr; dashboard</a></nav>
+         <button class="theme-toggle" type="button" data-theme-toggle data-iris-nav aria-label="Toggle color theme">theme</button>
+       </div>
+       <div class="header-bar">
+         <div>
+           <div class="page-title-row">
+             <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+             <div class="type-chip tp-report">report</div>
+           </div>
+           <h1>Docs Cmds</h1>
+         </div>
+         <span class="status-chip st-draft">status: draft</span>
+       </div>
+       <section class="metric-grid" style="margin-bottom: var(--space-4);">
+        <article class="surface metric-card">
+          <div class="metric-label">kind</div>
+          <div class="metric-value">report</div>
+        </article>
+
+        <article class="surface metric-card">
+          <div class="metric-label">status</div>
+          <div class="metric-value">draft</div>
+        </article>
+
+        <article class="surface metric-card">
+          <div class="metric-label">promotions</div>
+          <div class="metric-value">none</div>
+        </article>
+      </section>
+     </header>
+
+    <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+      <h2>Summary</h2>
+      <ul><li>Read-only mirror of docs/cmds.md</li><li>Source: docs/cmds.md</li></ul>
+    </article>
+
+    <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+      <h2>Open items</h2>
+      <p># iris commands and skills</p><p>&gt; If a command is not listed here, it does not exist.</p><p>## Common</p><ul><li>Exit codes: `0` ok · `1` validation/user error · `2` environment error.</li><li>Machine mode: all commands support `--json` (planned for full output parity in later milestones).</li><li>Agent surfaces: CLI `iris`, Claude `/iris *`, Copilot prompts, Codex `$iris-*` (generated in later milestones).</li><li>Navigation contract: the dashboard links every rendered, archived, and project page; every page links back to the dashboard. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).</li><li>Dashboard contract: briefing hero → health strip → architecture placeholder → work surface → project-docs strip. `/` focuses the work filter, `t` toggles theme, and arrow keys move between focused work cards; all remain classic-script, `file://`-safe interactions.</li></ul><p>## `iris init`</p><ul><li>Synopsis: scaffold `iris/`, detect OpenSpec and GitNexus, create dashboard and editor task.</li><li>Flags: `--json`.</li><li>Inputs: current project directory.</li><li>Outputs: scaffolded `iris/` tree, styled placeholder project pages, `.vscode/tasks.json`, quickstart lines.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris init`.</li><li>Surfaces: CLI + all generated skills.</li></ul><p>## `iris render [&lt;id&gt;|--all]`</p><ul><li>Synopsis: render contract data to page HTML and refresh dashboard/feed.</li><li>Flags: `--all`, `--json`.</li><li>Inputs: `iris/pages/&lt;id&gt;/data.json` or all pages.</li><li>Outputs: `page.html` artifacts and updated `iris/index.html`; each page is linked from the dashboard and links back to it.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris render --all`.</li><li>Surfaces: CLI + all generated skills.</li></ul><p>## `iris report|feature|bug|idea|plan &lt;id&gt;`</p><ul><li>Synopsis: create type-specific draft contract skeleton.</li><li>Flags: `--json`.</li><li>Inputs: page id.</li><li>Outputs: `iris/pages/&lt;id&gt;/data.json` skeleton.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris bug bug-cache-stampede`.</li><li>Surfaces: CLI + `/iris bug` style skills.</li></ul><p>## `iris report --from-session &lt;path&gt; [&lt;id&gt;]`</p><ul><li>Synopsis: turn local agent session data into a report contract, render it, and keep the output in the page registry.</li><li>Flags: `--from-session`, `--json`.</li><li>Inputs: a JSON object/array export, a non-empty Markdown/TXT dump, or a directory containing named session artifacts. Directory discovery reads files whose names identify metadata, sessions, conversations, turns/messages, checkpoints, tool/file activity, events, references, summaries, notes, or reports; unrelated files are ignored.</li><li>Outputs: `iris/pages/&lt;id&gt;/data.json` plus rendered HTML for the report page.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris report --from-session ./agent-session session-review`.</li><li>Surfaces: CLI + local session ingestion workflows.</li></ul><p>### Session import contract</p><p>The adapter is local-only and performs no network requests. It recognizes common camelCase and snake_case fields for workstream/title, branch, repository, status, timestamps, changed files, references, checkpoints, turns/messages, and tool activity. Missing optional metadata is represented as `null`, `unknown`, or an empty list rather than guessed.</p><p>The normal report fields remain available in `sections.summary`, `sections.open_items`, and `sections.promotable_as`. Traceable source data is also preserved under `sections.session_evidence`:</p><p>```json<br />{<br />  &quot;source&quot;: &quot;agent-session&quot;,<br />  &quot;input_shape&quot;: &quot;directory&quot;,<br />  &quot;workstream&quot;: &quot;Session ingestion&quot;,<br />  &quot;status&quot;: &quot;completed&quot;,<br />  &quot;repo&quot;: &quot;dgtalbug/iris&quot;,<br />  &quot;branch&quot;: &quot;feat/session-report&quot;,<br />  &quot;timestamps&quot;: [&quot;2026-08-18T08:00:00.000Z&quot;],<br />  &quot;files_touched&quot;: [&quot;src/commands/report.ts&quot;],<br />  &quot;references&quot;: [&quot;<a href="https://github.com/dgtalbug/iris/pull/42&quot;]," rel="noopener">https://github.com/dgtalbug/iris/pull/42&quot;],</a><br />  &quot;checkpoints&quot;: [&quot;Parser verified&quot;],<br />  &quot;tool_activity&quot;: [&quot;pnpm test&quot;]<br />}<br />```</p><p>Empty files, malformed JSON, unsupported extensions, missing sources, directories without recognized session artifacts, and sources with no reportable evidence fail with an actionable exit-code-1 validation error.</p><p>## `iris publish [&lt;id&gt;] [--output path]`</p><ul><li>Synopsis: generate a portable standalone HTML artifact from a rendered page for offline sharing.</li><li>Flags: `--output`, `--json`.</li><li>Inputs: page id. If omitted, the first available page is published.</li><li>Outputs: a single-file static HTML artifact at `iris/archive/&lt;id&gt;-publish.html` or the exact requested path. Missing parent directories are created.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris publish bug-cache-stampede --output dist/published.html`.</li><li>Surfaces: CLI + local publish/export flows.</li></ul><p>Published HTML includes the page CSS and has no local-file or network asset dependency. Interactive features that require the project script, and navigation links that point into the `iris/` tree, are intentionally omitted from this static handoff artifact.</p><p>## `iris promote &lt;report-id&gt; &lt;feature|bug|idea&gt;`</p><ul><li>Synopsis: remap report sections into promoted page and link both.</li><li>Flags: `--json`.</li><li>Inputs: report id + target type.</li><li>Outputs: new promoted page folder.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris promote report-cache feature`.</li><li>Surfaces: CLI + skills.</li><li>Status: not yet implemented; the CLI exits 1 with a clear message until a later milestone lands.</li></ul><p>## `iris sync`</p><ul><li>Synopsis: incremental changelog, hotspots, stale marks, selective re-render.</li><li>Flags: `--json`.</li><li>Inputs: local page contracts, adopted source paths, and the hashes stored in `iris/state.json`.</li><li>Outputs: state updates + feed/delta artifacts.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris sync`.</li><li>Surfaces: CLI + hooks.</li><li>State transitions: `refreshed` for changed page data or missing output, `stale` for changed/removed adopted sources, and `unchanged` when no work is needed.</li></ul><p>## `iris adopt`</p><ul><li>Synopsis: mirror README/docs markdown as read-only styled pages.</li><li>Flags: `--json`.</li><li>Inputs: repo docs markdown.</li><li>Outputs: mirror pages + dashboard listing.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris adopt`.</li><li>Surfaces: CLI + skills.</li><li>Contract: scans `README.md` and `docs/**/*.md`, stores the source path and content hash in the page registry, and writes a read-only report mirror. Re-run `adopt` to accept a source update flagged by `sync`.</li></ul><p>## `iris archive &lt;id&gt;`</p><ul><li>Synopsis: move page to archive and update feed/index.</li><li>Flags: `--json`.</li><li>Inputs: page id.</li><li>Outputs: archived page + state update.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris archive bug-cache-stampede`.</li><li>Surfaces: CLI + skills.</li></ul><p>## `iris export &lt;id&gt; --single|--png|--pdf`</p><ul><li>Synopsis: export standalone HTML or rendered image/PDF.</li><li>Flags: `--single` (default), `--png`, `--pdf`, `--output`, `--json`.</li><li>Inputs: page id.</li><li>Outputs: `--single` writes `iris/archive/&lt;id&gt;.html`; an explicit `--output` path overrides that location and missing parent directories are created.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris export bug-cache-stampede --single`.</li><li>Surfaces: CLI + skills.</li></ul><p>Current limitation: the standalone HTML exporter is implemented, but PNG and PDF remain unavailable until the project approves and integrates a browser renderer. Requests for either mode fail explicitly; they never emit mislabeled HTML. The bundled CSS uses system font stacks, so no remote font files are required.</p><p>## `iris vendor`</p><ul><li>Synopsis: download pinned CDN assets into `design/vendor` and switch asset base.</li><li>Flags: `--json`.</li><li>Inputs: CDN constants.</li><li>Outputs: local vendored assets.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris vendor`.</li><li>Surfaces: CLI + skills.</li><li>Status: not yet implemented; the CLI exits 1 with a clear message until a later milestone lands.</li></ul><p>## `iris open`</p><ul><li>Synopsis: open `iris/index.html` in the default browser via the platform opener (`open`, `start`, or `xdg-open`).</li><li>Flags: `--json`.</li><li>Inputs: local dashboard path.</li><li>Outputs: browser launch; prints the opened path.</li><li>Exit codes: 0 opened · 1 when `iris/index.html` is missing (run `iris init` first) · 2 when the opener cannot launch.</li><li>Example: `iris open`.</li><li>Surfaces: CLI + editor task.</li></ul><p>## `iris update`</p><ul><li>Synopsis: regenerate managed integration shims while preserving user edits outside managed blocks.</li><li>Flags: `--json`.</li><li>Inputs: existing project configuration.</li><li>Outputs: refreshed surface shim files.</li><li>Exit codes: 0/1/2.</li><li>Example: `iris update`.</li><li>Surfaces: CLI.</li><li>Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved.</li></ul>
+    </article>
+
+     <footer class="footer">rendered from doc-docs-cmds · offline deterministic template</footer>
+   </main>
+   <script defer src="../../design/components/base.js"></script>
+ </body>
+</html>

@@ -8,6 +8,7 @@
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
 - Agent surfaces: CLI `iris`, Claude `/iris *`, Copilot prompts, Codex `$iris-*` (generated in later milestones).
 - Navigation contract: the dashboard links every rendered, archived, and project page; every page links back to the dashboard. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
+- Dashboard contract: briefing hero → health strip → architecture placeholder → work surface → project-docs strip. `/` focuses the work filter, `t` toggles theme, and arrow keys move between focused work cards; all remain classic-script, `file://`-safe interactions.
 
 ## `iris init`
 

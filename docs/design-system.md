@@ -83,6 +83,8 @@ Rule: a type color always appears with a second channel (label, icon, or positio
 
 Daylight version of the same instrument: `--bg #F6F5F1` (warm paper, not blue-white), surfaces step down toward white, text inverts to `#191D26` / `#4B5163` / `#7A8093`, accent deepens to `#B87A16` for contrast, spectrum values darken ~15% lightness to hold 4.5:1 on light ground. Toggle mechanism (`data-theme`) is unchanged.
 
+Implementation note: `#B87A16` and the tertiary text values remain palette tokens, but automated contrast checks showed they do not reach 4.5:1 as small text on every surface. Components therefore use the contrast-safe `--accent-text` token for linked text and `--text-2` for readable captions; `--accent` remains the focus/border chrome color.
+
 ### 4.4 Type
 
 Two tiers, because fonts must work from file:// with zero network:

@@ -13,7 +13,7 @@ export async function runInitCommand(cwd: string): Promise<void> {
   await writeIfMissing(
     path.join(irisRoot, 'config.yaml'),
     [
-      'project: iris-project',
+      `project: ${path.basename(cwd)}`,
       'theme: dark',
       'asset_base: cdn',
       'detected_tools:',

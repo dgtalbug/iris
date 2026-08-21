@@ -1,32 +1,44 @@
-import { CDN } from '../cdn.js';
-
 export const TOKENS_CSS = `:root {
-  --bg: hsl(228 26% 8%);
-  --surface-1: hsl(227 22% 12%);
-  --surface-2: hsl(226 19% 16%);
-  --surface-3: hsl(225 16% 22%);
-  --text-1: hsl(40 24% 94%);
-  --text-2: hsl(228 12% 74%);
-  --text-3: hsl(228 10% 56%);
-  --accent: hsl(40 92% 62%);
-  --accent-ink: hsl(228 26% 10%);
-  --ok: hsl(152 52% 50%);
-  --warn: hsl(28 92% 58%);
-  --danger: hsl(357 78% 62%);
-  --info: hsl(199 84% 62%);
-  --chart-1: hsl(199 84% 62%);
-  --chart-2: hsl(276 70% 63%);
-  --chart-3: hsl(152 52% 50%);
-  --chart-4: hsl(40 92% 62%);
-  --chart-5: hsl(12 83% 65%);
-  --chart-6: hsl(324 75% 62%);
+  --bg: #0b0e14;
+  --surface-1: #12161f;
+  --surface-2: #1a1f2b;
+  --surface-3: #232936;
+  --line-1: #252b39;
+  --text-1: #e9ebf1;
+  --text-2: #a6adbf;
+  --text-3: #6e7689;
+  --accent: #f2b24e;
+  --accent-text: #f2b24e;
+  --accent-ink: #141008;
+  --type-report: #5cb8f0;
+  --type-feature: #4fc98c;
+  --type-bug: #ef6a6a;
+  --type-idea: #a78bfa;
+  --type-plan: #f2b24e;
+  --type-report-soft: #5cb8f026;
+  --type-feature-soft: #4fc98c26;
+  --type-bug-soft: #ef6a6a26;
+  --type-idea-soft: #a78bfa26;
+  --type-plan-soft: #f2b24e26;
+  --ok: #4fc98c;
+  --warn: #f0913e;
+  --danger: #ef6a6a;
+  --info: #5cb8f0;
+  --ok-soft: #4fc98c26;
+  --warn-soft: #f0913e26;
+  --danger-soft: #ef6a6a26;
+  --info-soft: #5cb8f026;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --size-1: 0.6875rem;
-  --size-2: 0.875rem;
-  --size-3: 1rem;
+  --size-2: 0.8125rem;
+  --size-3: 0.9375rem;
   --size-4: 1.25rem;
-  --size-5: 2rem;
+  --size-5: 1.75rem;
+  --size-6: 2.5rem;
+  --leading-tight: 1.2;
+  --leading-body: 1.55;
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-bold: 700;
@@ -39,8 +51,9 @@ export const TOKENS_CSS = `:root {
   --radius-1: 0.375rem;
   --radius-2: 0.625rem;
   --radius-3: 1rem;
-  --border-1: 1px solid hsl(228 14% 24%);
-  --elevation-1: 0 0.25rem 0.75rem hsl(228 50% 3% / 0.35);
+  --radius-full: 999px;
+  --border-1: 1px solid var(--line-1);
+  --elevation-1: none;
   --duration-1: 120ms;
   --duration-2: 220ms;
   --duration-3: 320ms;
@@ -48,22 +61,43 @@ export const TOKENS_CSS = `:root {
 }
 
 [data-theme='light'] {
-  --bg: hsl(42 38% 96%);
-  --surface-1: hsl(40 30% 99%);
-  --surface-2: hsl(42 28% 93%);
-  --surface-3: hsl(42 22% 87%);
-  --text-1: hsl(232 20% 14%);
-  --text-2: hsl(230 12% 32%);
-  --text-3: hsl(230 8% 48%);
-  --accent: hsl(34 90% 40%);
-  --accent-ink: hsl(40 30% 99%);
-  --border-1: 1px solid hsl(40 16% 80%);
-  --elevation-1: 0 0.25rem 0.75rem hsl(40 20% 60% / 0.25);
+  --bg: #f6f5f1;
+  --surface-1: #ffffff;
+  --surface-2: #ecebe7;
+  --surface-3: #e2e0da;
+  --line-1: #d4d1c8;
+  --text-1: #191d26;
+  --text-2: #4b5163;
+  --text-3: #7a8093;
+  --accent: #b87a16;
+  --accent-text: #84530b;
+  --accent-ink: #ffffff;
+  --type-report: #126b9b;
+  --type-feature: #16754a;
+  --type-bug: #b62b32;
+  --type-idea: #6941c6;
+  --type-plan: #84530b;
+  --type-report-soft: #126b9b18;
+  --type-feature-soft: #16754a18;
+  --type-bug-soft: #b62b3218;
+  --type-idea-soft: #6941c618;
+  --type-plan-soft: #84530b18;
+  --ok: #16754a;
+  --warn: #954708;
+  --danger: #b62b32;
+  --info: #126b9b;
+  --ok-soft: #16754a18;
+  --warn-soft: #95470818;
+  --danger-soft: #b62b3218;
+  --info-soft: #126b9b18;
+  --elevation-1: 0 0.25rem 0.75rem #6b625629;
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
+  font-size: var(--size-3);
+  line-height: var(--leading-body);
   background: var(--bg);
   color: var(--text-1);
 }
@@ -75,74 +109,107 @@ body {
 `;
 
 export const BASE_COMPONENTS_CSS = `
-.page-shell { max-width: 70rem; margin: 0 auto; padding: var(--space-5); }
+.page-shell { width: min(100% - calc(var(--space-4) * 2), 72rem); margin: 0 auto; padding: var(--space-5) 0; }
 .surface { background: var(--surface-1); border: var(--border-1); border-radius: var(--radius-2); box-shadow: var(--elevation-1); }
-a { color: var(--accent); }
-h1 { font-size: var(--size-5); font-weight: var(--weight-bold); letter-spacing: -0.02em; margin: 0; }
+a { color: var(--accent-text); }
+h1 { font-family: var(--font-display); font-size: var(--size-5); line-height: var(--leading-tight); font-weight: var(--weight-bold); letter-spacing: -0.02em; margin: 0; }
 h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01em; }
-.eyebrow { font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-3); }
+.eyebrow { font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-2); }
 .mono { font-family: var(--font-mono); font-size: var(--size-2); }
 
 .header { display: grid; gap: var(--space-4); margin-bottom: var(--space-5); }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
 .crumbs { display: flex; align-items: center; gap: var(--space-2); }
 .crumbs a { color: var(--text-2); text-decoration: none; font-family: var(--font-mono); font-size: var(--size-2); }
-.crumbs a:hover { color: var(--accent); }
-.theme-toggle { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: 999px; padding: var(--space-1) var(--space-3); cursor: pointer; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
+.crumbs a:hover { color: var(--accent-text); }
+.theme-toggle { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: var(--radius-full); padding: var(--space-1) var(--space-3); cursor: pointer; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; transition: border-color var(--duration-1) var(--easing), color var(--duration-1) var(--easing); }
 .theme-toggle:hover { color: var(--text-1); border-color: var(--accent); }
 
-.hero { display: flex; align-items: center; gap: var(--space-5); padding: var(--space-5); }
+.briefing-hero { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--space-5); padding: var(--space-5); }
 .hero-copy { display: grid; gap: var(--space-2); }
-.hero-line { margin: 0; color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-2); }
+.hero-copy h1 { font-size: var(--size-6); }
+.hero-line { max-width: 52rem; margin: 0; color: var(--text-2); }
+.hero-meta { display: flex; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-1) 0 0; color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-2); }
 .header-bar { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); flex-wrap: wrap; }
+.page-title-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2); }
 
 .aperture { flex: none; }
-.aperture .seg { stroke: currentColor; fill: none; stroke-width: 7; stroke-linecap: butt; transition: stroke-width var(--duration-2) var(--easing); }
+.aperture .seg { stroke: currentColor; fill: none; stroke-width: 7; stroke-linecap: butt; stroke-dashoffset: 0; animation: aperture-open var(--duration-3) var(--easing) both; transition: stroke-width var(--duration-1) var(--easing); }
 .aperture .seg:hover { stroke-width: 10; }
 .aperture .ring-empty { stroke: var(--surface-3); fill: none; stroke-width: 2; stroke-dasharray: 4 6; }
-.aperture-count { font-family: var(--font-mono); font-size: 1.375rem; font-weight: var(--weight-bold); fill: var(--text-1); }
-.aperture-label { font-family: var(--font-mono); font-size: 0.5rem; letter-spacing: 0.16em; text-transform: uppercase; fill: var(--text-3); }
+.aperture-count { font-family: var(--font-display); font-size: var(--size-4); font-weight: var(--weight-bold); fill: var(--text-1); }
+.aperture-label { font-family: var(--font-mono); font-size: var(--size-1); letter-spacing: 0.16em; text-transform: uppercase; fill: var(--text-2); }
+.aperture-glyph { width: 1.5rem; height: 1.5rem; flex: none; }
+.aperture-glyph circle { fill: none; stroke: currentColor; stroke-width: 5; stroke-dasharray: 30 10; transform: rotate(-45deg); transform-origin: center; }
+.tp-report { color: var(--type-report); }
+.tp-feature { color: var(--type-feature); }
+.tp-bug { color: var(--type-bug); }
+.tp-idea { color: var(--type-idea); }
+.tp-plan { color: var(--type-plan); }
+.tp-page { color: var(--text-2); }
 
-.type-chip { display: inline-flex; align-items: center; padding: var(--space-1) var(--space-2); border-radius: 999px; background: var(--surface-2); font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-2); }
-.status-chip { font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
-.st-draft { color: var(--text-3); }
+.pill, .type-chip, .status-chip { display: inline-flex; align-items: center; width: fit-content; padding: var(--space-1) var(--space-2); border-radius: var(--radius-full); background: var(--surface-2); font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-2); }
+.type-chip.tp-report { background: var(--type-report-soft); color: var(--type-report); }
+.type-chip.tp-feature { background: var(--type-feature-soft); color: var(--type-feature); }
+.type-chip.tp-bug { background: var(--type-bug-soft); color: var(--type-bug); }
+.type-chip.tp-idea { background: var(--type-idea-soft); color: var(--type-idea); }
+.type-chip.tp-plan { background: var(--type-plan-soft); color: var(--type-plan); }
+.st-draft { color: var(--text-2); }
 .st-active { color: var(--info); }
 .st-done { color: var(--ok); }
-.st-archived { color: var(--text-3); }
+.st-archived { color: var(--text-2); }
 .st-stale { color: var(--danger); }
+.status-chip.st-active { background: var(--info-soft); }
+.status-chip.st-done { background: var(--ok-soft); }
+.status-chip.st-stale { background: var(--danger-soft); }
+
+.health-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+.stat-tile { display: grid; gap: var(--space-1); padding: var(--space-4); color: inherit; text-decoration: none; transition: border-color var(--duration-1) var(--easing), background var(--duration-1) var(--easing); }
+.stat-tile:hover { border-color: var(--accent); background: var(--surface-2); }
+.stat-value { font-family: var(--font-display); font-size: var(--size-5); line-height: var(--leading-tight); font-weight: var(--weight-bold); }
+.stat-label { color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
+
+.dashboard-stack { display: grid; gap: var(--space-5); }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.section-heading h2 { margin: 0; }
+.architecture-pane { min-height: 13rem; display: grid; place-items: center; padding: var(--space-5); }
+.architecture-pane .empty-state { max-width: 38rem; text-align: center; }
+.work-surface { display: grid; gap: var(--space-3); }
 
 .toolbar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
 .tabs { display: flex; gap: var(--space-2); }
 .tab-button { background: var(--surface-2); border: var(--border-1); color: var(--text-2); border-radius: var(--radius-1); padding: var(--space-2) var(--space-3); cursor: pointer; font-family: var(--font-mono); font-size: var(--size-1); text-transform: uppercase; letter-spacing: 0.12em; }
-.tab-button[aria-selected='true'] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.tab-button[aria-selected='true'] { color: var(--accent-text); background: var(--surface-3); border-color: var(--accent); }
 .filter-input { background: var(--surface-2); border: var(--border-1); color: var(--text-1); border-radius: var(--radius-1); padding: var(--space-2) var(--space-3); font-family: var(--font-mono); font-size: var(--size-2); min-width: 14rem; }
-.filter-input::placeholder { color: var(--text-3); }
+.filter-wrap { display: flex; align-items: center; gap: var(--space-2); }
+.filter-input::placeholder { color: var(--text-2); }
+.kbd, kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; padding: var(--space-1) var(--space-2); border: var(--border-1); border-bottom-color: var(--text-2); border-radius: var(--radius-1); background: var(--surface-2); color: var(--text-2); font-family: var(--font-mono); font-size: var(--size-1); }
 
 .list { display: grid; gap: var(--space-3); }
 /* Class display values would otherwise defeat the hidden attribute. */
 [hidden] { display: none !important; }
-.page-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); padding: var(--space-4); text-decoration: none; color: inherit; transition: border-color var(--duration-1) var(--easing), transform var(--duration-1) var(--easing); }
-.page-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.page-card { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); padding: var(--space-4); text-decoration: none; color: inherit; transition: border-color var(--duration-1) var(--easing), background var(--duration-1) var(--easing), transform var(--duration-1) var(--easing); }
+.page-card:hover { border-color: var(--accent); background: var(--surface-2); transform: translateY(-1px); }
 .card-main { display: grid; gap: var(--space-1); min-width: 0; }
 .card-title { font-weight: var(--weight-medium); color: var(--text-1); }
-.card-id { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-3); overflow-wrap: anywhere; }
+.card-id { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); overflow-wrap: anywhere; }
 .empty-state { padding: var(--space-5); color: var(--text-2); }
-.empty-state code { font-family: var(--font-mono); color: var(--accent); }
+.empty-state code { font-family: var(--font-mono); color: var(--accent-text); }
 
 .board { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-3); }
 .board-col { display: grid; gap: var(--space-3); align-content: start; }
 .board-col .eyebrow { padding: var(--space-2) var(--space-1) 0; }
-.board-empty { color: var(--text-3); font-size: var(--size-2); padding: var(--space-2) var(--space-1); }
+.board-empty { color: var(--text-2); font-size: var(--size-2); padding: var(--space-2) var(--space-1); }
 
 .project-strip { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); margin-top: var(--space-4); flex-wrap: wrap; }
 .project-links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .project-links a { font-family: var(--font-mono); font-size: var(--size-2); text-decoration: none; color: var(--text-2); }
-.project-links a:hover { color: var(--accent); }
+.project-links a:hover { color: var(--accent-text); }
 
-.footer { margin-top: var(--space-6); color: var(--text-3); font-size: var(--size-2); font-family: var(--font-mono); }
+.footer { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-6); color: var(--text-2); font-size: var(--size-2); font-family: var(--font-mono); }
 
 .timeline { position: relative; margin-left: var(--space-4); border-left: var(--border-1); padding-left: var(--space-4); }
-.timeline-item { margin-bottom: var(--space-4); opacity: 0; transform: translateY(0.5rem); animation: timeline-in var(--duration-3) var(--easing) forwards; }
+.timeline-item { margin-bottom: var(--space-4); }
 .timeline-item.info::before,.timeline-item.warn::before,.timeline-item.error::before { content: ''; position: absolute; left: -0.41rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
 .timeline-item.info::before { background: var(--info); }
 .timeline-item.warn::before { background: var(--warn); }
@@ -151,16 +218,38 @@ h2 { font-size: var(--size-4); margin: 0 0 var(--space-3); letter-spacing: -0.01
 .code-toolbar { display: flex; justify-content: space-between; align-items: center; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--space-3); }
 .metric-card { padding: var(--space-3); }
-.metric-label { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; }
+.metric-label { font-family: var(--font-mono); font-size: var(--size-1); color: var(--text-2); text-transform: uppercase; letter-spacing: 0.12em; }
 .metric-value { margin-top: var(--space-2); font-size: var(--size-4); font-weight: var(--weight-bold); }
 .table-wrap { overflow: auto; }
 .chart-wrap, .mermaid-wrap, .flow-wrap { min-height: 16rem; padding: var(--space-4); }
+.callout { padding: var(--space-4); border-left: 0.25rem solid var(--info); }
+.callout.info { background: var(--info-soft); border-left-color: var(--info); }
+.callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+.callout.danger { background: var(--danger-soft); border-left-color: var(--danger); }
 
-@keyframes timeline-in { to { opacity: 1; transform: translateY(0); } }
+@keyframes aperture-open { from { stroke-dashoffset: 18; } to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .timeline-item { animation: none; opacity: 1; transform: none; }
-  .page-card, .aperture .seg { transition: none; }
+  .aperture .seg { animation: none; stroke-dashoffset: 0; }
+  .page-card, .stat-tile, .theme-toggle, .tab-button { transition: none; }
   .page-card:hover { transform: none; }
+}
+@media (max-width: 40rem) {
+  .page-shell { width: min(100% - calc(var(--space-3) * 2), 72rem); padding: var(--space-4) 0; }
+  .briefing-hero { grid-template-columns: 1fr; }
+  .aperture { justify-self: start; }
+  .health-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .toolbar, .filter-wrap { align-items: stretch; }
+  .filter-wrap { width: 100%; }
+  .filter-input { min-width: 0; width: 100%; }
+  .board { grid-template-columns: 1fr; }
+  .page-card { grid-template-columns: auto minmax(0, 1fr); }
+  .page-card .type-chip, .page-card .status-chip { grid-column: 2; }
+}
+@media print {
+  .theme-toggle, .crumbs, .toolbar, .kbd { display: none !important; }
+  .page-shell { width: 100%; padding: 0; }
+  .surface { box-shadow: none; break-inside: avoid; }
+  a { color: inherit; text-decoration: underline; }
 }
 `;
 
@@ -207,6 +296,43 @@ function setupFilter() {
   });
 }
 
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const editing = target instanceof HTMLElement && (
+      target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT'
+    );
+    if (editing || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key === '/') {
+      const input = document.querySelector('[data-filter-input]');
+      if (input instanceof HTMLElement) {
+        event.preventDefault();
+        input.focus();
+      }
+    }
+    if (event.key.toLowerCase() === 't') {
+      const toggle = document.querySelector('[data-theme-toggle]');
+      if (toggle instanceof HTMLElement) {
+        event.preventDefault();
+        toggle.click();
+      }
+    }
+  });
+}
+
+function setupCardNavigation() {
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    const cards = Array.from(document.querySelectorAll('[data-page-card]:not([hidden])'));
+    const index = cards.indexOf(document.activeElement);
+    if (index < 0) return;
+    event.preventDefault();
+    const offset = event.key === 'ArrowDown' ? 1 : -1;
+    const next = cards[(index + offset + cards.length) % cards.length];
+    if (next instanceof HTMLElement) next.focus();
+  });
+}
+
 function setupTheme() {
   const toggle = document.querySelector('[data-theme-toggle]');
   const stored = localStorage.getItem('iris-theme');
@@ -221,56 +347,12 @@ function setupTheme() {
   });
 }
 
-async function setupMermaid() {
-  const blocks = document.querySelectorAll('[data-mermaid-source]');
-  if (blocks.length === 0) return;
-  const mermaidModule = await import('${CDN.mermaid}');
-  const mermaid = mermaidModule.default;
-  mermaid.initialize({ startOnLoad: false });
-  for (const block of blocks) {
-    const source = block.getAttribute('data-mermaid-source');
-    if (!source) continue;
-    const id = 'mermaid-' + Math.random().toString(36).slice(2);
-    const rendered = await mermaid.render(id, source);
-    block.innerHTML = rendered.svg;
-  }
-}
-
-async function setupCodeCards() {
-  const blocks = document.querySelectorAll('[data-code-card]');
-  if (blocks.length === 0) return;
-  const shiki = await import('${CDN.shiki}');
-  for (const block of blocks) {
-    const source = block.getAttribute('data-code-source') || '';
-    const lang = block.getAttribute('data-code-lang') || 'text';
-    const html = await shiki.codeToHtml(source, { lang, theme: 'github-dark' });
-    block.innerHTML = html;
-  }
-}
-
-function setupCharts() {
-  const blocks = document.querySelectorAll('canvas[data-chart-config]');
-  if (blocks.length === 0) return;
-  const script = document.createElement('script');
-  script.src = '${CDN.chartJs}';
-  script.onload = () => {
-    for (const block of blocks) {
-      const config = block.getAttribute('data-chart-config');
-      if (!config) continue;
-      // @ts-ignore
-      new window.Chart(block, JSON.parse(config));
-    }
-  };
-  document.head.appendChild(script);
-}
-
 setupTabs();
 setupViewToggle();
 setupFilter();
 setupTheme();
-setupMermaid().catch(() => {});
-setupCodeCards().catch(() => {});
-setupCharts();
+setupKeyboardShortcuts();
+setupCardNavigation();
 document.documentElement.setAttribute('data-iris-js', 'ready');
 `;
 
@@ -281,6 +363,7 @@ export type DashboardPage = {
   status: string;
   href: string;
   stale?: boolean;
+  briefing?: string;
 };
 
 export const PROJECT_DOC_NAMES = [
@@ -355,6 +438,14 @@ function statusClass(status: string, stale?: boolean): string {
   return ['draft', 'active', 'done', 'archived'].includes(status) ? `st-${status}` : 'st-active';
 }
 
+function typeClass(type: string): string {
+  return ['report', 'feature', 'bug', 'idea', 'plan'].includes(type) ? `tp-${type}` : 'tp-page';
+}
+
+function apertureGlyph(type: string): string {
+  return `<svg class="aperture-glyph ${typeClass(type)}" viewBox="0 0 24 24" role="img" aria-label="${escapeHtml(type)} page"><circle cx="12" cy="12" r="8"><title>${escapeHtml(type)} page</title></circle></svg>`;
+}
+
 function renderMetricGrid(entries: Array<{ label: string; value: string }>): string {
   if (entries.length === 0) return '';
 
@@ -393,7 +484,7 @@ function renderTimeline(events: unknown[]): string {
       const level = typeof record.level === 'string' ? record.level : 'info';
       return `
         <div class="timeline-item ${escapeHtml(level)}" style="position: relative;">
-          <strong class="mono">${escapeHtml(time)}</strong>
+          <strong class="mono">${escapeHtml(time)}</strong> <span class="pill">${escapeHtml(level)}</span>
           <div>${escapeHtml(title)}</div>
         </div>
       `;
@@ -529,7 +620,10 @@ function renderPageShell({
        </div>
        <div class="header-bar">
          <div>
-           <div class="type-chip" style="margin-bottom: var(--space-2);">${escapeHtml(type)}</div>
+           <div class="page-title-row">
+             ${apertureGlyph(type)}
+             <div class="type-chip ${typeClass(type)}">${escapeHtml(type)}</div>
+           </div>
            <h1>${escapeHtml(title)}</h1>
          </div>
          <span class="status-chip ${statusClass(status)}">status: ${escapeHtml(status)}</span>
@@ -541,7 +635,7 @@ function renderPageShell({
    </main>
    <script defer src="../../design/components/base.js"></script>
  </body>
-</html>`;
+</html>`.replace(/[ \t]+$/gm, '');
 }
 
 export function renderContractPage(contract: Record<string, unknown>): string {
@@ -674,7 +768,7 @@ export function renderContractPage(contract: Record<string, unknown>): string {
 }
 
 // The aperture ring is the dashboard's signature: one arc per page, colored by
-// its real status, so the ornament carries the same information as the list.
+// page type and paired with an accessible title so color is never the only signal.
 function apertureRing(pages: DashboardPage[]): string {
   const size = 84;
   const center = size / 2;
@@ -692,7 +786,7 @@ function apertureRing(pages: DashboardPage[]): string {
             const dash = Math.max(share - gap, 1).toFixed(2);
             const rest = (circumference - Number(dash)).toFixed(2);
             const angle = ((360 / shown.length) * index - 90).toFixed(2);
-            return `<circle class="seg ${statusClass(page.status, page.stale)}" cx="${center}" cy="${center}" r="${radius}" stroke-dasharray="${dash} ${rest}" transform="rotate(${angle} ${center} ${center})"><title>${escapeHtml(page.title)} · ${escapeHtml(page.stale ? 'stale' : page.status)}</title></circle>`;
+            return `<circle class="seg ${typeClass(page.type)}" cx="${center}" cy="${center}" r="${radius}" stroke-dasharray="${dash} ${rest}" transform="rotate(${angle} ${center} ${center})"><title>${escapeHtml(page.title)} · ${escapeHtml(page.type)} · ${escapeHtml(page.stale ? 'stale' : page.status)}</title></circle>`;
           })
           .join('');
 
@@ -707,7 +801,8 @@ function dashboardCard(page: DashboardPage): string {
   const staleSuffix = page.stale ? ' · stale' : '';
   return `
     <a class="surface page-card" data-page-card href="${escapeHtml(page.href)}">
-      <span class="type-chip">${escapeHtml(page.type)}</span>
+      ${apertureGlyph(page.type)}
+      <span class="type-chip ${typeClass(page.type)}">${escapeHtml(page.type)}</span>
       <span class="card-main">
         <span class="card-title">${escapeHtml(page.title)}</span>
         <span class="card-id">${escapeHtml(page.id)}</span>
@@ -720,7 +815,7 @@ function dashboardCard(page: DashboardPage): string {
 function boardColumn(label: string, pages: DashboardPage[]): string {
   const cards =
     pages.length === 0
-      ? '<p class="board-empty">Nothing here yet.</p>'
+      ? '<p class="board-empty">Nothing here yet. Create work with <code>iris bug my-first-bug</code>.</p>'
       : pages.map((page) => dashboardCard(page)).join('');
   return `<div class="board-col"><span class="eyebrow">${escapeHtml(label)}</span>${cards}</div>`;
 }
@@ -737,6 +832,14 @@ export function dashboardHtml(
   pages: DashboardPage[] = [],
   projectDocs: string[] = [],
 ): string {
+  const staleCount = pages.filter((page) => page.stale).length;
+  const activeCount = pages.filter(
+    (page) => !page.stale && !['done', 'archived'].includes(page.status),
+  ).length;
+  const adoptedReadme = pages.find((page) => page.id === 'doc-readme');
+  const briefing =
+    adoptedReadme?.briefing ??
+    'Adopt your README for a source-grounded repository briefing: iris adopt.';
   const listCards =
     pages.length === 0
       ? `<article class="surface empty-state"><h2>No pages yet</h2><p>Create one with <code>iris bug my-first-bug</code>, then run <code>iris render --all</code>.</p></article>`
@@ -763,7 +866,7 @@ export function dashboardHtml(
 
   const projectStrip =
     projectDocs.length === 0
-      ? ''
+      ? `<section class="surface empty-state"><h2>Project docs are not initialized</h2><p>Create the managed overview, HLD, LLD, ERD, commands, and decisions pages with <code>iris init</code>.</p></section>`
       : `<section class="surface project-strip">
         <span class="eyebrow">project docs</span>
         <nav class="project-links">
@@ -786,39 +889,64 @@ export function dashboardHtml(
     <main class="page-shell">
       <header class="header">
         <div class="topbar">
-          <span class="eyebrow">iris · visual versioned docs</span>
+          <span class="eyebrow">◔ iris · ${escapeHtml(projectName)}</span>
           ${themeToggleButton()}
         </div>
-        <div class="hero surface">
+        <section class="briefing-hero surface" aria-labelledby="briefing-title">
           ${apertureRing(pages)}
           <div class="hero-copy">
-            <h1>${escapeHtml(projectName)}</h1>
-            <p class="hero-line">${escapeHtml(summaryLine(pages))}</p>
+            <span class="eyebrow">what this repo is</span>
+            <h1 id="briefing-title">${escapeHtml(projectName)}</h1>
+            <p class="hero-line">${escapeHtml(briefing)}</p>
+            <p class="hero-meta"><span>run: <code>pnpm dev</code></span><span>test: <code>pnpm test</code></span><span>entry: <code>src/</code> · <code>docs/</code></span></p>
           </div>
-        </div>
+        </section>
       </header>
 
-      <section class="surface toolbar">
-        <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
-          <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">List</button>
-          <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">Board</button>
-        </div>
-        <input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" />
-      </section>
+      <div class="dashboard-stack">
+        <section class="health-strip" aria-label="repository health">
+          <a class="surface stat-tile" href="#work"><span class="stat-value">${pages.length}</span><span class="stat-label">pages</span></a>
+          <a class="surface stat-tile" href="#work"><span class="stat-value">${staleCount}</span><span class="stat-label">stale</span></a>
+          <a class="surface stat-tile" href="#work"><span class="stat-value">${activeCount}</span><span class="stat-label">active</span></a>
+          <a class="surface stat-tile" href="#project-docs"><span class="stat-value">${projectDocs.length}</span><span class="stat-label">project docs</span></a>
+        </section>
 
-      <section class="list" data-dashboard-list>
-        ${listCards}
-      </section>
+        <section aria-labelledby="architecture-title">
+          <div class="section-heading"><div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div><span class="pill">HLD</span></div>
+          <div class="surface architecture-pane">
+            <div class="empty-state"><h2>Architecture view is waiting for its renderer</h2><p>Run <code>iris vendor</code>, then <code>iris render --all</code> when the later diagram change lands. Until then, <a href="./project/hld.html">open the HLD page</a>.</p></div>
+          </div>
+        </section>
 
-      <section class="board" data-dashboard-board hidden>
-        ${columns}
-      </section>
-      ${projectStrip}
-      <footer class="footer">generated by iris · works offline from file://</footer>
+        <section class="work-surface" id="work" aria-labelledby="work-title">
+          <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="work-title">Work</h2></div><span class="mono">${escapeHtml(summaryLine(pages))}</span></div>
+          <div class="surface toolbar">
+            <div class="tabs" role="tablist" aria-label="dashboard view" data-tabs="dashboard-view">
+              <button role="tab" class="tab-button" aria-selected="true" data-view="list" data-tab-id="list">List</button>
+              <button role="tab" class="tab-button" aria-selected="false" data-view="board" data-tab-id="board">Board</button>
+            </div>
+            <label class="filter-wrap"><span class="eyebrow">filter</span><input class="filter-input" type="search" data-filter-input placeholder="Filter pages…" aria-label="Filter pages" /><kbd>/</kbd></label>
+          </div>
+
+          <section class="list" data-dashboard-list>
+            ${listCards}
+          </section>
+
+          <section class="board" data-dashboard-board hidden>
+            ${columns}
+          </section>
+        </section>
+
+        <section id="project-docs" aria-labelledby="project-docs-title">
+          <div class="section-heading"><div><span class="eyebrow">reference shelf</span><h2 id="project-docs-title">Project docs</h2></div></div>
+          ${projectStrip}
+        </section>
+      </div>
+      <footer class="footer"><span>generated by iris · works offline from file://</span><span><kbd>/</kbd> filter · <kbd>t</kbd> theme · <kbd>↑</kbd><kbd>↓</kbd> move</span></footer>
     </main>
     <script defer src="./design/components/base.js"></script>
   </body>
-</html>`;
+</html>`.replace(/[ \t]+$/gm, '');
 }
 
 export function projectPlaceholderHtml(name: string): string {
@@ -841,7 +969,10 @@ export function projectPlaceholderHtml(name: string): string {
        </div>
        <div class="header-bar">
          <div>
-           <div class="type-chip" style="margin-bottom: var(--space-2);">project doc</div>
+           <div class="page-title-row">
+             ${apertureGlyph('report')}
+             <div class="type-chip tp-report">project doc</div>
+           </div>
            <h1>${escapeHtml(title)}</h1>
          </div>
          <span class="status-chip st-draft">status: pending</span>
@@ -849,7 +980,7 @@ export function projectPlaceholderHtml(name: string): string {
      </header>
      <article class="surface empty-state">
        <h2>This page is not generated yet</h2>
-       <p>The ${escapeHtml(name)} document fills in as later iris milestones land. Rendered pages live on the <a href="../index.html">dashboard</a>.</p>
+       <p>Adopt repository documentation with <code>iris adopt</code>, then refresh this ${escapeHtml(name)} surface with <code>iris render --all</code>. Rendered pages live on the <a href="../index.html">dashboard</a>.</p>
      </article>
      <footer class="footer">managed by iris · regenerated by iris update</footer>
    </main>

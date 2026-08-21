@@ -29,6 +29,36 @@ async function listPageIds(pagesRoot: string): Promise<string[]> {
   }
 }
 
+function briefingFromReadme(payload: Record<string, unknown>): string | undefined {
+  const sections =
+    payload.sections && typeof payload.sections === 'object' && !Array.isArray(payload.sections)
+      ? (payload.sections as Record<string, unknown>)
+      : {};
+  const openItems =
+    sections.open_items &&
+    typeof sections.open_items === 'object' &&
+    !Array.isArray(sections.open_items)
+      ? (sections.open_items as Record<string, unknown>)
+      : {};
+  if (typeof openItems.md !== 'string') return undefined;
+
+  const paragraph = openItems.md
+    .split(/\n\s*\n/)
+    .map((block) => block.replace(/\s+/g, ' ').trim())
+    .find(
+      (block) =>
+        block.length > 0 &&
+        !/^(?:#|!|\[!|```|---|<|[-*]\s)/.test(block),
+    );
+  if (!paragraph) return undefined;
+  const plain = paragraph
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`>#]/g, '')
+    .trim();
+  return plain.length > 240 ? `${plain.slice(0, 237).trimEnd()}…` : plain;
+}
+
 export async function runRenderCommand(cwd: string, id?: string): Promise<void> {
   const pagesRoot = path.join(cwd, 'iris', 'pages');
   const allPageIds = await listPageIds(pagesRoot);
@@ -100,6 +130,7 @@ export async function refreshDashboard(cwd: string): Promise<void> {
       status: typeof payload.status === 'string' ? payload.status : 'draft',
       stale: state?.page_index[pageId]?.status === 'stale',
       href: `./pages/${pageId}/page.html`,
+      briefing: pageId === 'doc-readme' ? briefingFromReadme(payload) : undefined,
     });
   }
 
@@ -120,5 +151,5 @@ export async function refreshDashboard(cwd: string): Promise<void> {
   );
 
   const indexPath = path.join(irisRoot, 'index.html');
-  await writeAlways(indexPath, dashboardHtml('iris project', renderedPages, projectDocs));
+  await writeAlways(indexPath, dashboardHtml(path.basename(cwd), renderedPages, projectDocs));
 }

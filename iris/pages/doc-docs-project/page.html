@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>Docs Project · iris</title>
+   <link rel="stylesheet" href="../../design/tokens.css" />
+   <link rel="stylesheet" href="../../design/components/base.css" />
+ </head>
+ <body>
+   <main class="page-shell">
+     <header class="header">
+       <div class="topbar">
+         <nav class="crumbs"><a data-iris-nav href="../../index.html">&larr; dashboard</a></nav>
+         <button class="theme-toggle" type="button" data-theme-toggle data-iris-nav aria-label="Toggle color theme">theme</button>
+       </div>
+       <div class="header-bar">
+         <div>
+           <div class="page-title-row">
+             <svg class="aperture-glyph tp-report" viewBox="0 0 24 24" role="img" aria-label="report page"><circle cx="12" cy="12" r="8"><title>report page</title></circle></svg>
+             <div class="type-chip tp-report">report</div>
+           </div>
+           <h1>Docs Project</h1>
+         </div>
+         <span class="status-chip st-draft">status: draft</span>
+       </div>
+       <section class="metric-grid" style="margin-bottom: var(--space-4);">
+        <article class="surface metric-card">
+          <div class="metric-label">kind</div>
+          <div class="metric-value">report</div>
+        </article>
+
+        <article class="surface metric-card">
+          <div class="metric-label">status</div>
+          <div class="metric-value">draft</div>
+        </article>
+
+        <article class="surface metric-card">
+          <div class="metric-label">promotions</div>
+          <div class="metric-value">none</div>
+        </article>
+      </section>
+     </header>
+
+    <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+      <h2>Summary</h2>
+      <ul><li>Read-only mirror of docs/project.md</li><li>Source: docs/project.md</li></ul>
+    </article>
+
+    <article class="surface" style="padding: var(--space-4); margin-bottom: var(--space-4);">
+      <h2>Open items</h2>
+      <p># iris project constitution</p><p>## Problem</p><p>Developers using AI coding agents need fast, visual, versioned documentation that stays local and file-first.</p><p>## Prime Directive</p><p>Minimize prose and maximize meaningful visuals so humans understand a change in seconds.</p><p>## What iris Is / Is Not</p><p>iris is an open-source local skill + CLI that manages and renders contract data into deterministic HTML.</p><p>Non-goals (v1): no SaaS, no server, no auth, no telemetry, no MCP integration, no analysis engine, and no remote lifecycle engine.</p><p>## Ecosystem Position</p><p>OpenSpec is lifecycle truth, GitNexus is code truth, iris is the renderer for both.</p><p>## Target Users</p><p>Developers working with Claude Code, Copilot, and Codex.</p><p>## Repo Layout iris Creates</p><p>`iris/config.yaml`, `iris/state.json`, `iris/design/*`, `iris/project/*`, `iris/pages/*`, `iris/archive/*`, `iris/index.html`.</p><p>## v1 Scope</p><p>M0 foundation + M1 design system and dashboard, then typed templates, a deterministic local lifecycle layer, and distribution milestones. Lifecycle remains repository-local: no remote orchestration, hosted sync, or background service.</p><p>## Glossary</p><ul><li>page: one rendered HTML artifact for a contract id</li><li>contract: JSON data envelope + type schema</li><li>block: typed visual unit (text, chart, flow, code, etc.)</li><li>section slot: fixed location in a type template</li><li>shim: generated agent-surface integration file</li><li>mirror: read-only rendered copy of existing markdown docs</li><li>stale: dashboard/page flag when scoped files changed since last render</li></ul>
+    </article>
+
+     <footer class="footer">rendered from doc-docs-project · offline deterministic template</footer>
+   </main>
+   <script defer src="../../design/components/base.js"></script>
+ </body>
+</html>

@@ -41,6 +41,43 @@ function setupFilter() {
   });
 }
 
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const editing = target instanceof HTMLElement && (
+      target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT'
+    );
+    if (editing || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key === '/') {
+      const input = document.querySelector('[data-filter-input]');
+      if (input instanceof HTMLElement) {
+        event.preventDefault();
+        input.focus();
+      }
+    }
+    if (event.key.toLowerCase() === 't') {
+      const toggle = document.querySelector('[data-theme-toggle]');
+      if (toggle instanceof HTMLElement) {
+        event.preventDefault();
+        toggle.click();
+      }
+    }
+  });
+}
+
+function setupCardNavigation() {
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    const cards = Array.from(document.querySelectorAll('[data-page-card]:not([hidden])'));
+    const index = cards.indexOf(document.activeElement);
+    if (index < 0) return;
+    event.preventDefault();
+    const offset = event.key === 'ArrowDown' ? 1 : -1;
+    const next = cards[(index + offset + cards.length) % cards.length];
+    if (next instanceof HTMLElement) next.focus();
+  });
+}
+
 function setupTheme() {
   const toggle = document.querySelector('[data-theme-toggle]');
   const stored = localStorage.getItem('iris-theme');
@@ -55,54 +92,10 @@ function setupTheme() {
   });
 }
 
-async function setupMermaid() {
-  const blocks = document.querySelectorAll('[data-mermaid-source]');
-  if (blocks.length === 0) return;
-  const mermaidModule = await import('https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.esm.min.mjs');
-  const mermaid = mermaidModule.default;
-  mermaid.initialize({ startOnLoad: false });
-  for (const block of blocks) {
-    const source = block.getAttribute('data-mermaid-source');
-    if (!source) continue;
-    const id = 'mermaid-' + Math.random().toString(36).slice(2);
-    const rendered = await mermaid.render(id, source);
-    block.innerHTML = rendered.svg;
-  }
-}
-
-async function setupCodeCards() {
-  const blocks = document.querySelectorAll('[data-code-card]');
-  if (blocks.length === 0) return;
-  const shiki = await import('https://cdn.jsdelivr.net/npm/shiki@3.12.2/dist/index.mjs');
-  for (const block of blocks) {
-    const source = block.getAttribute('data-code-source') || '';
-    const lang = block.getAttribute('data-code-lang') || 'text';
-    const html = await shiki.codeToHtml(source, { lang, theme: 'github-dark' });
-    block.innerHTML = html;
-  }
-}
-
-function setupCharts() {
-  const blocks = document.querySelectorAll('canvas[data-chart-config]');
-  if (blocks.length === 0) return;
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
-  script.onload = () => {
-    for (const block of blocks) {
-      const config = block.getAttribute('data-chart-config');
-      if (!config) continue;
-      // @ts-ignore
-      new window.Chart(block, JSON.parse(config));
-    }
-  };
-  document.head.appendChild(script);
-}
-
 setupTabs();
 setupViewToggle();
 setupFilter();
 setupTheme();
-setupMermaid().catch(() => {});
-setupCodeCards().catch(() => {});
-setupCharts();
+setupKeyboardShortcuts();
+setupCardNavigation();
 document.documentElement.setAttribute('data-iris-js', 'ready');

@@ -56,3 +56,4 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-19 | Load base components as a classic deferred script instead of a module      | Browsers CORS-block module scripts on file://, killing interactivity |
 | 2026-08-19 | Dashboard links every page; publish strips nav chrome via data-iris-nav    | Local HTML must be navigable, published artifacts must stand alone   |
 | 2026-08-19 | Enforce generated-link integrity with html-check in CI                     | A broken reference in generated HTML must fail the build             |
+| 2026-08-21 | Ship Aperture steps 1–3 with contrast-safe text aliases and no remote loaders | Preserves the specified palette, 4.5:1 readable text, and strict offline classic-script rendering while vendor/diagram/chart work remains deferred |
