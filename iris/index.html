@@ -92,8 +92,8 @@
           <a href="./spec.html">Open Spec &rarr;</a>
         </div>
         <div class="card-body"><div class="change-row">
-          <div class="change-row-head"><b>electric-design-system</b><span class="work-meta">30/31 tasks</span></div>
-          <div class="meter" role="img" aria-label="electric-design-system: 30/31 tasks"><div class="track"><div class="fill" style="width: 97%"></div></div></div>
+          <div class="change-row-head"><b>electric-design-system</b><span class="work-meta">31/31 tasks</span></div>
+          <div class="meter m-success" role="img" aria-label="electric-design-system: 31/31 tasks"><div class="track"><div class="fill" style="width: 100%"></div></div></div>
         </div></div>
       </section>
     </div>
@@ -103,7 +103,66 @@
         <div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div>
         <a href="./project/hld.html">Open HLD &rarr;</a>
       </div>
-      <div class="empty-state"><p>No architecture diagram is projected here yet. Mermaid fences render inside Markdown after <code>iris vendor</code>. Automatic HLD projection into this pane remains separate work.</p></div>
+      <div class="card-body"><figure class="diagram mermaid-figure" data-mermaid-figure>
+<div class="mermaid-status" role="status" data-mermaid-status>Diagram source. Run <code>iris vendor</code> to enable the offline preview.</div>
+<div class="mermaid-host" data-mermaid-host aria-label="Mermaid diagram">flowchart LR
+  cli[&quot;iris CLI · src/cli.ts&quot;]:::focus
+  cmds[&quot;Commands · src/commands&quot;]:::svc
+  loaders[&quot;Loaders · src/lib&quot;]:::svc
+  renderers[&quot;Renderers · src/templates&quot;]:::svc
+  sources[(&quot;Workspace sources · iris/pages, iris/research, iris/project&quot;)]:::db
+  openspec[(&quot;OpenSpec sources · openspec/&quot;)]:::db
+  packaged[(&quot;Packaged inputs · templates/, schemas/&quot;)]:::db
+  generated[(&quot;Generated workspace · iris/ HTML, spec.json, spec/data.js&quot;)]:::db
+  mermaid[&quot;Mermaid browser runtime · pinned 11.17.0&quot;]:::ext
+  cli --&gt; cmds
+  cmds --&gt;|collectWorkspace| loaders
+  loaders --&gt;|reads| sources
+  loaders --&gt;|reads| openspec
+  loaders --&gt;|validates against| packaged
+  loaders --&gt;|workspace model| renderers
+  renderers --&gt;|HTML strings| cmds
+  cmds --&gt;|writeAlways| generated
+  cmds --&gt;|scaffolds from| packaged
+  cmds --&gt;|iris vendor copies| mermaid
+  generated -.-&gt;|loaded in the browser| mermaid
+  classDef focus stroke:#8b5cf6,stroke-width:2.5px,fill:transparent,color:#8b5cf6;
+  classDef svc   stroke:#22d3ee,fill:transparent,color:#22d3ee;
+  classDef db    stroke:#fbbf24,fill:transparent,color:#fbbf24;
+  classDef q     stroke:#a3e635,fill:transparent,color:#a3e635;
+  classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
+  classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
+</div>
+<pre class="mermaid-fallback" data-mermaid-fallback><code class="language-mermaid">flowchart LR
+  cli[&quot;iris CLI · src/cli.ts&quot;]:::focus
+  cmds[&quot;Commands · src/commands&quot;]:::svc
+  loaders[&quot;Loaders · src/lib&quot;]:::svc
+  renderers[&quot;Renderers · src/templates&quot;]:::svc
+  sources[(&quot;Workspace sources · iris/pages, iris/research, iris/project&quot;)]:::db
+  openspec[(&quot;OpenSpec sources · openspec/&quot;)]:::db
+  packaged[(&quot;Packaged inputs · templates/, schemas/&quot;)]:::db
+  generated[(&quot;Generated workspace · iris/ HTML, spec.json, spec/data.js&quot;)]:::db
+  mermaid[&quot;Mermaid browser runtime · pinned 11.17.0&quot;]:::ext
+  cli --&gt; cmds
+  cmds --&gt;|collectWorkspace| loaders
+  loaders --&gt;|reads| sources
+  loaders --&gt;|reads| openspec
+  loaders --&gt;|validates against| packaged
+  loaders --&gt;|workspace model| renderers
+  renderers --&gt;|HTML strings| cmds
+  cmds --&gt;|writeAlways| generated
+  cmds --&gt;|scaffolds from| packaged
+  cmds --&gt;|iris vendor copies| mermaid
+  generated -.-&gt;|loaded in the browser| mermaid
+  classDef focus stroke:#8b5cf6,stroke-width:2.5px,fill:transparent,color:#8b5cf6;
+  classDef svc   stroke:#22d3ee,fill:transparent,color:#22d3ee;
+  classDef db    stroke:#fbbf24,fill:transparent,color:#fbbf24;
+  classDef q     stroke:#a3e635,fill:transparent,color:#a3e635;
+  classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
+  classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
+</code></pre>
+</figure>
+</div>
     </section>
 
     <section id="project-docs" aria-labelledby="project-docs-title">
@@ -162,6 +221,7 @@
         </div>
       </aside>
     </div>
+    <script defer src="./design/vendor/mermaid.min.js"></script>
     <script defer src="./design/components/base.js"></script>
   </body>
 </html>
