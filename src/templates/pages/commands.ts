@@ -1,6 +1,10 @@
 import { COMMAND_GROUPS, statusCounts, type CommandEntry } from '../../lib/command-catalog.js';
 import type { AgentSurfaceReport } from '../../lib/agent-skills.js';
-import { escapeHtml, statTile } from '../common.js';
+import {
+  escapeHtml,
+  healthBadgeClass,
+  statTile,
+} from '../common.js';
 
 
 const SURFACE_READERS: Array<{ prefix: string; reader: string }> = [
@@ -38,7 +42,7 @@ function agentSurfaceSection(surfaces: AgentSurfaceReport[]): string {
           <td>${entries
             .map(
               (entry) =>
-                `<span class="status-chip status-${entry.status === 'installed' ? 'implemented' : 'partial'}">${escapeHtml(SURFACE_STATUS_LABEL[entry.status])}</span>`,
+                `<span class="badge ${healthBadgeClass(entry.status)}">${escapeHtml(SURFACE_STATUS_LABEL[entry.status])}</span>`,
             )
             .join('<br>')}</td>
         </tr>`,
@@ -50,7 +54,7 @@ function agentSurfaceSection(surfaces: AgentSurfaceReport[]): string {
         <div><span class="eyebrow">what iris installs</span><h2 id="agent-surfaces-title">Agent surfaces</h2></div>
         <span class="mono">${installed} of ${surfaces.length} installed</span>
       </div>
-      <div class="surface table-wrap">
+      <div class="card work-table-wrap">
         <table class="work-table">
           <thead><tr><th>Reads it</th><th>Destination</th><th>Status</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -60,14 +64,14 @@ function agentSurfaceSection(surfaces: AgentSurfaceReport[]): string {
 }
 
 function commandCard(entry: CommandEntry): string {
-  const flags = entry.flags.map((flag) => `<span class="pill">${escapeHtml(flag)}</span>`).join('');
+  const flags = entry.flags.map((flag) => `<span class="badge b-muted">${escapeHtml(flag)}</span>`).join('');
   const lands = entry.lands
     ? `<p class="mono">lands in <code>${escapeHtml(entry.lands)}</code></p>`
     : '';
-  return `<article class="surface command-card">
+  return `<article class="card command-card">
       <div class="command-card-head">
         <code>${escapeHtml(entry.name)}</code>
-        <span class="status-chip status-${escapeHtml(entry.status)}">${escapeHtml(entry.status)}</span>
+        <span class="badge ${healthBadgeClass(entry.status)}">${escapeHtml(entry.status)}</span>
       </div>
       <p>${escapeHtml(entry.synopsis)}</p>
       <pre class="command-usage"><code>${escapeHtml(entry.usage)}</code></pre>

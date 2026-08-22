@@ -44,8 +44,15 @@ describe('publish and export commands', () => {
     const html = await readFile(artifactPath, 'utf8');
     expect(html).toContain('Bug Cache Stampede');
     expect(html).toContain('<style data-iris-standalone>');
-    expect(html).toContain('--bg:');
+    expect(html).toContain('--background:');
+    // Icons ship as inline SVG, so a standalone artifact keeps them with no reference.
+    expect(html).toContain('<svg xmlns="http://www.w3.org/2000/svg"');
+    expect(html).toContain('class="lucide lucide-');
     expect(html).toContain('.content {');
+    // The shell is stripped from an artifact, so the layout must not keep
+    // reserving the sidebar's column and squeeze the content into what is left.
+    expect(html).toMatch(/\.app \{ display: flex;/);
+    expect(html).not.toMatch(/\.app \{[^}]*grid-template-columns/);
     expect(html).not.toContain('class="sidebar"');
     expect(html).not.toContain('<kbd>');
     expect(html).not.toMatch(/<link\b[^>]*\b(?:href|src)=/i);

@@ -4,7 +4,12 @@ import type {
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
 import { renderDocument, type DocumentHeading } from '../../lib/markdown.js';
-import { escapeHtml, progressBar, statTile } from '../common.js';
+import {
+  escapeHtml,
+  healthBadgeClass,
+  progressBar,
+  statTile,
+} from '../common.js';
 
 export type SpecDetailKind = 'capability' | 'change' | 'legacy';
 
@@ -30,12 +35,12 @@ function tableOfContents(headings: DocumentHeading[]): string {
         `<li class="toc-${heading.level}"><a href="#${escapeHtml(heading.id)}">${escapeHtml(heading.text)}</a></li>`,
     )
     .join('');
-  return `<aside class="surface doc-toc" aria-label="On this page"><span class="eyebrow">on this page</span><ol>${items}</ol></aside>`;
+  return `<aside class="toc" aria-label="On this page"><div class="toc-title">on this page</div><ol>${items}</ol></aside>`;
 }
 
 function warningNotice(document: OpenSpecSourceDocument): string {
   if (document.warnings.length === 0) return '';
-  return `<div class="surface callout warn"><strong>Parser warnings</strong><ul>${document.warnings
+  return `<div class="callout c-warn"><strong>Parser warnings</strong><ul>${document.warnings
     .map((warning) => `<li>${escapeHtml(warning.code)}: ${escapeHtml(warning.message)}</li>`)
     .join('')}</ul></div>`;
 }
@@ -53,7 +58,7 @@ function artifactSection(
   const anchor = `${slugPrefix(prefix)}-artifact`;
   if (!document) {
     return {
-      html: `<section class="surface doc-body" id="${anchor}">
+      html: `<section class="card doc-body" id="${anchor}">
           <h2>${escapeHtml(label)}</h2>
           <p class="work-meta">This artifact is missing from the change directory.</p>
         </section>`,
@@ -68,7 +73,7 @@ function artifactSection(
 
   if (!isMarkdown) {
     return {
-      html: `<section class="surface doc-body" id="${anchor}">
+      html: `<section class="card doc-body" id="${anchor}">
           <h2>${escapeHtml(label)}</h2>
           <p class="mono spec-path">${escapeHtml(document.path)}</p>
           <pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>
@@ -79,10 +84,10 @@ function artifactSection(
 
   const { html, headings } = renderDocument(document.raw, { idPrefix: slugPrefix(prefix) });
   const operations = document.operations
-    .map((operation) => `<span class="pill">${escapeHtml(operation)}</span>`)
+    .map((operation) => `<span class="badge b-muted">${escapeHtml(operation)}</span>`)
     .join('');
   return {
-    html: `<section class="surface doc-body" id="${anchor}">
+    html: `<section class="card doc-body" id="${anchor}">
         <div class="spec-card-header">
           <h2>${escapeHtml(label)}</h2>
           <span class="spec-meta">${operations}</span>
@@ -112,10 +117,10 @@ export function capabilityDetailContent(capability: OpenSpecCapability, label: s
         <h1>${escapeHtml(capability.capability)}</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
           <span class="mono spec-path">${escapeHtml(capability.path)}</span>
-          <span class="status-chip health-${health}">${health}</span>
+          <span class="badge ${healthBadgeClass(health)}">${health}</span>
         </div>
       </div>
-      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
+      <div class="page-head-actions"><button class="btn btn-outline" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     <section class="strip" aria-label="capability summary">
@@ -125,12 +130,12 @@ export function capabilityDetailContent(capability: OpenSpecCapability, label: s
     </section>
 
     ${warningNotice(document)}
-    <div class="${toc === '' ? 'doc-single' : 'doc-layout'}">
-      <article class="surface doc-body">
+    <div class="${toc === '' ? 'doc-single' : 'layout'}">
+      ${toc}
+      <article class="card doc-body">
         ${html}
         <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>
       </article>
-      ${toc}
     </div>`;
 }
 
@@ -149,19 +154,19 @@ export function legacyDetailContent(document: OpenSpecSourceDocument): string {
         <h1>${escapeHtml(document.title)}</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
           <span class="mono spec-path">${escapeHtml(document.path)}</span>
-          <span class="status-chip">legacy</span>
+          <span class="badge b-archived">legacy</span>
         </div>
       </div>
-      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
+      <div class="page-head-actions"><button class="btn btn-outline" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     ${warningNotice(document)}
-    <div class="${toc === '' ? 'doc-single' : 'doc-layout'}">
-      <article class="surface doc-body">
+    <div class="${toc === '' ? 'doc-single' : 'layout'}">
+      ${toc}
+      <article class="card doc-body">
         ${html}
         <details class="spec-source-details"><summary>Exact source</summary><pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre></details>
       </article>
-      ${toc}
     </div>`;
 }
 
@@ -189,11 +194,11 @@ export function changeDetailContent(change: OpenSpecChange): string {
         <h1>${escapeHtml(change.name)}</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
           <span class="mono spec-path">${escapeHtml(change.path)}</span>
-          <span class="pill">${escapeHtml(change.completeness)}</span>
-          <span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span>
+          <span class="badge ${healthBadgeClass(change.completeness)}">${escapeHtml(change.completeness)}</span>
+          <span class="badge ${healthBadgeClass(change.health)}">${escapeHtml(change.health)}</span>
         </div>
       </div>
-      <div class="page-head-actions"><button class="button" type="button" data-spec-back>&larr; Spec index</button></div>
+      <div class="page-head-actions"><button class="btn btn-outline" type="button" data-spec-back>&larr; Spec index</button></div>
     </div>
 
     <section class="strip" aria-label="change summary">
@@ -202,9 +207,9 @@ export function changeDetailContent(change: OpenSpecChange): string {
       ${statTile({ value: change.delta_specs.length, label: 'delta specs' })}
     </section>
 
-    ${tasks ? `<div class="surface card-body-pad">${progressBar(tasks.complete, tasks.total, `${change.name}: ${tasks.complete} of ${tasks.total} tasks complete`)}<p class="work-meta" style="margin: var(--space-2) 0 0">${tasks.complete}/${tasks.total} tasks complete · ${tasks.open} open</p></div>` : ''}
+    ${tasks ? `<div class="card">${progressBar(tasks.complete, tasks.total, `${change.name}: ${tasks.complete} of ${tasks.total} tasks complete`)}<p class="work-meta" style="margin: var(--space-2) 0 0">${tasks.complete}/${tasks.total} tasks complete · ${tasks.open} open</p></div>` : ''}
 
-    <div class="${toc === '' ? 'doc-single' : 'doc-layout'}">
+    <div class="${toc === '' ? 'doc-single' : 'layout'}">
       <div class="spec-stack">${artifacts.map((artifact) => artifact.html).join('')}</div>
       ${toc}
     </div>`;

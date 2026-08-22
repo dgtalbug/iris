@@ -1,11 +1,12 @@
 import { renderSafeMarkdown } from '../../lib/markdown.js';
 import {
-  apertureGlyph,
+  PROJECT_DOC_NAMES,
   escapeHtml,
+  healthBadgeClass,
   projectDocMeta,
+  recordIcon,
   statusChip,
   typeChip,
-  PROJECT_DOC_NAMES,
 } from '../common.js';
 import { renderShell, type NavCounts } from '../shell.js';
 
@@ -50,15 +51,15 @@ function renderMetricGrid(entries: Array<{ label: string; value: string }>): str
   const cards = entries
     .map(
       (entry) =>
-        `<article class="surface metric-card"><div class="metric-label">${escapeHtml(entry.label)}</div><div class="metric-value">${escapeHtml(entry.value)}</div></article>`,
+        `<article class="card stat"><div class="label">${escapeHtml(entry.label)}</div><div class="value">${escapeHtml(entry.value)}</div></article>`,
     )
     .join('');
-  return `<section class="metric-grid">${cards}</section>`;
+  return `<section class="strip">${cards}</section>`;
 }
 
 function renderSummaryBlock(title: string, text: string): string {
   if (!text.trim()) return '';
-  return `<article class="surface doc-body"><h2>${escapeHtml(title)}</h2>${markdownToHtml(text)}</article>`;
+  return `<article class="card doc-body"><h2>${escapeHtml(title)}</h2>${markdownToHtml(text)}</article>`;
 }
 
 function renderTimeline(events: unknown[]): string {
@@ -69,13 +70,17 @@ function renderTimeline(events: unknown[]): string {
       const time = typeof record.t === 'string' ? record.t : 'n/a';
       const title = typeof record.title === 'string' ? record.title : 'Event';
       const level = typeof record.level === 'string' ? record.level : 'info';
-      return `<div class="timeline-item ${escapeHtml(level)}" style="position: relative;">
-          <strong class="mono">${escapeHtml(time)}</strong> <span class="pill">${escapeHtml(level)}</span>
-          <div>${escapeHtml(title)}</div>
-        </div>`;
+      const tone =
+        { warn: ' class="warn"', warning: ' class="warn"', error: ' class="danger"', danger: ' class="danger"' }[
+          level
+        ] ?? '';
+      return `<li${tone}>
+          <span class="when">${escapeHtml(time)}</span> <span class="badge ${healthBadgeClass(level)}">${escapeHtml(level)}</span>
+          <div class="what">${escapeHtml(title)}</div>
+        </li>`;
     })
     .join('');
-  return `<article class="surface doc-body"><h2>Timeline</h2><div class="timeline">${items}</div></article>`;
+  return `<article class="card doc-body"><h2>Timeline</h2><ul class="timeline">${items}</ul></article>`;
 }
 
 function renderTaskTable(tasks: unknown[]): string {
@@ -89,9 +94,9 @@ function renderTaskTable(tasks: unknown[]): string {
       return `<tr><td class="mono">${escapeHtml(id)}</td><td>${escapeHtml(title)}</td><td class="mono">${done ? 'done' : 'open'}</td></tr>`;
     })
     .join('');
-  return `<article class="surface doc-body">
+  return `<article class="card doc-body">
       <h2>Tasks</h2>
-      <div class="table-wrap">
+      <div class="work-table-wrap">
         <table class="work-table">
           <thead><tr><th scope="col">id</th><th scope="col">title</th><th scope="col">status</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -111,7 +116,7 @@ function renderStepsList(steps: unknown[]): string {
       return `<li><div><strong class="mono">${escapeHtml(id)}</strong> · ${escapeHtml(title)}</div>${detail ? `<div class="work-meta">${escapeHtml(detail)}</div>` : ''}</li>`;
     })
     .join('');
-  return `<article class="surface doc-body"><h2>Plan steps</h2><ol>${list}</ol></article>`;
+  return `<article class="card doc-body"><h2>Plan steps</h2><ol>${list}</ol></article>`;
 }
 
 function pageShell({
@@ -134,7 +139,7 @@ function pageShell({
   const head = `<div class="page-head">
       <div>
         <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
-          ${apertureGlyph(type)}
+          ${recordIcon(type)}
           ${typeChip(type)}
           ${statusChip(status)}
         </div>
@@ -332,21 +337,21 @@ export function projectPlaceholderHtml(
         <h1>${escapeHtml(meta.label)}</h1>
         <p>${escapeHtml(meta.purpose)}</p>
       </div>
-      <div class="page-head-actions"><span class="status-chip st-draft">not written yet</span></div>
+      <div class="page-head-actions"><span class="badge b-muted">not written yet</span></div>
     </div>
 
     <div class="grid-2">
-      <section class="surface card">
+      <section class="card">
         <div class="card-head"><div><span class="eyebrow">what belongs here</span><h2>Contents</h2></div></div>
-        <div class="card-body card-body-pad">
+        <div class="card-body">
           <ul class="doc-checklist">
             ${meta.contains.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
           </ul>
         </div>
       </section>
-      <section class="surface card">
+      <section class="card">
         <div class="card-head"><div><span class="eyebrow">how to fill it</span><h2>Next step</h2></div></div>
-        <div class="card-body card-body-pad">
+        <div class="card-body">
           <p>Write this page with the installed Iris skill, then refresh the workspace:</p>
           <pre class="command-usage"><code>iris render --all</code></pre>
           <p class="work-meta">Iris manages this placeholder. Replace it with real content and the next
@@ -358,7 +363,7 @@ export function projectPlaceholderHtml(
     ${
       siblings.length === 0
         ? ''
-        : `<section class="surface project-strip">
+        : `<section class="card project-strip">
         <span class="eyebrow">other project docs</span>
         <nav class="project-links" aria-label="Other project documents">
           ${siblings.map((doc) => `<a href="./${escapeHtml(doc)}.html">${escapeHtml(projectDocMeta(doc).label)}</a>`).join('')}

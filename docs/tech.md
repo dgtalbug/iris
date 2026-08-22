@@ -6,6 +6,7 @@
 - Ajv 8.17.1 — strict JSON Schema validation with explicit errors.
 - Vitest 3.2.4 + ESLint 9.34.0 + Prettier 3.6.2 — test and quality baseline.
 - Mermaid 11.17.0 — pinned production dependency copied locally by `iris vendor`; never loaded from a CDN at view time.
+- Lucide 0.469.0 — pinned production dependency read only at generation time; icon geometry is serialised to inline SVG, so no icon script, font, or request reaches a generated page.
 
 ## Data-contract design
 
@@ -62,6 +63,8 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 - MCP server: rejected for v1 local-file scope.
 - Reaviz: rejected to avoid extra runtime weight and contract lock-in.
 - IconScout primary icons: rejected (secondary only) to keep Lucide as default.
+- Lucide's browser UMD and `createIcons()`: rejected in favour of generation-time serialisation, which keeps published artifacts free of scripts and makes an unknown icon name a build failure rather than an invisible gap.
+- React Flow and Chart.js from Vision's pinned manifest: rejected; a React runtime breaks the zero-build model and the workspace has no chart surface.
 - SaaS dashboard: rejected to preserve offline local-first model.
 - Bundling GitNexus: rejected because GitNexus remains external source-of-truth.
 - Hand-written agent HTML: rejected in favor of strict contract-to-template flow.
@@ -85,3 +88,8 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-21 | Persist a bounded OpenSpec snapshot for the dashboard Spec tab                                                                       | Keeps explicit refresh semantics while allowing every dashboard regeneration to remain deterministic and offline                                   |
 | 2026-08-21 | Render OpenSpec Markdown at generation time with embedded HTML disabled                                                              | Improves readability without adding browser runtime or weakening exact-source evidence                                                             |
 | 2026-08-21 | Render exact Mermaid fences through an explicitly vendored strict classic runtime with source fallback                               | Adds useful offline diagrams without remote loaders, runtime modules, active diagram behavior, or all-or-nothing failure                           |
+| 2026-08-21 | Adopt Vision "Electric" v2.0 token and class names as iris's own vocabulary                                                           | Makes the upstream contract a truthful reference for generated output and reduces a future restyle to a token-block swap                            |
+| 2026-08-21 | Keep oklch tokens and teach the contrast validator gamut mapping and token aliases instead of converting to hex                       | Preserves that swap surface; browsers render out-of-gamut colors chroma-reduced, so the validator must measure the color that is actually shown     |
+| 2026-08-21 | Move nine upstream lightness values to meet iris's 4.5:1, 3:1, and 1.45:1 floors, recording each                                      | Badge text is normal text under WCAG AA; the accessibility contract predates the adoption and is enforced in CI                                     |
+| 2026-08-21 | Serialise Lucide icons to inline SVG at generation time rather than loading its browser runtime                                       | A generated page must work from file:// with no network, and publish refuses any artifact containing a resource reference                           |
+| 2026-08-21 | Retire the aperture ring and glyphs for Vision's radar mark and a pages-by-type badge row                                             | The badge row states in text what the ring encoded in color, which the accessibility floor required of the ring anyway                              |

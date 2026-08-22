@@ -92,9 +92,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).toContain('Project context');
     expect(dashboard).toContain('active-change');
     expect(dashboard).toContain('2026-08-20-complete-change');
-    expect(dashboard).toContain('<span class="pill">legacy</span>');
+    expect(dashboard).toContain('<span class="badge b-archived">legacy</span>');
     expect(dashboard).toContain('1/2 tasks');
-    expect(dashboard).toContain('health-invalid');
+    expect(dashboard).toContain('<span class="badge b-danger">invalid</span>');
+    expect(dashboard).toContain('<span class="badge b-success">valid</span>');
     expect(dashboard).toContain('malformed-spec');
     expect(dashboard).toContain('href="#/change/active-change"');
     expect(dashboard).toContain('href="#/capability/core"');
@@ -158,23 +159,35 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(script).toContain("['ArrowLeft', 'ArrowRight', 'Home', 'End']");
     expect(script).toContain("securityLevel: 'strict'");
     expect(script).toContain('for (const figure of figures)');
-    expect(script).toContain('nodes: [host]');
+    expect(script).toContain('renderSequence += 1;');
     expect(script).toContain('host.getClientRects().length === 0');
     expect(script).toContain("details.addEventListener('toggle'");
     expect(script).toContain("'iris:visibilitychange'");
     expect(script).toContain('Escaped source is shown below');
+    // Diagrams take their colors from the token block and redraw when it changes.
+    expect(script).toContain("theme: 'base'");
+    expect(script).toContain('themeVariables');
+    expect(script).toContain("token('--mmd-primary')");
+    expect(script).toContain("token('--mmd-line')");
+    expect(script).toContain("document.addEventListener('iris:theme'");
+    expect(script).toContain("dispatchEvent(new CustomEvent('iris:theme'");
+    expect(script).not.toContain("theme: 'neutral'");
+    // mermaid.run() derives its render id from Date.now(), so two diagrams
+    // finishing in the same millisecond draw into one host; iris supplies its own.
+    expect(script).toContain("'iris-mermaid-' + renderSequence");
+    expect(script).toContain('globalThis.mermaid.render(');
+    expect(script).not.toContain('globalThis.mermaid.run(');
     expect(script).not.toContain('import(');
     expect(script).not.toMatch(/https?:\/\//);
     expect(tokens).toContain("[data-theme='light']");
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
     expect(css).toContain('@media (max-width: 48rem)');
-    expect(css).toMatch(
-      /\.grid-2, \.doc-layout, \.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/,
-    );
-    expect(css).toContain('.spec-document table');
-    expect(css).toContain('.spec-document pre');
+    expect(css).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.layout \{ grid-template-columns: 1fr/);
+    expect(css).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/);
+    expect(css).toContain('.doc-body table');
+    expect(css).toContain('.doc-body pre');
     expect(css).toContain('.spec-source-details');
-    expect(css).toMatch(/@media print[\s\S]*\.spec-document pre/);
+    expect(css).toMatch(/@media print[\s\S]*\.doc-body pre/);
   });
 
   it('renders distinct absent and empty OpenSpec states', async () => {

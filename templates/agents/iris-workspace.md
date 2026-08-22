@@ -33,6 +33,17 @@ updated: 2026-08-21
 ---
 ```
 
+Diagrams in a `mermaid` fence pick up the workspace theme automatically. For flowcharts, paste these class definitions and apply them so nodes carry the workspace's meanings — violet is the thing being described, cyan a service, amber a data store, lime an async path, pink an external system, red an error path:
+
+```
+classDef focus stroke:#8b5cf6,stroke-width:2.5px,fill:transparent,color:#8b5cf6;
+classDef svc   stroke:#22d3ee,fill:transparent,color:#22d3ee;
+classDef db    stroke:#fbbf24,fill:transparent,color:#fbbf24;
+classDef q     stroke:#a3e635,fill:transparent,color:#a3e635;
+classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
+classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
+```
+
 Supported `status` values are `draft`, `active`, `done`, `archived`. Missing values fall back to the first `#` heading, `draft`, and explicit `not set` labels — never invented.
 
 ## Contract pages are JSON

@@ -49,6 +49,8 @@ iris open
 
 `/` focuses the visible filter, `t` toggles the theme, and `b` collapses the sidebar. Theme and sidebar state persist per browser; the initial theme comes from `iris/config.yaml`.
 
+Every page renders from one design system — Vision "Electric" v2.0, adopted in [`docs/design-system.md`](docs/design-system.md) — in dark and light themes. Colors live in a single generated token stylesheet that CI validates for contrast, and icons are inlined as SVG at generation time, so a page needs no font, script, or network request to look right.
+
 ## Research pages are Markdown
 
 Agents write research as plain Markdown, not JSON-escaped strings:

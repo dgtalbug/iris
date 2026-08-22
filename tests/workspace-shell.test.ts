@@ -175,13 +175,13 @@ describe('generated commands page', () => {
       for (const entry of group.entries) {
         expect(page, `commands page lists ${entry.name}`).toContain(`<code>${entry.name}</code>`);
         expect(page).toContain(
-          `<span class="status-chip status-${entry.status}">${entry.status}</span>`,
+          `>${entry.status}</span>`,
         );
       }
     }
 
-    expect(page).toContain('status-stubbed">stubbed');
-    expect(page).toContain('status-partial">partial');
+    expect(page).toContain('class="badge b-muted">stubbed</span>');
+    expect(page).toContain('class="badge b-warning">partial</span>');
   });
 
   it('derives CLI help from the same catalog', () => {

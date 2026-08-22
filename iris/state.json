@@ -12,6 +12,12 @@
       "type": "feature",
       "title": "Redesign Work Board",
       "status": "active"
+    },
+    "report-from-agent-sessions": {
+      "id": "report-from-agent-sessions",
+      "type": "idea",
+      "title": "Report From Agent Sessions",
+      "status": "active"
     }
   }
 }

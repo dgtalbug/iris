@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Redesign Work Board · iris</title>
+    <title>Report From Agent Sessions · iris</title>
     <link rel="stylesheet" href="../../design/tokens.css" />
     <link rel="stylesheet" href="../../design/components/base.css" />
   </head>
@@ -26,7 +26,7 @@
       <div class="main">
         <header class="topbar" data-iris-nav>
           <button class="btn btn-ghost menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" focusable="false" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg></button>
-          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../work.html">Work</a><span aria-hidden="true">/</span><b data-spec-crumb>redesign-work-board</b></nav>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../work.html">Work</a><span aria-hidden="true">/</span><b data-spec-crumb>report-from-agent-sessions</b></nav>
           <span class="topbar-spacer"></span>
 
           <div class="mode-toggle" data-theme-toggle-group>
@@ -38,27 +38,39 @@
 <div class="page-head">
       <div>
         <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles ic-3" focusable="false" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>
-          <span class="badge b-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles" focusable="false" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>feature</span>
-          <span class="badge b-success">done</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb ic-4" focusable="false" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>
+          <span class="badge b-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb" focusable="false" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>idea</span>
+          <span class="badge b-muted">draft</span>
         </div>
-        <h1>Redesign Work Board</h1>
+        <h1>Report From Agent Sessions</h1>
       </div>
     </div>
-    <section class="strip"><article class="card stat"><div class="label">kind</div><div class="value">feature</div></article><article class="card stat"><div class="label">status</div><div class="value">done</div></article><article class="card stat"><div class="label">tasks</div><div class="value">5</div></article></section>
-    <article class="card doc-body"><h2>Problem</h2><p>The Work surface exposed only spacious List and Board layouts, navigated away for details, and remained visually empty in repositories without page contracts. It lacked a compact table, shared field hierarchy, context-preserving inspection, and explicit handling for unavailable metadata.</p>
-</article><article class="card doc-body"><h2>Goal</h2><p>Provide compact List, Table, and Kanban views over one validated contract projection, with shared filtering and an accessible right-side detail drawer. Preserve deterministic static HTML, file:// operation, no-JavaScript full-page links, light/dark themes, reduced motion, and readable 360 px layouts.</p>
-</article><article class="card doc-body">
-      <h2>Tasks</h2>
-      <div class="work-table-wrap">
-        <table class="work-table">
-          <thead><tr><th scope="col">id</th><th scope="col">title</th><th scope="col">status</th></tr></thead>
-          <tbody><tr><td class="mono">1</td><td>Derive bounded Work metadata from validated contracts without inventing unsupported values</td><td class="mono">done</td></tr><tr><td class="mono">2</td><td>Implement peer List, Table, and Kanban views with shared filtering</td><td class="mono">done</td></tr><tr><td class="mono">3</td><td>Implement hash-addressable accessible detail drawer and keyboard behavior</td><td class="mono">done</td></tr><tr><td class="mono">4</td><td>Add Jira-inspired design documentation and focused regression coverage</td><td class="mono">done</td></tr><tr><td class="mono">5</td><td>Pass the full release gate and merge the implementation into main</td><td class="mono">done</td></tr></tbody>
-        </table>
-      </div>
-    </article>
+    <section class="strip"><article class="card stat"><div class="label">kind</div><div class="value">idea</div></article><article class="card stat"><div class="label">status</div><div class="value">draft</div></article><article class="card stat"><div class="label">effort</div><div class="value">4</div></article><article class="card stat"><div class="label">impact</div><div class="value">4</div></article></section>
+    <article class="card doc-body"><h2>Current state</h2><p><code>iris report --from-session &lt;path&gt;</code> already exists — wired in <code>src/cli.ts</code> and implemented in <code>src/commands/report.ts</code> — but it only accepts a curated export: one <code>.json</code>, <code>.md</code>, or <code>.txt</code> file, or a directory whose filenames match <code>SESSION_FILE_PATTERN</code>. Nothing produces those files.</p>
+<p>What agents actually leave on disk is JSONL, one record per line:</p>
+<ul>
+<li>Claude Code: <code>~/.claude/projects/&lt;cwd-slug&gt;/&lt;uuid&gt;.jsonl</code></li>
+<li>Codex: <code>~/.codex/sessions/&lt;yyyy&gt;/&lt;mm&gt;/&lt;dd&gt;/rollout-&lt;timestamp&gt;-&lt;uuid&gt;.jsonl</code></li>
+</ul>
+<p>Pointed at either, the command fails before writing anything:</p>
+<ul>
+<li>a session directory gives <code>No supported session files found in ...; expected named JSON, Markdown, or text session artifacts</code>, because the filename pattern anchors on <code>.json|.md|.txt</code> and <code>.jsonl</code> never matches</li>
+<li>a single rollout file gives <code>Unsupported session input format: ... (expected .json, .md, .txt, or a directory)</code></li>
+</ul>
+<p>The extension guard is not the only blocker. <code>parseDocument</code> runs <code>JSON.parse</code> over the whole file, so a line-delimited transcript would still be rejected as malformed even if the guard let it through. Extraction is format-blind as well: <code>stringsAtKeys</code> sniffs generic keys (<code>summary</code>, <code>content</code>, <code>message</code>, <code>path</code>, <code>command</code>) rather than reading turn structure, and the key names do not line up. A Claude Code transcript records the repository as <code>cwd</code> and the branch as <code>gitBranch</code> on nearly every line, while <code>ingestSessionSource</code> looks for <code>repo</code>/<code>repository</code>/<code>repo_path</code> and <code>branch</code>/<code>branch_name</code> — so even a parseable transcript would report both as <code>unspecified</code>. And the generated envelope hardcodes <code>agent: &quot;other&quot;</code> and falls back to forty zeros for <code>commit</code>, discarding metadata the source already identifies.</p>
+<p>So the backlog item is half built. The contract, the renderer, and <code>sections.session_evidence</code> are all in place; the reader cannot open the files that exist.</p>
+</article><article class="card doc-body"><h2>Proposed</h2><p>Teach the existing ingestor the formats that are already on disk, and let it find them.</p>
+<ol>
+<li>JSONL reader. Accept <code>.jsonl</code> in both the file guard and the directory pattern, and parse line-delimited records into the document array instead of one <code>JSON.parse</code>. Skip malformed lines with a count rather than failing the import — transcripts are append-only and can end mid-write.</li>
+<li>Per-agent adapters. Read record structure instead of sniffing keys. A Claude Code transcript is typed line by line: <code>user</code> and <code>assistant</code> turns carry <code>cwd</code>, <code>gitBranch</code>, <code>sessionId</code>, and <code>timestamp</code>, tool calls live inside their <code>message</code> content blocks, and <code>file-history-snapshot</code> and <code>file-history-delta</code> records track edited paths directly. That is precisely the repository, branch, tool activity, and files-touched evidence the report contract already has fields for. Codex rollout files get their own adapter, and the existing key-sniffing path stays as the fallback for unrecognized shapes.</li>
+<li>Discovery. <code>iris report --from-session</code> with no path resolves the current repo to its session directory — Claude Code slugifies the cwd, Codex is date-partitioned — and picks the most recent transcript. An explicit <code>--from-session &lt;path&gt;</code> keeps working unchanged.</li>
+<li>Real envelope metadata. Set <code>agent</code> from whichever adapter matched, and take <code>commit</code> from repo HEAD at session end instead of defaulting to forty zeros.</li>
+<li>Redaction before render. Transcripts hold pasted secrets, file contents, and third-party data, and Iris output is HTML that gets published and exported. Summarize and redact by default; require an explicit flag to carry raw transcript text into <code>session_evidence</code>.</li>
+</ol>
+<p>Step 1 alone makes the command usable against real files. Steps 2–4 are what make the resulting report worth reading. Step 5 is not optional once step 1 ships.</p>
+</article>
         </main>
-        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav>rendered from redesign-work-board · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav>rendered from report-from-agent-sessions · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
       </div>
     </div>
 

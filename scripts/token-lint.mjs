@@ -2,7 +2,9 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { validateTokenContract } from './token-contract.mjs';
 
-const colorLiteralPattern = /((?<!&)#[0-9a-fA-F]{3,8})|\b(?:rgb|hsl)a?\(/g;
+// `color-mix()` composes declared tokens rather than naming a color, so it stays legal.
+const colorLiteralPattern =
+  /((?<!&)#[0-9a-fA-F]{3,8})|\b(?:rgb|hsl)a?\(|\b(?:oklch|oklab|lab|lch|hwb|color)\(/g;
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -31,7 +33,15 @@ if (!tokenTemplate) {
 
 const tokenCss = tokenTemplate[1];
 const sourceWithoutTokens = designSource.replace(tokenTemplate[0], 'export const TOKENS_CSS = ``;');
-for (const error of validateTokenContract(tokenCss, sourceWithoutTokens)) {
+const sourceFiles = (await walk('src')).filter((file) => /\.(ts|js|css|html)$/.test(file));
+const sourceContents = await Promise.all(
+  sourceFiles.map(async (file) =>
+    path.normalize(file) === designPath ? sourceWithoutTokens : readFile(file, 'utf8'),
+  ),
+);
+// Every var() in src is checked, not just the ones in the token file, so a
+// component that reaches for a token nobody declares fails here.
+for (const error of validateTokenContract(tokenCss, sourceContents.join('\n'))) {
   failed = true;
   console.error(`token-lint: ${error}`);
 }
@@ -43,13 +53,8 @@ if (generatedTokens !== tokenCss) {
   console.error('token-lint: generated iris/design/tokens.css is out of sync');
 }
 
-for (const file of await walk('src')) {
-  const normalized = path.normalize(file);
-  if (!/\.(ts|js|css|html)$/.test(file)) {
-    continue;
-  }
-
-  const content = normalized === designPath ? sourceWithoutTokens : await readFile(file, 'utf8');
+for (const [index, file] of sourceFiles.entries()) {
+  const content = sourceContents[index];
   const matches = content.match(colorLiteralPattern);
   if (matches) {
     failed = true;

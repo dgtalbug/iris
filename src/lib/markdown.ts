@@ -27,7 +27,7 @@ markdown.renderer.rules.fence = (tokens, index, options, environment, renderer) 
   }
 
   const source = escapeHtml(token.content);
-  return `<figure class="mermaid-figure" data-mermaid-figure>
+  return `<figure class="diagram mermaid-figure" data-mermaid-figure>
 <div class="mermaid-status" role="status" data-mermaid-status>Diagram source. Run <code>iris vendor</code> to enable the offline preview.</div>
 <div class="mermaid-host" data-mermaid-host aria-label="Mermaid diagram">${source}</div>
 <pre class="mermaid-fallback" data-mermaid-fallback><code class="language-mermaid">${source}</code></pre>
