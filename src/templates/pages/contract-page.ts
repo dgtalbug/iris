@@ -5,6 +5,7 @@ import {
   healthBadgeClass,
   recordIcon,
   statusChip,
+  tabGroup,
   typeChip,
 } from '../common.js';
 import { renderShell, type NavCounts } from '../shell.js';
@@ -236,11 +237,23 @@ export function renderContractPage(
       });
     }
     case 'feature': {
-      const content = [
+      const design = asObject(sections.design);
+      const hld = getText(design.hld);
+      const lld = getText(design.lld);
+      const overview = [
         renderSummaryBlock('Problem', getText(sections.problem)),
         renderSummaryBlock('Goal', getText(sections.goal)),
-        renderTaskTable(Array.isArray(sections.tasks) ? sections.tasks : []),
       ].join('');
+      const tasksHtml = renderTaskTable(Array.isArray(sections.tasks) ? sections.tasks : []);
+      const content =
+        hld.trim() === '' && lld.trim() === ''
+          ? overview + tasksHtml
+          : tabGroup(`feature-${id}`, 'feature sections', [
+              { id: 'overview', label: 'Overview', html: overview },
+              { id: 'hld', label: 'HLD', html: renderSummaryBlock('HLD', hld) },
+              { id: 'lld', label: 'LLD', html: renderSummaryBlock('LLD', lld) },
+              { id: 'tasks', label: 'Tasks', html: tasksHtml },
+            ]);
       return pageShell({
         id,
         title,

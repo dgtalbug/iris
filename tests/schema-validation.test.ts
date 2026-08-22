@@ -42,6 +42,25 @@ describe('schema validation', () => {
     );
   });
 
+  it('accepts optional feature design sections and rejects unknown design keys', async () => {
+    const feature = await loadFixture('base-valid.json');
+    feature.type = 'feature';
+    feature.sections = {
+      problem: { md: 'x' },
+      goal: { md: 'y' },
+      tasks: [],
+      design: { hld: { md: '```mermaid\nflowchart LR\n  A --> B\n```' }, lld: { md: 'seq' } },
+    };
+    await expect(
+      validateContract('feature', feature, '/tmp/feature.json'),
+    ).resolves.toBeUndefined();
+
+    feature.sections.design = { erd: { md: 'nope' } };
+    await expect(validateContract('feature', feature, '/tmp/feature.json')).rejects.toThrow(
+      /field: \/sections\/design/,
+    );
+  });
+
   it('rejects invalid bug fixture with actionable error', async () => {
     const invalid = await loadFixture('base-valid.json');
     invalid.sections.severity = 'critical';

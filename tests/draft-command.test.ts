@@ -33,4 +33,16 @@ describe('draft commands', () => {
     expect(payload.type).toBe('bug');
     expect(payload.id).toBe('bug-cache-stampede');
   });
+
+  it('drafts a feature with HLD and LLD Mermaid skeletons that validate', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['feature', 'login-flow'], cwd)).toBe(0);
+    const dataPath = path.join(cwd, 'iris', 'pages', 'login-flow', 'data.json');
+    const payload = JSON.parse(await readFile(dataPath, 'utf8'));
+    await expect(validateContract('feature', payload, dataPath)).resolves.toBeUndefined();
+    expect(payload.sections.design.hld.md).toContain('```mermaid\nflowchart LR');
+    expect(payload.sections.design.hld.md).toContain('Login Flow');
+    expect(payload.sections.design.lld.md).toContain('```mermaid\nsequenceDiagram');
+    expect(payload.sections.design.hld.md).not.toMatch(/#[0-9a-f]{6}/i);
+  });
 });

@@ -54,6 +54,37 @@ function buildDraftPayload(kind: ContractKind, id: string): Record<string, unkno
         sections: {
           problem: { md: 'Describe the problem.' },
           goal: { md: 'Describe the outcome.' },
+          design: {
+            hld: {
+              md: [
+                'How this feature sits in the system. Replace the placeholder nodes; paste the `classDef` lines from `iris/project/hld.md` to colour them.',
+                '',
+                '```mermaid',
+                'flowchart LR',
+                '  caller["Caller · replace me"]:::svc',
+                `  feature["${title}"]:::focus`,
+                '  store[("Store · replace me")]:::db',
+                '  caller --> feature --> store',
+                '```',
+              ].join('\n'),
+            },
+            lld: {
+              md: [
+                'How the feature works inside its boundary. Replace the participants and steps with the real call path.',
+                '',
+                '```mermaid',
+                'sequenceDiagram',
+                '  participant Caller',
+                `  participant Feature as ${title}`,
+                '  participant Store',
+                '  Caller->>Feature: request',
+                '  Feature->>Store: read or write',
+                '  Store-->>Feature: result',
+                '  Feature-->>Caller: response',
+                '```',
+              ].join('\n'),
+            },
+          },
           tasks: [{ id: '1', title: 'Draft task', done: false }],
         },
       };
