@@ -245,4 +245,32 @@ describe('project docs workspace', () => {
     expect(await runCli(['render', '--all'], cwd)).toBe(0);
     expect(existsSync(path.join(cwd, 'iris', 'project'))).toBe(false);
   });
+
+  it('projects the first HLD Mermaid fence onto the Overview and explains when there is none', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    let index = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    const pane = index.slice(
+      index.indexOf('id="architecture-title"'),
+      index.indexOf('id="project-docs"'),
+    );
+    expect(pane).toContain('data-mermaid-figure');
+    expect(pane).toContain('href="./project/hld.html"');
+    expect(pane).not.toContain('remains separate work');
+    expect(index).toContain('design/vendor/mermaid.min.js');
+
+    await writeFile(
+      path.join(cwd, 'iris', 'project', 'hld.md'),
+      '# HLD\n\nNo diagram yet.\n',
+      'utf8',
+    );
+    expect(await runCli(['render', '--all'], cwd)).toBe(0);
+    index = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(index).toContain('No HLD diagram yet');
+    expect(index).toContain('iris/project/hld.md');
+    expect(index.slice(index.indexOf('id="architecture-title"'))).not.toContain(
+      'data-mermaid-figure',
+    );
+  });
 });

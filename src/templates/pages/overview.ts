@@ -81,6 +81,7 @@ export function overviewPageContent({
   activeChanges,
   researchCount,
   projectDocs,
+  hldDiagram,
 }: {
   projectName: string;
   pages: DashboardPage[];
@@ -88,6 +89,7 @@ export function overviewPageContent({
   activeChanges: OpenSpecChange[];
   researchCount: number;
   projectDocs: readonly string[];
+  hldDiagram: string;
 }): string {
   const work = workStatusCounts(pages);
   const commands = statusCounts();
@@ -161,7 +163,11 @@ export function overviewPageContent({
         <div><span class="eyebrow">system shape</span><h2 id="architecture-title">Architecture</h2></div>
         ${projectDocs.includes('hld') ? '<a href="./project/hld.html">Open HLD &rarr;</a>' : '<span class="mono">hld page missing</span>'}
       </div>
-      <div class="empty-state"><p>No architecture diagram is projected here yet. Mermaid fences render inside Markdown after <code>iris vendor</code>. Automatic HLD projection into this pane remains separate work.</p></div>
+      ${
+        hldDiagram === ''
+          ? '<div class="empty-state"><p>No HLD diagram yet. Edit <code>iris/project/hld.md</code> (created by <code>iris init</code>), add a <code>mermaid</code> fence, then run <code>iris render --all</code>.</p></div>'
+          : `<div class="card-body">${hldDiagram}</div>`
+      }
     </section>
 
     <section id="project-docs" aria-labelledby="project-docs-title">

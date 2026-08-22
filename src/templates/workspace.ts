@@ -2,6 +2,8 @@ import type { OpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import type { ResearchItem, ResearchWarning } from '../lib/research-workspace.js';
 import type { AgentSurfaceReport } from '../lib/agent-skills.js';
 import type { ProjectDocItem, ProjectDocWarning } from '../lib/project-docs.js';
+import { firstMermaidFence } from '../lib/project-docs.js';
+import { renderSafeMarkdown } from '../lib/markdown.js';
 import { COMMAND_GROUPS } from '../lib/command-catalog.js';
 import { escapeHtml, projectDocMeta, type DashboardPage } from './common.js';
 import { renderShell, type NavCounts } from './shell.js';
@@ -98,11 +100,15 @@ function section(model: WorkspaceModel, options: SectionOptions): string {
 }
 
 export function overviewHtml(model: WorkspaceModel): string {
+  const hld = model.projectDocItems.find((item) => item.name === 'hld');
+  const fence = hld ? firstMermaidFence(hld.body) : null;
+  const hldDiagram = fence === null ? '' : renderSafeMarkdown('```mermaid\n' + fence + '\n```');
   return section(model, {
     current: 'overview',
     title: model.projectName,
     crumbLabel: 'Overview',
     drawer: true,
+    mermaid: hldDiagram !== '',
     content: overviewPageContent({
       projectName: model.projectName,
       pages: model.pages,
@@ -110,6 +116,7 @@ export function overviewHtml(model: WorkspaceModel): string {
       activeChanges: model.openSpec.active_changes,
       researchCount: model.research.length,
       projectDocs: model.projectDocs,
+      hldDiagram,
     }),
   });
 }
