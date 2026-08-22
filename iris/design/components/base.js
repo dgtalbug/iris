@@ -353,8 +353,9 @@ async function setupMermaid() {
   initialize();
 
   // Sources are captured before the first render so a theme change can redraw
-  // from the original text rather than from an already-rendered SVG.
-  const sources = new Map();
+  // from the original text rather than from an already-rendered SVG. A WeakMap
+  // avoids pinning hosts detached by spec-record navigation.
+  const sources = new WeakMap();
   let renderSequence = 0;
 
   async function renderFigure(figure) {

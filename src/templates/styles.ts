@@ -499,5 +499,7 @@ a.stat:hover { border-color: color-mix(in oklch, var(--primary) 45%, var(--borde
   .doc-body pre, .doc-body table, .spec-source, pre.code { max-height: none; overflow: visible; }
   .mermaid-host { display: none !important; }
   .mermaid-fallback { display: block !important; max-height: none; overflow: visible; white-space: pre-wrap; }
+  /* Printing has no tab interaction, so every panel must render, not just the selected one. */
+  .tabs .tabpanel[hidden] { display: block !important; }
 }
 `;

@@ -167,7 +167,7 @@ export function legacyDetailContent(document: OpenSpecSourceDocument): string {
 
 function artifactPanel(artifact: RenderedArtifact): string {
   const toc = tableOfContents(artifact.headings);
-  return `<div class="${toc === '' ? 'doc-single' : 'layout'}"><div class="spec-stack">${artifact.html}</div>${toc}</div>`;
+  return `<div class="${toc === '' ? 'doc-single' : 'layout'}">${toc}<div class="spec-stack">${artifact.html}</div></div>`;
 }
 
 export function changeDetailContent(change: OpenSpecChange): string {

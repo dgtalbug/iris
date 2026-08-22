@@ -18,6 +18,11 @@ const MERMAID_SCRIPT_PATTERN =
 // that tree, so marked elements are removed rather than shipped broken.
 const NAV_CHROME_PATTERN =
   /<(a|button|nav|header|aside|span)\b[^>]*\bdata-iris-nav\b[^>]*>.*?<\/\1>/gis;
+// wireTabs (base.js) is stripped from a standalone artifact, so it can never
+// reveal a `hidden` panel; the tablist that drives it is removed and every
+// panel unhidden so the artifact reads as one stacked document instead.
+const TABLIST_PATTERN = /<div class="tablist" role="tablist"[^>]*>.*?<\/div>/gis;
+const TABPANEL_HIDDEN_PATTERN = /(<[a-z]+\b[^>]*\brole="tabpanel"[^>]*?) hidden>/gi;
 const RESOURCE_REFERENCE_PATTERN =
   /<(?:link|script|img|source|video|audio|iframe|object)\b[^>]*\b(?:href|src|data)=["'](?!data:|#)[^"']+["'][^>]*>/i;
 
@@ -88,7 +93,9 @@ function inlineLocalAssets(
     .replace(BASE_STYLESHEET_PATTERN, '')
     .replace(MERMAID_SCRIPT_PATTERN, '')
     .replace(BASE_SCRIPT_PATTERN, '')
-    .replace(NAV_CHROME_PATTERN, '');
+    .replace(NAV_CHROME_PATTERN, '')
+    .replace(TABLIST_PATTERN, '')
+    .replace(TABPANEL_HIDDEN_PATTERN, '$1>');
   const style = `<style data-iris-standalone>\n${tokensCss}\n${baseCss}\n</style>`;
 
   if (!withoutLocalAssets.includes('</head>')) {

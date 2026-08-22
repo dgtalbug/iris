@@ -54,6 +54,6 @@ sequenceDiagram
 
 `iris/spec.json` is the OpenSpec snapshot: `version` 1, whether an `openspec/` directory was `detected`, then `canonical_specs`, `active_changes`, `archived_changes`, `legacy_archives`, and `warnings`. `loadOpenSpecSnapshot` falls back to an empty snapshot carrying a warning when the version or the array fields do not match, rather than rendering from a shape it does not recognise.
 
-`iris/spec/data.js` assigns `globalThis.IRIS_SPEC`, an object of records keyed `kind:name` — `capability`, `change`, or `legacy` — each holding the record's title, source path, and pre-rendered HTML. Every `<` in the JSON is escaped so record content cannot close the script element or open an HTML comment.
+`iris/spec/data.js` assigns `globalThis.IRIS_SPEC = { records }`, where `records` is an object keyed `kind:name` — `capability`, `change`, or `legacy` — each holding the record's title, source path, and pre-rendered HTML. Every `<` in the JSON is escaped so record content cannot close the script element or open an HTML comment.
 
 `iris/state.json` holds `page_index`, one entry per page with `id`, `type`, `title`, and `status`. Status is what distinguishes an active page from an archived one; archived entries keep their row on the dashboard and link into `iris/archive/`.

@@ -81,6 +81,30 @@ describe('publish and export commands', () => {
     ).resolves.toBeUndefined();
   });
 
+  it('stacks feature HLD/LLD/Tasks panels instead of hiding them in standalone artifacts', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    expect(await runCli(['feature', 'with-design'], cwd)).toBe(0);
+    expect(await runCli(['render', '--all'], cwd)).toBe(0);
+
+    const publishPath = path.join(cwd, 'published.html');
+    expect(await runCli(['publish', 'with-design', '--output', publishPath], cwd)).toBe(0);
+    const exportPath = path.join(cwd, 'exported.html');
+    expect(await runCli(['export', 'with-design', '--single', '--output', exportPath], cwd)).toBe(
+      0,
+    );
+
+    for (const artifactPath of [publishPath, exportPath]) {
+      const html = await readFile(artifactPath, 'utf8');
+      expect(html).toContain('<h2>HLD</h2>');
+      expect(html).toContain('<h2>LLD</h2>');
+      expect(html).toContain('<h2>Tasks</h2>');
+      expect(html).not.toContain('role="tablist"');
+      expect(html).not.toMatch(/role="tabpanel"[^>]*\shidden>/);
+      expect(html).not.toContain('<script');
+    }
+  });
+
   it('fails clearly for a missing page without creating its directory', async () => {
     const cwd = await createTempDir();
     expect(await runCli(['init'], cwd)).toBe(0);

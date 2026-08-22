@@ -192,6 +192,8 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(css).toContain('.doc-body pre');
     expect(css).toContain('.spec-source-details');
     expect(css).toMatch(/@media print[\s\S]*\.doc-body pre/);
+    // Printing must keep every tab panel's content, not just the selected one.
+    expect(css).toMatch(/@media print[\s\S]*\.tabs \.tabpanel\[hidden\][^}]*display:\s*block/);
   });
 
   it('separates a change into Proposal, Design, Tasks, and Specs tabs', async () => {
@@ -215,6 +217,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(changePage).toContain('Delta spec ·');
     // Each artifact now sits in its own panel, so the page carries one stack per tab.
     expect(changePage.match(/class="spec-stack"/g)).toHaveLength(4);
+    // The TOC belongs in the 230px column, ahead of the content stack, like every other `.layout` consumer.
+    expect(changePage).toMatch(
+      /<div class="layout"><aside class="toc"[\s\S]*?<\/aside><div class="spec-stack">/,
+    );
   });
 
   it('wires tabs after a record is injected and renders diagrams that appear later', async () => {
