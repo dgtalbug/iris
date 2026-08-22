@@ -202,6 +202,9 @@ describe('generated agent command surfaces', () => {
         expect(skill, `skill names where ${entry.name} lands`).toContain(entry.lands);
     }
     expect(skill).toContain('## When to use this');
+    expect(skill).toContain('## Project docs are Markdown');
+    expect(skill).toContain('iris/project/hld.md');
+    expect(skill).toContain('`design.lld`');
     // The intent table only pays for itself if the whole skill stays cheap to read.
     expect(Buffer.byteLength(skill, 'utf8')).toBeLessThan(4096);
   });
