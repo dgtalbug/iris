@@ -25,7 +25,6 @@ export { icon, typeIcon, ICON_KEYS, type IconName } from './icons.js';
 export { assetPrefix, renderShell, type NavCounts, type ShellOptions } from './shell.js';
 export {
   DEFAULT_WORKSPACE_CONTEXT,
-  projectPlaceholderHtml,
   renderContractPage,
   type WorkspaceContext,
 } from './pages/contract-page.js';

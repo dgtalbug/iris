@@ -1,11 +1,13 @@
 import type { OpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import type { ResearchItem, ResearchWarning } from '../lib/research-workspace.js';
 import type { AgentSurfaceReport } from '../lib/agent-skills.js';
+import type { ProjectDocItem, ProjectDocWarning } from '../lib/project-docs.js';
 import { COMMAND_GROUPS } from '../lib/command-catalog.js';
-import type { DashboardPage } from './common.js';
+import { escapeHtml, projectDocMeta, type DashboardPage } from './common.js';
 import { renderShell, type NavCounts } from './shell.js';
 import { commandsPageContent } from './pages/commands.js';
 import { overviewPageContent } from './pages/overview.js';
+import { projectDocContent } from './pages/project-doc.js';
 import { EMPTY_OPENSPEC_SNAPSHOT, specCounts, specPageContent } from './pages/spec.js';
 import {
   capabilityDetailContent,
@@ -28,6 +30,8 @@ export type WorkspaceModel = {
   researchWarnings: ResearchWarning[];
   openSpec: OpenSpecSnapshot;
   projectDocs: readonly string[];
+  projectDocItems: ProjectDocItem[];
+  projectDocWarnings: ProjectDocWarning[];
   agentSurfaces: AgentSurfaceReport[];
 };
 
@@ -40,6 +44,8 @@ export function emptyWorkspaceModel(projectName = 'iris project'): WorkspaceMode
     researchWarnings: [],
     openSpec: EMPTY_OPENSPEC_SNAPSHOT,
     projectDocs: [],
+    projectDocItems: [],
+    projectDocWarnings: [],
     agentSurfaces: [],
   };
 }
@@ -172,6 +178,27 @@ export function researchDocumentHtml(model: WorkspaceModel, item: ResearchItem):
   });
 }
 
+export function projectDocHtml(model: WorkspaceModel, item: ProjectDocItem): string {
+  const meta = projectDocMeta(item.name);
+  return renderShell({
+    current: `project:${item.name}`,
+    depth: 1,
+    title: item.title,
+    projectName: model.projectName,
+    theme: model.theme,
+    counts: navCounts(model),
+    projectDocs: model.projectDocs,
+    crumbs: [
+      { label: 'iris', href: '../index.html' },
+      { label: 'project docs' },
+      { label: meta.label },
+    ],
+    content: projectDocContent(item, model.projectDocs),
+    mermaid: true,
+    footerHints: `rendered from ${escapeHtml(item.path)} · managed by iris · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar`,
+  }).replace('<html lang="en"', '<html lang="en" data-iris-managed');
+}
+
 export const SPEC_BUNDLE_FILE = 'spec/data.js';
 
 /** One record per canonical spec, change, and legacy archive, keyed by kind and name. */
@@ -233,5 +260,11 @@ export function renderSectionPages(model: WorkspaceModel): Record<string, string
     'research.html': researchHtml(model),
     'commands.html': commandsHtml(model),
     [SPEC_BUNDLE_FILE]: specBundle(model),
+    ...Object.fromEntries(
+      model.projectDocItems.map((item) => [
+        `project/${item.name}.html`,
+        projectDocHtml(model, item),
+      ]),
+    ),
   };
 }

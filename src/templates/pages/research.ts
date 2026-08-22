@@ -70,7 +70,7 @@ export function researchPageContent(
     ${warningList(warnings)}`;
 }
 
-function tableOfContents(headings: DocumentHeading[]): string {
+export function tableOfContents(headings: DocumentHeading[]): string {
   const usable = headings.filter((heading) => heading.level === 2 || heading.level === 3);
   if (usable.length < 2) return '';
   const items = usable
@@ -84,7 +84,7 @@ function tableOfContents(headings: DocumentHeading[]): string {
 
 // The page header already shows the title, which is derived from the body's own
 // first level-one heading when front matter omits it; rendering both duplicates it.
-function withoutLeadingTitle(body: string): string {
+export function withoutLeadingTitle(body: string): string {
   return body.replace(/^\s*#[ \t]+.+?(?:\n|$)/, '');
 }
 

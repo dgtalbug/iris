@@ -4,22 +4,28 @@ import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
 import { installAgentSurfaces, type SkillInstallResult } from '../lib/agent-skills.js';
+import {
+  projectDocOutputPath,
+  projectDocSkeleton,
+  projectDocSourcePath,
+} from '../lib/project-docs.js';
 import { loadProjectState, saveProjectState } from '../lib/project-state.js';
 import {
   BASE_COMPONENTS_CSS,
   BASE_COMPONENTS_JS,
   PROJECT_DOC_NAMES,
-  projectPlaceholderHtml,
   RETIRED_PROJECT_DOC_NAMES,
   TOKENS_CSS,
 } from '../templates/design.js';
-import { loadWorkspaceTheme, refreshDashboard, runRenderCommand } from './render.js';
+import { refreshDashboard, runRenderCommand } from './render.js';
 
 const MANAGED_TASK_LABEL = 'iris: open dashboard';
 const LEGACY_PENDING_STUB = '<!doctype html><title>pending</title>\n';
 
 export type ManagedSurfaceResult = {
   skills: SkillInstallResult;
+  scaffoldedProjectDocs: string[];
+  userOwnedProjectDocs: string[];
   retiredProjectDocs: string[];
   preservedProjectDocs: string[];
 };
@@ -28,24 +34,31 @@ function isManaged(content: string): boolean {
   return content === LEGACY_PENDING_STUB || content.includes('data-iris-managed');
 }
 
-async function refreshProjectPlaceholders(
-  cwd: string,
-): Promise<{ retired: string[]; preserved: string[] }> {
-  const theme = await loadWorkspaceTheme(cwd);
-  const context = {
-    projectName: path.basename(cwd),
-    theme,
-    counts: {},
-    projectDocs: PROJECT_DOC_NAMES,
-  };
+type ProjectDocRefresh = {
+  scaffolded: string[];
+  userOwned: string[];
+  retired: string[];
+  preserved: string[];
+};
+
+// Only decides which Markdown sources exist; the dashboard refresh that follows
+// renders them. A source always wins, a managed HTML page is superseded by a
+// fresh source, and a user-edited HTML page is left alone and reported.
+async function refreshProjectDocs(cwd: string): Promise<ProjectDocRefresh> {
+  const projectName = path.basename(cwd);
+  const scaffolded: string[] = [];
+  const userOwned: string[] = [];
 
   for (const name of PROJECT_DOC_NAMES) {
-    const pagePath = path.join(cwd, 'iris', 'project', `${name}.html`);
-    if (existsSync(pagePath)) {
-      const current = await readFile(pagePath, 'utf8');
-      if (!isManaged(current)) continue;
+    const sourcePath = projectDocSourcePath(cwd, name);
+    if (existsSync(sourcePath)) continue;
+    const outputPath = projectDocOutputPath(cwd, name);
+    if (existsSync(outputPath) && !isManaged(await readFile(outputPath, 'utf8'))) {
+      userOwned.push(`iris/project/${name}.html`);
+      continue;
     }
-    await writeAlways(pagePath, projectPlaceholderHtml(name, context));
+    await writeAlways(sourcePath, await projectDocSkeleton(name, projectName));
+    scaffolded.push(`iris/project/${name}.md`);
   }
 
   // Retired project docs are removed only when Iris can prove it generated them;
@@ -64,7 +77,7 @@ async function refreshProjectPlaceholders(
     }
   }
 
-  return { retired, preserved };
+  return { scaffolded, userOwned, retired, preserved };
 }
 
 export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurfaceResult> {
@@ -74,7 +87,7 @@ export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurface
     BASE_COMPONENTS_CSS,
   );
   await writeAlways(path.join(cwd, 'iris', 'design', 'components', 'base.js'), BASE_COMPONENTS_JS);
-  const projectDocs = await refreshProjectPlaceholders(cwd);
+  const projectDocs = await refreshProjectDocs(cwd);
 
   const tasksPath = path.join(cwd, '.vscode', 'tasks.json');
   let existing: { version?: string; tasks?: unknown[] } = {};
@@ -110,6 +123,8 @@ export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurface
 
   return {
     skills: await installAgentSurfaces(cwd),
+    scaffoldedProjectDocs: projectDocs.scaffolded,
+    userOwnedProjectDocs: projectDocs.userOwned,
     retiredProjectDocs: projectDocs.retired,
     preservedProjectDocs: projectDocs.preserved,
   };
@@ -154,16 +169,28 @@ export async function runArchiveCommand(cwd: string, id?: string): Promise<void>
   process.stdout.write(`archived ${id}\n`);
 }
 
-export async function runUpdateCommand(cwd: string): Promise<void> {
-  await loadProjectState(cwd);
-  const surfaces = await updateManagedSurfaces(cwd);
-  await refreshDashboard(cwd);
+export function reportProjectDocs(surfaces: ManagedSurfaceResult): void {
+  for (const created of surfaces.scaffoldedProjectDocs) {
+    process.stdout.write(`created ${created}\n`);
+  }
+  for (const page of surfaces.userOwnedProjectDocs) {
+    process.stderr.write(
+      `preserved user-owned ${page}; move its content to ${page.replace(/\.html$/, '.md')} to let Iris render it\n`,
+    );
+  }
   for (const retired of surfaces.retiredProjectDocs) {
     process.stdout.write(`removed retired managed page ${retired}\n`);
   }
   for (const preserved of surfaces.preservedProjectDocs) {
     process.stderr.write(`preserved user-owned ${preserved}; it is no longer generated\n`);
   }
+}
+
+export async function runUpdateCommand(cwd: string): Promise<void> {
+  await loadProjectState(cwd);
+  const surfaces = await updateManagedSurfaces(cwd);
+  await refreshDashboard(cwd);
+  reportProjectDocs(surfaces);
   assertSkillInstallComplete(surfaces.skills);
   process.stdout.write(
     'updated managed iris surfaces and agent skills; preserved user-owned content\n',

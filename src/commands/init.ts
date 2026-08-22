@@ -5,7 +5,11 @@ import { ensureDir, writeIfMissing } from '../lib/fs.js';
 import { writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import { migrateProjectState } from '../lib/project-migration.js';
 import { createProjectState, loadProjectState } from '../lib/project-state.js';
-import { assertSkillInstallComplete, updateManagedSurfaces } from './lifecycle.js';
+import {
+  assertSkillInstallComplete,
+  reportProjectDocs,
+  updateManagedSurfaces,
+} from './lifecycle.js';
 import { refreshDashboard } from './render.js';
 
 export async function runInitCommand(cwd: string): Promise<void> {
@@ -60,12 +64,7 @@ export async function runInitCommand(cwd: string): Promise<void> {
   for (const id of migration.preserved) {
     process.stderr.write(`preserved ambiguous legacy adopted page ${id}; review it manually\n`);
   }
-  for (const retired of surfaces.retiredProjectDocs) {
-    process.stdout.write(`removed retired managed page ${retired}\n`);
-  }
-  for (const preserved of surfaces.preservedProjectDocs) {
-    process.stderr.write(`preserved user-owned ${preserved}; it is no longer generated\n`);
-  }
+  reportProjectDocs(surfaces);
   try {
     assertSkillInstallComplete(surfaces.skills);
   } catch (error) {
@@ -83,6 +82,9 @@ export async function runInitCommand(cwd: string): Promise<void> {
   }
 
   process.stdout.write('iris initialized\n');
-  process.stdout.write('next: iris research <id> or iris bug <id>\n');
+  process.stdout.write(
+    'next: write iris/project/hld.md and iris/project/lld.md (Mermaid), then iris render --all\n',
+  );
+  process.stdout.write('then: iris research <id> or iris bug <id>\n');
   process.stdout.write('open: iris open\n');
 }

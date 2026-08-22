@@ -1,7 +1,9 @@
-import { chmod, mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { chmod, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { runCli } from '../src/cli.js';
 import { firstMermaidFence, loadProjectDocs, projectDocSkeleton } from '../src/lib/project-docs.js';
 import { PROJECT_DOC_NAMES } from '../src/templates/common.js';
 
@@ -137,4 +139,110 @@ describe('project doc loader', () => {
       }
     },
   );
+});
+
+function captureStderr(): { lines: string[]; restore: () => void } {
+  const lines: string[] = [];
+  const spy = vi.spyOn(process.stderr, 'write').mockImplementation(((chunk: unknown) => {
+    lines.push(String(chunk));
+    return true;
+  }) as typeof process.stderr.write);
+  return { lines, restore: () => spy.mockRestore() };
+}
+
+describe('project docs workspace', () => {
+  it('scaffolds five Markdown sources on init and renders them as managed pages', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    for (const name of PROJECT_DOC_NAMES) {
+      expect(existsSync(path.join(cwd, 'iris', 'project', `${name}.md`)), name).toBe(true);
+      const html = await readFile(path.join(cwd, 'iris', 'project', `${name}.html`), 'utf8');
+      expect(html, name).toContain('data-iris-managed');
+      expect(html, name).toContain('href="../index.html"');
+      expect(html, name).toContain(`iris/project/${name}.md`);
+      expect(html, name).not.toContain('not written yet');
+    }
+
+    const hld = await readFile(path.join(cwd, 'iris', 'project', 'hld.html'), 'utf8');
+    expect(hld).toContain('<h1>HLD</h1>');
+    expect(hld).toContain('data-mermaid-figure');
+    expect(hld).toContain('<h2 id="system-map">System map</h2>');
+    expect(hld).toContain('aria-label="On this page"');
+    expect(hld).toContain('href="./lld.html"');
+    expect(hld).toContain('design/vendor/mermaid.min.js');
+
+    const overview = await readFile(path.join(cwd, 'iris', 'project', 'overview.html'), 'utf8');
+    expect(overview).not.toContain('data-mermaid-figure');
+  });
+
+  it('keeps an edited source across init and update, and re-renders from it', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    const source = path.join(cwd, 'iris', 'project', 'hld.md');
+    const edited =
+      '---\ntitle: Real shape\nstatus: active\n---\n\n## Map\n\n```mermaid\nflowchart LR\n  cli --> renderer\n```\n';
+    await writeFile(source, edited, 'utf8');
+
+    expect(await runCli(['init'], cwd)).toBe(0);
+    expect(await readFile(source, 'utf8')).toBe(edited);
+    expect(await runCli(['update'], cwd)).toBe(0);
+    expect(await readFile(source, 'utf8')).toBe(edited);
+
+    const html = await readFile(path.join(cwd, 'iris', 'project', 'hld.html'), 'utf8');
+    expect(html).toContain('<h1>Real shape</h1>');
+    expect(html).toContain('cli --&gt; renderer');
+  });
+
+  it('preserves a user-owned HTML page, does not scaffold over it, and says how to migrate', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    await rm(path.join(cwd, 'iris', 'project', 'hld.md'));
+    const page = path.join(cwd, 'iris', 'project', 'hld.html');
+    await writeFile(page, '<!doctype html><title>mine</title>', 'utf8');
+
+    const stderr = captureStderr();
+    try {
+      expect(await runCli(['update'], cwd)).toBe(0);
+    } finally {
+      stderr.restore();
+    }
+
+    expect(existsSync(path.join(cwd, 'iris', 'project', 'hld.md'))).toBe(false);
+    expect(await readFile(page, 'utf8')).toBe('<!doctype html><title>mine</title>');
+    expect(stderr.lines.join('')).toContain(
+      'preserved user-owned iris/project/hld.html; move its content to iris/project/hld.md to let Iris render it',
+    );
+    const index = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
+    expect(index).toContain('href="./project/hld.html"');
+  });
+
+  it('surfaces front-matter warnings on the page and on stderr during render', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    await writeFile(
+      path.join(cwd, 'iris', 'project', 'erd.md'),
+      '---\nupdated: not-a-date\n---\n\n# ERD\n\ntext\n',
+      'utf8',
+    );
+
+    const stderr = captureStderr();
+    try {
+      expect(await runCli(['render', '--all'], cwd)).toBe(0);
+    } finally {
+      stderr.restore();
+    }
+
+    const html = await readFile(path.join(cwd, 'iris', 'project', 'erd.html'), 'utf8');
+    expect(html).toContain('Front matter warnings');
+    expect(html).toContain('is not an ISO date');
+    expect(stderr.lines.join('')).toContain('iris/project/erd.md');
+  });
+
+  it('writes no project pages when the project has no iris/project directory', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['bug', 'some-bug'], cwd)).toBe(0);
+    expect(await runCli(['render', '--all'], cwd)).toBe(0);
+    expect(existsSync(path.join(cwd, 'iris', 'project'))).toBe(false);
+  });
 });
