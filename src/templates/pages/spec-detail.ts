@@ -4,12 +4,7 @@ import type {
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
 import { renderDocument, type DocumentHeading } from '../../lib/markdown.js';
-import {
-  escapeHtml,
-  healthBadgeClass,
-  progressBar,
-  statTile,
-} from '../common.js';
+import { escapeHtml, healthBadgeClass, progressBar, statTile, tabGroup } from '../common.js';
 
 export type SpecDetailKind = 'capability' | 'change' | 'legacy';
 
@@ -170,23 +165,34 @@ export function legacyDetailContent(document: OpenSpecSourceDocument): string {
     </div>`;
 }
 
+function artifactPanel(artifact: RenderedArtifact): string {
+  const toc = tableOfContents(artifact.headings);
+  return `<div class="${toc === '' ? 'doc-single' : 'layout'}"><div class="spec-stack">${artifact.html}</div>${toc}</div>`;
+}
+
 export function changeDetailContent(change: OpenSpecChange): string {
   const tasks = change.artifacts.tasks?.progress;
-  const artifacts: RenderedArtifact[] = [
-    artifactSection('Proposal', change.artifacts.proposal, 'proposal'),
-    artifactSection('Design', change.artifacts.design, 'design'),
-    artifactSection('Tasks', change.artifacts.tasks, 'tasks'),
-    artifactSection('Manifest', change.artifacts.manifest, 'manifest'),
-    ...change.delta_specs.map((capability) =>
-      artifactSection(
-        `Delta spec · ${capability.capability}`,
-        capability.document,
-        `delta-${capability.capability}`,
-      ),
+  const proposal = artifactSection('Proposal', change.artifacts.proposal, 'proposal');
+  const design = artifactSection('Design', change.artifacts.design, 'design');
+  const taskDoc = artifactSection('Tasks', change.artifacts.tasks, 'tasks');
+  const manifest = change.artifacts.manifest;
+  const deltas = change.delta_specs.map((capability) =>
+    artifactSection(
+      `Delta spec · ${capability.capability}`,
+      capability.document,
+      `delta-${capability.capability}`,
     ),
-  ];
-
-  const toc = tableOfContents(artifacts.flatMap((artifact) => artifact.headings));
+  );
+  const specs: RenderedArtifact = {
+    html:
+      (manifest
+        ? `<details class="card spec-artifact"><summary>Manifest · <span class="mono spec-path">${escapeHtml(manifest.path)}</span></summary>${artifactSection('Manifest', manifest, 'manifest').html}</details>`
+        : '') +
+      (deltas.length === 0
+        ? '<section class="card doc-body"><h2>Delta specs</h2><p class="work-meta">This change carries no delta specs.</p></section>'
+        : deltas.map((delta) => delta.html).join('')),
+    headings: deltas.flatMap((delta) => delta.headings),
+  };
 
   return `<div class="page-head">
       <div>
@@ -209,10 +215,12 @@ export function changeDetailContent(change: OpenSpecChange): string {
 
     ${tasks ? `<div class="card">${progressBar(tasks.complete, tasks.total, `${change.name}: ${tasks.complete} of ${tasks.total} tasks complete`)}<p class="work-meta" style="margin: var(--space-2) 0 0">${tasks.complete}/${tasks.total} tasks complete · ${tasks.open} open</p></div>` : ''}
 
-    <div class="${toc === '' ? 'doc-single' : 'layout'}">
-      <div class="spec-stack">${artifacts.map((artifact) => artifact.html).join('')}</div>
-      ${toc}
-    </div>`;
+    ${tabGroup(`change-${slugPrefix(change.name)}`, 'change artifacts', [
+      { id: 'proposal', label: 'Proposal', html: artifactPanel(proposal) },
+      { id: 'design', label: 'Design', html: artifactPanel(design) },
+      { id: 'tasks', label: 'Tasks', html: artifactPanel(taskDoc) },
+      { id: 'specs', label: 'Specs', html: artifactPanel(specs) },
+    ])}`;
 }
 
 export type SpecRecord = {

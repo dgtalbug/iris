@@ -215,3 +215,24 @@ export function progressBar(complete: number, total: number, label: string): str
   const variant = percent === 100 ? ' m-success' : '';
   return `<div class="meter${variant}" role="img" aria-label="${escapeHtml(label)}"><div class="track"><div class="fill" style="width: ${percent}%"></div></div></div>`;
 }
+
+export type TabPanel = { id: string; label: string; html: string };
+
+/** A tablist plus its panels; empty panels are dropped and the first remaining one starts selected. */
+export function tabGroup(groupId: string, ariaLabel: string, panels: TabPanel[]): string {
+  const present = panels.filter((panel) => panel.html !== '');
+  const group = escapeHtml(groupId);
+  const tabs = present
+    .map(
+      (panel, index) =>
+        `<button id="${group}-tab-${escapeHtml(panel.id)}" role="tab" class="tab" aria-controls="${group}-panel-${escapeHtml(panel.id)}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}" data-tab-id="${escapeHtml(panel.id)}">${escapeHtml(panel.label)}</button>`,
+    )
+    .join('');
+  const bodies = present
+    .map(
+      (panel, index) =>
+        `<section id="${group}-panel-${escapeHtml(panel.id)}" class="tabpanel" role="tabpanel" aria-labelledby="${group}-tab-${escapeHtml(panel.id)}" data-tab-group="${group}" data-tab-id="${escapeHtml(panel.id)}"${index === 0 ? '' : ' hidden'}>${panel.html}</section>`,
+    )
+    .join('');
+  return `<div class="tabs"><div class="tablist" role="tablist" aria-label="${escapeHtml(ariaLabel)}" data-tabs="${group}">${tabs}</div>${bodies}</div>`;
+}

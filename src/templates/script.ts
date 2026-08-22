@@ -93,11 +93,13 @@ function setupNavigation() {
   return { setCollapsed };
 }
 
-function setupTabs() {
-  for (const group of document.querySelectorAll('[data-tabs]')) {
+function wireTabs(root) {
+  for (const group of root.querySelectorAll('[data-tabs]')) {
+    if (group.hasAttribute('data-tabs-ready')) continue;
+    group.setAttribute('data-tabs-ready', '');
     const buttons = Array.from(group.querySelectorAll('[role="tab"]'));
     const groupId = group.getAttribute('data-tabs');
-    const panels = document.querySelectorAll('[data-tab-group="' + groupId + '"]');
+    const panels = root.querySelectorAll('[data-tab-group="' + groupId + '"]');
     const activate = (button, moveFocus) => {
       buttons.forEach((it) => {
         const selected = it === button;
@@ -125,6 +127,10 @@ function setupTabs() {
       });
     });
   }
+}
+
+function setupTabs() {
+  wireTabs(document);
 }
 
 function setupFilter() {
@@ -306,9 +312,9 @@ function setupWorkDrawer() {
 }
 
 async function setupMermaid() {
-  const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
-  if (figures.length === 0) return;
   if (!globalThis.mermaid || typeof globalThis.mermaid.initialize !== 'function') return;
+  // Spec records arrive from the bundle after load, so figures are queried per pass.
+  const figures = () => Array.from(document.querySelectorAll('[data-mermaid-figure]'));
 
   const token = (name) =>
     getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -395,18 +401,17 @@ async function setupMermaid() {
   }
 
   async function renderVisibleFigures() {
-    for (const figure of figures) await renderFigure(figure);
+    for (const figure of figures()) await renderFigure(figure);
   }
 
-  for (const details of document.querySelectorAll('details')) {
-    details.addEventListener('toggle', () => {
-      if (details.open) void renderVisibleFigures();
-    });
-  }
+  // \`toggle\` does not bubble; capturing on the document also covers injected <details>.
+  document.addEventListener('toggle', (event) => {
+    if (event.target instanceof HTMLDetailsElement && event.target.open) void renderVisibleFigures();
+  }, true);
   document.addEventListener('iris:visibilitychange', () => void renderVisibleFigures());
   document.addEventListener('iris:theme', () => {
     initialize();
-    for (const figure of figures) {
+    for (const figure of figures()) {
       const host = figure.querySelector('[data-mermaid-host]');
       if (!(host instanceof HTMLElement) || !sources.has(host)) continue;
       host.removeAttribute('data-render-state');
@@ -441,6 +446,7 @@ function setupSpecBrowser() {
     // Content is generated and escaped by Iris at render time; inserted script
     // elements do not execute, and the parser output is already escaped.
     slot.innerHTML = record.html;
+    wireTabs(slot);
     if (crumb) crumb.textContent = record.title;
     const heading = slot.querySelector('h1');
     if (heading instanceof HTMLElement) {

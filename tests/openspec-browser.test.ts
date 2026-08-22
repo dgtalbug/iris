@@ -158,10 +158,10 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(dashboard).not.toMatch(/(?:src|href)="https?:\/\//);
     expect(script).toContain("['ArrowLeft', 'ArrowRight', 'Home', 'End']");
     expect(script).toContain("securityLevel: 'strict'");
-    expect(script).toContain('for (const figure of figures)');
+    expect(script).toContain('for (const figure of figures())');
     expect(script).toContain('renderSequence += 1;');
     expect(script).toContain('host.getClientRects().length === 0');
-    expect(script).toContain("details.addEventListener('toggle'");
+    expect(script).toContain("document.addEventListener('toggle'");
     expect(script).toContain("'iris:visibilitychange'");
     expect(script).toContain('Escaped source is shown below');
     // Diagrams take their colors from the token block and redraw when it changes.
@@ -182,12 +182,52 @@ describe('OpenSpec Spec browser orchestration', () => {
     expect(tokens).toContain("[data-theme='light']");
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
     expect(css).toContain('@media (max-width: 48rem)');
-    expect(css).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.layout \{ grid-template-columns: 1fr/);
-    expect(css).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/);
+    expect(css).toMatch(
+      /@media \(max-width: 900px\)[\s\S]*?\.layout \{ grid-template-columns: 1fr/,
+    );
+    expect(css).toMatch(
+      /@media \(max-width: 900px\)[\s\S]*?\.spec-grid \{ grid-template-columns: minmax\(0, 1fr\)/,
+    );
     expect(css).toContain('.doc-body table');
     expect(css).toContain('.doc-body pre');
     expect(css).toContain('.spec-source-details');
     expect(css).toMatch(/@media print[\s\S]*\.doc-body pre/);
+  });
+
+  it('separates a change into Proposal, Design, Tasks, and Specs tabs', async () => {
+    const cwd = await tempProject();
+    await rm(path.join(cwd, 'openspec', 'changes', 'active-change', 'design.md'));
+    expect(await runCli(['init'], cwd)).toBe(0);
+
+    const changePage = loadSpecBundle(cwd)['change:active-change'].html;
+    expect(changePage).toContain(
+      'role="tablist" aria-label="change artifacts" data-tabs="change-active-change"',
+    );
+    for (const tab of ['proposal', 'design', 'tasks', 'specs']) {
+      expect(changePage).toContain(`data-tab-id="${tab}">`);
+      expect(changePage).toContain(`data-tab-group="change-active-change" data-tab-id="${tab}"`);
+    }
+    expect(changePage).toContain('aria-selected="true" tabindex="0" data-tab-id="proposal"');
+    expect(changePage).toContain('aria-selected="false" tabindex="-1" data-tab-id="design"');
+    // A missing artifact keeps its tab so the gap stays visible.
+    expect(changePage).toContain('This artifact is missing from the change directory.');
+    expect(changePage).toContain('<h2 id="proposal-why">Why</h2>');
+    expect(changePage).toContain('Delta spec ·');
+    // Each artifact now sits in its own panel, so the page carries one stack per tab.
+    expect(changePage.match(/class="spec-stack"/g)).toHaveLength(4);
+  });
+
+  it('wires tabs after a record is injected and renders diagrams that appear later', async () => {
+    const cwd = await tempProject();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    const script = await readFile(
+      path.join(cwd, 'iris', 'design', 'components', 'base.js'),
+      'utf8',
+    );
+    expect(script).toContain('function wireTabs(root)');
+    expect(script).toContain('wireTabs(slot)');
+    expect(script).not.toContain('if (figures.length === 0) return;');
+    expect(script).toContain("document.addEventListener('toggle'");
   });
 
   it('renders distinct absent and empty OpenSpec states', async () => {
