@@ -30,4 +30,10 @@ describe('project doc skeletons', () => {
     const skeleton = await projectDocSkeleton('hld', 'my "quoted" app');
     expect(skeleton).toContain(`app["my 'quoted' app"]`);
   });
+
+  it('preserves dollar signs in the project name without String.replace interpretation', async () => {
+    const skeleton = await projectDocSkeleton('hld', 'weird$&name');
+    expect(skeleton).toContain(`app["weird$&name"]`);
+    expect(skeleton).not.toContain('__PROJECT__');
+  });
 });

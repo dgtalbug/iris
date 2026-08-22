@@ -29,5 +29,6 @@ export async function projectDocSkeleton(
     'utf8',
   );
   // The name lands inside double-quoted Mermaid labels; a quote would end the label early.
-  return template.replace(PROJECT_PLACEHOLDER, projectName.replace(/"/g, "'"));
+  const safeName = projectName.replace(/"/g, "'");
+  return template.replace(PROJECT_PLACEHOLDER, () => safeName);
 }
