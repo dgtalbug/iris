@@ -48,6 +48,7 @@ for (const requiredPath of [
   'dist/src/lib/agent-skills.js',
   'templates/agents/iris-workspace.md',
   'templates/agents/iris-commands.md',
+  'templates/project/hld.md',
 ]) {
   if (!packedFiles.has(requiredPath)) {
     throw new Error(`Packed CLI is missing required initialization asset: ${requiredPath}`);
@@ -82,11 +83,7 @@ try {
     .map((entry) => entry.usage)
     .filter((usage) => !helpOutput.includes(usage));
 
-  if (
-    helpOutput !== repoHelp ||
-    !/Usage:\s*iris/i.test(helpOutput) ||
-    missingCommands.length > 0
-  ) {
+  if (helpOutput !== repoHelp || !/Usage:\s*iris/i.test(helpOutput) || missingCommands.length > 0) {
     throw new Error(
       `Installed command help does not match the repository CLI interface${
         missingCommands.length > 0 ? `; missing ${missingCommands.join(', ')}` : ''

@@ -25,6 +25,7 @@
     "dist/src",
     "schemas",
     "templates/agents",
+    "templates/project",
     "README.md"
   ],
   "publishConfig": {
