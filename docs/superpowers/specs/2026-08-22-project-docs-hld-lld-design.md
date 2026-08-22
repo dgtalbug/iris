@@ -77,9 +77,10 @@ Renderer: `projectDocHtml(model, item)` in `src/templates/workspace.ts`, reusing
 shared module extracted from it) and `renderShell` at `depth: 1` with crumbs
 `iris / project docs / <Label>`, `mermaid: true`, the `doc-meta` row (status,
 agent, updated), any front-matter warnings, the TOC/`doc-single` layout, and the
-existing "other project docs" sibling strip. `projectPlaceholderHtml` remains only
-for the unmanaged-HTML preservation case described in section 7 and for the
-`RETIRED_PROJECT_DOC_NAMES` logic; it is not written when a `.md` source exists.
+existing "other project docs" sibling strip. `projectPlaceholderHtml` is deleted:
+nothing writes HTML placeholders any more (a missing source is scaffolded, a
+user-edited HTML page is left alone — section 7), and the
+`RETIRED_PROJECT_DOC_NAMES` logic does not need it.
 
 `WorkspaceModel` gains `projectDocItems: ProjectDocItem[]` and
 `projectDocWarnings`. `projectDocs: string[]` (which `.html` files exist) is kept
@@ -87,11 +88,16 @@ unchanged so the shell and nav do not change.
 
 ### 2. Scaffold content written by `iris init`
 
-Templates live in `src/templates/project-docs.ts` as string constants (one per doc)
-so tests can assert on them. Each file has front matter (`title`, `status: draft`),
-one sentence of purpose, and headings taken from the current placeholder's "what
-belongs here" list. Mermaid skeletons use the same `classDef` block that the agent
-skill already documents (focus/svc/db/q/ext/err):
+Templates ship as packaged Markdown files, `templates/project/<name>.md`, read
+through `packageRoot()` exactly like the agent skill templates (`package.json`
+`files` and the install smoke test gain `templates/project`). They cannot live
+under `src/` because `scripts/token-lint.mjs` rejects the Mermaid `classDef` hex
+colours anywhere there. `__PROJECT__` is replaced by the project directory name
+(double quotes swapped for single quotes so a Mermaid label cannot break). Each
+file has front matter (`title`, `status: draft`), one sentence of purpose, and
+headings taken from the current placeholder's "what belongs here" list. Mermaid
+skeletons use the same `classDef` block that the agent skill already documents
+(focus/svc/db/q/ext/err):
 
 - `hld.md`: `## System map` with a `flowchart LR` of three placeholder nodes
   (`Service A`:svc, `Store`:db, `External`:ext) around a `focus` node named after
@@ -122,9 +128,13 @@ Because change detail HTML is injected from the spec bundle at click time,
 `setupTabs()` in `src/templates/script.ts` is refactored into `wireTabs(root)`;
 `setupTabs` calls `wireTabs(document)` at load and `showRecord` calls
 `wireTabs(slot)` after injection. Activation already dispatches
-`iris:visibilitychange`, which triggers Mermaid rendering for figures that just
-became visible, so diagrams inside the Design tab render when the tab is opened.
-The existing tab keyboard contract (Arrow/Home/End) is unchanged.
+`iris:visibilitychange`, but `setupMermaid` snapshots `[data-mermaid-figure]` once
+at load and returns early when the page has none — so today diagrams inside an
+injected spec record never render on `spec.html`. It is changed to re-query the
+figures on every render pass and to listen for `toggle` in the capture phase on
+`document` (so `<details>` injected later also trigger a render); with that,
+diagrams inside the Design tab render when the tab is opened. The existing tab
+keyboard contract (Arrow/Home/End) is unchanged.
 
 ### 4. Feature contract `design.hld` / `design.lld`
 
@@ -134,7 +144,10 @@ Existing contracts remain valid.
 
 `iris feature <id>` (`src/commands/draft.ts`) writes
 `design: { hld: { md }, lld: { md } }` whose bodies are one-line prompts followed
-by the same `flowchart` and `sequenceDiagram` skeletons used for the project docs.
+by `flowchart` and `sequenceDiagram` skeletons shaped like the project-doc ones.
+They carry `:::focus` / `:::svc` / `:::db` class references but no `classDef` hex
+lines (token-lint forbids them in `src/`); the prompt tells the agent to paste the
+`classDef` lines from `iris/project/hld.md`.
 
 `renderContractPage` `feature` case: when `sections.design` has at least one of
 `hld`/`lld`, render a `[data-tabs]` tablist Overview | HLD | LLD | Tasks where
@@ -162,7 +175,7 @@ is no `hld.md` or it has no Mermaid fence, the empty state is kept and reworded:
 - `templates/agents/iris-commands.md`: extend `feature` with the HLD/LLD steps;
   extend the setup guidance so `/iris:*` surfaces mention the project docs.
 - `iris init` final hints: `next: write iris/project/hld.md and lld.md (Mermaid),
-  then iris render --all`.
+then iris render --all`.
 - `docs/cmds.md` (`iris init`, `iris render`, `iris feature`), `README.md` workspace
   table and "Research pages are Markdown" neighbour section, `docs/tech.md`
   ("three editable sources"), `docs/status.md`.
@@ -171,11 +184,11 @@ is no `hld.md` or it has no Mermaid fence, the empty state is kept and reworded:
 
 For each name in `PROJECT_DOC_NAMES`, in `refreshProjectPlaceholders`:
 
-| `.md` exists | `.html` state | Action |
-| --- | --- | --- |
-| yes | any | render `.md` to `.html` (managed) |
-| no | missing or managed placeholder | write skeleton `.md`, render |
-| no | unmanaged (user-edited) | leave `.html` untouched, do not scaffold, report `preserved user-owned iris/project/<name>.html; move its content to iris/project/<name>.md to let Iris render it` |
+| `.md` exists | `.html` state                  | Action                                                                                                                                                             |
+| ------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| yes          | any                            | render `.md` to `.html` (managed)                                                                                                                                  |
+| no           | missing or managed placeholder | write skeleton `.md`, render                                                                                                                                       |
+| no           | unmanaged (user-edited)        | leave `.html` untouched, do not scaffold, report `preserved user-owned iris/project/<name>.html; move its content to iris/project/<name>.md to let Iris render it` |
 
 The third row reuses the existing `preservedProjectDocs` reporting path.
 `RETIRED_PROJECT_DOC_NAMES` handling is unchanged.
