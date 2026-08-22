@@ -76,7 +76,9 @@ export async function loadProjectDocs(cwd: string): Promise<ProjectDocsSnapshot>
     let info;
     try {
       info = await lstat(sourcePath);
-    } catch {
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      warnings.push({ code: 'unreadable', path: relativePath, message: (error as Error).message });
       continue;
     }
     if (info.isSymbolicLink()) {

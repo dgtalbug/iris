@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -117,4 +117,24 @@ describe('project doc loader', () => {
     expect(snapshot.warnings[2].message).toContain('not an ISO date');
     expect(snapshot.items[1].warnings).toHaveLength(1);
   });
+
+  it.skipIf(process.getuid?.() === 0)(
+    'warns instead of silently skipping when a source cannot be inspected',
+    async () => {
+      const cwd = await createTempDir();
+      await writeDoc(cwd, 'hld', '# HLD\n');
+      const root = path.join(cwd, 'iris', 'project');
+      await chmod(root, 0o000);
+      try {
+        const snapshot = await loadProjectDocs(cwd);
+        expect(snapshot.items).toEqual([]);
+        expect(snapshot.warnings.map((warning) => warning.code)).toEqual(
+          PROJECT_DOC_NAMES.map(() => 'unreadable'),
+        );
+        expect(snapshot.warnings[0].path).toBe('iris/project/overview.md');
+      } finally {
+        await chmod(root, 0o755);
+      }
+    },
+  );
 });
