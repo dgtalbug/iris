@@ -44,8 +44,15 @@ describe('publish and export commands', () => {
     const html = await readFile(artifactPath, 'utf8');
     expect(html).toContain('Bug Cache Stampede');
     expect(html).toContain('<style data-iris-standalone>');
-    expect(html).toContain('--bg:');
+    expect(html).toContain('--background:');
+    // Icons ship as inline SVG, so a standalone artifact keeps them with no reference.
+    expect(html).toContain('<svg xmlns="http://www.w3.org/2000/svg"');
+    expect(html).toContain('class="lucide lucide-');
     expect(html).toContain('.content {');
+    // The shell is stripped from an artifact, so the layout must not keep
+    // reserving the sidebar's column and squeeze the content into what is left.
+    expect(html).toMatch(/\.app \{ display: flex;/);
+    expect(html).not.toMatch(/\.app \{[^}]*grid-template-columns/);
     expect(html).not.toContain('class="sidebar"');
     expect(html).not.toContain('<kbd>');
     expect(html).not.toMatch(/<link\b[^>]*\b(?:href|src)=/i);
@@ -72,6 +79,30 @@ describe('publish and export commands', () => {
     await expect(
       access(path.join(cwd, 'iris', 'archive', 'bug-cache-stampede.html')),
     ).resolves.toBeUndefined();
+  });
+
+  it('stacks feature HLD/LLD/Tasks panels instead of hiding them in standalone artifacts', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    expect(await runCli(['feature', 'with-design'], cwd)).toBe(0);
+    expect(await runCli(['render', '--all'], cwd)).toBe(0);
+
+    const publishPath = path.join(cwd, 'published.html');
+    expect(await runCli(['publish', 'with-design', '--output', publishPath], cwd)).toBe(0);
+    const exportPath = path.join(cwd, 'exported.html');
+    expect(await runCli(['export', 'with-design', '--single', '--output', exportPath], cwd)).toBe(
+      0,
+    );
+
+    for (const artifactPath of [publishPath, exportPath]) {
+      const html = await readFile(artifactPath, 'utf8');
+      expect(html).toContain('<h2>HLD</h2>');
+      expect(html).toContain('<h2>LLD</h2>');
+      expect(html).toContain('<h2>Tasks</h2>');
+      expect(html).not.toContain('role="tablist"');
+      expect(html).not.toMatch(/role="tabpanel"[^>]*\shidden>/);
+      expect(html).not.toContain('<script');
+    }
   });
 
   it('fails clearly for a missing page without creating its directory', async () => {

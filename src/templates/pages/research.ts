@@ -6,7 +6,7 @@ import {
   type ResearchWarning,
 } from '../../lib/research-workspace.js';
 import {
-  apertureGlyph,
+  recordIcon,
   escapeHtml,
   statTile,
   statusChip,
@@ -18,7 +18,7 @@ export function researchListRow(item: ResearchItem, href: string): string {
   const tags = item.tags.length > 0 ? item.tags.join(' · ') : 'no tags';
   return `<article class="work-list-row" data-work-list-item>
       <a class="work-row" href="${escapeHtml(href)}">
-        ${apertureGlyph('research')}
+        ${recordIcon('research')}
         <span class="work-row-primary"><span class="work-row-title">${escapeHtml(item.title)}</span><span class="work-row-id">${escapeHtml(item.id)} · ${escapeHtml(tags)}</span></span>
         ${statusChip(item.status)}
         <span class="work-meta">${escapeHtml(researchEvidence(item))}</span>
@@ -31,8 +31,8 @@ export function researchListRow(item: ResearchItem, href: string): string {
 function warningList(warnings: ResearchWarning[]): string {
   if (warnings.length === 0) return '';
   return `<section aria-labelledby="research-warnings-title">
-      <div class="section-heading"><div><span class="eyebrow">parser health</span><h2 id="research-warnings-title">Warnings</h2></div><span class="status-chip health-warning">${warnings.length}</span></div>
-      <ul class="surface spec-card spec-list">
+      <div class="section-heading"><div><span class="eyebrow">parser health</span><h2 id="research-warnings-title">Warnings</h2></div><span class="badge b-warning">${warnings.length}</span></div>
+      <ul class="card spec-list">
         ${warnings.map((warning) => `<li class="spec-warning"><strong>${escapeHtml(warning.code)}</strong> · <code>${escapeHtml(warning.path)}</code><br />${escapeHtml(warning.message)}</li>`).join('')}
       </ul>
     </section>`;
@@ -66,11 +66,11 @@ export function researchPageContent(
       ${statTile({ value: tagCount, label: 'tags' })}
     </section>
 
-    <section class="surface list" aria-label="all research">${rows}</section>
+    <section class="card list" aria-label="all research">${rows}</section>
     ${warningList(warnings)}`;
 }
 
-function tableOfContents(headings: DocumentHeading[]): string {
+export function tableOfContents(headings: DocumentHeading[]): string {
   const usable = headings.filter((heading) => heading.level === 2 || heading.level === 3);
   if (usable.length < 2) return '';
   const items = usable
@@ -79,12 +79,12 @@ function tableOfContents(headings: DocumentHeading[]): string {
         `<li class="toc-${heading.level}"><a href="#${escapeHtml(heading.id)}">${escapeHtml(heading.text)}</a></li>`,
     )
     .join('');
-  return `<aside class="surface doc-toc" aria-label="On this page"><span class="eyebrow">on this page</span><ol>${items}</ol></aside>`;
+  return `<aside class="toc" aria-label="On this page"><div class="toc-title">on this page</div><ol>${items}</ol></aside>`;
 }
 
 // The page header already shows the title, which is derived from the body's own
 // first level-one heading when front matter omits it; rendering both duplicates it.
-function withoutLeadingTitle(body: string): string {
+export function withoutLeadingTitle(body: string): string {
   return body.replace(/^\s*#[ \t]+.+?(?:\n|$)/, '');
 }
 
@@ -97,16 +97,16 @@ export function researchDocumentContent(item: ResearchItem): string {
   const tags =
     item.tags.length === 0
       ? '<span>tags not set</span>'
-      : `<span>tags ${item.tags.map((tag) => `<span class="pill">${escapeHtml(tag)}</span>`).join(' ')}</span>`;
+      : `<span>tags ${item.tags.map((tag) => `<span class="badge b-muted">${escapeHtml(tag)}</span>`).join(' ')}</span>`;
   const warnings =
     item.warnings.length === 0
       ? ''
-      : `<div class="surface callout warn"><strong>Front matter warnings</strong><ul>${item.warnings.map((warning) => `<li>${escapeHtml(warning.message)}</li>`).join('')}</ul></div>`;
+      : `<div class="callout c-warn"><strong>Front matter warnings</strong><ul>${item.warnings.map((warning) => `<li>${escapeHtml(warning.message)}</li>`).join('')}</ul></div>`;
 
   return `<div class="page-head">
       <div>
-        <div class="page-title-row" style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
-          ${apertureGlyph('research')}
+        <div class="page-title-row">
+          ${recordIcon('research')}
           ${typeChip('research')}
           ${statusChip(item.status)}
         </div>
@@ -120,9 +120,9 @@ export function researchDocumentContent(item: ResearchItem): string {
       </div>
     </div>
     ${warnings}
-    <div class="${toc === '' ? 'doc-single' : 'doc-layout'}">
-      <article class="surface doc-body">${html}</article>
+    <div class="${toc === '' ? 'doc-single' : 'layout'}">
       ${toc}
+      <article class="card doc-body">${html}</article>
     </div>`;
 }
 

@@ -30,9 +30,10 @@ Record a feature in the Iris workspace.
 
 1. Pick a lowercase kebab-case `<id>`.
 2. Run `iris feature <id>`.
-3. Edit `iris/pages/<id>/data.json`: fill `problem`, `goal`, and the `tasks` list with real tasks and their done state.
-4. Run `iris render <id>`.
-5. Report the generated path `iris/pages/<id>/page.html`.
+3. Edit `iris/pages/<id>/data.json`: fill `problem`, `goal`, and the `tasks` list with real tasks and their done state. Replace the placeholder diagrams in `sections.design.hld` (a `flowchart` of how the feature sits in the system) and `sections.design.lld` (a `sequenceDiagram` of how it works inside) with the real components; remove `design` only when there is nothing worth drawing.
+4. If the feature changed the system's shape, update `iris/project/hld.md` and `iris/project/lld.md` too.
+5. Run `iris render <id>`, or `iris render --all` when project docs changed.
+6. Report the generated path `iris/pages/<id>/page.html`.
 
 ## idea — Record a proposal worth keeping as an Iris page
 

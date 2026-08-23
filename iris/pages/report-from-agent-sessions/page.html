@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Report From Agent Sessions · iris</title>
+    <link rel="stylesheet" href="../../design/tokens.css" />
+    <link rel="stylesheet" href="../../design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="../../index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-radar" focusable="false" role="img" aria-label="iris"><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" /><path d="M4 6h.01" /><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35" /><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67" /><path d="M12 18h.01" /><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67" /><circle cx="12" cy="12" r="2" /><path d="m13.41 10.59 5.66-5.66" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="../../index.html" title="Overview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard" focusable="false" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../work.html" aria-current="page" title="Work"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-kanban" focusable="false" aria-hidden="true"><path d="M6 5v11" /><path d="M12 5v6" /><path d="M18 5v14" /></svg><span>Work</span><em class="nav-count">4</em></a></li><li><a class="nav-item" href="../../spec.html" title="Spec"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text" focusable="false" aria-hidden="true"><path d="M15 12h-5" /><path d="M15 8h-5" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" /></svg><span>Spec</span><em class="nav-count">10</em></a></li><li><a class="nav-item" href="../../research.html" title="Research"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical" focusable="false" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></svg><span>Research</span><em class="nav-count">2</em></a></li><li><a class="nav-item" href="../../commands.html" title="Commands"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal" focusable="false" aria-hidden="true"><polyline points="4 17 10 11 4 5" /><line x1="12" x2="20" y1="19" y2="19" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="../../project/overview.html" title="Overview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" focusable="false" aria-hidden="true"><path d="M12 7v14" /><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../project/hld.html" title="HLD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network" focusable="false" aria-hidden="true"><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" /><path d="M12 12V8" /></svg><span>HLD</span></a></li><li><a class="nav-item" href="../../project/lld.html" title="LLD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu" focusable="false" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2" /><rect width="6" height="6" x="9" y="9" rx="1" /><path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" /></svg><span>LLD</span></a></li><li><a class="nav-item" href="../../project/erd.html" title="ERD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database" focusable="false" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg><span>ERD</span></a></li><li><a class="nav-item" href="../../project/decisions.html" title="Decisions"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale" focusable="false" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" /></svg><span>Decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="btn btn-ghost menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" focusable="false" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg></button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../work.html">Work</a><span aria-hidden="true">/</span><b data-spec-crumb>report-from-agent-sessions</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <div class="mode-toggle" data-theme-toggle-group>
+            <button type="button" data-theme-set="dark" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon" focusable="false" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg> Dark</button>
+            <button type="button" data-theme-set="light" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg> Light</button>
+          </div>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb ic-4" focusable="false" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>
+          <span class="badge b-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb" focusable="false" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>idea</span>
+          <span class="badge b-muted">draft</span>
+        </div>
+        <h1>Report From Agent Sessions</h1>
+      </div>
+    </div>
+    <section class="strip"><article class="card stat"><div class="label">kind</div><div class="value">idea</div></article><article class="card stat"><div class="label">status</div><div class="value">draft</div></article><article class="card stat"><div class="label">effort</div><div class="value">4</div></article><article class="card stat"><div class="label">impact</div><div class="value">4</div></article></section>
+    <article class="card doc-body"><h2>Current state</h2><p><code>iris report --from-session &lt;path&gt;</code> already exists — wired in <code>src/cli.ts</code> and implemented in <code>src/commands/report.ts</code> — but it only accepts a curated export: one <code>.json</code>, <code>.md</code>, or <code>.txt</code> file, or a directory whose filenames match <code>SESSION_FILE_PATTERN</code>. Nothing produces those files.</p>
+<p>What agents actually leave on disk is JSONL, one record per line:</p>
+<ul>
+<li>Claude Code: <code>~/.claude/projects/&lt;cwd-slug&gt;/&lt;uuid&gt;.jsonl</code></li>
+<li>Codex: <code>~/.codex/sessions/&lt;yyyy&gt;/&lt;mm&gt;/&lt;dd&gt;/rollout-&lt;timestamp&gt;-&lt;uuid&gt;.jsonl</code></li>
+</ul>
+<p>Pointed at either, the command fails before writing anything:</p>
+<ul>
+<li>a session directory gives <code>No supported session files found in ...; expected named JSON, Markdown, or text session artifacts</code>, because the filename pattern anchors on <code>.json|.md|.txt</code> and <code>.jsonl</code> never matches</li>
+<li>a single rollout file gives <code>Unsupported session input format: ... (expected .json, .md, .txt, or a directory)</code></li>
+</ul>
+<p>The extension guard is not the only blocker. <code>parseDocument</code> runs <code>JSON.parse</code> over the whole file, so a line-delimited transcript would still be rejected as malformed even if the guard let it through. Extraction is format-blind as well: <code>stringsAtKeys</code> sniffs generic keys (<code>summary</code>, <code>content</code>, <code>message</code>, <code>path</code>, <code>command</code>) rather than reading turn structure, and the key names do not line up. A Claude Code transcript records the repository as <code>cwd</code> and the branch as <code>gitBranch</code> on nearly every line, while <code>ingestSessionSource</code> looks for <code>repo</code>/<code>repository</code>/<code>repo_path</code> and <code>branch</code>/<code>branch_name</code> — so even a parseable transcript would report both as <code>unspecified</code>. And the generated envelope hardcodes <code>agent: &quot;other&quot;</code> and falls back to forty zeros for <code>commit</code>, discarding metadata the source already identifies.</p>
+<p>So the backlog item is half built. The contract, the renderer, and <code>sections.session_evidence</code> are all in place; the reader cannot open the files that exist.</p>
+</article><article class="card doc-body"><h2>Proposed</h2><p>Teach the existing ingestor the formats that are already on disk, and let it find them.</p>
+<ol>
+<li>JSONL reader. Accept <code>.jsonl</code> in both the file guard and the directory pattern, and parse line-delimited records into the document array instead of one <code>JSON.parse</code>. Skip malformed lines with a count rather than failing the import — transcripts are append-only and can end mid-write.</li>
+<li>Per-agent adapters. Read record structure instead of sniffing keys. A Claude Code transcript is typed line by line: <code>user</code> and <code>assistant</code> turns carry <code>cwd</code>, <code>gitBranch</code>, <code>sessionId</code>, and <code>timestamp</code>, tool calls live inside their <code>message</code> content blocks, and <code>file-history-snapshot</code> and <code>file-history-delta</code> records track edited paths directly. That is precisely the repository, branch, tool activity, and files-touched evidence the report contract already has fields for. Codex rollout files get their own adapter, and the existing key-sniffing path stays as the fallback for unrecognized shapes.</li>
+<li>Discovery. <code>iris report --from-session</code> with no path resolves the current repo to its session directory — Claude Code slugifies the cwd, Codex is date-partitioned — and picks the most recent transcript. An explicit <code>--from-session &lt;path&gt;</code> keeps working unchanged.</li>
+<li>Real envelope metadata. Set <code>agent</code> from whichever adapter matched, and take <code>commit</code> from repo HEAD at session end instead of defaulting to forty zeros.</li>
+<li>Redaction before render. Transcripts hold pasted secrets, file contents, and third-party data, and Iris output is HTML that gets published and exported. Summarize and redact by default; require an explicit flag to carry raw transcript text into <code>session_evidence</code>.</li>
+</ol>
+<p>Step 1 alone makes the command usable against real files. Steps 2–4 are what make the resulting report worth reading. Step 5 is not optional once step 1 ships.</p>
+</article>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav>rendered from report-from-agent-sessions · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="../../design/vendor/mermaid.min.js"></script>
+    <script defer src="../../design/components/base.js"></script>
+  </body>
+</html>

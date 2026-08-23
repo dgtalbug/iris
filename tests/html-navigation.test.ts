@@ -136,7 +136,7 @@ describe('generated HTML navigation', () => {
     expect(baseJs).not.toMatch(/https?:\/\//);
   });
 
-  it('renders the Aperture hierarchy, shortcuts, and narrow-screen fallback', async () => {
+  it('renders the Electric hierarchy, shortcuts, and narrow-screen fallback', async () => {
     const cwd = await createTempDir();
 
     expect(await runCli(['init'], cwd)).toBe(0);
@@ -170,7 +170,16 @@ describe('generated HTML navigation', () => {
     expect(baseJs).toContain("event.key.toLowerCase() === 'b'");
     expect(baseCss).toContain('@media (max-width: 48rem)');
     expect(baseCss).toMatch(/\.strip[^{]*\{[^}]*grid-template-columns:\s*repeat\(auto-fit/);
-    expect(baseCss).toMatch(/prefers-reduced-motion:[^)]+\)[\s\S]*aperture \.seg/);
+    expect(baseCss).toMatch(/prefers-reduced-motion:[^)]+\)[\s\S]*?transition: none !important/);
+
+    // The hero states pages-by-type as labelled badges; the aperture ring is gone.
+    expect(dashboard).toContain('class="card hero"');
+    expect(dashboard).toContain('<h1 class="page" id="briefing-title">');
+    expect(dashboard).toMatch(/class="hero-types" role="group" aria-label="\d+ pages? by type"|No pages yet/);
+    expect(dashboard).not.toContain('aperture');
+    expect(baseCss).not.toContain('.aperture');
+    expect(dashboard).toContain('class="lucide lucide-radar');
+    expect(dashboard).toContain('data-theme-set="dark"');
 
     for (const section of ['work.html', 'spec.html', 'research.html', 'commands.html']) {
       expect(dashboard).toContain(`href="./${section}"`);

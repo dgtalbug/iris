@@ -4,7 +4,12 @@ import type {
   OpenSpecSnapshot,
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
-import { escapeHtml, progressBar, statTile } from '../common.js';
+import {
+  escapeHtml,
+  healthBadgeClass,
+  progressBar,
+  statTile,
+} from '../common.js';
 import { legacyDetailSlug, specRecordHash } from './spec-detail.js';
 
 export const EMPTY_OPENSPEC_SNAPSHOT: OpenSpecSnapshot = {
@@ -66,7 +71,7 @@ function capabilityRows(capabilities: OpenSpecCapability[]): string {
           ${nameCell(capability.capability, href, capability.path)}
           <td class="mono col-updated">${capability.document.requirements.length}</td>
           <td class="mono col-priority">${capability.document.scenarios.length}</td>
-          <td><span class="status-chip health-${health}">${health}</span></td>
+          <td><span class="badge ${healthBadgeClass(health)}">${health}</span></td>
         </tr>`;
     })
     .join('');
@@ -80,9 +85,9 @@ function changeRows(changes: OpenSpecChange[]): string {
       const href = specRecordHash('change', change.name);
       return `<tr>
           ${nameCell(change.name, href, change.path)}
-          <td class="col-type"><span class="pill">${escapeHtml(change.completeness)}</span></td>
+          <td class="col-type"><span class="badge ${healthBadgeClass(change.completeness)}">${escapeHtml(change.completeness)}</span></td>
           <td class="col-updated">${tasks ? progressBar(tasks.complete, tasks.total, `${change.name}: ${label}`) : ''}<span class="work-meta">${escapeHtml(label)}</span></td>
-          <td><span class="status-chip health-${escapeHtml(change.health)}">${escapeHtml(change.health)}</span></td>
+          <td><span class="badge ${healthBadgeClass(change.health)}">${escapeHtml(change.health)}</span></td>
         </tr>`;
     })
     .join('');
@@ -94,17 +99,17 @@ function legacyRows(documents: OpenSpecSourceDocument[]): string {
       const href = specRecordHash('legacy', legacyDetailSlug(document));
       return `<tr>
         ${nameCell(document.title, href, document.path)}
-        <td class="col-type"><span class="pill">legacy</span></td>
+        <td class="col-type"><span class="badge b-archived">legacy</span></td>
         <td class="col-updated"><span class="work-meta">not structured</span></td>
-        <td><span class="status-chip">archived</span></td>
+        <td><span class="badge b-archived">archived</span></td>
       </tr>`;
     })
     .join('');
 }
 
 function table(caption: string, headers: string[], rows: string, empty: string): string {
-  if (rows === '') return `<div class="surface empty-state">${empty}</div>`;
-  return `<div class="surface work-table-wrap">
+  if (rows === '') return `<div class="empty-state">${empty}</div>`;
+  return `<div class="card work-table-wrap">
       <table class="work-table">
         <caption class="visually-hidden">${escapeHtml(caption)}</caption>
         <thead><tr>${headers.map((header, index) => `<th scope="col"${index === 1 ? ' class="col-type"' : index === 2 ? ' class="col-updated"' : index === 3 && headers.length > 4 ? ' class="col-priority"' : ''}>${escapeHtml(header)}</th>`).join('')}</tr></thead>
@@ -114,7 +119,7 @@ function table(caption: string, headers: string[], rows: string, empty: string):
 }
 
 function contextDisclosure(document: OpenSpecSourceDocument): string {
-  return `<details class="surface spec-card spec-artifact">
+  return `<details class="card spec-artifact">
       <summary>${escapeHtml(document.title)} · <span class="mono spec-path">${escapeHtml(document.path)}</span></summary>
       <pre class="spec-source"><code>${escapeHtml(document.raw)}</code></pre>
     </details>`;
@@ -123,8 +128,8 @@ function contextDisclosure(document: OpenSpecSourceDocument): string {
 function warningList(snapshot: OpenSpecSnapshot): string {
   if (snapshot.warnings.length === 0) return '';
   return `<section aria-labelledby="spec-warnings-title">
-    <div class="section-heading"><div><span class="eyebrow">parser health</span><h2 id="spec-warnings-title">Warnings</h2></div><span class="status-chip health-warning">${snapshot.warnings.length} warnings</span></div>
-    <ul class="surface spec-card spec-list">
+    <div class="section-heading"><div><span class="eyebrow">parser health</span><h2 id="spec-warnings-title">Warnings</h2></div><span class="badge b-warning">${snapshot.warnings.length} warnings</span></div>
+    <ul class="card spec-list">
       ${snapshot.warnings.map((item) => `<li class="spec-warning"><strong>${escapeHtml(item.code)}</strong> · <code>${escapeHtml(item.path)}</code><br />${escapeHtml(item.message)}</li>`).join('')}
     </ul>
   </section>`;
@@ -138,9 +143,9 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
     snapshot.archived_changes.length +
     snapshot.legacy_archives.length;
   const emptyState = !snapshot.detected
-    ? '<article class="surface empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
+    ? '<article class="empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
     : supportedCount === 0
-      ? '<article class="surface empty-state"><h2>OpenSpec workspace is empty</h2><p>No supported canonical specs, active changes, or archive records were found. Refresh after adding OpenSpec artifacts with <code>iris render --all</code>.</p></article>'
+      ? '<article class="empty-state"><h2>OpenSpec workspace is empty</h2><p>No supported canonical specs, active changes, or archive records were found. Refresh after adding OpenSpec artifacts with <code>iris render --all</code>.</p></article>'
       : '';
   const contextDocuments = [snapshot.context.project, snapshot.context.config].filter(
     (document): document is OpenSpecSourceDocument => Boolean(document),
@@ -164,14 +169,14 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
     </section>
 
     <noscript>
-      <div class="surface callout info">Opening a record needs JavaScript. Every row below names its
+      <div class="callout c-info">Opening a record needs JavaScript. Every row below names its
       source path on disk, so the listing stays complete either way.</div>
     </noscript>
 
     <div class="spec-stack">
       ${emptyState}
       <section aria-labelledby="canonical-specs-title">
-        <div class="section-heading"><div><span class="eyebrow">source of truth</span><h2 id="canonical-specs-title">Canonical specs</h2></div><span class="pill">${counts.canonical}</span></div>
+        <div class="section-heading"><div><span class="eyebrow">source of truth</span><h2 id="canonical-specs-title">Canonical specs</h2></div><span class="badge b-muted">${counts.canonical}</span></div>
         ${table(
           'Canonical specs',
           ['Capability', 'Requirements', 'Scenarios', 'Health'],
@@ -180,7 +185,7 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
         )}
       </section>
       <section aria-labelledby="active-changes-title">
-        <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="active-changes-title">Active changes</h2></div><span class="pill">${counts.active}</span></div>
+        <div class="section-heading"><div><span class="eyebrow">current movement</span><h2 id="active-changes-title">Active changes</h2></div><span class="badge b-muted">${counts.active}</span></div>
         ${table(
           'Active changes',
           ['Change', 'Completeness', 'Tasks', 'Health'],
@@ -189,7 +194,7 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
         )}
       </section>
       <section aria-labelledby="archive-title">
-        <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="pill">${counts.archived}</span></div>
+        <div class="section-heading"><div><span class="eyebrow">history</span><h2 id="archive-title">Archive</h2></div><span class="badge b-muted">${counts.archived}</span></div>
         ${table(
           'Archived changes',
           ['Change', 'Completeness', 'Tasks', 'Health'],

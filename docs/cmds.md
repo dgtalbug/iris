@@ -15,11 +15,12 @@
 - Synopsis: create or safely upgrade the complete local Iris workspace and agent setup.
 - Flags: `--json`.
 - Inputs: current project directory.
-- Outputs: scaffolded or refreshed `iris/` tree, styled project placeholders, the managed `.vscode/tasks.json` entry, three generated agent skills, generated `/iris:*` command surfaces for Claude and Copilot, a deterministic `iris/spec.json` OpenSpec snapshot, and every rendered section page.
+- Outputs: scaffolded or refreshed `iris/` tree, five Markdown project doc sources (`iris/project/{overview,hld,lld,erd,decisions}.md`, created only when missing, with Mermaid skeletons for HLD, LLD, and ERD) rendered to managed `iris/project/<name>.html` pages, the managed `.vscode/tasks.json` entry, three generated agent skills, generated `/iris:*` command surfaces for Claude and Copilot, a deterministic `iris/spec.json` OpenSpec snapshot, and every rendered section page.
 - Exit codes: 0/1/2.
 - Example: `iris init`.
 - Surfaces: CLI + all generated skills.
 - Preservation: existing configuration, user pages, archives, unrelated editor tasks, sibling skills, unmarked files, and edited managed skill content are retained. A skill collision is reported as an incomplete setup instead of being overwritten.
+- Project docs: a `.md` source always wins; a managed HTML placeholder is superseded by a fresh source; a user-edited `iris/project/<name>.html` without a source is preserved, not scaffolded over, and reported with the path to move its content to.
 - Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
 - Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
 - Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences get source-first diagram hosts, exact escaped document source remains available, and YAML remains literal. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
@@ -29,7 +30,7 @@
 - Synopsis: render contract and research sources to page HTML and refresh every section page; full renders also refresh the OpenSpec filesystem snapshot.
 - Flags: `--all`, `--json`.
 - Inputs: `iris/pages/<id>/data.json`, `iris/research/<id>/index.md`, or all sources.
-- Outputs: `page.html` artifacts and updated `iris/index.html`, `work.html`, `spec.html`, `research.html`, and `commands.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot.
+- Outputs: `page.html` artifacts and updated `iris/index.html`, `work.html`, `spec.html`, `research.html`, and `commands.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot, and `iris/project/<name>.html` for every project doc source, with front-matter warnings printed to stderr.
 - Exit codes: 0/1/2.
 - Example: `iris render --all`.
 - Surfaces: CLI + all generated skills.
@@ -61,6 +62,7 @@ Research records join the Work browser as type `research` with status from front
 - Exit codes: 0/1/2.
 - Example: `iris bug bug-cache-stampede`.
 - Surfaces: CLI + the generated `iris-workspace` skill.
+- Feature design: `iris feature <id>` also writes optional `sections.design.hld` and `sections.design.lld` Markdown with Mermaid skeletons; when present the feature page renders Overview / HLD / LLD / Tasks tabs.
 
 ## `iris report --from-session <path> [<id>]`
 
@@ -175,7 +177,7 @@ Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered o
 - Exit codes: 0/1/2.
 - Example: `iris update`.
 - Surfaces: CLI.
-- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill and command regions update only when their ownership markers and digest remain valid. The retired `iris/project/commands.html` placeholder is removed only when it still carries the managed marker; a user-owned copy is preserved and reported.
+- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill and command regions update only when their ownership markers and digest remain valid. The retired `iris/project/commands.html` placeholder is removed only when it still carries the managed marker; a user-owned copy is preserved and reported. Missing project doc sources are scaffolded; existing sources and user-owned project HTML are preserved.
 - Setup guidance: use `iris init` for first run and upgrades. `iris update` remains a compatible explicit refresh, not a required setup step.
 
 ## Generated agent surfaces
@@ -190,4 +192,4 @@ Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered o
 | `.claude/commands/iris/<action>.md`       | `templates/agents/iris-commands.md`  | `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, `/iris:report` |
 | `.github/prompts/iris-<action>.prompt.md` | `templates/agents/iris-commands.md`  | The same actions as Copilot prompts                                                        |
 
-The skill states when to reach for Iris in conversational terms and maps each intent to its command and generated destination, so finished work lands in the workspace without the user asking. Every generated file carries ownership, version, and a SHA-256 body digest between `IRIS:MANAGED` markers: an intact region is refreshed atomically while bytes outside it are preserved, and anything unmarked, half-marked, edited, symlinked, or escaping the repository is preserved and reported as a collision.
+The skill states when to reach for Iris in conversational terms and maps each intent to its command and generated destination, so finished work lands in the workspace without the user asking. The skill also names the project docs: write `iris/project/hld.md` and `lld.md` right after `iris init`, and refresh them plus a feature's `design.hld`/`design.lld` after building a feature. Every generated file carries ownership, version, and a SHA-256 body digest between `IRIS:MANAGED` markers: an intact region is refreshed atomically while bytes outside it are preserved, and anything unmarked, half-marked, edited, symlinked, or escaping the repository is preserved and reported as a collision.

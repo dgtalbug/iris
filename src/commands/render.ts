@@ -5,6 +5,7 @@ import { IrisError } from '../lib/errors.js';
 import { writeAlways } from '../lib/fs.js';
 import { inspectAgentSurfaces } from '../lib/agent-skills.js';
 import { loadOpenSpecSnapshot, writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
+import { loadProjectDocs } from '../lib/project-docs.js';
 import {
   loadResearchWorkspace,
   researchSourcePath,
@@ -186,6 +187,8 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
     });
   }
 
+  const projectDocs = await loadProjectDocs(cwd);
+
   return {
     projectName: path.basename(cwd),
     theme: await loadWorkspaceTheme(cwd),
@@ -193,8 +196,12 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
     research: research.items,
     researchWarnings: research.warnings,
     openSpec: await loadOpenSpecSnapshot(cwd),
-    projectDocs: PROJECT_DOC_NAMES.filter((name) =>
-      existsSync(path.join(irisRoot, 'project', `${name}.html`)),
+    projectDocItems: projectDocs.items,
+    projectDocWarnings: projectDocs.warnings,
+    projectDocs: PROJECT_DOC_NAMES.filter(
+      (name) =>
+        projectDocs.items.some((item) => item.name === name) ||
+        existsSync(path.join(irisRoot, 'project', `${name}.html`)),
     ),
     agentSurfaces: await inspectAgentSurfaces(cwd),
     contracts,
@@ -226,6 +233,9 @@ export async function runRenderCommand(
   if (options.refreshOpenSpec) await writeOpenSpecSnapshot(cwd);
 
   const model = await collectWorkspace(cwd);
+  for (const warning of model.projectDocWarnings) {
+    process.stderr.write(`warning: ${warning.path}: ${warning.message}\n`);
+  }
   const context = workspaceContext(model);
   const irisRoot = path.join(cwd, 'iris');
 

@@ -6,23 +6,25 @@ export { TOKENS_CSS } from './tokens.js';
 export { BASE_COMPONENTS_CSS } from './styles.js';
 export { BASE_COMPONENTS_JS } from './script.js';
 export {
-  apertureGlyph,
-  apertureRing,
   escapeHtml,
-  priorityClass,
+  healthBadgeClass,
+  priorityBadgeClass,
   progressBar,
   PROJECT_DOC_NAMES,
+  recordIcon,
   RETIRED_PROJECT_DOC_NAMES,
   statTile,
-  statusClass,
-  typeClass,
+  statusBadgeClass,
+  tagChip,
+  typeBadgeClass,
+  typeIconClass,
   WORK_TYPES,
   type DashboardPage,
 } from './common.js';
+export { icon, typeIcon, ICON_KEYS, type IconName } from './icons.js';
 export { assetPrefix, renderShell, type NavCounts, type ShellOptions } from './shell.js';
 export {
   DEFAULT_WORKSPACE_CONTEXT,
-  projectPlaceholderHtml,
   renderContractPage,
   type WorkspaceContext,
 } from './pages/contract-page.js';

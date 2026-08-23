@@ -1,5 +1,5 @@
 import {
-  apertureGlyph,
+  recordIcon,
   escapeHtml,
   priorityChip,
   statTile,
@@ -36,15 +36,22 @@ export function workItemAttributes(page: DashboardPage): string {
   ].join(' ');
 }
 
-export function workListItem(page: DashboardPage): string {
-  return `<article class="work-list-row" ${workItemAttributes(page)} data-work-list-item>
+/**
+ * `compact` is for rows summarised inside a card, which have roughly a third of
+ * the Work page's width; they carry identity and status only.
+ */
+export function workListItem(page: DashboardPage, options: { compact?: boolean } = {}): string {
+  const detail = options.compact
+    ? ''
+    : `${priorityChip(page.priority)}
+      <span class="work-meta work-updated">${escapeHtml(page.updated)}</span>
+      <span class="work-meta work-agent">${escapeHtml(page.agent)}</span>`;
+  return `<article class="work-list-row${options.compact ? ' compact' : ''}" ${workItemAttributes(page)} data-work-list-item>
     <a class="work-row" data-work-open href="${escapeHtml(page.href)}">
-      ${apertureGlyph(page.type)}
+      ${recordIcon(page.type)}
       <span class="work-row-primary"><span class="work-row-title">${escapeHtml(page.title)}</span><span class="work-row-id">${escapeHtml(page.id)} · ${escapeHtml(page.type)}</span></span>
       ${statusChip(page.status)}
-      ${priorityChip(page.priority)}
-      <span class="work-meta work-updated">${escapeHtml(page.updated)}</span>
-      <span class="work-meta work-agent">${escapeHtml(page.agent)}</span>
+      ${detail}
     </a>
   </article>`;
 }
@@ -74,7 +81,7 @@ function kanbanColumn(label: string, pages: DashboardPage[]): string {
     pages.length === 0
       ? '<p class="kanban-empty">No items</p>'
       : pages.map((page) => kanbanCard(page)).join('');
-  return `<section class="kanban-col" aria-label="${escapeHtml(label)} work"><header class="kanban-col-header"><span class="eyebrow">${escapeHtml(label)}</span><span class="pill">${pages.length}</span></header>${cards}</section>`;
+  return `<section class="kanban-col" aria-label="${escapeHtml(label)} work"><header class="kanban-col-header"><span class="eyebrow">${escapeHtml(label)}</span><span class="badge b-muted">${pages.length}</span></header>${cards}</section>`;
 }
 
 export function workStatusCounts(pages: DashboardPage[]): {
@@ -141,20 +148,20 @@ export function workPageContent(pages: DashboardPage[]): string {
 
     <section class="work-surface" id="work" aria-labelledby="work-title">
       <h2 class="visually-hidden" id="work-title">Work items</h2>
-      <div class="surface toolbar">
-        <div class="tabs" role="tablist" aria-label="work layout" data-tabs="work-layout">
-          <button id="work-layout-tab-list" role="tab" class="tab-button" aria-controls="work-layout-panel-list" aria-selected="true" tabindex="0" data-tab-id="list">List</button>
-          <button id="work-layout-tab-table" role="tab" class="tab-button" aria-controls="work-layout-panel-table" aria-selected="false" tabindex="-1" data-tab-id="table">Table</button>
-          <button id="work-layout-tab-kanban" role="tab" class="tab-button" aria-controls="work-layout-panel-kanban" aria-selected="false" tabindex="-1" data-tab-id="kanban">Kanban</button>
+      <div class="card toolbar tabs">
+        <div class="tablist" role="tablist" aria-label="work layout" data-tabs="work-layout">
+          <button id="work-layout-tab-list" role="tab" class="tab" aria-controls="work-layout-panel-list" aria-selected="true" tabindex="0" data-tab-id="list">List</button>
+          <button id="work-layout-tab-table" role="tab" class="tab" aria-controls="work-layout-panel-table" aria-selected="false" tabindex="-1" data-tab-id="table">Table</button>
+          <button id="work-layout-tab-kanban" role="tab" class="tab" aria-controls="work-layout-panel-kanban" aria-selected="false" tabindex="-1" data-tab-id="kanban">Kanban</button>
         </div>
         <span class="work-result-count mono" data-work-result-count>${pages.length} ${pages.length === 1 ? 'item' : 'items'}</span>
       </div>
 
-      <section id="work-layout-panel-list" class="surface list" role="tabpanel" aria-labelledby="work-layout-tab-list" data-tab-group="work-layout" data-tab-id="list" data-dashboard-list>
+      <section id="work-layout-panel-list" class="card list" role="tabpanel" aria-labelledby="work-layout-tab-list" data-tab-group="work-layout" data-tab-id="list" data-dashboard-list>
         ${listItems}
       </section>
 
-      <section id="work-layout-panel-table" class="surface work-table-wrap" role="tabpanel" aria-labelledby="work-layout-tab-table" data-tab-group="work-layout" data-tab-id="table" data-dashboard-table hidden>
+      <section id="work-layout-panel-table" class="card work-table-wrap" role="tabpanel" aria-labelledby="work-layout-tab-table" data-tab-group="work-layout" data-tab-id="table" data-dashboard-table hidden>
         <table class="work-table">
           <thead><tr><th class="col-type" scope="col">Type</th><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Status</th><th class="col-priority" scope="col">Priority</th><th class="col-updated" scope="col">Updated</th><th class="col-agent" scope="col">Agent</th></tr></thead>
           <tbody>${pages.map((page) => workTableRow(page)).join('')}</tbody>

@@ -1,6 +1,6 @@
-# iris design system 3.1 — "Aperture / Electra"
+# iris design system 4.0 — "Electric"
 
-> Implemented direction, updated 2026-08-21 for the multi-page workspace. Generated design output is owned by `src/templates/`: `tokens.ts`, `styles.ts`, `script.ts`, `shell.ts`, `common.ts`, and `pages/*.ts`, with `design.ts` as the import barrel.
+> Implemented direction, updated 2026-08-21. iris adopts **Vision "Electric" v2.0**; the upstream contract is stored verbatim at [`vision-electric-v2.md`](./vision-electric-v2.md) and §11 below records exactly what is taken verbatim and what deviates. Generated design output is owned by `src/templates/`: `tokens.ts`, `styles.ts`, `icons.ts`, `script.ts`, `shell.ts`, `common.ts`, and `pages/*.ts`, with `design.ts` as the import barrel.
 
 ## 1. The one goal
 
@@ -31,203 +31,155 @@ Sources: [Muzli dashboard examples 2026](https://muz.li/blog/best-dashboard-desi
 
 ### 2.3 What this means for iris
 
-The current UI is not ugly because of its colors; it is generic because nothing about it is _about_ iris, and the dashboard leads with an empty list instead of answers. The redesign gives iris an identity rooted in its own name and reorganizes the dashboard around the newcomer's first sixty seconds.
+The 3.x redesign reorganized the dashboard around the newcomer's first sixty seconds, and that information architecture is unchanged. What changed in 4.0 is the visual language: "Electra" was an interpretation made when no real system existed, and the real one — Vision "Electric" v2.0 — is now the source. Adopting its token names and class names, rather than re-skinning iris's own, is what lets the upstream document stay a truthful reference for what iris generates.
 
-## 3. Identity concept: the optical instrument
+## 3. Identity: the instrument that reads a system
 
-_iris_ is the aperture of an eye — the mechanism that admits exactly enough light to see — and, in Greek myth, the messenger who carries the spectrum. Both readings are load-bearing:
+Vision's mark is the **radar** — the instrument that sweeps a space and reports what is there — rendered in `--primary` (electric violet). It is the sidebar brand, the Overview hero mark, and the visual anchor of the workspace.
 
-- **The chamber.** The interface is a dark instrument body: near-black, matte, quiet. Content panels are ground-glass viewing surfaces. Nothing in the chrome competes with the content.
-- **The spectrum is meaning.** Color appears only where it encodes something: page type, status, chart series. The chrome itself stays monochrome plus one accent. If a color can be removed without losing information, it is removed.
-- **Signature element: the aperture ring.** A segmented ring — one arc segment per page, colored by type, gap-separated — is simultaneously the brand mark, the dashboard's primary status visual, and the favicon. Each page carries a small single-segment aperture glyph in its type color. This is the one element allowed a moment of theater: on dashboard load the segments sweep open once (320 ms, `--easing`); with `prefers-reduced-motion` they render already open.
+The 3.x aperture ring and per-page aperture glyphs are **retired**. The ring encoded pages-by-type as arc segments; that information now reads as a labelled badge row in the hero — one badge per type carrying the typed Lucide icon, the type name, and its count. Badges say in text what the ring said in color, which is what the accessibility floor asked of the ring anyway.
 
-This keeps the existing seed (the current SVG aperture, the amber accent) and commits to it properly instead of replacing identity with a trend.
+Every icon is a Lucide 0.469.0 glyph serialised to inline SVG at generation time (§7).
 
 ## 4. Tokens
 
-All values live in `tokens.css`; `token-lint` continues to forbid literals elsewhere. Dark is the source theme; light is derived.
+`tokens.css` is generated from `src/templates/tokens.ts` and is the only place a color literal may appear; `token-lint` enforces that for hex, `rgb`, `hsl`, `oklch`, `oklab`, `lab`, `lch`, `hwb`, and `color()` alike, and rejects any `var(--x)` in `src/` that nobody declares. `color-mix()` composes declared tokens and stays legal everywhere.
 
-### 4.1 Color — dark (default)
+### 4.1 The Vision block
 
-| Token               | Value       | Role                                                     |
-| ------------------- | ----------- | -------------------------------------------------------- |
-| `--bg`              | `#0e1117`   | chamber — page ground                                    |
-| `--surface-1`       | `#151923`   | ground glass — cards, panels                             |
-| `--surface-2`       | `#1b2030`   | raised — table headers, inputs, code                     |
-| `--surface-3`       | `#242a3b`   | top elevation — menus, hover                             |
-| `--line-1`          | `#2a3143`   | hairline borders                                         |
-| `--text-1`          | `#e7eaf2`   | primary text                                             |
-| `--text-2`          | `#a4adc2`   | secondary text                                           |
-| `--text-3`          | `#7a8399`   | captions, metadata                                       |
-| `--accent`          | `#6f8cff`   | interactive chrome — focus, selected tab, primary button |
-| `--accent-text`     | `#93a8ff`   | contrast-safe linked text                                |
-| `--accent-soft`     | `#6f8cff1f` | selected tab fill, blockquote ground                     |
-| `--accent-ink`      | `#0b0e14`   | text on accent                                           |
-| `--nav-bg`          | `#0a0d13`   | sidebar ground, one step below the page                  |
-| `--nav-text`        | `#a4adc2`   | sidebar entries                                          |
-| `--nav-active-bg`   | `#6f8cff1f` | current section fill                                     |
-| `--nav-active-text` | `#c3cfff`   | current section label                                    |
+§2 of the upstream contract is embedded with its names and oklch values: `--background`, `--foreground`, `--card`, `--card-2`, `--code-bg`, `--border`, `--muted`; `--primary`, `--primary-fg`, `--accent-1..4`; `--success`, `--warning`, `--danger`, `--info`; `--glow`, `--shadow-card`; `--radius`, `--radius-sm`, `--radius-pill`, `--font-sans`, `--font-mono`.
 
-The palette was brightened in 3.1: grounds gained blue and the encoded spectrum gained saturation, so status and type read at a glance without the chrome getting louder. Every pair still clears 4.5:1 in both themes, which is what stops "brighter" from becoming "washed out". The interactive accent is electric indigo, not the earlier amber. Amber survives as `--type-plan`, where it encodes meaning; using it for chrome as well made every interactive element read as a plan badge. Indigo is the convention the tools this replaces already use for selection and focus, which is worth more here than novelty. The sidebar sits one step darker than the page so the content area reads as the lit surface.
+Dark is the default theme; light is a peer, selected by `data-theme='light'` on `<html>`.
 
-### 4.2 Color — the spectrum (encoding only)
+### 4.2 Reconciliation — the only edited values
 
-Used exclusively for page types, statuses, and chart series. Never for decoration, never in chrome.
+iris validates every text pair at 4.5:1, every control boundary at 3:1, and every border at a 1.45:1 visibility floor, in both themes. Upstream values that miss a floor are moved by the smallest lightness step that clears it, and nothing else changes:
 
-| Token                                     | Value                                         | Encodes                               |
-| ----------------------------------------- | --------------------------------------------- | ------------------------------------- |
-| `--type-report`                           | `#5CB8F0`                                     | report pages / series 1               |
-| `--type-feature`                          | `#4FC98C`                                     | feature pages / series 2              |
-| `--type-bug`                              | `#EF6A6A`                                     | bug pages / series 3                  |
-| `--type-idea`                             | `#A78BFA`                                     | idea pages / series 4                 |
-| `--type-plan`                             | `#F2B24E`                                     | plan pages / series 5                 |
-| `--type-research`                         | `#2DD4BF`                                     | research pages / series 6             |
-| `--ok` / `--warn` / `--danger` / `--info` | `#4FC98C` / `#F0913E` / `#EF6A6A` / `#5CB8F0` | statuses, warnings, and render errors |
+| Token | Vision v2.0 | iris | Ratio before | Floor that required it |
+| --- | --- | --- | --- | --- |
+| dark `--border` | `oklch(0.30 0.03 285)` | `oklch(0.355 0.03 285)` | 1.24–1.44:1 | border visibility 1.45:1 |
+| light `--border` | `oklch(0.90 0.01 285)` | `oklch(0.825 0.01 285)` | 1.20–1.35:1 | border visibility 1.45:1 |
+| light `--accent-1` | `oklch(0.60 0.13 220)` | `oklch(0.54 0.13 220)` | 3.69:1 | text 4.5:1 on `--card` |
+| light `--accent-2` | `oklch(0.65 0.15 65)` | `oklch(0.57 0.15 65)` | 3.35:1 | text 4.5:1 on `--card` |
+| light `--accent-3` | `oklch(0.60 0.17 140)` | `oklch(0.54 0.17 140)` | 3.70:1 | text 4.5:1 on `--card` |
+| light `--accent-4` | `oklch(0.60 0.21 350)` | `oklch(0.59 0.21 350)` | 4.42:1 | text 4.5:1 on `--card` |
+| light `--success` | `oklch(0.55 0.15 155)` | `oklch(0.54 0.15 155)` | 4.45:1 | text 4.5:1 on `--card` |
+| light `--warning` | `oklch(0.65 0.15 70)` | `oklch(0.57 0.15 70)` | 3.33:1 | text 4.5:1 on `--card` |
+| light `--info` | `oklch(0.55 0.13 220)` | `oklch(0.54 0.13 220)` | 4.47:1 | text 4.5:1 on `--card` |
 
-Rule: a type color always appears with a second channel (label, icon, or position) — color is never the only signal (color-blind safety).
+Badge text is 11 px — normal text under WCAG AA — which is why the accent floor is 4.5:1 and not 3:1. The 1.45 border floor is an iris decision rather than a WCAG result, and the validator reports it under its own name so it is never mistaken for one.
 
-### 4.3 Color — light theme (peer, not afterthought)
+Dark `--primary` and `--accent-1` fall outside sRGB. Browsers render the chroma-reduced color, so the validator gamut-maps the same way (hold lightness and hue, reduce chroma until it fits) before measuring; clamping channels instead would overstate their luminance.
 
-Light is a first-class theme rather than a derived one, because the workspace is read in daylight as often as not. Ground is a cool `#f4f5f7`, cards are pure white, and the sidebar is white against that grey so the navigation reads as a panel rather than a stripe. Text inverts to `#172b4d` / `#44546f` / `#626f86`; the accent deepens to `#3b5bdb` with `#2f4ac0` for linked text; spectrum values darken to hold 4.5:1 on white. `--elevation-1` becomes a real two-layer shadow in light and stays `none` in dark, where elevation comes from surface steps.
+### 4.3 The iris extension block
 
-The initial theme comes from `theme:` in `iris/config.yaml`, emitted as `data-theme` on `<html>`. The `t` toggle overrides it per browser through `localStorage`, and every generated page reads that key so the choice follows the reader across sections.
+Vision covers a single-page report. The workspace needs more, all defined as aliases onto Vision tokens so the semantics stay Vision's:
 
-### 4.4 Type
+| Extension | Value | Why |
+| --- | --- | --- |
+| `--nav-bg` | dark `oklch(0.13 0.02 285)`, light `var(--card)` | the sidebar sits one step below the page in dark and reads as a white panel in light |
+| `--nav-text`, `--nav-active-text`, `--nav-active-bg` | `var(--muted)`, `var(--primary)`, `color-mix(… --primary 18%)` | Vision's badge-fill recipe applied to the current entry |
+| `--selected`, `--hover` | `color-mix(… --primary 14%)`, `var(--card-2)` | selection and hover across dense surfaces |
+| `--type-report/-feature/-bug/-idea/-plan/-research` | `--accent-1` / `--accent-3` / `--danger` / `--accent-4` / `--accent-2` / `--primary` | six record types onto Vision's wheel |
+| `--priority-urgent/-high/-medium/-low` | `--danger` / `--warning` / `--info` / `--muted` | Vision status semantics |
+| `--code-fg`, `--code-muted`, `--code-comment` | constant across themes | the code block is dark in both themes, so its text cannot follow `--muted` (2.74:1 in light) |
+| `--mmd-*` | §8.1 theme variables and §8.2 classDef hexes, per theme | Mermaid parses colors itself and reads neither `oklch()` nor `var()` |
+| `--size-*`, `--space-*`, `--leading-*`, `--weight-*`, `--duration-*`, `--easing`, `--nav-width`, `--nav-rail`, `--backdrop`, `--border-1` | unchanged from 3.x | Vision defines no ramps |
 
-Two tiers, because fonts must work from file:// with zero network:
+Print is a third palette, declared as a `@media print` override inside the token block for the same reason every other color lives there.
 
-- **Tier 0 (default, zero-install):** system stacks as today. `--font-sans: system-ui …`, `--font-mono: ui-monospace …`.
-- **Tier 1 (after `iris vendor`):** woff2 files in `design/vendor/`, all SIL OFL:
-  - Display — **Bricolage Grotesque** (`--font-display`): h1, the dashboard title, stat numbers, eyebrows. Characterful without being another Inter clone; used with restraint.
-  - Body — **Inter** (`--font-sans`): everything else.
-  - Mono — **JetBrains Mono** (`--font-mono`): code, ids, paths, data values.
+### 4.4 Encoding, and why colors repeat
 
-Scale (unchanged token names, retuned): `--size-1 0.6875rem` caption · `--size-2 0.8125rem` UI · `--size-3 0.9375rem` body · `--size-4 1.25rem` section · `--size-5 1.75rem` page title · `--size-6 2.5rem` hero stat. Line-height tokens added: `--leading-tight 1.2`, `--leading-body 1.55`. Weights 400/500/700 as today.
+Type badges: report cyan, feature lime, bug red, idea pink, plan amber, research violet. Status badges: draft muted, active violet, done green, archived muted with a dashed border — Vision's own treatment for a sixth category. Priority: urgent red, high amber, medium cyan, low muted. Health and command status share one scale: valid/complete/implemented/installed green, warning/incomplete/partial amber, invalid/missing red, stubbed muted.
 
-### 4.5 Space, radius, elevation, motion
+A research badge and an active badge are both violet, and a bug badge and an error state are both red. That is accepted: the type name is always present as text, so color is never the only signal, and inventing extra hues would break §5's rule that a token means one thing everywhere.
 
-Keep the existing `--space-*`, `--radius-*` ramps. `--radius-full` covers the aperture and pills. Elevation in dark mode = surface step + 1px `--line-1` border; shadows (`--elevation-1`) apply in the light theme only. Motion tokens unchanged (`--duration-1/2/3`, `--easing`); policy in §8. Two layout tokens drive the shell: `--nav-width` (15rem) and `--nav-rail` (3.5rem), with `[data-nav='collapsed']` swapping one for the other so the collapse is a single token change rather than a second layout.
+### 4.5 Type
+
+System stacks only, from Vision §2: `--font-sans` and `--font-mono`. No webfont is loaded or vendored — a generated page must render identically with no network. The size, leading, and weight ramps from 3.x are retained for the workspace surfaces Vision does not size.
 
 ## 5. Workspace information architecture
 
-The workspace is a set of static pages behind one shared shell, not a single scrolling dashboard. Sections are separate files so each stays small enough for an agent to read on its own and for a human to deep-link:
+Unchanged from 3.1: one shell over per-section pages (`index.html` Overview, `work.html`, `spec.html`, `research.html`, `commands.html`, plus `pages/<id>/`, `research/<id>/`, `project/*.html`). The Overview summarizes and links; it never embeds another section's content. `renderShell` is depth-aware, everything in the shell is marked `data-iris-nav` so publish and export strip it, and `/`, `t`, `b` keep their meanings.
 
-```
-┌───────────────┬──────────────────────────────────────────────────┐
-│ ◔ iris        │ iris / Work                    [filter] [theme]  │  top bar
-│   <repo>      ├──────────────────────────────────────────────────┤
-│               │                                                  │
-│ ◔ Overview    │  WORK                                            │
-│ ▤ Work     7  │  Every contract and research page in one browser │  page head
-│ ▣ Spec     4  │                                                  │
-│ ⌕ Research 2  │  ┌────┐┌────┐┌────┐┌────┐┌────┐                  │  summary strip
-│ ▭ Commands 15 │  │ 7  ││ 3  ││ 2  ││ 2  ││ 0  │                  │
-│               │  └────┘└────┘└────┘└────┘└────┘                  │
-│ PROJECT DOCS  │  [List|Table|Kanban]              7 items         │  toolbar
-│ ▤ overview    │  ◔ cache-stampede   active urgent 2026-08-21     │  work surface
-│ ▤ hld         │  ◔ agent-notes      active  —     2026-08-21     │
-│ ▤ lld  …      │                                                  │
-│               │                                                  │
-│ offline    ‹  │  generated by iris · works offline from file://  │
-└───────────────┴──────────────────────────────────────────────────┘
-```
-
-| Page                | Owns                                                                                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index.html`        | Overview: briefing hero + aperture ring, four section tiles, recent work, spec movement with task progress, architecture pane, project-docs strip |
-| `work.html`         | Dense List / Table / Kanban browser over one projection, shared filter, detail drawer                                                             |
-| `spec.html`         | OpenSpec index: overview counts, compact tables for canonical specs, active changes, and archive, project context, warnings — no artifact bodies  |
-| `spec/**/page.html` | One detail page per canonical spec, change, and legacy archive: header, counts, requirement table of contents, rendered artifacts, exact source   |
-| `research.html`     | Markdown research index with status, tags, evidence, and parser warnings                                                                          |
-| `commands.html`     | Every catalog command grouped by purpose with an explicit status chip                                                                             |
-| `pages/<id>/`       | One contract page per record, same shell                                                                                                          |
-| `research/<id>/`    | One research document per record: header from front matter, table of contents, safe body                                                          |
-| `project/*.html`    | Managed overview, HLD, LLD, ERD, decisions placeholders                                                                                           |
-
-The Overview **summarizes and links**; it never embeds another section's content. That is what keeps `index.html` around 13 KB while the Spec page carries the full OpenSpec snapshot.
-
-- **Shell.** Sidebar (sections + project docs, current entry marked with `aria-current` and an inset accent rule) and a top bar carrying the breadcrumb, an optional filter slot, and the theme toggle. The sidebar collapses to a `--nav-rail` icon strip via the footer control or `b`, and the state persists in `localStorage`. Below 48rem it becomes an overlay opened from a top-bar menu button. Everything in the shell is marked `data-iris-nav`, so publish and export strip it and the page body still stands alone.
-- **Depth-aware paths.** `renderShell` takes a `depth` and derives every asset and navigation href from it (`./`, `../`, `../../`), so the same shell serves root sections, project docs, and nested record pages.
-- **Keyboard.** `/` focuses the visible filter, `t` toggles theme, `b` toggles the sidebar, arrow keys move between work items, and the layout tablist follows the standard tab pattern. Focus rings use `--accent`.
-- **No JavaScript.** The sidebar renders expanded and fully linked, the default List view is readable, and every work item keeps its full-page link.
-
-### 5.1 Jira-inspired Work research
-
-The Work redesign borrows information-density and context-preserving interaction principles, not Atlassian branding, fonts, icons, or exact styling:
-
-- Jira's list view prioritizes type, key, summary, priority, created/updated, status, and assignee fields for scanning ([Atlassian: list view](https://support.atlassian.com/jira-software-cloud/docs/what-is-the-list-view/)). Iris maps only fields backed by its contracts.
-- Jira boards organize work by status columns, while configurable compact card fields help busy backlogs remain legible ([Atlassian: boards](https://support.atlassian.com/jira-software-cloud/docs/what-is-a-jira-software-board/), [Atlassian: board and backlog view](https://support.atlassian.com/jira-software-cloud/docs/customize-your-view-of-the-board-and-backlog/)). Iris keeps its four real statuses and deliberately omits drag-and-drop.
-- Jira's side panel preserves list context and provides close, keyboard, and full-page paths ([Atlassian: side panel](https://support.atlassian.com/jira-software-cloud/docs/view-content-in-a-side-panel/)). Iris implements one reusable offline drawer with stronger explicit focus and hash behavior.
-- Aperture retains its own tokens and identity; Atlassian's guidance is used only as a density and interaction reference ([Atlassian Design System: typography](https://atlassian.design/foundations/typography/applying-typography/), [design tokens](https://atlassian.design/foundations/tokens/design-tokens/)).
-
-Page templates keep the same anatomy: identity bar (back to dashboard) → page header with aperture glyph, id, type, status, dates → typed section slots → evidence/footer. Published artifacts drop the identity bar (existing `data-iris-nav` stripping).
+What changed is the chrome: the sidebar brand is the radar mark, section entries carry Lucide icons, and the theme control is Vision's two-button mode toggle (`data-theme-set`), which also dispatches `iris:theme`.
 
 ## 6. Component inventory
 
-Tokens-only styling, one class per component, no utility soup — `base.css` stays small and auditable.
+The vocabulary is Vision's. Where Vision and iris both defined something, Vision's rule ships and iris markup moved to it:
 
-| Component                              | Notes                                                                            |
-| -------------------------------------- | -------------------------------------------------------------------------------- |
-| `sidebar` / `nav-item`                 | workspace shell: sections, project docs, current marking, collapsed rail         |
-| `topbar` / `crumbs`                    | breadcrumb, filter slot, theme toggle; stripped from published artifacts         |
-| `page-head`                            | eyebrow, H1, one-line description, optional actions — opens every section page   |
-| `progress`                             | task-completion bar for OpenSpec changes; label carried by `aria-label`          |
-| `command-card`                         | one catalog command: name, status chip, synopsis, usage, flags                   |
-| `doc-layout` / `doc-toc` / `doc-body`  | research document with sticky table of contents; stacks below 48 rem             |
-| `aperture`                             | ring (overview) and glyph (cards/pages); SVG, segments driven by rendered data   |
-| `stat-tile`                            | display-face number, caption label, optional delta arrow, links to filtered view |
-| `work-row` / `work-table` / `kanban`   | three compact peer representations over one honest Work projection               |
-| `work-drawer`                          | modal right-side preview, full-screen at 360 px, with full-page escape hatch     |
-| `pill`                                 | status/type badge; spectrum background at 15% alpha, full-strength text          |
-| `tabs`, `filter-input`, `theme-toggle` | keep current behavior, restyle to tokens                                         |
-| `kanban-col`                           | four real status columns with counts; drag remains out of scope                  |
-| `diagram`                              | mermaid host block with code fallback (§7)                                       |
-| `chart`                                | CLI-generated inline SVG (§7); legend uses spectrum tokens                       |
-| `timeline`                             | vertical, for report/session evidence (checkpoints, tool activity)               |
-| `code`                                 | mono, surface-2, copy affordance; language label eyebrow                         |
-| `callout`                              | info/warn/danger left-rule variants                                              |
-| `table`                                | hairline rows, sticky header, right-aligned numerics in mono                     |
-| `empty-state`                          | always states the exact command that fills it                                    |
-| `kbd`                                  | keyboard hints in footer/filter                                                  |
+| 3.x | 4.0 |
+| --- | --- |
+| `.surface` | `.card` |
+| `.pill`, `.type-chip`, `.status-chip`, `.priority-chip` | `.badge` + `.b-*` (plus iris's `.b-muted`, `.b-archived`) |
+| `.stat-tile`, `.metric-card` | `.card.stat` with `.value` / `.label` / `.sub` |
+| `.callout.warn` | `.callout.c-warn` (`c-info`, `c-danger`, `c-success`) with a Lucide icon |
+| `.tab-button` | `.tabs .tab` |
+| `.button`, `.button-primary` | `.btn`, `.btn-primary`, `.btn-outline`, `.btn-ghost` |
+| `.progress` | `.meter` with `.track` / `.fill` |
+| `.theme-toggle` | `.mode-toggle` |
+| `.doc-layout` + right `.doc-toc` | `.layout` + sticky left `.toc` |
+| `.timeline-item` divs | `.timeline` list items with `.when` / `.what` |
+| `.aperture`, `.aperture-glyph`, `.tp-*` | removed; typed Lucide icon + badge |
 
-## 7. Library policy — mermaid, React Flow, charts (the direct answer)
+Vision components now available that iris did not have: `.steps`, `.evidence`, `.filetree`, `.flow`/`.node`/`.edge`, `.footnotes`, `details.ds`, `table.ds`, `pre.code` with `.tok-*`, `.confidence`, `.diagram`, `.chart-box`.
 
-Hard constraints these decisions obey: deterministic render, works from `file://`, no network at view time, no build step, classic (non-module) scripts, publish artifacts must stand alone.
+The iris layer adds only what Vision has no equivalent for: app grid, sidebar and nav items, topbar extension, crumbs, footer, page head, summary strip, Work rows/table/Kanban/drawer, Spec browser, command cards, document bodies, empty states, and the Mermaid figure.
 
-| Ask            | Verdict                              | How                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| -------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mermaid**    | **Adopted for Markdown fences.**     | `iris vendor` copies the pinned 11.17.0 classic bundle (~3.4 MB) and license from the installed package into `design/vendor/` without network access. Exact `mermaid` fences emit source-first hosts; the browser renders each independently with strict security, HTML/click behavior disabled, explicit complexity bounds, accessible SVG labeling, and escaped fallback. Automatic HLD projection into the Architecture pane remains separate future work.                                                                                                     |
-| **React Flow** | **No — rejected.**                   | It is a React library: requires the React runtime, a bundler, and client-side state. That breaks the zero-build, framework-free, deterministic model (same grounds Reaviz was rejected on in `docs/tech.md`). If an interactive draggable node graph is ever genuinely needed, the framework-free path is vendored Cytoscape.js (~400 KB UMD) — but mermaid flowcharts cover the actual v1 use cases.                                                                                                                                                             |
-| **Charts**     | **Yes — CLI-generated SVG first.**   | The chart block's primary renderer is deterministic inline SVG produced at `iris render` time from the contract data (bar, line, donut; spectrum tokens for series; `<title>` elements for accessibility). Zero runtime, works in published single-file artifacts, diffs cleanly in git. A vendored uPlot (~50 KB) can layer tooltips/zoom onto the same data later as progressive enhancement — the SVG remains the no-JS fallback. This preserves the "Reaviz swap behind chart contract" backlog idea: the contract is the interface, renderers are swappable. |
-| **Animations** | **Yes — CSS only, meaning-bearing.** | Existing policy in `docs/tech.md` stands: animation only where it carries meaning, `prefers-reduced-motion` falls back to frame zero. Budget: the aperture opening sweep on dashboard load and 120 ms hover/focus transitions on cards, tabs, and pills. Nothing else. No scroll-triggered effects, no parallax, no JS animation libraries.                                                                                                                                                                                                                       |
+Markdown output carries no classes, so `.doc-body table`, `.doc-body pre`, and `.doc-body code` mirror `table.ds`, `pre.code`, and Vision's inline-code rule by descendant selector.
 
-Publish/export note: `iris publish` output stays self-contained. It strips project scripts and retains Mermaid source fallback; Iris does not yet capture or claim a pre-rendered SVG snapshot, and the 3.4 MB runtime is not embedded in shared artifacts.
+The shell is a flex row rather than a two-column grid. `publish` and `export` strip the sidebar, and a grid keeps holding its column — which squeezed a standalone artifact's content into the sidebar's width. With flex, removing the sidebar reflows the content to full width with no artifact-specific rule.
+
+## 7. Library policy
+
+Hard constraints, unchanged: deterministic render, works from `file://`, no network at view time, no build step, classic (non-module) scripts, publish artifacts stand alone.
+
+| Vision asks for | iris verdict | How |
+| --- | --- | --- |
+| **Lucide via CDN UMD** | **Adopted, inverted.** | `lucide@0.469.0` is a generation-time dependency; `src/templates/icons.ts` serialises each icon's node tree to inline SVG at render time. Zero runtime, no `<script>`, no network, survives `publish`, and an unknown name throws at build instead of leaving an invisible gap. |
+| **Mermaid via ESM CDN** | **Adopted, vendored.** | The pinned 11.17.0 classic bundle is copied locally by `iris vendor`. Themed with `theme: 'base'` and `themeVariables` read from the `--mmd-*` tokens, re-rendered on `iris:theme` from each figure's retained source, strict security and complexity bounds unchanged. ESM would be CORS-blocked on `file://`. |
+| **Chart.js** | **Not included.** | The workspace has no chart surface. If one appears, the standing decision is CLI-generated inline SVG behind a chart contract, with a vendored classic bundle as the interactive upgrade. |
+| **React Flow** | **Rejected**, as in 3.1. | A React runtime plus a bundler plus client state breaks the zero-build, framework-free, deterministic model. Mermaid flowcharts cover the real use cases. |
+| **Animation** | **CSS only, meaning-bearing.** | The aperture sweep is gone with the ring. What remains: the drawer entrance and 120 ms hover/focus transitions. `prefers-reduced-motion` disables both. |
 
 ## 8. Motion, accessibility, and quality floor
 
-- Contrast: 4.5:1 minimum for text on every surface in both themes; spectrum-on-surface pairs validated in CI (extend `token-lint` with a contrast check).
-- Color never the sole signal (§4.2 rule); every SVG gets `role="img"` + label; charts get `<title>`/`<desc>`.
-- Full keyboard operability; visible `:focus-visible` ring (`--accent`); existing tab/tablist ARIA kept.
-- `prefers-reduced-motion: reduce` → all transitions/animations to 0; aperture renders open.
-- Print stylesheet for pages (publish artifacts double as printable one-pagers).
-- Responsive to 360 px: health strip wraps 2×2, board becomes vertically stacked columns, hero stacks ring above copy.
+- Contrast: 4.5:1 text, 3:1 control boundaries, 1.45:1 borders, both themes, validated in CI over oklch and token aliases.
+- Color is never the only signal: every type, status, priority, and health badge carries its name as text.
+- Icons are `aria-hidden` when decorative and `role="img"` with a label when they carry meaning.
+- Full keyboard operability; `:focus-visible` ring in `--primary`; the tablist follows the standard tab pattern.
+- `prefers-reduced-motion: reduce` disables every transition and animation.
+- Print is a declared palette; chrome, drawer, and TOC are hidden and Mermaid falls back to source.
+- Responsive to 360 px: Vision's 900 px rules govern grids and the TOC; iris's 48 rem rule turns the sidebar into an overlay.
 
-## 9. Migration plan (no code in this doc — sequencing for when work starts)
+## 9. Migration record
 
-1. **Tokens 2.0** — replace `tokens.css` values with §4; extend `token-lint` for the new names + contrast check. Everything else keeps working.
-2. **Components 2.0** — restyle `base.css` to §6; add stat-tile, pill, callout, timeline, kbd. Update `src/templates/design.ts` markup accordingly; `html-check` guards links.
-3. **Dashboard IA** — reorder `index.html` template to §5 (briefing hero, health strip, work surface); use agent-first guidance rather than inferred repository-document content.
-4. **`iris vendor` + Markdown Mermaid fences** — implemented for the pinned Mermaid runtime and license; font/icon vendoring remains separate.
-5. **Architecture projection + chart blocks** — project the relevant HLD Mermaid fence into the Architecture pane and add a CLI-side SVG chart renderer behind the chart contract.
-6. **Dogfood** — run `iris init` and `iris render --all` so the shipped `iris/` tree is generated from intentional page contracts without repository-document ingestion.
-7. **Workspace shell (`dashboard-shell-redesign`)** — Electra tokens, module split, one shell over per-section pages, generated command reference. Done.
-8. **Markdown research (`research-markdown-pages`)** — a second editable source: `iris/research/<id>/index.md` with bounded front matter, document template, section page, and Work-browser inclusion. Done.
-9. **Conversational agent surfaces (`agent-surface-triggers`)** — intent-mapped skill plus generated `/iris:*` commands and Copilot prompts from one managed-surface installer. Done.
+Steps 1–9 of the 3.x plan shipped as described in git history. Step 10 is this change:
 
-Each step is an OpenSpec change; each keeps CI green independently.
+10. **Electric adoption (`electric-design-system`)** — Vision §2/§3 embedded with the measured reconciliation, generation-time Lucide icons, radar identity, token-themed Mermaid that re-renders on theme change, the validator taught oklch and token aliases, and the whole workspace migrated onto Vision's vocabulary.
 
 ## 10. Open questions
 
-- Vendor payload size: Mermaid alone is ~3.4 MB per repo. It is explicit today; a later multi-asset vendor command may need selective flags.
-- Should render-time mermaid→SVG snapshots (needed for fully-visual published artifacts) wait for the PNG/PDF browser-renderer decision, since both need headless Chromium?
-- Light-theme default for `iris publish` output? Shared artifacts are often pasted into docs/wikis where dark blocks look heavy.
+- Should research pages adopt Vision's §6 report blueprint (TL;DR → question → map → findings → …) as authored structure? Deliberately out of scope here; this change gives them the component language and header anatomy only.
+- Vendor payload size: Mermaid is ~3.4 MB per repo. Still explicit, still opt-in.
+- Should `iris publish` output default to the light theme, since shared artifacts are often pasted where dark blocks look heavy?
+
+## 11. Relationship to Vision "Electric" v2.0
+
+The upstream contract is [`vision-electric-v2.md`](./vision-electric-v2.md), stored verbatim. iris follows it except where a hard constraint of this project makes it impossible.
+
+**Verbatim:** the §2 token names and values (except §4.2), the §3 component CSS, the §5 semantic color mapping, the §8.1 theme variables and §8.2 classDef fallbacks, and Lucide 0.469.0 as the icon set.
+
+**Deviations, each with its reason:**
+
+| Vision rule | iris | Why |
+| --- | --- | --- |
+| Light theme selected by `data-mode="light"` | `data-theme='light'` | The attribute predates the adoption and is read by `iris/config.yaml`, the stored preference, the tests, and the validator. Renaming it would change user-visible configuration for no design gain. |
+| Tokens and components in one inline `<style data-ds="vision-electric">` per page | `iris/design/tokens.css` + `components/base.css`, inlined into `publish`/`export` artifacts | A workspace is many pages sharing one stylesheet; inlining per page would duplicate ~30 KB per file. Standalone artifacts do get one inline block, which is Vision's actual requirement. |
+| Never edit the token block | Nine lightness values moved | Documented in §4.2 with the measured ratio and the floor. iris's accessibility contract predates the adoption and is enforced in CI. |
+| Load Lucide, Mermaid, Chart.js, React Flow from pinned CDNs | Lucide inlined at generation time; Mermaid vendored locally; the other two not used | A generated page must work from `file://` with no network, and `publish` refuses any artifact containing a resource reference. |
+| `vision:mode` event on theme change | `iris:theme` | Same contract under this project's event namespace. |
+| Report structure per the §6 blueprint | Not adopted here | iris generates a workspace, not a single report. See §10. |
+| §8.2 hexes are the only permitted literals | Also the `--mmd-*` theme variables, and all of them are tokens | Same intent — Mermaid cannot read custom properties — expressed so that `token-lint` still sees exactly one file containing color literals. |
+
+The swap surface is `src/templates/tokens.ts`. A future Vision version is adopted by replacing that block, re-running `pnpm token-lint` to see which values miss a floor, recording the new reconciliation here, and regenerating.

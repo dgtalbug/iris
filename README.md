@@ -45,9 +45,11 @@ iris open
 | `spec.html`      | The OpenSpec filesystem snapshot: canonical specs, active changes, archives, task counts |
 | `research.html`  | Markdown research pages with status, tags, and warnings                                  |
 | `commands.html`  | Every CLI command with its real implementation status                                    |
-| `project/*.html` | The managed overview, HLD, LLD, ERD, and decisions placeholders                          |
+| `project/*.html` | Overview, HLD, LLD, ERD, and decisions rendered from `iris/project/<name>.md`            |
 
 `/` focuses the visible filter, `t` toggles the theme, and `b` collapses the sidebar. Theme and sidebar state persist per browser; the initial theme comes from `iris/config.yaml`.
+
+Every page renders from one design system — Vision "Electric" v2.0, adopted in [`docs/design-system.md`](docs/design-system.md) — in dark and light themes. Colors live in a single generated token stylesheet that CI validates for contrast, and icons are inlined as SVG at generation time, so a page needs no font, script, or network request to look right.
 
 ## Research pages are Markdown
 
@@ -73,6 +75,10 @@ flowchart LR
 ````
 
 Without JavaScript or before `iris vendor`, Iris shows the escaped diagram source. Standalone `publish` and `export --single` artifacts also keep that source fallback; Iris does not claim a pre-rendered SVG snapshot without a deterministic browser renderer.
+
+## Project docs are Markdown
+
+`iris init` creates `iris/project/{overview,hld,lld,erd,decisions}.md` once, each with front matter and a placeholder Mermaid skeleton (HLD `flowchart`, LLD `sequenceDiagram`, ERD `erDiagram`), and renders them to `iris/project/<name>.html`. Edit the Markdown, run `iris render --all`, and the HLD diagram is also projected onto the Overview. The installed agent skill asks the agent to fill HLD and LLD from the codebase right after init and to refresh them, together with a feature's `design.hld`/`design.lld` sections, after building a feature. A hand-written `iris/project/<name>.html` without a Markdown source is preserved and reported, never overwritten.
 
 ## How it runs
 

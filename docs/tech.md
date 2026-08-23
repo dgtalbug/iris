@@ -6,6 +6,7 @@
 - Ajv 8.17.1 — strict JSON Schema validation with explicit errors.
 - Vitest 3.2.4 + ESLint 9.34.0 + Prettier 3.6.2 — test and quality baseline.
 - Mermaid 11.17.0 — pinned production dependency copied locally by `iris vendor`; never loaded from a CDN at view time.
+- Lucide 0.469.0 — pinned production dependency read only at generation time; icon geometry is serialised to inline SVG, so no icon script, font, or request reaches a generated page.
 
 ## Data-contract design
 
@@ -13,13 +14,13 @@ Envelope schema plus per-type schemas; rendering is blocked on invalid contracts
 
 ## Rendering model
 
-Two editable sources produce deterministic HTML: JSON contracts at `iris/pages/<id>/data.json` and Markdown research at `iris/research/<id>/index.md`. Both render to a `page.html` beside their source and both feed one Work projection.
+Three editable sources produce deterministic HTML: JSON contracts at `iris/pages/<id>/data.json`, Markdown research at `iris/research/<id>/index.md`, and Markdown project docs at `iris/project/<name>.md`. Contracts and research render to a `page.html` beside their source and feed one Work projection; project docs render to `iris/project/<name>.html` as managed output.
 
 Browsers treat every local file as its own opaque origin, so a `file://` page cannot read a sibling file: `fetch` fails with `TypeError: Failed to fetch` and `XMLHttpRequest` fails with `status 0`. A classic `<script src>` is the one local-load mechanism that still works, which is why the vendored Mermaid runtime loads that way and why the Spec section ships its record detail as a generated data bundle rather than reading Markdown at view time. The bundle escapes every `<` so no record can terminate the script element or open an HTML comment.
 
 The workspace is a set of static `file://`-compatible pages that share one generated shell: `index.html` (Overview), `work.html`, `spec.html`, `research.html`, `commands.html`, contract pages, and project docs. The shell is depth-aware — every asset and navigation reference is relative — and is marked `data-iris-nav` so publish and export strip it. Splitting sections into separate files keeps each page small enough for an agent to read without pulling in the whole OpenSpec snapshot.
 
-Research Markdown is read by a bounded local walker (sorted, symlink-refusing, repository-confined, 256 KB per file, 500 directories) and rendered through the same safe Markdown pipeline as OpenSpec artifacts, with opt-in heading ids so a document page can carry a table of contents. Heading ids stay opt-in because the Spec page renders many documents into one page, where generated ids would collide.
+Research Markdown is read by a bounded local walker (sorted, symlink-refusing, repository-confined, 256 KB per file, 500 directories) and rendered through the same safe Markdown pipeline as OpenSpec artifacts, with opt-in heading ids so a document page can carry a table of contents. Heading ids stay opt-in because the Spec page renders many documents into one page, where generated ids would collide. Project doc sources are read the same way, limited to the five fixed file names.
 
 The CLI command surface is declared once in `src/lib/command-catalog.ts`; `iris --help` and the generated `commands.html` both read it, and each entry carries an explicit `implemented`, `partial`, or `stubbed` status.
 
@@ -62,6 +63,8 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 - MCP server: rejected for v1 local-file scope.
 - Reaviz: rejected to avoid extra runtime weight and contract lock-in.
 - IconScout primary icons: rejected (secondary only) to keep Lucide as default.
+- Lucide's browser UMD and `createIcons()`: rejected in favour of generation-time serialisation, which keeps published artifacts free of scripts and makes an unknown icon name a build failure rather than an invisible gap.
+- React Flow and Chart.js from Vision's pinned manifest: rejected; a React runtime breaks the zero-build model and the workspace has no chart surface.
 - SaaS dashboard: rejected to preserve offline local-first model.
 - Bundling GitNexus: rejected because GitNexus remains external source-of-truth.
 - Hand-written agent HTML: rejected in favor of strict contract-to-template flow.
@@ -85,3 +88,8 @@ MIT at package level; vendored third-party assets retain upstream licenses in ve
 | 2026-08-21 | Persist a bounded OpenSpec snapshot for the dashboard Spec tab                                                                       | Keeps explicit refresh semantics while allowing every dashboard regeneration to remain deterministic and offline                                   |
 | 2026-08-21 | Render OpenSpec Markdown at generation time with embedded HTML disabled                                                              | Improves readability without adding browser runtime or weakening exact-source evidence                                                             |
 | 2026-08-21 | Render exact Mermaid fences through an explicitly vendored strict classic runtime with source fallback                               | Adds useful offline diagrams without remote loaders, runtime modules, active diagram behavior, or all-or-nothing failure                           |
+| 2026-08-21 | Adopt Vision "Electric" v2.0 token and class names as iris's own vocabulary                                                          | Makes the upstream contract a truthful reference for generated output and reduces a future restyle to a token-block swap                           |
+| 2026-08-21 | Keep oklch tokens and teach the contrast validator gamut mapping and token aliases instead of converting to hex                      | Preserves that swap surface; browsers render out-of-gamut colors chroma-reduced, so the validator must measure the color that is actually shown    |
+| 2026-08-21 | Move nine upstream lightness values to meet iris's 4.5:1, 3:1, and 1.45:1 floors, recording each                                     | Badge text is normal text under WCAG AA; the accessibility contract predates the adoption and is enforced in CI                                    |
+| 2026-08-21 | Serialise Lucide icons to inline SVG at generation time rather than loading its browser runtime                                      | A generated page must work from file:// with no network, and publish refuses any artifact containing a resource reference                          |
+| 2026-08-21 | Retire the aperture ring and glyphs for Vision's radar mark and a pages-by-type badge row                                            | The badge row states in text what the ring encoded in color, which the accessibility floor required of the ring anyway                             |

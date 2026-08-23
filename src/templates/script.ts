@@ -15,16 +15,34 @@ function writeStored(key, value) {
   }
 }
 
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+
+function syncThemeButtons(theme) {
+  for (const button of document.querySelectorAll('[data-theme-set]')) {
+    const active = button.getAttribute('data-theme-set') === theme;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  }
+}
+
+function setTheme(theme, persist) {
+  document.documentElement.setAttribute('data-theme', theme);
+  if (persist) writeStored('iris-theme', theme);
+  syncThemeButtons(theme);
+  // Diagrams cannot read custom properties, so they re-theme from this event.
+  document.dispatchEvent(new CustomEvent('iris:theme', { detail: theme }));
+}
+
 function setupTheme() {
-  const root = document.documentElement;
   const stored = readStored('iris-theme');
-  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
-  for (const toggle of document.querySelectorAll('[data-theme-toggle]')) {
-    toggle.addEventListener('click', () => {
-      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      root.setAttribute('data-theme', next);
-      writeStored('iris-theme', next);
-    });
+  if (stored === 'light' || stored === 'dark') {
+    document.documentElement.setAttribute('data-theme', stored);
+  }
+  syncThemeButtons(currentTheme());
+  for (const button of document.querySelectorAll('[data-theme-set]')) {
+    button.addEventListener('click', () => setTheme(button.getAttribute('data-theme-set'), true));
   }
 }
 
@@ -75,11 +93,13 @@ function setupNavigation() {
   return { setCollapsed };
 }
 
-function setupTabs() {
-  for (const group of document.querySelectorAll('[data-tabs]')) {
+function wireTabs(root) {
+  for (const group of root.querySelectorAll('[data-tabs]')) {
+    if (group.hasAttribute('data-tabs-ready')) continue;
+    group.setAttribute('data-tabs-ready', '');
     const buttons = Array.from(group.querySelectorAll('[role="tab"]'));
     const groupId = group.getAttribute('data-tabs');
-    const panels = document.querySelectorAll('[data-tab-group="' + groupId + '"]');
+    const panels = root.querySelectorAll('[data-tab-group="' + groupId + '"]');
     const activate = (button, moveFocus) => {
       buttons.forEach((it) => {
         const selected = it === button;
@@ -107,6 +127,10 @@ function setupTabs() {
       });
     });
   }
+}
+
+function setupTabs() {
+  wireTabs(document);
 }
 
 function setupFilter() {
@@ -144,11 +168,8 @@ function setupKeyboardShortcuts(navigation) {
       }
     }
     if (event.key.toLowerCase() === 't') {
-      const toggle = document.querySelector('[data-theme-toggle]');
-      if (toggle instanceof HTMLElement) {
-        event.preventDefault();
-        toggle.click();
-      }
+      event.preventDefault();
+      setTheme(currentTheme() === 'light' ? 'dark' : 'light', true);
     }
     if (event.key.toLowerCase() === 'b' && navigation) {
       event.preventDefault();
@@ -291,22 +312,51 @@ function setupWorkDrawer() {
 }
 
 async function setupMermaid() {
-  const figures = Array.from(document.querySelectorAll('[data-mermaid-figure]'));
-  if (figures.length === 0) return;
   if (!globalThis.mermaid || typeof globalThis.mermaid.initialize !== 'function') return;
+  // Spec records arrive from the bundle after load, so figures are queried per pass.
+  const figures = () => Array.from(document.querySelectorAll('[data-mermaid-figure]'));
 
-  globalThis.mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: 'strict',
-    secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering', 'maxEdges', 'htmlLabels', 'flowchart'],
-    htmlLabels: false,
-    maxTextSize: 50000,
-    maxEdges: 500,
-    suppressErrorRendering: true,
-    theme: 'neutral',
-    fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
-    flowchart: { htmlLabels: false, useMaxWidth: true },
-  });
+  const token = (name) =>
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function initialize() {
+    globalThis.mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize', 'suppressErrorRendering', 'maxEdges', 'htmlLabels', 'flowchart'],
+      htmlLabels: false,
+      maxTextSize: 50000,
+      maxEdges: 500,
+      suppressErrorRendering: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: document.documentElement.getAttribute('data-theme') !== 'light',
+        background: 'transparent',
+        fontFamily: token('--font-mono') || 'ui-monospace, Menlo, monospace',
+        fontSize: '13px',
+        primaryColor: token('--mmd-primary'),
+        primaryTextColor: token('--mmd-primary-text'),
+        primaryBorderColor: token('--mmd-primary-border'),
+        lineColor: token('--mmd-line'),
+        secondaryColor: token('--mmd-secondary'),
+        tertiaryColor: token('--mmd-tertiary'),
+        noteBkgColor: token('--mmd-note-bg'),
+        noteTextColor: token('--mmd-note-text'),
+        actorBorder: token('--mmd-actor-border'),
+        signalColor: token('--mmd-signal'),
+      },
+      fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
+      flowchart: { htmlLabels: false, useMaxWidth: true },
+    });
+  }
+
+  initialize();
+
+  // Sources are captured before the first render so a theme change can redraw
+  // from the original text rather than from an already-rendered SVG. A WeakMap
+  // avoids pinning hosts detached by spec-record navigation.
+  const sources = new WeakMap();
+  let renderSequence = 0;
 
   async function renderFigure(figure) {
     if (figure.hasAttribute('data-render-state')) return;
@@ -318,14 +368,24 @@ async function setupMermaid() {
       host.removeAttribute('data-render-state');
       return;
     }
-    const source = host.textContent || '';
+    if (!sources.has(host)) sources.set(host, host.textContent || '');
+    const source = sources.get(host);
+    host.textContent = source;
     host.classList.add('mermaid');
     host.setAttribute('data-render-state', 'pending');
     figure.setAttribute('data-render-state', 'pending');
     status.textContent = 'Rendering diagram…';
     try {
       if (source.length > 50000) throw new Error('diagram source exceeds 50000 characters');
-      await globalThis.mermaid.run({ nodes: [host], suppressErrors: true });
+      // Rendering by explicit id rather than mermaid.run: run() derives its id
+      // from Date.now(), so two diagrams finishing in the same millisecond —
+      // which is what a theme re-render does — collide and draw into one host.
+      renderSequence += 1;
+      const { svg: markup } = await globalThis.mermaid.render(
+        'iris-mermaid-' + renderSequence,
+        source,
+      );
+      host.innerHTML = markup;
       const svg = host.querySelector('svg');
       if (!(svg instanceof SVGElement)) throw new Error('Mermaid did not produce an SVG');
       svg.setAttribute('role', 'img');
@@ -342,15 +402,24 @@ async function setupMermaid() {
   }
 
   async function renderVisibleFigures() {
-    for (const figure of figures) await renderFigure(figure);
+    for (const figure of figures()) await renderFigure(figure);
   }
 
-  for (const details of document.querySelectorAll('details')) {
-    details.addEventListener('toggle', () => {
-      if (details.open) void renderVisibleFigures();
-    });
-  }
+  // \`toggle\` does not bubble; capturing on the document also covers injected <details>.
+  document.addEventListener('toggle', (event) => {
+    if (event.target instanceof HTMLDetailsElement && event.target.open) void renderVisibleFigures();
+  }, true);
   document.addEventListener('iris:visibilitychange', () => void renderVisibleFigures());
+  document.addEventListener('iris:theme', () => {
+    initialize();
+    for (const figure of figures()) {
+      const host = figure.querySelector('[data-mermaid-host]');
+      if (!(host instanceof HTMLElement) || !sources.has(host)) continue;
+      host.removeAttribute('data-render-state');
+      figure.removeAttribute('data-render-state');
+    }
+    void renderVisibleFigures();
+  });
   await renderVisibleFigures();
 }
 
@@ -378,6 +447,7 @@ function setupSpecBrowser() {
     // Content is generated and escaped by Iris at render time; inserted script
     // elements do not execute, and the parser output is already escaped.
     slot.innerHTML = record.html;
+    wireTabs(slot);
     if (crumb) crumb.textContent = record.title;
     const heading = slot.querySelector('h1');
     if (heading instanceof HTMLElement) {

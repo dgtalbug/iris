@@ -1,0 +1,29 @@
+{
+  "iris": "1",
+  "type": "idea",
+  "id": "report-from-agent-sessions",
+  "title": "Report From Agent Sessions",
+  "status": "draft",
+  "agent": "claude-code",
+  "created": "2026-08-21T12:46:51.581Z",
+  "updated": "2026-08-21T12:46:51.581Z",
+  "commit": "8b7bb92c8ecd0d1c12273a03aa398f1576c9f419",
+  "tags": [
+    "idea",
+    "cli",
+    "report",
+    "session-import"
+  ],
+  "sections": {
+    "current_state": {
+      "md": "`iris report --from-session <path>` already exists \u2014 wired in `src/cli.ts` and implemented in `src/commands/report.ts` \u2014 but it only accepts a curated export: one `.json`, `.md`, or `.txt` file, or a directory whose filenames match `SESSION_FILE_PATTERN`. Nothing produces those files.\n\nWhat agents actually leave on disk is JSONL, one record per line:\n\n- Claude Code: `~/.claude/projects/<cwd-slug>/<uuid>.jsonl`\n- Codex: `~/.codex/sessions/<yyyy>/<mm>/<dd>/rollout-<timestamp>-<uuid>.jsonl`\n\nPointed at either, the command fails before writing anything:\n\n- a session directory gives `No supported session files found in ...; expected named JSON, Markdown, or text session artifacts`, because the filename pattern anchors on `.json|.md|.txt` and `.jsonl` never matches\n- a single rollout file gives `Unsupported session input format: ... (expected .json, .md, .txt, or a directory)`\n\nThe extension guard is not the only blocker. `parseDocument` runs `JSON.parse` over the whole file, so a line-delimited transcript would still be rejected as malformed even if the guard let it through. Extraction is format-blind as well: `stringsAtKeys` sniffs generic keys (`summary`, `content`, `message`, `path`, `command`) rather than reading turn structure, and the key names do not line up. A Claude Code transcript records the repository as `cwd` and the branch as `gitBranch` on nearly every line, while `ingestSessionSource` looks for `repo`/`repository`/`repo_path` and `branch`/`branch_name` \u2014 so even a parseable transcript would report both as `unspecified`. And the generated envelope hardcodes `agent: \"other\"` and falls back to forty zeros for `commit`, discarding metadata the source already identifies.\n\nSo the backlog item is half built. The contract, the renderer, and `sections.session_evidence` are all in place; the reader cannot open the files that exist."
+    },
+    "proposed": {
+      "md": "Teach the existing ingestor the formats that are already on disk, and let it find them.\n\n1. JSONL reader. Accept `.jsonl` in both the file guard and the directory pattern, and parse line-delimited records into the document array instead of one `JSON.parse`. Skip malformed lines with a count rather than failing the import \u2014 transcripts are append-only and can end mid-write.\n2. Per-agent adapters. Read record structure instead of sniffing keys. A Claude Code transcript is typed line by line: `user` and `assistant` turns carry `cwd`, `gitBranch`, `sessionId`, and `timestamp`, tool calls live inside their `message` content blocks, and `file-history-snapshot` and `file-history-delta` records track edited paths directly. That is precisely the repository, branch, tool activity, and files-touched evidence the report contract already has fields for. Codex rollout files get their own adapter, and the existing key-sniffing path stays as the fallback for unrecognized shapes.\n3. Discovery. `iris report --from-session` with no path resolves the current repo to its session directory \u2014 Claude Code slugifies the cwd, Codex is date-partitioned \u2014 and picks the most recent transcript. An explicit `--from-session <path>` keeps working unchanged.\n4. Real envelope metadata. Set `agent` from whichever adapter matched, and take `commit` from repo HEAD at session end instead of defaulting to forty zeros.\n5. Redaction before render. Transcripts hold pasted secrets, file contents, and third-party data, and Iris output is HTML that gets published and exported. Summarize and redact by default; require an explicit flag to carry raw transcript text into `session_evidence`.\n\nStep 1 alone makes the command usable against real files. Steps 2\u20134 are what make the resulting report worth reading. Step 5 is not optional once step 1 ships."
+    },
+    "effort_impact": {
+      "effort": 4,
+      "impact": 4
+    }
+  }
+}
