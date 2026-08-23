@@ -8,6 +8,12 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    ignore:
+      # typescript-eslint refuses TS 7.0 outright and tracks TS >=7.1 support in
+      # typescript-eslint#10940. Until that lands, `pnpm lint` cannot run on a
+      # TS 7 tree, so the bump is held rather than reproposed every week.
+      - dependency-name: typescript
+        versions: ['>=7.0.0']
   - package-ecosystem: github-actions
     directory: /
     schedule:
