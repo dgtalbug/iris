@@ -5,6 +5,9 @@
 ## Common
 
 - Exit codes: `0` ok · `1` validation/user error · `2` environment error.
+- Version: `iris --version` (`-v`) prints the installed package version alone and exits `0`, so an installer check can read it without parsing the help text.
+- Unsupported runtime: a Node.js older than the `engines.node` floor exits `2` with a one-line message naming the supported minimum and the runtime found, before any workspace write.
+- Unrecognized invocation: an unknown option or command exits `1` with a one-line message naming what was not recognized and pointing at `iris --help`.
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
 - Agent surfaces: CLI `iris` plus the generated `iris-workspace` skill under `.agents/skills`, `.claude/skills`, and `.github/skills`.
 - Navigation contract: every generated page carries the same workspace shell — a sidebar listing Overview, Work, Spec, Research, Commands, and the project docs, plus a breadcrumb top bar. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
@@ -177,7 +180,7 @@ Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered o
 - Exit codes: 0/1/2.
 - Example: `iris update`.
 - Surfaces: CLI.
-- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill and command regions update only when their ownership markers and digest remain valid. The retired `iris/project/commands.html` placeholder is removed only when it still carries the managed marker; a user-owned copy is preserved and reported. Missing project doc sources are scaffolded; existing sources and user-owned project HTML are preserved.
+- Managed boundary: design assets and the `iris: open dashboard` task are refreshed; unrelated `.vscode/tasks.json` entries are preserved. Agent skill and command regions, and the generated front matter above them, update only when their ownership markers and digests remain valid. The retired `iris/project/commands.html` placeholder is removed only when it still carries the managed marker; a user-owned copy is preserved and reported. Missing project doc sources are scaffolded; existing sources and user-owned project HTML are preserved.
 - Setup guidance: use `iris init` for first run and upgrades. `iris update` remains a compatible explicit refresh, not a required setup step.
 
 ## Generated agent surfaces
@@ -192,4 +195,4 @@ Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered o
 | `.claude/commands/iris/<action>.md`       | `templates/agents/iris-commands.md`  | `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, `/iris:report` |
 | `.github/prompts/iris-<action>.prompt.md` | `templates/agents/iris-commands.md`  | The same actions as Copilot prompts                                                        |
 
-The skill states when to reach for Iris in conversational terms and maps each intent to its command and generated destination, so finished work lands in the workspace without the user asking. The skill also names the project docs: write `iris/project/hld.md` and `lld.md` right after `iris init`, and refresh them plus a feature's `design.hld`/`design.lld` after building a feature. Every generated file carries ownership, version, and a SHA-256 body digest between `IRIS:MANAGED` markers: an intact region is refreshed atomically while bytes outside it are preserved, and anything unmarked, half-marked, edited, symlinked, or escaping the repository is preserved and reported as a collision.
+The skill states when to reach for Iris in conversational terms and maps each intent to its command and generated destination, so finished work lands in the workspace without the user asking. The skill also names the project docs: write `iris/project/hld.md` and `lld.md` right after `iris init`, and refresh them plus a feature's `design.hld`/`design.lld` after building a feature. Every generated file carries ownership, version, and SHA-256 digests of both the managed body and the generated front matter in its `IRIS:MANAGED` start marker. An intact region is refreshed atomically. The front matter an agent host reads is Iris-owned and refreshed with it, but only when the bytes on disk are provably the ones Iris wrote — they hash to the recorded digest, or, for a surface written before ownership was recorded, they match verbatim what this or an earlier release generated. Bytes after the managed region are preserved untouched. Front matter Iris cannot attribute to itself, and anything unmarked, half-marked, edited, symlinked, or escaping the repository, is preserved and reported as a collision.

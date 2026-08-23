@@ -175,7 +175,9 @@ describe('generated HTML navigation', () => {
     // The hero states pages-by-type as labelled badges; the aperture ring is gone.
     expect(dashboard).toContain('class="card hero"');
     expect(dashboard).toContain('<h1 class="page" id="briefing-title">');
-    expect(dashboard).toMatch(/class="hero-types" role="group" aria-label="\d+ pages? by type"|No pages yet/);
+    expect(dashboard).toMatch(
+      /class="hero-types" role="group" aria-label="\d+ pages? by type"|No pages yet/,
+    );
     expect(dashboard).not.toContain('aperture');
     expect(baseCss).not.toContain('.aperture');
     expect(dashboard).toContain('class="lucide lucide-radar');

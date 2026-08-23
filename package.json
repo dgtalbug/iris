@@ -1,6 +1,6 @@
 {
   "name": "@dgtalbug/iris",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Visual, versioned HTML docs for AI coding work.",
   "keywords": [
     "cli",
@@ -44,9 +44,9 @@
     "format": "prettier --check .",
     "token-lint": "node ./scripts/token-lint.mjs",
     "html-check": "node ./scripts/html-check.mjs",
-    "prepack": "npm run build",
+    "prepack": "tsc -p tsconfig.json",
     "smoke:install": "node ./scripts/install-smoke.mjs",
-    "release:check": "pnpm lint && pnpm token-lint && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
+    "release:check": "pnpm lint && pnpm format && pnpm token-lint && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
   },
   "runtimeDependencyRationale": {
     "ajv": "JSON Schema validation for strict contract enforcement",

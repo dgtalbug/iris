@@ -5,7 +5,7 @@ import path from 'node:path';
 import { ensureDir } from './fs.js';
 import { packageRoot, packageVersion } from './package-info.js';
 
-const MARKER_SCHEMA = 1;
+const MARKER_SCHEMA = 2;
 const START_PREFIX = '<!-- IRIS:MANAGED:START';
 const SKILL_TEMPLATE_ID = 'iris-workspace';
 const COMMAND_TEMPLATE_ID = 'iris-command';
@@ -24,6 +24,27 @@ metadata:
   author: iris
 ---
 `;
+
+/**
+ * Front matter earlier revisions of Iris generated, kept so a surface written
+ * before the marker recorded ownership can still be attributed and refreshed.
+ * The set is closed: no release preceded the one that records ownership, so
+ * every surface that can exist was written by a revision listed here or by the
+ * current one, and anything else is a human's edit.
+ */
+const LEGACY_FRONT_MATTER: Record<string, readonly string[]> = {
+  [SKILL_TEMPLATE_ID]: [
+    `---
+name: iris-workspace
+description: Use Iris to create and render intentional local visual workspace content.
+license: MIT
+metadata:
+  author: iris
+---
+`,
+  ],
+  [COMMAND_TEMPLATE_ID]: [],
+};
 
 export type SurfaceDescriptor = {
   templateId: string;
@@ -50,8 +71,8 @@ function digest(content: string): string {
   return createHash('sha256').update(content).digest('hex');
 }
 
-function startMarker(templateId: string, version: string, body: string): string {
-  return `${START_PREFIX} template=${templateId} schema=${MARKER_SCHEMA} version=${version} sha256=${digest(body)} -->`;
+function startMarker(descriptor: SurfaceDescriptor, version: string): string {
+  return `${START_PREFIX} template=${descriptor.templateId} schema=${MARKER_SCHEMA} version=${version} sha256=${digest(descriptor.body)} fm=${digest(descriptor.frontMatter)} -->`;
 }
 
 function endMarker(templateId: string): string {
@@ -100,14 +121,40 @@ async function atomicWrite(target: string, content: string): Promise<void> {
   }
 }
 
+const MARKER_CONFLICT = 'managed markers or digest are invalid; preserved the file';
+const UNMANAGED_CONFLICT = 'existing file is not Iris-managed; preserved the file';
+const FRONT_MATTER_CONFLICT =
+  'front matter above the managed region is not the front matter Iris generated; preserved the file';
+
+type ManagedRewrite = { content: string } | { conflict: string };
+
+/**
+ * A marker written before ownership was recorded proves only the body. Its
+ * front matter is attributed by reconstruction instead: Iris owns it when it is
+ * byte-for-byte what this release, or a revision listed above, generates.
+ */
+function frontMatterIsOwned(
+  frontMatter: string,
+  descriptor: SurfaceDescriptor,
+  recordedDigest: string | undefined,
+): boolean {
+  if (recordedDigest !== undefined) return digest(frontMatter) === recordedDigest;
+  if (frontMatter === descriptor.frontMatter) return true;
+  return (LEGACY_FRONT_MATTER[descriptor.templateId] ?? []).includes(frontMatter);
+}
+
 function updateManagedContent(
   existing: string,
   descriptor: SurfaceDescriptor,
   version: string,
-): string | null {
+): ManagedRewrite {
+  const unreadable = existing.includes(START_PREFIX)
+    ? { conflict: MARKER_CONFLICT }
+    : { conflict: UNMANAGED_CONFLICT };
+
   const starts = [...existing.matchAll(/<!-- IRIS:MANAGED:START[^>]*-->/g)];
   const ends = [...existing.matchAll(/<!-- IRIS:MANAGED:END[^>]*-->/g)];
-  if (starts.length !== 1 || ends.length !== 1) return null;
+  if (starts.length !== 1 || ends.length !== 1) return unreadable;
   const start = starts[0];
   const end = ends[0];
   if (
@@ -117,21 +164,31 @@ function updateManagedContent(
     start[0].includes('\n') ||
     end[0] !== endMarker(descriptor.templateId)
   ) {
-    return null;
+    return unreadable;
   }
   const marker = start[0].match(
     new RegExp(
-      `^<!-- IRIS:MANAGED:START template=${descriptor.templateId} schema=${MARKER_SCHEMA} version=\\S+ sha256=([a-f0-9]{64}) -->$`,
+      `^<!-- IRIS:MANAGED:START template=${descriptor.templateId} schema=([12]) version=\\S+ sha256=([a-f0-9]{64})(?: fm=([a-f0-9]{64}))? -->$`,
     ),
   );
-  if (!marker) return null;
+  if (!marker) return unreadable;
+  const recordedFrontMatter = marker[3];
+  // Only the schema that introduced the field may carry it, so a hand-mixed
+  // marker is rejected rather than half-trusted.
+  if ((marker[1] === '2') !== (recordedFrontMatter !== undefined)) return unreadable;
 
   const bodyStart = start.index + start[0].length + 1;
-  if (existing[start.index + start[0].length] !== '\n' || bodyStart > end.index) return null;
+  if (existing[start.index + start[0].length] !== '\n' || bodyStart > end.index) return unreadable;
   const currentBody = existing.slice(bodyStart, end.index);
-  if (digest(currentBody) !== marker[1]) return null;
+  if (digest(currentBody) !== marker[2]) return unreadable;
 
-  return `${existing.slice(0, start.index)}${startMarker(descriptor.templateId, version, descriptor.body)}\n${descriptor.body}${existing.slice(end.index)}`;
+  if (!frontMatterIsOwned(existing.slice(0, start.index), descriptor, recordedFrontMatter)) {
+    return { conflict: FRONT_MATTER_CONFLICT };
+  }
+
+  return {
+    content: `${descriptor.frontMatter}${startMarker(descriptor, version)}\n${descriptor.body}${existing.slice(end.index)}`,
+  };
 }
 
 /**
@@ -197,7 +254,7 @@ async function installSurface(
   result: SkillInstallResult,
 ): Promise<void> {
   const target = path.resolve(cwd, descriptor.relativePath);
-  const initial = `${descriptor.frontMatter}${startMarker(descriptor.templateId, version, descriptor.body)}\n${descriptor.body}${endMarker(descriptor.templateId)}\n`;
+  const initial = `${descriptor.frontMatter}${startMarker(descriptor, version)}\n${descriptor.body}${endMarker(descriptor.templateId)}\n`;
   try {
     await assertNoSymlinkComponents(cwd, target);
     if (!existsSync(target)) {
@@ -207,17 +264,12 @@ async function installSurface(
     }
     const existing = await readFile(target, 'utf8');
     const desired = updateManagedContent(existing, descriptor, version);
-    if (desired === null) {
-      result.conflicts.push({
-        path: descriptor.relativePath,
-        reason: existing.includes(START_PREFIX)
-          ? 'managed markers or digest are invalid; preserved the file'
-          : 'existing file is not Iris-managed; preserved the file',
-      });
-    } else if (desired === existing) {
+    if ('conflict' in desired) {
+      result.conflicts.push({ path: descriptor.relativePath, reason: desired.conflict });
+    } else if (desired.content === existing) {
       result.unchanged.push(descriptor.relativePath);
     } else {
-      await atomicWrite(target, desired);
+      await atomicWrite(target, desired.content);
       result.updated.push(descriptor.relativePath);
     }
   } catch (error) {

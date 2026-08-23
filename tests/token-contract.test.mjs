@@ -108,9 +108,7 @@ describe('color parsing', () => {
       '  --card: oklch(0.19 0.025 285 / 0.6);',
     );
     expect(validateTokenContract(invalid)).toEqual(
-      expect.arrayContaining([
-        'dark contrast pair --foreground/--card is not an opaque color',
-      ]),
+      expect.arrayContaining(['dark contrast pair --foreground/--card is not an opaque color']),
     );
   });
 });

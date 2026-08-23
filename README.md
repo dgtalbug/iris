@@ -4,22 +4,28 @@ Visual, versioned docs from your AI coding agents. Less prose, more pictures —
 
 ## Install
 
-Prerequisite: Node.js 22.13.0 or newer on macOS, Linux, or Windows.
+Prerequisite: Node.js 22.13.0 or newer on macOS, Linux, or Windows. Iris checks this itself and exits with an actionable message on an older runtime.
 
-The primary install surface is the versioned npm package. After a release is published to npm, install and verify it with:
-
-```bash
-npm install -g @dgtalbug/iris
-iris --help
-```
-
-Or initialize a repository from that published release without a global install:
+The artifact is published to the npm registry as `@dgtalbug/iris`. Run it without installing anything:
 
 ```bash
 npx @dgtalbug/iris init
+# or
+pnpm dlx @dgtalbug/iris init
 ```
 
-The package is not yet present in the public npm registry. Until the first release is published, contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, inspects its initialization assets, installs it into a temporary directory, runs `iris init` twice without runtime network access, verifies all supported agent skills, then creates and renders a page outside the repository. Homebrew remains deferred until a real release tarball URL and SHA-256 checksum exist; publishing a placeholder formula would be packaging theatre, which is still theatre even when written in Ruby.
+Install it persistently and verify what you got:
+
+```bash
+pnpm add -g @dgtalbug/iris
+iris --version
+```
+
+`pnpm add -g` needs a global bin directory, so run `pnpm setup` once first if you have never used it. And pnpm ignores releases younger than a day by default (`minimumReleaseAge`), so a version published minutes ago resolves to the previous one until that window passes — pass `--config.minimumReleaseAge=0` if you need it immediately. `npx` has no such delay.
+
+Homebrew remains deferred until a real release tarball URL and SHA-256 checksum exist; publishing a placeholder formula would be packaging theatre, which is still theatre even when written in Ruby.
+
+Contributors can verify the exact install artifact locally with `pnpm smoke:install`; the check packs the package, inspects its initialization assets, installs it into a temporary directory, runs `iris init` twice without runtime network access, verifies all supported agent skills, then creates and renders a page outside the repository.
 
 Once installed, a minimal local-first workflow is:
 
@@ -84,24 +90,27 @@ Without JavaScript or before `iris vendor`, Iris shows the escaped diagram sourc
 
 iris is a plain Node.js CLI — no agent, server, or AI runtime is needed to use it. You, or an AI coding agent working in your repository (Claude Code, Copilot, Codex), run `iris` commands directly. The CLI writes JSON contracts under `iris/pages/<id>/data.json` and Markdown research under `iris/research/<id>/index.md`, validates contracts against the schemas in `schemas/`, snapshots supported OpenSpec filesystem evidence into `iris/spec.json`, and renders deterministic static HTML that opens straight from disk with `iris open` — no build step or dev server.
 
-Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`, and generates `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, and `/iris:report` into `.claude/commands/iris/` and `.github/prompts/`. All of them are generated from two packaged templates and describe the same CLI workflow, and the skill names the moments that call for Iris so finished work reaches the workspace without being asked for. Iris refreshes only an intact hash-verified managed region, preserves user content outside it, and refuses to overwrite unmarked or edited targets.
+Initialization installs one canonical `iris-workspace` skill into `.agents/skills`, `.claude/skills`, and `.github/skills`, and generates `/iris:research`, `/iris:bug`, `/iris:feature`, `/iris:idea`, `/iris:plan`, and `/iris:report` into `.claude/commands/iris/` and `.github/prompts/`. All of them are generated from two packaged templates and describe the same CLI workflow, and the skill names the moments that call for Iris so finished work reaches the workspace without being asked for. Iris refreshes an intact hash-verified managed region together with the generated front matter above it, so an upgraded Iris converges an already-installed surface instead of leaving a stale description in place. Front matter is rewritten only when it hashes to the digest recorded in the marker, or matches verbatim what an earlier release generated; user content after the managed region is preserved, and unmarked, edited, or unattributable targets are preserved and reported.
 
 ### Upgrade
 
 ```bash
-npm install -g @dgtalbug/iris@latest
+pnpm add -g @dgtalbug/iris@latest
+iris --version
 iris init
 ```
 
-The package version controls the installed CLI version. Rerun `iris init` in each repository after upgrading so managed workspace assets and agent skills converge safely; no separate setup command is required.
+With `npx @dgtalbug/iris@latest init` there is nothing to upgrade; each run resolves the current release.
+
+The package version controls the installed CLI version. Rerun `iris init` in each repository after upgrading so managed workspace assets and agent skills converge safely; no separate setup command is required. An upgrade that changed a generated skill or command description refreshes it in place, and reports any surface it could not attribute to itself instead of overwriting it.
 
 ### Release maintainers
 
-1. Update `package.json` to the intended version and merge the fully verified change.
-2. Create a GitHub Release whose tag is exactly `v<package version>`.
-3. The `release.yml` workflow repeats the full release gate, verifies tag/package alignment, inspects the tarball, and publishes the public package with provenance.
+1. Update `package.json` to the intended version, add the matching `CHANGELOG.md` section, and merge the fully verified change. Release verification fails when the version being released has no changelog section.
+2. Create a GitHub Release whose tag is exactly `v<package version>`, with `CHANGELOG.md` as the source of the release notes.
+3. The `release.yml` workflow repeats the full release gate, verifies tag/package alignment and the packaged initialization assets, inspects the tarball, and publishes the public package with provenance.
 
-The workflow uses npm trusted publishing through GitHub OIDC and the protected `npm` environment; it stores no long-lived publish token. Before the first automated release, the package owner must bootstrap `@dgtalbug/iris` on npm if necessary, configure `dgtalbug/iris` + `release.yml` as its trusted publisher, and approve the GitHub `npm` environment. A manual workflow run is verification-only and never publishes.
+The workflow uses npm trusted publishing through GitHub OIDC and the protected `npm` environment; it stores no long-lived publish token. Before the first automated release, the package owner must bootstrap `@dgtalbug/iris` on npm if necessary, configure `dgtalbug/iris` + `release.yml` as its trusted publisher, and approve the GitHub `npm` environment. A manual workflow run performs every step except publishing — including release verification, against the version in `package.json` — so the pipeline can be exercised end to end without cutting a release.
 
 ## Quickstart for contributors
 

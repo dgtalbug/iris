@@ -1,1 +1,32 @@
-{ "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "required": ["type", "sections"], "properties": { "type": { "const": "idea" }, "sections": { "type": "object", "required": ["current_state", "proposed", "effort_impact"], "properties": { "current_state": { "type": "object", "required": ["md"], "properties": { "md": { "type": "string" } } }, "proposed": { "type": "object", "required": ["md"], "properties": { "md": { "type": "string" } } }, "effort_impact": { "type": "object", "required": ["effort", "impact"], "properties": { "effort": { "type": "integer", "minimum": 1, "maximum": 5 }, "impact": { "type": "integer", "minimum": 1, "maximum": 5 } } } } } } }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["type", "sections"],
+  "properties": {
+    "type": { "const": "idea" },
+    "sections": {
+      "type": "object",
+      "required": ["current_state", "proposed", "effort_impact"],
+      "properties": {
+        "current_state": {
+          "type": "object",
+          "required": ["md"],
+          "properties": { "md": { "type": "string" } }
+        },
+        "proposed": {
+          "type": "object",
+          "required": ["md"],
+          "properties": { "md": { "type": "string" } }
+        },
+        "effort_impact": {
+          "type": "object",
+          "required": ["effort", "impact"],
+          "properties": {
+            "effort": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "impact": { "type": "integer", "minimum": 1, "maximum": 5 }
+          }
+        }
+      }
+    }
+  }
+}

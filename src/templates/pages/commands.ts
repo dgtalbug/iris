@@ -1,11 +1,6 @@
 import { COMMAND_GROUPS, statusCounts, type CommandEntry } from '../../lib/command-catalog.js';
 import type { AgentSurfaceReport } from '../../lib/agent-skills.js';
-import {
-  escapeHtml,
-  healthBadgeClass,
-  statTile,
-} from '../common.js';
-
+import { escapeHtml, healthBadgeClass, statTile } from '../common.js';
 
 const SURFACE_READERS: Array<{ prefix: string; reader: string }> = [
   { prefix: '.claude/commands/', reader: 'Claude slash commands' },
@@ -64,7 +59,9 @@ function agentSurfaceSection(surfaces: AgentSurfaceReport[]): string {
 }
 
 function commandCard(entry: CommandEntry): string {
-  const flags = entry.flags.map((flag) => `<span class="badge b-muted">${escapeHtml(flag)}</span>`).join('');
+  const flags = entry.flags
+    .map((flag) => `<span class="badge b-muted">${escapeHtml(flag)}</span>`)
+    .join('');
   const lands = entry.lands
     ? `<p class="mono">lands in <code>${escapeHtml(entry.lands)}</code></p>`
     : '';
