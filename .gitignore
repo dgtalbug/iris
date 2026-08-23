@@ -10,3 +10,21 @@ package-lock.json
 .github/prompts/*
 .github/skills/*
 .idea/*
+
+# Iris renders these from the source-owned config, contracts, research, and
+# project Markdown. Keep the sources under iris/ tracked; never commit these
+# deterministic workspace artifacts.
+/iris/index.html
+/iris/work.html
+/iris/spec.html
+/iris/research.html
+/iris/commands.html
+/iris/state.json
+/iris/spec.json
+/iris/spec/
+/iris/design/
+/iris/pages/*/page.html
+/iris/research/*/page.html
+/iris/project/*.html
+/iris/archive/*/page.html
+/iris/archive/*-publish.html

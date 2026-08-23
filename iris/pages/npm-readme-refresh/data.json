@@ -1,0 +1,39 @@
+{
+  "iris": "1",
+  "type": "feature",
+  "id": "npm-readme-refresh",
+  "title": "Npm Readme Refresh",
+  "status": "done",
+  "agent": "codex",
+  "created": "2026-08-23T15:51:49.585Z",
+  "updated": "2026-08-23T15:51:49.585Z",
+  "commit": "5f0e2e110bcb41209aa6ebf9a98acd6ced29f563",
+  "tags": [
+    "documentation",
+    "npm",
+    "opensource"
+  ],
+  "sections": {
+    "problem": {
+      "md": "The package README was technically complete but led with dense implementation detail. It did not give prospective npm users an immediate value proposition, a short copy-paste workflow, a command map, or clear open-source trust signals."
+    },
+    "goal": {
+      "md": "Make the npm-facing README a concise open-source landing page: explain Iris in one sentence, show the local workflow visually, provide verified installation and command examples, link contribution and security policies, and improve npm discovery metadata without overstating unsupported export capabilities."
+    },
+    "design": {
+      "hld": {
+        "md": "The repository README is packed by npm and rendered on the package page. Package metadata improves search and discovery after the next release.\n\n```mermaid\nflowchart LR\n  repo[\"Repository README\"]:::svc\n  npm[(\"npm package tarball\")]:::db\n  page[\"npm package page\"]:::focus\n  repo --> npm --> page\n```"
+      },
+      "lld": {
+        "md": "The documentation update uses only facts verified from the installed CLI and package metadata.\n\n```mermaid\nsequenceDiagram\n  participant Maintainer\n  participant README\n  participant Package as package.json\n  participant npm\n  Maintainer->>README: update npm-facing content\n  Maintainer->>Package: refine description and keywords\n  Package-->>npm: publish next release\n  README-->>npm: render package page\n```"
+      }
+    },
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Design and verify the npm-facing README and package discovery metadata",
+        "done": true
+      }
+    ]
+  }
+}
