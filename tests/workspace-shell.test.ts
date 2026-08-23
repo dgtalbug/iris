@@ -174,9 +174,7 @@ describe('generated commands page', () => {
       expect(page).toContain(group.label);
       for (const entry of group.entries) {
         expect(page, `commands page lists ${entry.name}`).toContain(`<code>${entry.name}</code>`);
-        expect(page).toContain(
-          `>${entry.status}</span>`,
-        );
+        expect(page).toContain(`>${entry.status}</span>`);
       }
     }
 
@@ -244,7 +242,9 @@ describe('agent surface reporting', () => {
     try {
       expect(await runCli(['init'], cwd)).toBe(0);
       const written = stdout.mock.calls.map((call) => String(call[0])).join('');
-      expect(written).toMatch(/agent surfaces: \d+ installed \(\d+ created, \d+ updated, \d+ unchanged\)/);
+      expect(written).toMatch(
+        /agent surfaces: \d+ installed \(\d+ created, \d+ updated, \d+ unchanged\)/,
+      );
     } finally {
       stdout.mockRestore();
     }

@@ -1,1 +1,24 @@
-{ "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "required": ["type", "sections"], "properties": { "type": { "const": "report" }, "sections": { "type": "object", "required": ["summary", "open_items", "promotable_as"], "properties": { "summary": { "type": "array", "maxItems": 5, "items": { "type": "string" } }, "open_items": { "type": "object", "required": ["md"], "properties": { "md": { "type": "string" } } }, "promotable_as": { "type": "array", "items": { "type": "string", "enum": ["feature", "bug", "idea"] } } } } } }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["type", "sections"],
+  "properties": {
+    "type": { "const": "report" },
+    "sections": {
+      "type": "object",
+      "required": ["summary", "open_items", "promotable_as"],
+      "properties": {
+        "summary": { "type": "array", "maxItems": 5, "items": { "type": "string" } },
+        "open_items": {
+          "type": "object",
+          "required": ["md"],
+          "properties": { "md": { "type": "string" } }
+        },
+        "promotable_as": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["feature", "bug", "idea"] }
+        }
+      }
+    }
+  }
+}

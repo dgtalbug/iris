@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
@@ -39,6 +40,48 @@ function managedBody(content: string): string {
   return content.slice(start + 4, end);
 }
 
+const LEGACY_SKILL_FRONTMATTER = `---
+name: iris-workspace
+description: Use Iris to create and render intentional local visual workspace content.
+license: MIT
+metadata:
+  author: iris
+---
+`;
+
+function sha256(content: string): string {
+  return createHash('sha256').update(content).digest('hex');
+}
+
+function splitSurface(content: string): { frontMatter: string; marker: string; rest: string } {
+  const startIndex = content.indexOf('<!-- IRIS:MANAGED:START');
+  const markerEnd = content.indexOf('-->', startIndex) + 3;
+  return {
+    frontMatter: content.slice(0, startIndex),
+    marker: content.slice(startIndex, markerEnd),
+    rest: content.slice(markerEnd),
+  };
+}
+
+/** Rewrites the front matter and the ownership digest that vouches for it. */
+function withGeneratedFrontMatter(content: string, frontMatter: string): string {
+  const { marker, rest } = splitSurface(content);
+  return `${frontMatter}${marker.replace(/ fm=[a-f0-9]{64}/, ` fm=${sha256(frontMatter)}`)}${rest}`;
+}
+
+/** Rewrites the front matter without touching the digest, as a human edit would. */
+function withEditedFrontMatter(content: string, frontMatter: string): string {
+  const { marker, rest } = splitSurface(content);
+  return `${frontMatter}${marker}${rest}`;
+}
+
+/** Reproduces a surface written before the marker recorded front-matter ownership. */
+function asLegacyMarker(content: string): string {
+  const { frontMatter, marker, rest } = splitSurface(content);
+  const downgraded = marker.replace(' schema=2 ', ' schema=1 ').replace(/ fm=[a-f0-9]{64}/, '');
+  return `${frontMatter}${downgraded}${rest}`;
+}
+
 describe('agent skill installation', () => {
   it('installs three canonical skill surfaces and leaves siblings alone', async () => {
     const cwd = await tempProject();
@@ -55,7 +98,7 @@ describe('agent skill installation', () => {
     expect(new Set(contents.map(managedBody)).size).toBe(1);
     for (const content of contents) {
       expect(content).toContain('name: iris-workspace');
-      expect(content).toContain('IRIS:MANAGED:START template=iris-workspace schema=1');
+      expect(content).toContain('IRIS:MANAGED:START template=iris-workspace schema=2');
       expect(content).not.toMatch(/iris (?:adopt|sync)/);
     }
   });
@@ -72,13 +115,12 @@ describe('agent skill installation', () => {
     expect(await targetContents(cwd)).toEqual(before);
   });
 
-  it('updates an intact managed marker and preserves bytes outside the region', async () => {
+  it('updates an intact managed marker and preserves bytes after the region', async () => {
     const cwd = await tempProject();
     await installAgentSkills(cwd);
     const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
     const current = await readFile(target, 'utf8');
     const customized = current
-      .replace('<!-- IRIS:MANAGED:START', '<!-- user-prefix -->\n<!-- IRIS:MANAGED:START')
       .replace(`version=${packageVersion()}`, 'version=0.0.1')
       .replace(/\n$/, '\n<!-- user-suffix -->\n');
     await writeFile(target, customized);
@@ -86,9 +128,22 @@ describe('agent skill installation', () => {
     const result = await installAgentSkills(cwd);
     expect(result.updated).toContain(AGENT_SKILL_TARGETS[0]);
     const updated = await readFile(target, 'utf8');
-    expect(updated).toContain('<!-- user-prefix -->');
     expect(updated).toContain('<!-- user-suffix -->');
     expect(updated).toContain(`version=${packageVersion()}`);
+  });
+
+  it('preserves and reports user bytes added ahead of the managed region', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const customized = (await readFile(target, 'utf8'))
+      .replace('<!-- IRIS:MANAGED:START', '<!-- user-prefix -->\n<!-- IRIS:MANAGED:START')
+      .replace(`version=${packageVersion()}`, 'version=0.0.1');
+    await writeFile(target, customized);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.conflicts.map((conflict) => conflict.path)).toContain(AGENT_SKILL_TARGETS[0]);
+    expect(await readFile(target, 'utf8')).toBe(customized);
   });
 
   it.each([
@@ -153,6 +208,110 @@ describe('agent skill installation', () => {
   });
 });
 
+describe('generated metadata ownership', () => {
+  it('refreshes stale generated metadata and reports the surface as updated', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const current = await readFile(target, 'utf8');
+    await writeFile(target, withGeneratedFrontMatter(current, LEGACY_SKILL_FRONTMATTER));
+
+    const result = await installAgentSkills(cwd);
+    expect(result.updated).toContain(AGENT_SKILL_TARGETS[0]);
+    expect(result.conflicts).toEqual([]);
+    expect(await readFile(target, 'utf8')).toBe(current);
+  });
+
+  it('preserves and reports metadata a user edited', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const edited = withEditedFrontMatter(
+      await readFile(target, 'utf8'),
+      LEGACY_SKILL_FRONTMATTER.replace('license: MIT', 'license: Apache-2.0'),
+    );
+    await writeFile(target, edited);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.updated).not.toContain(AGENT_SKILL_TARGETS[0]);
+    expect(result.conflicts.map((conflict) => conflict.path)).toContain(AGENT_SKILL_TARGETS[0]);
+    expect(await readFile(target, 'utf8')).toBe(edited);
+  });
+
+  it.each([
+    ['metadata an earlier release generated', LEGACY_SKILL_FRONTMATTER],
+    ['metadata this release generates', null],
+  ])('migrates a marker without recorded ownership carrying %s', async (_label, frontMatter) => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const current = await readFile(target, 'utf8');
+    const legacy = asLegacyMarker(
+      frontMatter === null ? current : withEditedFrontMatter(current, frontMatter),
+    );
+    await writeFile(target, legacy);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.updated).toContain(AGENT_SKILL_TARGETS[0]);
+    expect(result.conflicts).toEqual([]);
+    const migrated = await readFile(target, 'utf8');
+    expect(migrated).toBe(current);
+    expect(migrated).toMatch(/schema=2 version=\S+ sha256=[a-f0-9]{64} fm=[a-f0-9]{64} -->/);
+  });
+
+  it('preserves a marker without recorded ownership whose metadata it cannot attribute', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const legacy = asLegacyMarker(
+      withEditedFrontMatter(
+        await readFile(target, 'utf8'),
+        LEGACY_SKILL_FRONTMATTER.replace('author: iris', 'author: someone-else'),
+      ),
+    );
+    await writeFile(target, legacy);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.conflicts.map((conflict) => conflict.path)).toContain(AGENT_SKILL_TARGETS[0]);
+    expect(await readFile(target, 'utf8')).toBe(legacy);
+  });
+
+  it('refreshes a generated command description alongside the skill', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const relativePath = '.claude/commands/iris/research.md';
+    const target = path.join(cwd, relativePath);
+    const current = await readFile(target, 'utf8');
+    const stale = withGeneratedFrontMatter(
+      current,
+      '---\nname: "Iris: research"\ndescription: "An older description"\n---\n',
+    );
+    await writeFile(target, stale);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.updated).toContain(relativePath);
+    expect(await readFile(target, 'utf8')).toBe(current);
+  });
+
+  it('converges after migrating every surface, reporting a second run unchanged', async () => {
+    const cwd = await tempProject();
+    const created = (await installAgentSkills(cwd)).created;
+    for (const relativePath of created) {
+      const target = path.join(cwd, relativePath);
+      await writeFile(target, asLegacyMarker(await readFile(target, 'utf8')));
+    }
+
+    const migration = await installAgentSkills(cwd);
+    expect(migration.conflicts).toEqual([]);
+    expect(migration.updated.sort()).toEqual([...created].sort());
+
+    const rerun = await installAgentSkills(cwd);
+    expect(rerun.conflicts).toEqual([]);
+    expect(rerun.updated).toEqual([]);
+    expect(rerun.unchanged.sort()).toEqual([...created].sort());
+  });
+});
+
 describe('generated agent command surfaces', () => {
   it('installs one command file per content action for Claude and Copilot', async () => {
     const cwd = await tempProject();
@@ -165,7 +324,7 @@ describe('generated agent command surfaces', () => {
       expect(existsSync(claude)).toBe(true);
       expect(existsSync(copilot)).toBe(true);
       const content = await readFile(claude, 'utf8');
-      expect(content).toContain('IRIS:MANAGED:START template=iris-command schema=1');
+      expect(content).toContain('IRIS:MANAGED:START template=iris-command schema=2');
       expect(content).toContain(`iris ${action} <id>`);
       expect(managedBody(content)).toBe(managedBody(await readFile(copilot, 'utf8')));
     }

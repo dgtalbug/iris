@@ -7,15 +7,15 @@ in the design doc instead.
 
 # Vision — Research-Report Design System · "Electric" v2.0
 
-> *Named for the violet android who sees systems with perfect clarity.*
+> _Named for the violet android who sees systems with perfect clarity._
 
 > **What this file is:** A self-contained design contract for generating standalone HTML
 > **research reports** about codebases: architecture research, code explainers, HLD/LLD docs,
 > refactor proposals, and solution designs.
 >
 > **How to use it:** Hand this entire file to any agent along with a query, e.g.:
-> *"Using the attached design system, produce an HTML research report on the retry pipeline
-> in packages/queue."* Every generated page shares identical tokens, class names, libraries,
+> _"Using the attached design system, produce an HTML research report on the retry pipeline
+> in packages/queue."_ Every generated page shares identical tokens, class names, libraries,
 > and structure — so a future redesign is a token-block swap, not a rewrite.
 
 ---
@@ -47,29 +47,30 @@ in the design doc instead.
 
 ```css
 /* ═══ vision-ds tokens · electric · v2.0 · DO NOT EDIT ═══ */
-:root, [data-mode="dark"] {
+:root,
+[data-mode='dark'] {
   /* surfaces */
   --background: oklch(0.15 0.02 285);
   --foreground: oklch(0.95 0.01 285);
-  --card:       oklch(0.19 0.025 285);
-  --card-2:     oklch(0.23 0.03 285);
-  --code-bg:    oklch(0.13 0.02 285);
-  --border:     oklch(0.30 0.03 285);
-  --muted:      oklch(0.65 0.02 285);
+  --card: oklch(0.19 0.025 285);
+  --card-2: oklch(0.23 0.03 285);
+  --code-bg: oklch(0.13 0.02 285);
+  --border: oklch(0.3 0.03 285);
+  --muted: oklch(0.65 0.02 285);
 
   /* brand + accents */
-  --primary:    oklch(0.65 0.25 293);  /* electric violet */
+  --primary: oklch(0.65 0.25 293); /* electric violet */
   --primary-fg: oklch(0.98 0.01 293);
-  --accent-1:   oklch(0.80 0.15 195);  /* cyan   */
-  --accent-2:   oklch(0.82 0.16 85);   /* amber  */
-  --accent-3:   oklch(0.85 0.20 130);  /* lime   */
-  --accent-4:   oklch(0.70 0.20 350);  /* pink   */
+  --accent-1: oklch(0.8 0.15 195); /* cyan   */
+  --accent-2: oklch(0.82 0.16 85); /* amber  */
+  --accent-3: oklch(0.85 0.2 130); /* lime   */
+  --accent-4: oklch(0.7 0.2 350); /* pink   */
 
   /* status */
   --success: oklch(0.75 0.17 155);
-  --warning: oklch(0.80 0.16 75);
-  --danger:  oklch(0.65 0.22 25);
-  --info:    var(--accent-1);
+  --warning: oklch(0.8 0.16 75);
+  --danger: oklch(0.65 0.22 25);
+  --info: var(--accent-1);
 
   /* effects */
   --glow: 0 0 24px oklch(0.65 0.25 293 / 0.25);
@@ -79,29 +80,29 @@ in the design doc instead.
   --radius: 12px;
   --radius-sm: 8px;
   --radius-pill: 999px;
-  --font-sans: ui-sans-serif, -apple-system, "SF Pro Text", "Segoe UI", Inter, Roboto, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-sans: ui-sans-serif, -apple-system, 'SF Pro Text', 'Segoe UI', Inter, Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 }
-[data-mode="light"] {
+[data-mode='light'] {
   --background: oklch(0.98 0.005 285);
-  --foreground: oklch(0.20 0.02 285);
-  --card:       oklch(1 0 0);
-  --card-2:     oklch(0.96 0.01 285);
-  --code-bg:    oklch(0.24 0.02 285);   /* code stays dark in light mode */
-  --border:     oklch(0.90 0.01 285);
-  --muted:      oklch(0.50 0.02 285);
+  --foreground: oklch(0.2 0.02 285);
+  --card: oklch(1 0 0);
+  --card-2: oklch(0.96 0.01 285);
+  --code-bg: oklch(0.24 0.02 285); /* code stays dark in light mode */
+  --border: oklch(0.9 0.01 285);
+  --muted: oklch(0.5 0.02 285);
 
-  --primary:    oklch(0.55 0.25 293);
+  --primary: oklch(0.55 0.25 293);
   --primary-fg: oklch(0.98 0.01 293);
-  --accent-1:   oklch(0.60 0.13 220);
-  --accent-2:   oklch(0.65 0.15 65);
-  --accent-3:   oklch(0.60 0.17 140);
-  --accent-4:   oklch(0.60 0.21 350);
+  --accent-1: oklch(0.6 0.13 220);
+  --accent-2: oklch(0.65 0.15 65);
+  --accent-3: oklch(0.6 0.17 140);
+  --accent-4: oklch(0.6 0.21 350);
 
   --success: oklch(0.55 0.15 155);
   --warning: oklch(0.65 0.15 70);
-  --danger:  oklch(0.55 0.21 25);
-  --info:    oklch(0.55 0.13 220);
+  --danger: oklch(0.55 0.21 25);
+  --info: oklch(0.55 0.13 220);
 
   --glow: 0 4px 20px oklch(0.55 0.25 293 / 0.12);
   --shadow-card: 0 1px 3px oklch(0 0 0 / 0.08);
@@ -115,266 +116,901 @@ in the design doc instead.
 
 ```css
 /* ═══ vision-ds components · v2.0 ═══ */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: var(--font-sans);
   background: var(--background);
   color: var(--foreground);
   line-height: 1.65;
   font-size: 15px;
-  transition: background 0.35s ease, color 0.35s ease;
+  transition:
+    background 0.35s ease,
+    color 0.35s ease;
 }
-code, pre, kbd, .mono { font-family: var(--font-mono); }
+code,
+pre,
+kbd,
+.mono {
+  font-family: var(--font-mono);
+}
 
 /* ── lucide icons ── */
-.lucide { width: 16px; height: 16px; stroke-width: 2; vertical-align: -3px; }
-.icon-lg .lucide, .lucide.lg { width: 22px; height: 22px; }
-.ic-primary { color: var(--primary); }
-.ic-1 { color: var(--accent-1); } .ic-2 { color: var(--accent-2); }
-.ic-3 { color: var(--accent-3); } .ic-4 { color: var(--accent-4); }
-.ic-success { color: var(--success); } .ic-warning { color: var(--warning); }
-.ic-danger { color: var(--danger); } .ic-muted { color: var(--muted); }
+.lucide {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+  vertical-align: -3px;
+}
+.icon-lg .lucide,
+.lucide.lg {
+  width: 22px;
+  height: 22px;
+}
+.ic-primary {
+  color: var(--primary);
+}
+.ic-1 {
+  color: var(--accent-1);
+}
+.ic-2 {
+  color: var(--accent-2);
+}
+.ic-3 {
+  color: var(--accent-3);
+}
+.ic-4 {
+  color: var(--accent-4);
+}
+.ic-success {
+  color: var(--success);
+}
+.ic-warning {
+  color: var(--warning);
+}
+.ic-danger {
+  color: var(--danger);
+}
+.ic-muted {
+  color: var(--muted);
+}
 
 /* ── layout shell ── */
 .topbar {
-  position: sticky; top: 0; z-index: 50;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
   padding: 14px 28px;
   background: color-mix(in oklch, var(--background) 82%, transparent);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
-.topbar .title { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
-.topbar .crumb { font-size: 12.5px; color: var(--muted); }
-.spacer { flex: 1; }
-.wrap { max-width: 1100px; margin: 0 auto; padding: 32px 28px 96px; }
-.wrap.wide { max-width: 1440px; }
+.topbar .title {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar .crumb {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.spacer {
+  flex: 1;
+}
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 28px 96px;
+}
+.wrap.wide {
+  max-width: 1440px;
+}
 
 /* two-column with sticky TOC — mandatory for reports with 4+ sections */
-.layout { display: grid; grid-template-columns: 230px 1fr; gap: 40px; align-items: start; }
-.toc { position: sticky; top: 72px; font-size: 13px; max-height: calc(100vh - 100px); overflow-y: auto; }
-.toc .toc-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; font-weight: 700; }
-.toc a { display: block; color: var(--muted); text-decoration: none; padding: 4px 10px; border-left: 2px solid var(--border); }
-.toc a:hover, .toc a.active { color: var(--primary); border-left-color: var(--primary); }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } }
+.layout {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.toc {
+  position: sticky;
+  top: 72px;
+  font-size: 13px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.toc .toc-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.toc a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-left: 2px solid var(--border);
+}
+.toc a:hover,
+.toc a.active {
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .toc {
+    display: none;
+  }
+}
 
 /* ── typography ── */
-h1.page { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px; }
-p.subtitle { color: var(--muted); font-size: 15.5px; margin-bottom: 12px; }
-.meta-row { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-bottom: 28px; align-items: center; }
-.meta-row span { display: inline-flex; align-items: center; gap: 5px; }
-h2.section {
-  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--muted); margin: 40px 0 16px;
-  display: flex; align-items: center; gap: 10px;
+h1.page {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 8px;
 }
-h2.section::after { content: ""; flex: 1; height: 1px; background: var(--border); }
-h3 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; margin: 22px 0 8px; }
-h4 { font-size: 14px; font-weight: 650; margin: 16px 0 6px; }
-p + p { margin-top: 10px; }
-a { color: var(--primary); text-decoration-color: color-mix(in oklch, var(--primary) 40%, transparent); }
-strong { font-weight: 650; }
-ul, ol { padding-left: 22px; margin: 8px 0; }
-li { margin: 4px 0; }
-hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
-p code, li code, td code, summary code {
-  background: var(--card-2); padding: 2px 7px; border-radius: 6px;
-  font-size: 0.86em; color: var(--accent-1);
+p.subtitle {
+  color: var(--muted);
+  font-size: 15.5px;
+  margin-bottom: 12px;
+}
+.meta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 28px;
+  align-items: center;
+}
+.meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+h2.section {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+h2.section::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+h3 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 22px 0 8px;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 650;
+  margin: 16px 0 6px;
+}
+p + p {
+  margin-top: 10px;
+}
+a {
+  color: var(--primary);
+  text-decoration-color: color-mix(in oklch, var(--primary) 40%, transparent);
+}
+strong {
+  font-weight: 650;
+}
+ul,
+ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+li {
+  margin: 4px 0;
+}
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+p code,
+li code,
+td code,
+summary code {
+  background: var(--card-2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.86em;
+  color: var(--accent-1);
 }
 
 /* ── cards & grids ── */
 .card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-card);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow-card);
 }
-.card.hero { border-color: color-mix(in oklch, var(--primary) 40%, var(--border)); box-shadow: var(--glow); }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-@media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .grid-4 { grid-template-columns: 1fr 1fr; } }
+.card.hero {
+  border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+  box-shadow: var(--glow);
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
 /* stat / metric card */
-.stat .value { font-size: 26px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
-.stat .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-.stat .delta { font-size: 12px; font-family: var(--font-mono); }
-.stat .delta.up { color: var(--success); } .stat .delta.down { color: var(--danger); }
+.stat .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+.stat .label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat .delta {
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+.stat .delta.up {
+  color: var(--success);
+}
+.stat .delta.down {
+  color: var(--danger);
+}
 
 /* ── badges ── */
 .badge {
-  display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 650;
-  padding: 3px 10px; border-radius: var(--radius-pill); letter-spacing: 0.02em; vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 650;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.02em;
+  vertical-align: middle;
 }
-.b-primary { background: color-mix(in oklch, var(--primary) 18%, transparent);  color: var(--primary);  border: 1px solid color-mix(in oklch, var(--primary) 40%, transparent); }
-.b-1 { background: color-mix(in oklch, var(--accent-1) 18%, transparent); color: var(--accent-1); border: 1px solid color-mix(in oklch, var(--accent-1) 40%, transparent); }
-.b-2 { background: color-mix(in oklch, var(--accent-2) 18%, transparent); color: var(--accent-2); border: 1px solid color-mix(in oklch, var(--accent-2) 40%, transparent); }
-.b-3 { background: color-mix(in oklch, var(--accent-3) 18%, transparent); color: var(--accent-3); border: 1px solid color-mix(in oklch, var(--accent-3) 40%, transparent); }
-.b-4 { background: color-mix(in oklch, var(--accent-4) 18%, transparent); color: var(--accent-4); border: 1px solid color-mix(in oklch, var(--accent-4) 40%, transparent); }
-.b-success { background: color-mix(in oklch, var(--success) 18%, transparent); color: var(--success); border: 1px solid color-mix(in oklch, var(--success) 40%, transparent); }
-.b-warning { background: color-mix(in oklch, var(--warning) 18%, transparent); color: var(--warning); border: 1px solid color-mix(in oklch, var(--warning) 40%, transparent); }
-.b-danger  { background: color-mix(in oklch, var(--danger) 18%, transparent);  color: var(--danger);  border: 1px solid color-mix(in oklch, var(--danger) 40%, transparent); }
+.b-primary {
+  background: color-mix(in oklch, var(--primary) 18%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in oklch, var(--primary) 40%, transparent);
+}
+.b-1 {
+  background: color-mix(in oklch, var(--accent-1) 18%, transparent);
+  color: var(--accent-1);
+  border: 1px solid color-mix(in oklch, var(--accent-1) 40%, transparent);
+}
+.b-2 {
+  background: color-mix(in oklch, var(--accent-2) 18%, transparent);
+  color: var(--accent-2);
+  border: 1px solid color-mix(in oklch, var(--accent-2) 40%, transparent);
+}
+.b-3 {
+  background: color-mix(in oklch, var(--accent-3) 18%, transparent);
+  color: var(--accent-3);
+  border: 1px solid color-mix(in oklch, var(--accent-3) 40%, transparent);
+}
+.b-4 {
+  background: color-mix(in oklch, var(--accent-4) 18%, transparent);
+  color: var(--accent-4);
+  border: 1px solid color-mix(in oklch, var(--accent-4) 40%, transparent);
+}
+.b-success {
+  background: color-mix(in oklch, var(--success) 18%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in oklch, var(--success) 40%, transparent);
+}
+.b-warning {
+  background: color-mix(in oklch, var(--warning) 18%, transparent);
+  color: var(--warning);
+  border: 1px solid color-mix(in oklch, var(--warning) 40%, transparent);
+}
+.b-danger {
+  background: color-mix(in oklch, var(--danger) 18%, transparent);
+  color: var(--danger);
+  border: 1px solid color-mix(in oklch, var(--danger) 40%, transparent);
+}
 
 /* confidence chips — use on every research finding */
-.confidence { font-family: var(--font-mono); font-size: 10.5px; }
+.confidence {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
 
 /* ── callouts ── */
 .callout {
-  border-radius: var(--radius); padding: 13px 16px; font-size: 13.5px; margin: 12px 0;
-  border: 1px solid; display: flex; gap: 10px; align-items: flex-start;
+  border-radius: var(--radius);
+  padding: 13px 16px;
+  font-size: 13.5px;
+  margin: 12px 0;
+  border: 1px solid;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
-.callout .lucide { flex-shrink: 0; margin-top: 2px; }
-.callout strong.label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
-.c-info    { background: color-mix(in oklch, var(--info) 10%, transparent);    border-color: color-mix(in oklch, var(--info) 35%, transparent); }
-.c-info strong.label, .c-info > .lucide { color: var(--info); }
-.c-warn    { background: color-mix(in oklch, var(--warning) 10%, transparent); border-color: color-mix(in oklch, var(--warning) 35%, transparent); }
-.c-warn strong.label, .c-warn > .lucide { color: var(--warning); }
-.c-success { background: color-mix(in oklch, var(--success) 10%, transparent); border-color: color-mix(in oklch, var(--success) 35%, transparent); }
-.c-success strong.label, .c-success > .lucide { color: var(--success); }
-.c-danger  { background: color-mix(in oklch, var(--danger) 10%, transparent);  border-color: color-mix(in oklch, var(--danger) 35%, transparent); }
-.c-danger strong.label, .c-danger > .lucide { color: var(--danger); }
+.callout .lucide {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.callout strong.label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+.c-info {
+  background: color-mix(in oklch, var(--info) 10%, transparent);
+  border-color: color-mix(in oklch, var(--info) 35%, transparent);
+}
+.c-info strong.label,
+.c-info > .lucide {
+  color: var(--info);
+}
+.c-warn {
+  background: color-mix(in oklch, var(--warning) 10%, transparent);
+  border-color: color-mix(in oklch, var(--warning) 35%, transparent);
+}
+.c-warn strong.label,
+.c-warn > .lucide {
+  color: var(--warning);
+}
+.c-success {
+  background: color-mix(in oklch, var(--success) 10%, transparent);
+  border-color: color-mix(in oklch, var(--success) 35%, transparent);
+}
+.c-success strong.label,
+.c-success > .lucide {
+  color: var(--success);
+}
+.c-danger {
+  background: color-mix(in oklch, var(--danger) 10%, transparent);
+  border-color: color-mix(in oklch, var(--danger) 35%, transparent);
+}
+.c-danger strong.label,
+.c-danger > .lucide {
+  color: var(--danger);
+}
 
 /* ── tabs ── */
-.tabs { margin: 14px 0; }
-.tabs .tablist { display: flex; gap: 4px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-.tabs .tab {
-  all: unset; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
-  padding: 8px 16px; color: var(--muted); border-bottom: 2px solid transparent;
-  margin-bottom: -1px; display: inline-flex; align-items: center; gap: 6px;
+.tabs {
+  margin: 14px 0;
 }
-.tabs .tab:hover { color: var(--foreground); }
-.tabs .tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); }
-.tabs .tabpanel { padding: 16px 2px; }
-.tabs .tabpanel[hidden] { display: none; }
+.tabs .tablist {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.tabs .tab {
+  all: unset;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tabs .tab:hover {
+  color: var(--foreground);
+}
+.tabs .tab[aria-selected='true'] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tabs .tabpanel {
+  padding: 16px 2px;
+}
+.tabs .tabpanel[hidden] {
+  display: none;
+}
 
 /* ── code blocks ── */
 pre.code {
-  background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 18px; font-size: 12.5px; line-height: 1.7; overflow-x: auto;
-  color: oklch(0.92 0.01 260); margin: 12px 0;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  overflow-x: auto;
+  color: oklch(0.92 0.01 260);
+  margin: 12px 0;
 }
 pre.code .filename {
-  display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted);
-  margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
 }
-.tok-kw  { color: var(--accent-4); font-weight: 600; }
-.tok-fn  { color: var(--accent-1); }
-.tok-str { color: var(--accent-3); }
-.tok-num { color: var(--accent-2); }
-.tok-cm  { color: oklch(0.55 0.02 285); font-style: italic; }
-.tok-hl  { background: color-mix(in oklch, var(--primary) 20%, transparent); border-radius: 3px; padding: 1px 2px; }
+.tok-kw {
+  color: var(--accent-4);
+  font-weight: 600;
+}
+.tok-fn {
+  color: var(--accent-1);
+}
+.tok-str {
+  color: var(--accent-3);
+}
+.tok-num {
+  color: var(--accent-2);
+}
+.tok-cm {
+  color: oklch(0.55 0.02 285);
+  font-style: italic;
+}
+.tok-hl {
+  background: color-mix(in oklch, var(--primary) 20%, transparent);
+  border-radius: 3px;
+  padding: 1px 2px;
+}
 
 /* ── file tree ── */
-.filetree { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.9; }
-.filetree .dir { color: var(--accent-1); font-weight: 600; }
-.filetree .file { color: var(--foreground); }
-.filetree .note { color: var(--muted); font-size: 11.5px; padding-left: 12px; font-style: italic; }
-.filetree .hot { color: var(--primary); font-weight: 600; }  /* files the report focuses on */
+.filetree {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.9;
+}
+.filetree .dir {
+  color: var(--accent-1);
+  font-weight: 600;
+}
+.filetree .file {
+  color: var(--foreground);
+}
+.filetree .note {
+  color: var(--muted);
+  font-size: 11.5px;
+  padding-left: 12px;
+  font-style: italic;
+}
+.filetree .hot {
+  color: var(--primary);
+  font-weight: 600;
+} /* files the report focuses on */
 
 /* ── tables ── */
-table.ds { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
-table.ds th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); }
-table.ds td { padding: 9px 12px; border-bottom: 1px solid color-mix(in oklch, var(--border) 55%, transparent); }
+table.ds {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+table.ds th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+table.ds td {
+  padding: 9px 12px;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
+}
 
 /* ── static flow (simple pipelines w/o mermaid) ── */
-.flow { display: flex; align-items: center; flex-wrap: wrap; gap: 0; padding: 8px 0; }
-.node {
-  padding: 10px 18px; border-radius: 10px; font-size: 12.5px; font-weight: 600;
-  border: 1.5px solid; background: var(--card-2); white-space: nowrap; margin: 6px 0;
-  display: inline-flex; align-items: center; gap: 7px;
+.flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 8px 0;
 }
-.n-primary { border-color: var(--primary);  color: var(--primary); box-shadow: 0 0 14px color-mix(in oklch, var(--primary) 25%, transparent); }
-.n-1 { border-color: var(--accent-1); color: var(--accent-1); }
-.n-2 { border-color: var(--accent-2); color: var(--accent-2); }
-.n-3 { border-color: var(--accent-3); color: var(--accent-3); }
-.n-4 { border-color: var(--accent-4); color: var(--accent-4); }
-.n-danger { border-color: var(--danger); color: var(--danger); }
-.edge { width: 42px; height: 1.5px; background: var(--border); position: relative; flex-shrink: 0; }
+.node {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1.5px solid;
+  background: var(--card-2);
+  white-space: nowrap;
+  margin: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.n-primary {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 14px color-mix(in oklch, var(--primary) 25%, transparent);
+}
+.n-1 {
+  border-color: var(--accent-1);
+  color: var(--accent-1);
+}
+.n-2 {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+.n-3 {
+  border-color: var(--accent-3);
+  color: var(--accent-3);
+}
+.n-4 {
+  border-color: var(--accent-4);
+  color: var(--accent-4);
+}
+.n-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.edge {
+  width: 42px;
+  height: 1.5px;
+  background: var(--border);
+  position: relative;
+  flex-shrink: 0;
+}
 .edge::after {
-  content: ""; position: absolute; right: 0; top: -3.25px;
-  border-left: 7px solid var(--muted); border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -3.25px;
+  border-left: 7px solid var(--muted);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
 }
 
 /* ── numbered steps (call paths, LLD sequences) ── */
-.steps { counter-reset: step; list-style: none; padding: 0; }
-.steps li { counter-increment: step; position: relative; padding: 0 0 18px 44px; }
-.steps li::before {
-  content: counter(step); position: absolute; left: 0; top: 0;
-  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-  font-size: 12.5px; font-weight: 700; font-family: var(--font-mono);
-  background: color-mix(in oklch, var(--primary) 18%, transparent);
-  color: var(--primary); border: 1px solid color-mix(in oklch, var(--primary) 40%, transparent);
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
 }
-.steps li::after { content: ""; position: absolute; left: 13.5px; top: 30px; bottom: 2px; width: 1.5px; background: var(--border); }
-.steps li:last-child::after { display: none; }
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 0 0 18px 44px;
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  background: color-mix(in oklch, var(--primary) 18%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in oklch, var(--primary) 40%, transparent);
+}
+.steps li::after {
+  content: '';
+  position: absolute;
+  left: 13.5px;
+  top: 30px;
+  bottom: 2px;
+  width: 1.5px;
+  background: var(--border);
+}
+.steps li:last-child::after {
+  display: none;
+}
 
 /* ── timeline (research log, incident history, migration phases) ── */
-.timeline { list-style: none; padding: 0; }
-.timeline li { position: relative; padding: 0 0 20px 28px; }
-.timeline li::before {
-  content: ""; position: absolute; left: 0; top: 6px; width: 10px; height: 10px;
-  border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px color-mix(in oklch, var(--primary) 50%, transparent);
+.timeline {
+  list-style: none;
+  padding: 0;
 }
-.timeline li.past::before { background: var(--muted); box-shadow: none; }
-.timeline li::after { content: ""; position: absolute; left: 4.25px; top: 20px; bottom: 0; width: 1.5px; background: var(--border); }
-.timeline li:last-child::after { display: none; }
-.timeline .when { font-size: 11.5px; font-family: var(--font-mono); color: var(--muted); }
-.timeline .what { font-size: 13.5px; }
+.timeline li {
+  position: relative;
+  padding: 0 0 20px 28px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--primary) 50%, transparent);
+}
+.timeline li.past::before {
+  background: var(--muted);
+  box-shadow: none;
+}
+.timeline li::after {
+  content: '';
+  position: absolute;
+  left: 4.25px;
+  top: 20px;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--border);
+}
+.timeline li:last-child::after {
+  display: none;
+}
+.timeline .when {
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+.timeline .what {
+  font-size: 13.5px;
+}
 
 /* ── meters (coverage, risk, effort) ── */
-.meter { margin: 8px 0; }
-.meter .meter-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-.meter .meter-head .val { font-family: var(--font-mono); color: var(--muted); }
-.meter .track { height: 8px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--border); overflow: hidden; }
-.meter .fill { height: 100%; border-radius: 999px; background: var(--primary); }
-.meter.m-success .fill { background: var(--success); }
-.meter.m-warning .fill { background: var(--warning); }
-.meter.m-danger  .fill { background: var(--danger); }
+.meter {
+  margin: 8px 0;
+}
+.meter .meter-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.meter .meter-head .val {
+  font-family: var(--font-mono);
+  color: var(--muted);
+}
+.meter .track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.meter .fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+}
+.meter.m-success .fill {
+  background: var(--success);
+}
+.meter.m-warning .fill {
+  background: var(--warning);
+}
+.meter.m-danger .fill {
+  background: var(--danger);
+}
 
 /* ── evidence block (findings must cite code) ── */
 .evidence {
-  border-left: 3px solid var(--accent-1); background: color-mix(in oklch, var(--accent-1) 6%, transparent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 14px; margin: 10px 0; font-size: 13px;
+  border-left: 3px solid var(--accent-1);
+  background: color-mix(in oklch, var(--accent-1) 6%, transparent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 13px;
 }
-.evidence .src { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent-1); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.evidence .src {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--accent-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
 
 /* ── footnotes / citations ── */
-sup.fn a { font-family: var(--font-mono); font-size: 10.5px; text-decoration: none; color: var(--accent-1); }
-.footnotes { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px; padding-top: 16px; }
-.footnotes li { margin: 6px 0; }
-.footnotes code { font-size: 11.5px; }
+sup.fn a {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-decoration: none;
+  color: var(--accent-1);
+}
+.footnotes {
+  font-size: 12.5px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+  padding-top: 16px;
+}
+.footnotes li {
+  margin: 6px 0;
+}
+.footnotes code {
+  font-size: 11.5px;
+}
 
 /* ── collapsible ── */
-details.ds { border: 1px solid var(--border); border-radius: var(--radius); margin: 10px 0; background: var(--card); }
-details.ds summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
-details.ds[open] summary { border-bottom: 1px solid var(--border); }
-details.ds .body { padding: 14px 16px; }
+details.ds {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 10px 0;
+  background: var(--card);
+}
+details.ds summary {
+  cursor: pointer;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+details.ds[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+details.ds .body {
+  padding: 14px 16px;
+}
 
 /* ── buttons, kbd, toggle ── */
-.btn { all: unset; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: 10px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px; }
-.btn-primary { background: var(--primary); color: var(--primary-fg); }
-.btn-primary:hover { box-shadow: var(--glow); transform: translateY(-1px); }
-.btn-outline { border: 1px solid var(--border); color: var(--foreground); }
-.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-.btn-ghost { color: var(--muted); }
-.btn-ghost:hover { color: var(--foreground); background: var(--card-2); }
-kbd { font-size: 11px; padding: 2px 7px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; background: var(--card-2); }
-.mode-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-.mode-toggle button { all: unset; cursor: pointer; padding: 6px 14px; font-size: 12.5px; font-weight: 550; color: var(--muted); font-family: inherit; }
-.mode-toggle button.active { background: var(--primary); color: var(--primary-fg); }
+.btn {
+  all: unset;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.btn-primary:hover {
+  box-shadow: var(--glow);
+  transform: translateY(-1px);
+}
+.btn-outline {
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.btn-ghost {
+  color: var(--muted);
+}
+.btn-ghost:hover {
+  color: var(--foreground);
+  background: var(--card-2);
+}
+kbd {
+  font-size: 11px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--card-2);
+}
+.mode-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.mode-toggle button {
+  all: unset;
+  cursor: pointer;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--muted);
+  font-family: inherit;
+}
+.mode-toggle button.active {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
 
 /* ── diagram & chart containers ── */
 .diagram {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 20px; margin: 14px 0; overflow-x: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 14px 0;
+  overflow-x: auto;
 }
-.diagram .caption { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
-.chart-box { position: relative; height: 300px; }
-.chart-box.tall { height: 420px; }
+.diagram .caption {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+  text-align: center;
+}
+.chart-box {
+  position: relative;
+  height: 300px;
+}
+.chart-box.tall {
+  height: 420px;
+}
 
 @media print {
-  :root, [data-mode="dark"] { --background: white; --foreground: black; --card: white; --card-2: oklch(0.96 0 0); --border: oklch(0.85 0 0); --muted: oklch(0.4 0 0); }
-  .topbar, .mode-toggle, .toc { display: none; }
-  .layout { grid-template-columns: 1fr; }
+  :root,
+  [data-mode='dark'] {
+    --background: white;
+    --foreground: black;
+    --card: white;
+    --card-2: oklch(0.96 0 0);
+    --border: oklch(0.85 0 0);
+    --muted: oklch(0.4 0 0);
+  }
+  .topbar,
+  .mode-toggle,
+  .toc {
+    display: none;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }
 /* ═══ end vision-ds components ═══ */
 ```
@@ -386,68 +1022,73 @@ kbd { font-size: 11px; padding: 2px 7px; border: 1px solid var(--border); border
 ```html
 <!DOCTYPE html>
 <html lang="en" data-mode="dark">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{{Report Title}} · Vision Report</title>
-<style data-ds="vision-electric" data-ds-version="2">
-  /* §2 tokens + §3 components, verbatim */
-</style>
-<style data-page>/* page-specific, var(--*) only */</style>
-</head>
-<body>
-<header class="topbar">
-  <span class="title"><i data-lucide="radar" class="ic-primary"></i> {{Report Title}}</span>
-  <span class="crumb">{{doc-type}} · {{date}} · {{repo/service}}</span>
-  <div class="spacer"></div>
-  <div class="mode-toggle">
-    <button id="btn-dark" class="active">● Dark</button>
-    <button id="btn-light">○ Light</button>
-  </div>
-</header>
-
-<main class="wrap wide">
-  <div class="layout">
-    <nav class="toc">
-      <div class="toc-title">Contents</div>
-      <a href="#tldr">TL;DR</a>
-      <!-- one <a> per h2.section id -->
-    </nav>
-    <div>
-      <h1 class="page">{{Title}}</h1>
-      <p class="subtitle">{{One sentence: what was researched and what the reader gets.}}</p>
-      <div class="meta-row">
-        <span><i data-lucide="git-branch"></i> {{branch/commit}}</span>
-        <span><i data-lucide="calendar"></i> {{date}}</span>
-        <span><i data-lucide="user"></i> {{author/agent}}</span>
-        <span class="badge b-primary">{{doc-type}}</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{Report Title}} · Vision Report</title>
+    <style data-ds="vision-electric" data-ds-version="2">
+      /* §2 tokens + §3 components, verbatim */
+    </style>
+    <style data-page>
+      /* page-specific, var(--*) only */
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <span class="title"><i data-lucide="radar" class="ic-primary"></i> {{Report Title}}</span>
+      <span class="crumb">{{doc-type}} · {{date}} · {{repo/service}}</span>
+      <div class="spacer"></div>
+      <div class="mode-toggle">
+        <button id="btn-dark" class="active">● Dark</button>
+        <button id="btn-light">○ Light</button>
       </div>
-      <!-- §6 blueprint sections -->
-    </div>
-  </div>
-</main>
+    </header>
 
-<!-- §7 library includes (only those used), then: -->
-<script>
-  lucide.createIcons();
-  document.getElementById("btn-dark").onclick  = () => setMode("dark");
-  document.getElementById("btn-light").onclick = () => setMode("light");
-  function setMode(m) {
-    document.documentElement.dataset.mode = m;
-    document.getElementById("btn-dark").classList.toggle("active", m === "dark");
-    document.getElementById("btn-light").classList.toggle("active", m === "light");
-    document.dispatchEvent(new CustomEvent("vision:mode", { detail: m })); // charts/diagrams re-theme on this
-  }
-  // tabs (generic, ARIA-correct)
-  document.querySelectorAll(".tabs").forEach(t => {
-    const tabs = t.querySelectorAll(".tab"), panels = t.querySelectorAll(".tabpanel");
-    tabs.forEach((tab, i) => tab.addEventListener("click", () => {
-      tabs.forEach((x, j) => x.setAttribute("aria-selected", i === j));
-      panels.forEach((p, j) => p.hidden = i !== j);
-    }));
-  });
-</script>
-</body>
+    <main class="wrap wide">
+      <div class="layout">
+        <nav class="toc">
+          <div class="toc-title">Contents</div>
+          <a href="#tldr">TL;DR</a>
+          <!-- one <a> per h2.section id -->
+        </nav>
+        <div>
+          <h1 class="page">{{Title}}</h1>
+          <p class="subtitle">{{One sentence: what was researched and what the reader gets.}}</p>
+          <div class="meta-row">
+            <span><i data-lucide="git-branch"></i> {{branch/commit}}</span>
+            <span><i data-lucide="calendar"></i> {{date}}</span>
+            <span><i data-lucide="user"></i> {{author/agent}}</span>
+            <span class="badge b-primary">{{doc-type}}</span>
+          </div>
+          <!-- §6 blueprint sections -->
+        </div>
+      </div>
+    </main>
+
+    <!-- §7 library includes (only those used), then: -->
+    <script>
+      lucide.createIcons();
+      document.getElementById('btn-dark').onclick = () => setMode('dark');
+      document.getElementById('btn-light').onclick = () => setMode('light');
+      function setMode(m) {
+        document.documentElement.dataset.mode = m;
+        document.getElementById('btn-dark').classList.toggle('active', m === 'dark');
+        document.getElementById('btn-light').classList.toggle('active', m === 'light');
+        document.dispatchEvent(new CustomEvent('vision:mode', { detail: m })); // charts/diagrams re-theme on this
+      }
+      // tabs (generic, ARIA-correct)
+      document.querySelectorAll('.tabs').forEach((t) => {
+        const tabs = t.querySelectorAll('.tab'),
+          panels = t.querySelectorAll('.tabpanel');
+        tabs.forEach((tab, i) =>
+          tab.addEventListener('click', () => {
+            tabs.forEach((x, j) => x.setAttribute('aria-selected', i === j));
+            panels.forEach((p, j) => (p.hidden = i !== j));
+          }),
+        );
+      });
+    </script>
+  </body>
 </html>
 ```
 
@@ -455,17 +1096,17 @@ kbd { font-size: 11px; padding: 2px 7px; border: 1px solid var(--border); border
 
 ## 5. Semantic color mapping (badges, nodes, mermaid, React Flow, chart series, icons)
 
-| Token | Meaning — always, everywhere | Lucide icons to pair |
-|---|---|---|
-| `--primary` (violet) | The subject of the report: focus component, "you are here" | `radar`, `crosshair`, `zap` |
-| `--accent-1` (cyan) | Services, APIs, functions, internal compute | `server`, `cpu`, `function-square`, `globe` |
-| `--accent-2` (amber) | Data stores, caches, state, persistence | `database`, `hard-drive`, `archive` |
-| `--accent-3` (lime) | Async: queues, events, streams; happy paths | `send`, `radio-tower`, `arrow-right-left` |
-| `--accent-4` (pink) | External/third-party systems, users, vendors | `users`, `building-2`, `plug` |
-| `--danger` (red) | Error paths, failure modes, deprecated code | `alert-octagon`, `bug`, `skull` |
-| `--warning` | Caution, tech debt, race conditions | `alert-triangle`, `construction` |
-| `--success` | Verified findings, accepted decisions, passing states | `check-circle-2`, `shield-check` |
-| `--muted` | Secondary detail, disabled, legacy | `minus-circle`, `history` |
+| Token                | Meaning — always, everywhere                               | Lucide icons to pair                        |
+| -------------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `--primary` (violet) | The subject of the report: focus component, "you are here" | `radar`, `crosshair`, `zap`                 |
+| `--accent-1` (cyan)  | Services, APIs, functions, internal compute                | `server`, `cpu`, `function-square`, `globe` |
+| `--accent-2` (amber) | Data stores, caches, state, persistence                    | `database`, `hard-drive`, `archive`         |
+| `--accent-3` (lime)  | Async: queues, events, streams; happy paths                | `send`, `radio-tower`, `arrow-right-left`   |
+| `--accent-4` (pink)  | External/third-party systems, users, vendors               | `users`, `building-2`, `plug`               |
+| `--danger` (red)     | Error paths, failure modes, deprecated code                | `alert-octagon`, `bug`, `skull`             |
+| `--warning`          | Caution, tech debt, race conditions                        | `alert-triangle`, `construction`            |
+| `--success`          | Verified findings, accepted decisions, passing states      | `check-circle-2`, `shield-check`            |
+| `--muted`            | Secondary detail, disabled, legacy                         | `minus-circle`, `history`                   |
 
 Chart series order is fixed: series 1 = `--primary`, 2 = `--accent-1`, 3 = `--accent-2`,
 4 = `--accent-3`, 5 = `--accent-4`. Never repurpose. A 6th diagram category uses `--muted`
@@ -505,12 +1146,12 @@ Each is an `h2.section` with an `id`, mirrored in the TOC.
 
 ## 7. Pinned library manifest (the ONLY external deps, verified 2026-08)
 
-| Library | Version | Use for | Include |
-|---|---|---|---|
-| Lucide | 0.469.0 | All icons (no emoji, no other packs) | `<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>` |
-| Mermaid | 11 | Flowcharts, sequence, state, ER diagrams | `import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"` |
-| Chart.js | 4.4.7 | Bar/line/doughnut/radar metrics | `<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>` |
-| React + React Flow | 18 / @xyflow/react 12 | Interactive system maps (10+ nodes) | esm.sh imports, §9 |
+| Library            | Version               | Use for                                  | Include                                                                                  |
+| ------------------ | --------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Lucide             | 0.469.0               | All icons (no emoji, no other packs)     | `<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>`        |
+| Mermaid            | 11                    | Flowcharts, sequence, state, ER diagrams | `import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"` |
+| Chart.js           | 4.4.7                 | Bar/line/doughnut/radar metrics          | `<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>`  |
+| React + React Flow | 18 / @xyflow/react 12 | Interactive system maps (10+ nodes)      | esm.sh imports, §9                                                                       |
 
 Rationale (evaluated alternatives): Chart.js over ECharts/D3 — smaller, one UMD file,
 trivially token-themeable; D3 invites bespoke one-off visuals which breaks consistency.
@@ -529,36 +1170,39 @@ call at the end of `<body>`. Icons inherit semantic color via `.ic-*` classes on
 
 ```html
 <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-const srcs = new Map();
-document.querySelectorAll(".mermaid").forEach((el, i) => srcs.set(el, el.textContent));
-async function render() {
-  const dark = document.documentElement.dataset.mode !== "light";
-  mermaid.initialize({
-    startOnLoad: false, theme: "base",
-    themeVariables: {
-      darkMode: dark, background: "transparent",
-      fontFamily: "ui-monospace, SF Mono, Menlo, monospace", fontSize: "13px",
-      primaryColor: dark ? "#2a2438" : "#f1edfb",
-      primaryTextColor: dark ? "#efeef5" : "#28243a",
-      primaryBorderColor: "#8b5cf6",
-      lineColor: dark ? "#5b5570" : "#a8a3bd",
-      secondaryColor: dark ? "#173b47" : "#e3f4fa",
-      tertiaryColor: dark ? "#3d3117" : "#fbf3dc",
-      noteBkgColor: dark ? "#3d3117" : "#fbf3dc",
-      noteTextColor: dark ? "#efeef5" : "#28243a",
-      actorBorder: "#8b5cf6",
-      signalColor: dark ? "#9b96ad" : "#6b6683"
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  const srcs = new Map();
+  document.querySelectorAll('.mermaid').forEach((el, i) => srcs.set(el, el.textContent));
+  async function render() {
+    const dark = document.documentElement.dataset.mode !== 'light';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        darkMode: dark,
+        background: 'transparent',
+        fontFamily: 'ui-monospace, SF Mono, Menlo, monospace',
+        fontSize: '13px',
+        primaryColor: dark ? '#2a2438' : '#f1edfb',
+        primaryTextColor: dark ? '#efeef5' : '#28243a',
+        primaryBorderColor: '#8b5cf6',
+        lineColor: dark ? '#5b5570' : '#a8a3bd',
+        secondaryColor: dark ? '#173b47' : '#e3f4fa',
+        tertiaryColor: dark ? '#3d3117' : '#fbf3dc',
+        noteBkgColor: dark ? '#3d3117' : '#fbf3dc',
+        noteTextColor: dark ? '#efeef5' : '#28243a',
+        actorBorder: '#8b5cf6',
+        signalColor: dark ? '#9b96ad' : '#6b6683',
+      },
+    });
+    let i = 0;
+    for (const [el, src] of srcs) {
+      const { svg } = await mermaid.render('mmd' + i++ + Date.now(), src);
+      el.innerHTML = svg;
     }
-  });
-  let i = 0;
-  for (const [el, src] of srcs) {
-    const { svg } = await mermaid.render("mmd" + (i++) + Date.now(), src);
-    el.innerHTML = svg;
   }
-}
-render();
-document.addEventListener("vision:mode", render);
+  render();
+  document.addEventListener('vision:mode', render);
 </script>
 ```
 
@@ -573,8 +1217,8 @@ classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
 classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
 ```
 
-*These hexes are the only permitted color literals in a report — sRGB fallbacks of the §2
-tokens, needed because mermaid can't read CSS variables. Keep in sync with §2.*
+_These hexes are the only permitted color literals in a report — sRGB fallbacks of the §2
+tokens, needed because mermaid can't read CSS variables. Keep in sync with §2._
 
 Markup: `<div class="diagram"><pre class="mermaid">…</pre><div class="caption">Fig 1 — …</div></div>`
 
@@ -591,27 +1235,43 @@ Use only when interactivity earns it (pan/zoom, 10+ nodes, grouping); otherwise 
 <div id="rf-root" class="diagram" style="height: 560px; padding: 0;"></div>
 <link rel="stylesheet" href="https://esm.sh/@xyflow/react@12/dist/style.css" />
 <script type="module">
-import React from "https://esm.sh/react@18";
-import { createRoot } from "https://esm.sh/react-dom@18/client";
-import { ReactFlow, Background, Controls, MiniMap } from "https://esm.sh/@xyflow/react@12?deps=react@18,react-dom@18";
+  import React from 'https://esm.sh/react@18';
+  import { createRoot } from 'https://esm.sh/react-dom@18/client';
+  import {
+    ReactFlow,
+    Background,
+    Controls,
+    MiniMap,
+  } from 'https://esm.sh/@xyflow/react@12?deps=react@18,react-dom@18';
 
-const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const nodeStyle = (accent) => ({
-  background: css("--card-2"), color: css(accent),
-  border: `1.5px solid ${css(accent)}`, borderRadius: 10,
-  fontSize: 12.5, fontWeight: 600, fontFamily: css("--font-mono"), padding: "10px 18px",
-});
-// nodes: pick accent per §5, e.g. { id: "orders", data: { label: "Order Service" }, style: nodeStyle("--accent-1"), position: {x, y} }
-// edges: { style: { stroke: css("--border") }, animated: true }  // animated ONLY for async (lime) paths
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const nodeStyle = (accent) => ({
+    background: css('--card-2'),
+    color: css(accent),
+    border: `1.5px solid ${css(accent)}`,
+    borderRadius: 10,
+    fontSize: 12.5,
+    fontWeight: 600,
+    fontFamily: css('--font-mono'),
+    padding: '10px 18px',
+  });
+  // nodes: pick accent per §5, e.g. { id: "orders", data: { label: "Order Service" }, style: nodeStyle("--accent-1"), position: {x, y} }
+  // edges: { style: { stroke: css("--border") }, animated: true }  // animated ONLY for async (lime) paths
 
-const root = createRoot(document.getElementById("rf-root"));
-function draw() {
-  root.render(React.createElement(ReactFlow, { nodes, edges, fitView: true, colorMode: document.documentElement.dataset.mode },
-    React.createElement(Background, { gap: 24, color: css("--border") }),
-    React.createElement(Controls), React.createElement(MiniMap, { pannable: true })));
-}
-draw();
-document.addEventListener("vision:mode", draw);
+  const root = createRoot(document.getElementById('rf-root'));
+  function draw() {
+    root.render(
+      React.createElement(
+        ReactFlow,
+        { nodes, edges, fitView: true, colorMode: document.documentElement.dataset.mode },
+        React.createElement(Background, { gap: 24, color: css('--border') }),
+        React.createElement(Controls),
+        React.createElement(MiniMap, { pannable: true }),
+      ),
+    );
+  }
+  draw();
+  document.addEventListener('vision:mode', draw);
 </script>
 ```
 
@@ -624,30 +1284,35 @@ One global theme block, then per-chart configs. Series colors strictly follow §
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js"></script>
 <script>
-const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const SERIES = () => ["--primary", "--accent-1", "--accent-2", "--accent-3", "--accent-4"].map(css);
-function themeCharts() {
-  Chart.defaults.color = css("--muted");
-  Chart.defaults.borderColor = css("--border");
-  Chart.defaults.font.family = css("--font-sans");
-  Chart.defaults.font.size = 12;
-  Chart.defaults.plugins.legend.labels.boxWidth = 10;
-  Chart.defaults.plugins.legend.labels.usePointStyle = true;
-  for (const c of Object.values(Chart.instances)) { retint(c); c.update(); }
-}
-function retint(chart) {
-  const s = SERIES();
-  chart.data.datasets.forEach((d, i) => {
-    d.borderColor = s[i % 5];
-    d.backgroundColor = chart.config.type === "line"
-      ? "transparent"
-      : s[i % 5].replace(")", " / 0.35)").replace("oklch(", "oklch(");
-    d.pointBackgroundColor = s[i % 5];
-  });
-}
-themeCharts();
-document.addEventListener("vision:mode", themeCharts);
-// Every chart: new Chart(ctx, cfg) then retint(chart). Wrap canvas in <div class="diagram"><div class="chart-box">…
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const SERIES = () =>
+    ['--primary', '--accent-1', '--accent-2', '--accent-3', '--accent-4'].map(css);
+  function themeCharts() {
+    Chart.defaults.color = css('--muted');
+    Chart.defaults.borderColor = css('--border');
+    Chart.defaults.font.family = css('--font-sans');
+    Chart.defaults.font.size = 12;
+    Chart.defaults.plugins.legend.labels.boxWidth = 10;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    for (const c of Object.values(Chart.instances)) {
+      retint(c);
+      c.update();
+    }
+  }
+  function retint(chart) {
+    const s = SERIES();
+    chart.data.datasets.forEach((d, i) => {
+      d.borderColor = s[i % 5];
+      d.backgroundColor =
+        chart.config.type === 'line'
+          ? 'transparent'
+          : s[i % 5].replace(')', ' / 0.35)').replace('oklch(', 'oklch(');
+      d.pointBackgroundColor = s[i % 5];
+    });
+  }
+  themeCharts();
+  document.addEventListener('vision:mode', themeCharts);
+  // Every chart: new Chart(ctx, cfg) then retint(chart). Wrap canvas in <div class="diagram"><div class="chart-box">…
 </script>
 ```
 
@@ -660,15 +1325,15 @@ options in §6.9. No pie, no 3D, no gradients.
 
 ## 11. Do / Don't
 
-| ✅ Do | ❌ Don't |
-|---|---|
-| Lucide icons everywhere, colored via `.ic-*` | Emoji as icons (v1 habit — retired), other icon packs |
-| Cite every finding with `.evidence` + `file:line` | Unattributed claims |
-| Confidence badge on every TL;DR bullet and finding | Presenting guesses as facts |
-| `.tabs` for options / before-after / per-language variants | Duplicated near-identical sections |
-| Highlight the 2–5 lines that matter with `.tok-hl` | 100-line unhighlighted code walls |
-| Fixed §5 palette semantics in every visual | Per-page color improvisation |
-| `.chart-box` fixed heights around canvases | Unbounded canvases (Chart.js resize loops) |
+| ✅ Do                                                      | ❌ Don't                                              |
+| ---------------------------------------------------------- | ----------------------------------------------------- |
+| Lucide icons everywhere, colored via `.ic-*`               | Emoji as icons (v1 habit — retired), other icon packs |
+| Cite every finding with `.evidence` + `file:line`          | Unattributed claims                                   |
+| Confidence badge on every TL;DR bullet and finding         | Presenting guesses as facts                           |
+| `.tabs` for options / before-after / per-language variants | Duplicated near-identical sections                    |
+| Highlight the 2–5 lines that matter with `.tok-hl`         | 100-line unhighlighted code walls                     |
+| Fixed §5 palette semantics in every visual                 | Per-page color improvisation                          |
+| `.chart-box` fixed heights around canvases                 | Unbounded canvases (Chart.js resize loops)            |
 
 ---
 
@@ -676,6 +1341,7 @@ options in §6.9. No pie, no 3D, no gradients.
 
 > You are generating a standalone HTML **research report**. Follow the attached
 > **Vision Design System ("Electric" v2.0)** exactly:
+>
 > - Embed §2 tokens + §3 component CSS verbatim in `<style data-ds="vision-electric" data-ds-version="2">`.
 > - Use the §4 skeleton (topbar, sticky TOC, meta-row, mode toggle with `vision:mode` event).
 > - Structure the report per the §6 blueprint, in order, with the fixed section ids.
@@ -693,6 +1359,6 @@ options in §6.9. No pie, no 3D, no gradients.
 
 ---
 
-*Redesign path: bump `data-ds-version`, regenerate §2/§3 (+ §8.2 fallback hexes), and
+_Redesign path: bump `data-ds-version`, regenerate §2/§3 (+ §8.2 fallback hexes), and
 find-replace the `vision-ds … v2.0` blocks across generated files. Class names, section
-ids, and §5 semantics stay stable forever.*
+ids, and §5 semantics stay stable forever._

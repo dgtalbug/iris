@@ -55,17 +55,17 @@ Dark is the default theme; light is a peer, selected by `data-theme='light'` on 
 
 iris validates every text pair at 4.5:1, every control boundary at 3:1, and every border at a 1.45:1 visibility floor, in both themes. Upstream values that miss a floor are moved by the smallest lightness step that clears it, and nothing else changes:
 
-| Token | Vision v2.0 | iris | Ratio before | Floor that required it |
-| --- | --- | --- | --- | --- |
-| dark `--border` | `oklch(0.30 0.03 285)` | `oklch(0.355 0.03 285)` | 1.24–1.44:1 | border visibility 1.45:1 |
-| light `--border` | `oklch(0.90 0.01 285)` | `oklch(0.825 0.01 285)` | 1.20–1.35:1 | border visibility 1.45:1 |
-| light `--accent-1` | `oklch(0.60 0.13 220)` | `oklch(0.54 0.13 220)` | 3.69:1 | text 4.5:1 on `--card` |
-| light `--accent-2` | `oklch(0.65 0.15 65)` | `oklch(0.57 0.15 65)` | 3.35:1 | text 4.5:1 on `--card` |
-| light `--accent-3` | `oklch(0.60 0.17 140)` | `oklch(0.54 0.17 140)` | 3.70:1 | text 4.5:1 on `--card` |
-| light `--accent-4` | `oklch(0.60 0.21 350)` | `oklch(0.59 0.21 350)` | 4.42:1 | text 4.5:1 on `--card` |
-| light `--success` | `oklch(0.55 0.15 155)` | `oklch(0.54 0.15 155)` | 4.45:1 | text 4.5:1 on `--card` |
-| light `--warning` | `oklch(0.65 0.15 70)` | `oklch(0.57 0.15 70)` | 3.33:1 | text 4.5:1 on `--card` |
-| light `--info` | `oklch(0.55 0.13 220)` | `oklch(0.54 0.13 220)` | 4.47:1 | text 4.5:1 on `--card` |
+| Token              | Vision v2.0            | iris                    | Ratio before | Floor that required it   |
+| ------------------ | ---------------------- | ----------------------- | ------------ | ------------------------ |
+| dark `--border`    | `oklch(0.30 0.03 285)` | `oklch(0.355 0.03 285)` | 1.24–1.44:1  | border visibility 1.45:1 |
+| light `--border`   | `oklch(0.90 0.01 285)` | `oklch(0.825 0.01 285)` | 1.20–1.35:1  | border visibility 1.45:1 |
+| light `--accent-1` | `oklch(0.60 0.13 220)` | `oklch(0.54 0.13 220)`  | 3.69:1       | text 4.5:1 on `--card`   |
+| light `--accent-2` | `oklch(0.65 0.15 65)`  | `oklch(0.57 0.15 65)`   | 3.35:1       | text 4.5:1 on `--card`   |
+| light `--accent-3` | `oklch(0.60 0.17 140)` | `oklch(0.54 0.17 140)`  | 3.70:1       | text 4.5:1 on `--card`   |
+| light `--accent-4` | `oklch(0.60 0.21 350)` | `oklch(0.59 0.21 350)`  | 4.42:1       | text 4.5:1 on `--card`   |
+| light `--success`  | `oklch(0.55 0.15 155)` | `oklch(0.54 0.15 155)`  | 4.45:1       | text 4.5:1 on `--card`   |
+| light `--warning`  | `oklch(0.65 0.15 70)`  | `oklch(0.57 0.15 70)`   | 3.33:1       | text 4.5:1 on `--card`   |
+| light `--info`     | `oklch(0.55 0.13 220)` | `oklch(0.54 0.13 220)`  | 4.47:1       | text 4.5:1 on `--card`   |
 
 Badge text is 11 px — normal text under WCAG AA — which is why the accent floor is 4.5:1 and not 3:1. The 1.45 border floor is an iris decision rather than a WCAG result, and the validator reports it under its own name so it is never mistaken for one.
 
@@ -75,16 +75,16 @@ Dark `--primary` and `--accent-1` fall outside sRGB. Browsers render the chroma-
 
 Vision covers a single-page report. The workspace needs more, all defined as aliases onto Vision tokens so the semantics stay Vision's:
 
-| Extension | Value | Why |
-| --- | --- | --- |
-| `--nav-bg` | dark `oklch(0.13 0.02 285)`, light `var(--card)` | the sidebar sits one step below the page in dark and reads as a white panel in light |
-| `--nav-text`, `--nav-active-text`, `--nav-active-bg` | `var(--muted)`, `var(--primary)`, `color-mix(… --primary 18%)` | Vision's badge-fill recipe applied to the current entry |
-| `--selected`, `--hover` | `color-mix(… --primary 14%)`, `var(--card-2)` | selection and hover across dense surfaces |
-| `--type-report/-feature/-bug/-idea/-plan/-research` | `--accent-1` / `--accent-3` / `--danger` / `--accent-4` / `--accent-2` / `--primary` | six record types onto Vision's wheel |
-| `--priority-urgent/-high/-medium/-low` | `--danger` / `--warning` / `--info` / `--muted` | Vision status semantics |
-| `--code-fg`, `--code-muted`, `--code-comment` | constant across themes | the code block is dark in both themes, so its text cannot follow `--muted` (2.74:1 in light) |
-| `--mmd-*` | §8.1 theme variables and §8.2 classDef hexes, per theme | Mermaid parses colors itself and reads neither `oklch()` nor `var()` |
-| `--size-*`, `--space-*`, `--leading-*`, `--weight-*`, `--duration-*`, `--easing`, `--nav-width`, `--nav-rail`, `--backdrop`, `--border-1` | unchanged from 3.x | Vision defines no ramps |
+| Extension                                                                                                                                 | Value                                                                                | Why                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `--nav-bg`                                                                                                                                | dark `oklch(0.13 0.02 285)`, light `var(--card)`                                     | the sidebar sits one step below the page in dark and reads as a white panel in light         |
+| `--nav-text`, `--nav-active-text`, `--nav-active-bg`                                                                                      | `var(--muted)`, `var(--primary)`, `color-mix(… --primary 18%)`                       | Vision's badge-fill recipe applied to the current entry                                      |
+| `--selected`, `--hover`                                                                                                                   | `color-mix(… --primary 14%)`, `var(--card-2)`                                        | selection and hover across dense surfaces                                                    |
+| `--type-report/-feature/-bug/-idea/-plan/-research`                                                                                       | `--accent-1` / `--accent-3` / `--danger` / `--accent-4` / `--accent-2` / `--primary` | six record types onto Vision's wheel                                                         |
+| `--priority-urgent/-high/-medium/-low`                                                                                                    | `--danger` / `--warning` / `--info` / `--muted`                                      | Vision status semantics                                                                      |
+| `--code-fg`, `--code-muted`, `--code-comment`                                                                                             | constant across themes                                                               | the code block is dark in both themes, so its text cannot follow `--muted` (2.74:1 in light) |
+| `--mmd-*`                                                                                                                                 | §8.1 theme variables and §8.2 classDef hexes, per theme                              | Mermaid parses colors itself and reads neither `oklch()` nor `var()`                         |
+| `--size-*`, `--space-*`, `--leading-*`, `--weight-*`, `--duration-*`, `--easing`, `--nav-width`, `--nav-rail`, `--backdrop`, `--border-1` | unchanged from 3.x                                                                   | Vision defines no ramps                                                                      |
 
 Print is a third palette, declared as a `@media print` override inside the token block for the same reason every other color lives there.
 
@@ -108,19 +108,19 @@ What changed is the chrome: the sidebar brand is the radar mark, section entries
 
 The vocabulary is Vision's. Where Vision and iris both defined something, Vision's rule ships and iris markup moved to it:
 
-| 3.x | 4.0 |
-| --- | --- |
-| `.surface` | `.card` |
-| `.pill`, `.type-chip`, `.status-chip`, `.priority-chip` | `.badge` + `.b-*` (plus iris's `.b-muted`, `.b-archived`) |
-| `.stat-tile`, `.metric-card` | `.card.stat` with `.value` / `.label` / `.sub` |
-| `.callout.warn` | `.callout.c-warn` (`c-info`, `c-danger`, `c-success`) with a Lucide icon |
-| `.tab-button` | `.tabs .tab` |
-| `.button`, `.button-primary` | `.btn`, `.btn-primary`, `.btn-outline`, `.btn-ghost` |
-| `.progress` | `.meter` with `.track` / `.fill` |
-| `.theme-toggle` | `.mode-toggle` |
-| `.doc-layout` + right `.doc-toc` | `.layout` + sticky left `.toc` |
-| `.timeline-item` divs | `.timeline` list items with `.when` / `.what` |
-| `.aperture`, `.aperture-glyph`, `.tp-*` | removed; typed Lucide icon + badge |
+| 3.x                                                     | 4.0                                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `.surface`                                              | `.card`                                                                  |
+| `.pill`, `.type-chip`, `.status-chip`, `.priority-chip` | `.badge` + `.b-*` (plus iris's `.b-muted`, `.b-archived`)                |
+| `.stat-tile`, `.metric-card`                            | `.card.stat` with `.value` / `.label` / `.sub`                           |
+| `.callout.warn`                                         | `.callout.c-warn` (`c-info`, `c-danger`, `c-success`) with a Lucide icon |
+| `.tab-button`                                           | `.tabs .tab`                                                             |
+| `.button`, `.button-primary`                            | `.btn`, `.btn-primary`, `.btn-outline`, `.btn-ghost`                     |
+| `.progress`                                             | `.meter` with `.track` / `.fill`                                         |
+| `.theme-toggle`                                         | `.mode-toggle`                                                           |
+| `.doc-layout` + right `.doc-toc`                        | `.layout` + sticky left `.toc`                                           |
+| `.timeline-item` divs                                   | `.timeline` list items with `.when` / `.what`                            |
+| `.aperture`, `.aperture-glyph`, `.tp-*`                 | removed; typed Lucide icon + badge                                       |
 
 Vision components now available that iris did not have: `.steps`, `.evidence`, `.filetree`, `.flow`/`.node`/`.edge`, `.footnotes`, `details.ds`, `table.ds`, `pre.code` with `.tok-*`, `.confidence`, `.diagram`, `.chart-box`.
 
@@ -134,13 +134,13 @@ The shell is a flex row rather than a two-column grid. `publish` and `export` st
 
 Hard constraints, unchanged: deterministic render, works from `file://`, no network at view time, no build step, classic (non-module) scripts, publish artifacts stand alone.
 
-| Vision asks for | iris verdict | How |
-| --- | --- | --- |
-| **Lucide via CDN UMD** | **Adopted, inverted.** | `lucide@0.469.0` is a generation-time dependency; `src/templates/icons.ts` serialises each icon's node tree to inline SVG at render time. Zero runtime, no `<script>`, no network, survives `publish`, and an unknown name throws at build instead of leaving an invisible gap. |
-| **Mermaid via ESM CDN** | **Adopted, vendored.** | The pinned 11.17.0 classic bundle is copied locally by `iris vendor`. Themed with `theme: 'base'` and `themeVariables` read from the `--mmd-*` tokens, re-rendered on `iris:theme` from each figure's retained source, strict security and complexity bounds unchanged. ESM would be CORS-blocked on `file://`. |
-| **Chart.js** | **Not included.** | The workspace has no chart surface. If one appears, the standing decision is CLI-generated inline SVG behind a chart contract, with a vendored classic bundle as the interactive upgrade. |
-| **React Flow** | **Rejected**, as in 3.1. | A React runtime plus a bundler plus client state breaks the zero-build, framework-free, deterministic model. Mermaid flowcharts cover the real use cases. |
-| **Animation** | **CSS only, meaning-bearing.** | The aperture sweep is gone with the ring. What remains: the drawer entrance and 120 ms hover/focus transitions. `prefers-reduced-motion` disables both. |
+| Vision asks for         | iris verdict                   | How                                                                                                                                                                                                                                                                                                             |
+| ----------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lucide via CDN UMD**  | **Adopted, inverted.**         | `lucide@0.469.0` is a generation-time dependency; `src/templates/icons.ts` serialises each icon's node tree to inline SVG at render time. Zero runtime, no `<script>`, no network, survives `publish`, and an unknown name throws at build instead of leaving an invisible gap.                                 |
+| **Mermaid via ESM CDN** | **Adopted, vendored.**         | The pinned 11.17.0 classic bundle is copied locally by `iris vendor`. Themed with `theme: 'base'` and `themeVariables` read from the `--mmd-*` tokens, re-rendered on `iris:theme` from each figure's retained source, strict security and complexity bounds unchanged. ESM would be CORS-blocked on `file://`. |
+| **Chart.js**            | **Not included.**              | The workspace has no chart surface. If one appears, the standing decision is CLI-generated inline SVG behind a chart contract, with a vendored classic bundle as the interactive upgrade.                                                                                                                       |
+| **React Flow**          | **Rejected**, as in 3.1.       | A React runtime plus a bundler plus client state breaks the zero-build, framework-free, deterministic model. Mermaid flowcharts cover the real use cases.                                                                                                                                                       |
+| **Animation**           | **CSS only, meaning-bearing.** | The aperture sweep is gone with the ring. What remains: the drawer entrance and 120 ms hover/focus transitions. `prefers-reduced-motion` disables both.                                                                                                                                                         |
 
 ## 8. Motion, accessibility, and quality floor
 
@@ -172,14 +172,14 @@ The upstream contract is [`vision-electric-v2.md`](./vision-electric-v2.md), sto
 
 **Deviations, each with its reason:**
 
-| Vision rule | iris | Why |
-| --- | --- | --- |
-| Light theme selected by `data-mode="light"` | `data-theme='light'` | The attribute predates the adoption and is read by `iris/config.yaml`, the stored preference, the tests, and the validator. Renaming it would change user-visible configuration for no design gain. |
-| Tokens and components in one inline `<style data-ds="vision-electric">` per page | `iris/design/tokens.css` + `components/base.css`, inlined into `publish`/`export` artifacts | A workspace is many pages sharing one stylesheet; inlining per page would duplicate ~30 KB per file. Standalone artifacts do get one inline block, which is Vision's actual requirement. |
-| Never edit the token block | Nine lightness values moved | Documented in §4.2 with the measured ratio and the floor. iris's accessibility contract predates the adoption and is enforced in CI. |
-| Load Lucide, Mermaid, Chart.js, React Flow from pinned CDNs | Lucide inlined at generation time; Mermaid vendored locally; the other two not used | A generated page must work from `file://` with no network, and `publish` refuses any artifact containing a resource reference. |
-| `vision:mode` event on theme change | `iris:theme` | Same contract under this project's event namespace. |
-| Report structure per the §6 blueprint | Not adopted here | iris generates a workspace, not a single report. See §10. |
-| §8.2 hexes are the only permitted literals | Also the `--mmd-*` theme variables, and all of them are tokens | Same intent — Mermaid cannot read custom properties — expressed so that `token-lint` still sees exactly one file containing color literals. |
+| Vision rule                                                                      | iris                                                                                        | Why                                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Light theme selected by `data-mode="light"`                                      | `data-theme='light'`                                                                        | The attribute predates the adoption and is read by `iris/config.yaml`, the stored preference, the tests, and the validator. Renaming it would change user-visible configuration for no design gain. |
+| Tokens and components in one inline `<style data-ds="vision-electric">` per page | `iris/design/tokens.css` + `components/base.css`, inlined into `publish`/`export` artifacts | A workspace is many pages sharing one stylesheet; inlining per page would duplicate ~30 KB per file. Standalone artifacts do get one inline block, which is Vision's actual requirement.            |
+| Never edit the token block                                                       | Nine lightness values moved                                                                 | Documented in §4.2 with the measured ratio and the floor. iris's accessibility contract predates the adoption and is enforced in CI.                                                                |
+| Load Lucide, Mermaid, Chart.js, React Flow from pinned CDNs                      | Lucide inlined at generation time; Mermaid vendored locally; the other two not used         | A generated page must work from `file://` with no network, and `publish` refuses any artifact containing a resource reference.                                                                      |
+| `vision:mode` event on theme change                                              | `iris:theme`                                                                                | Same contract under this project's event namespace.                                                                                                                                                 |
+| Report structure per the §6 blueprint                                            | Not adopted here                                                                            | iris generates a workspace, not a single report. See §10.                                                                                                                                           |
+| §8.2 hexes are the only permitted literals                                       | Also the `--mmd-*` theme variables, and all of them are tokens                              | Same intent — Mermaid cannot read custom properties — expressed so that `token-lint` still sees exactly one file containing color literals.                                                         |
 
 The swap surface is `src/templates/tokens.ts`. A future Vision version is adopted by replacing that block, re-running `pnpm token-lint` to see which values miss a floor, recording the new reconciliation here, and regenerating.

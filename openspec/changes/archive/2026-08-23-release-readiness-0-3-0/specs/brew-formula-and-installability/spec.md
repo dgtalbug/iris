@@ -1,9 +1,4 @@
-# brew-formula-and-installability Specification
-
-## Purpose
-Provide a reliable, low-friction installation and upgrade path for the `iris` CLI so the project remains easy to adopt without depending on a repo checkout or manual build steps.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: supported CLI installation path
 The system MUST provide a clear installation path for the `iris` command that works across supported environments, and the CLI itself MUST refuse an unsupported environment or an unrecognized invocation with an actionable message rather than an internal runtime failure, because the package manager only warns about an unsupported runtime and cannot be relied on to enforce it.

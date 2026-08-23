@@ -4,12 +4,7 @@ import type {
   OpenSpecSnapshot,
   OpenSpecSourceDocument,
 } from '../../lib/openspec-workspace.js';
-import {
-  escapeHtml,
-  healthBadgeClass,
-  progressBar,
-  statTile,
-} from '../common.js';
+import { escapeHtml, healthBadgeClass, progressBar, statTile } from '../common.js';
 import { legacyDetailSlug, specRecordHash } from './spec-detail.js';
 
 export const EMPTY_OPENSPEC_SNAPSHOT: OpenSpecSnapshot = {

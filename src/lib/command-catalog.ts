@@ -234,6 +234,7 @@ Usage: iris <command> [options]
 
 ${groups}
 
-Every command accepts --json. Full reference: iris/commands.html
+Every command accepts --json. Run iris --version to print the installed version.
+Full reference: iris/commands.html
 `;
 }

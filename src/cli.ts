@@ -12,32 +12,59 @@ import { helpText } from './lib/command-catalog.js';
 import { IrisError } from './lib/errors.js';
 import { packageVersion } from './lib/package-info.js';
 
-export const HELP_TEXT = helpText(packageVersion());
+const CLI_OPTIONS = {
+  help: { type: 'boolean', short: 'h' },
+  version: { type: 'boolean', short: 'v' },
+  json: { type: 'boolean' },
+  all: { type: 'boolean', short: 'a' },
+  'from-session': { type: 'string' },
+  output: { type: 'string', short: 'o' },
+  single: { type: 'boolean' },
+  png: { type: 'boolean' },
+  pdf: { type: 'boolean' },
+} as const;
+
+/** Evaluated per call so a broken package layout exits through the error path
+ * below instead of throwing while this module is being imported. */
+export function cliHelpText(): string {
+  return helpText(packageVersion());
+}
+
+/**
+ * `parseArgs` is strict, so an unrecognized token throws an `ERR_PARSE_ARGS_*`
+ * error that would escape every handler unless it is translated here.
+ */
+function parseCliArgs(argv: string[]) {
+  try {
+    return parseArgs({ args: argv, allowPositionals: true, options: CLI_OPTIONS });
+  } catch (error) {
+    const parseError = error as NodeJS.ErrnoException;
+    const message = parseError.message ?? String(error);
+    const token = message.match(/'([^']+)'/)?.[1];
+    const detail =
+      parseError.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION' && token
+        ? `Unknown option: ${token}`
+        : message.split('. ')[0];
+    throw new IrisError(1, `${detail}. Run 'iris --help' for the supported commands and options.`);
+  }
+}
 
 export async function runCli(argv: string[], cwd = process.cwd()): Promise<number> {
-  const parsed = parseArgs({
-    args: argv,
-    allowPositionals: true,
-    options: {
-      help: { type: 'boolean', short: 'h' },
-      json: { type: 'boolean' },
-      all: { type: 'boolean', short: 'a' },
-      'from-session': { type: 'string' },
-      output: { type: 'string', short: 'o' },
-      single: { type: 'boolean' },
-      png: { type: 'boolean' },
-      pdf: { type: 'boolean' },
-    },
-  });
-
-  if (parsed.values.help || parsed.positionals.length === 0) {
-    process.stdout.write(HELP_TEXT);
-    return 0;
-  }
-
-  const [command, id] = parsed.positionals;
-
   try {
+    const parsed = parseCliArgs(argv);
+
+    if (parsed.values.version) {
+      process.stdout.write(`${packageVersion()}\n`);
+      return 0;
+    }
+
+    if (parsed.values.help || parsed.positionals.length === 0) {
+      process.stdout.write(cliHelpText());
+      return 0;
+    }
+
+    const [command, id] = parsed.positionals;
+
     switch (command) {
       case 'init':
         await runInitCommand(cwd);

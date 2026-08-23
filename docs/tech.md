@@ -2,9 +2,10 @@
 
 ## Stack decisions (pinned)
 
-- Node.js >=22.13 + TypeScript 5.9.2 strict ESM — modern runtime + deterministic tooling.
-- Ajv 8.17.1 — strict JSON Schema validation with explicit errors.
-- Vitest 3.2.4 + ESLint 9.34.0 + Prettier 3.6.2 — test and quality baseline.
+- Node.js >=22.13.0 + TypeScript 5.9.2 strict ESM — modern runtime + deterministic tooling. The floor is duplicated in `src/lib/runtime.ts` and pinned to `engines.node` by a test, because `engines` is advisory for `npx` and `pnpm dlx` and the CLI has to enforce it itself.
+- Ajv 8.18.0 — strict JSON Schema validation with explicit errors.
+- markdown-it 15.0.0 — generation-time Markdown rendering with embedded HTML disabled.
+- Vitest 3.2.6 + ESLint 9.34.0 + Prettier 3.6.2 — test and quality baseline.
 - Mermaid 11.17.0 — pinned production dependency copied locally by `iris vendor`; never loaded from a CDN at view time.
 - Lucide 0.469.0 — pinned production dependency read only at generation time; icon geometry is serialised to inline SVG, so no icon script, font, or request reaches a generated page.
 
@@ -38,7 +39,7 @@ The parser extracts headings, requirements, scenarios, delta-operation labels, a
 
 The initializer reads version 1 state only long enough to classify legacy active document mirrors. It removes an exact page directory only when safe path, state provenance, page identity, generated metadata, and both stored data hashes match the current bytes. Every mismatch and every archived record is preserved before state is normalized to version 2.
 
-Agent instructions come from two packaged sources: `templates/agents/iris-workspace.md` for the skill and `templates/agents/iris-commands.md` for the generated `/iris:*` command and prompt files. One descriptor-driven installer writes every surface, so skills and commands share the same versioned managed markers, SHA-256 body digest, confinement and symlink checks, and atomic writes. Intact managed regions update atomically; unmarked, malformed, edited, symlinked, or escaping targets are preserved and reported.
+Agent instructions come from two packaged sources: `templates/agents/iris-workspace.md` for the skill and `templates/agents/iris-commands.md` for the generated `/iris:*` command and prompt files. One descriptor-driven installer writes every surface, so skills and commands share the same versioned managed markers, SHA-256 digests of both the managed body and the generated front matter, confinement and symlink checks, and atomic writes. Intact managed regions update atomically together with the front matter above them, so a changed skill or command `description` reaches an already-initialized repository — but only when the bytes on disk hash to the recorded digest, or, for a surface written before ownership was recorded, match verbatim what this or an earlier release generated. Unmarked, malformed, edited, symlinked, escaping, or unattributable targets are preserved and reported. An older Iris meeting a newer marker fails its own pattern match and preserves the file rather than corrupting it.
 
 ## Permalink algorithm
 
@@ -50,7 +51,16 @@ Meaning-bearing only with reduced-motion fallback to static frame at frame zero.
 
 ## Distribution model
 
-The built npm package is the primary, verified Node entrypoint on macOS, Linux, and Windows. It includes the canonical agent template, so initialization needs no network after installation. GitHub Release publication is automated through npm trusted publishing and provenance after the owner configures the external trust relationship. Homebrew remains deferred until a real release URL and checksum exist. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
+The built npm package is the primary, verified Node entrypoint on macOS, Linux, and Windows. It includes the canonical agent template, so initialization needs no network after installation. GitHub Release publication is automated through npm trusted publishing and provenance after the owner configures the external trust relationship. Contributors use pnpm locally. The installed CLI has no server or telemetry, and rendering makes no network request.
+
+Decisions taken for the 0.3.0 release:
+
+- **Documented install paths are `npx`, `pnpm dlx`, and `pnpm add -g`; `npm install -g` is not one of them.** The registry that hosts the artifact is named separately from the commands used to fetch it, so the documentation stays honest without implying a second distribution channel. The `pnpm setup` prerequisite and pnpm's default one-day `minimumReleaseAge` are stated next to the commands they affect, because both look like a broken release when they are not.
+- **Homebrew ships nothing until a published tarball URL and checksum exist.** A formula is a claim about an artifact; there is no artifact to claim yet.
+- **One packaged-asset manifest, `scripts/packaged-assets.mjs`, is read by both release verification and the install smoke test.** Two hand-written lists are how `templates/project` came to be required by one check and unverified by the other; a test asserts every packaged template and schema on disk appears in the manifest.
+- **`CHANGELOG.md` is the single source of release notes,** and release verification fails when the version being released has no section, so a release cannot be cut with none.
+- **The publish step keeps `npm publish --provenance`.** pnpm's native OIDC publish is a viable simplification, but changing the publish mechanism in the same release that first exercises it would leave nothing known-good to compare against; it is a follow-up once one green OIDC publish exists.
+- **`prepack` is package-manager-neutral (`tsc -p tsconfig.json`)** so packing works under whichever client a consumer or CI runs, and `package-lock.json` is gone from this pnpm project.
 
 `iris vendor` resolves Mermaid from the installed Iris dependency, checks the exact expected version, and atomically copies `mermaid.min.js` plus the upstream MIT license into `iris/design/vendor/`. Initialization writes a tiny inert placeholder at that script path so generated references remain valid before vendoring; it does not download or silently vendor the 3.4 MB bundle. Standalone publishing removes project-relative scripts and keeps Mermaid source fallback rather than embedding the runtime or claiming an SVG snapshot.
 

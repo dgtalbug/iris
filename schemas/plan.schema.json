@@ -1,1 +1,31 @@
-{ "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "required": ["type", "sections"], "properties": { "type": { "const": "plan" }, "sections": { "type": "object", "required": ["goal", "steps"], "properties": { "goal": { "type": "object", "required": ["md"], "properties": { "md": { "type": "string" } } }, "steps": { "type": "array", "items": { "type": "object", "required": ["id", "title"], "properties": { "id": { "type": "string" }, "title": { "type": "string" }, "detail": { "type": "string" } } } } } } } }
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["type", "sections"],
+  "properties": {
+    "type": { "const": "plan" },
+    "sections": {
+      "type": "object",
+      "required": ["goal", "steps"],
+      "properties": {
+        "goal": {
+          "type": "object",
+          "required": ["md"],
+          "properties": { "md": { "type": "string" } }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

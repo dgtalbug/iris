@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:f
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assetsMissingFromPayload } from './packaged-assets.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,15 +45,11 @@ const packedFiles = new Set(packInfo[0]?.files?.map((file) => file.path) ?? []);
 if (!tarballName) {
   throw new Error('npm pack did not return a tarball filename');
 }
-for (const requiredPath of [
-  'dist/src/lib/agent-skills.js',
-  'templates/agents/iris-workspace.md',
-  'templates/agents/iris-commands.md',
-  'templates/project/hld.md',
-]) {
-  if (!packedFiles.has(requiredPath)) {
-    throw new Error(`Packed CLI is missing required initialization asset: ${requiredPath}`);
-  }
+const missingAssets = assetsMissingFromPayload(packedFiles);
+if (missingAssets.length > 0) {
+  throw new Error(
+    `Packed CLI is missing required initialization assets: ${missingAssets.join(', ')}`,
+  );
 }
 
 const tarballPath = path.join(repoRoot, tarballName);
@@ -72,6 +69,18 @@ try {
   });
 
   const binaryPath = path.join(installDir, 'node_modules', '.bin', irisBinary);
+  const versionOutput = execFileSync(binaryPath, ['--version'], {
+    cwd: projectDir,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    encoding: 'utf8',
+  });
+
+  if (versionOutput !== `${packageJson.version}\n`) {
+    throw new Error(
+      `Installed CLI reported version ${JSON.stringify(versionOutput)}; expected ${packageJson.version}`,
+    );
+  }
+
   const helpOutput = execFileSync(binaryPath, ['--help'], {
     cwd: projectDir,
     stdio: ['ignore', 'pipe', 'pipe'],
