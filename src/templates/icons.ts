@@ -9,6 +9,25 @@ import { icons as lucideIcons } from 'lucide';
 type IconAttributes = Readonly<Record<string, string | number>>;
 type IconNode = readonly [string, IconAttributes, (readonly IconNode[])?];
 
+/**
+ * Lucide 1.x ships each icon as its child nodes alone, and its package entry
+ * point does not re-export the root attributes that 0.x embedded in every icon.
+ * They are declared here rather than deep-imported from `dist/`, which the
+ * package does not expose through an `exports` map. The values are Lucide's own
+ * defaults and are unchanged from 0.x, so the emitted root element is identical.
+ */
+const ROOT_ATTRIBUTES: IconAttributes = {
+  xmlns: 'http://www.w3.org/2000/svg',
+  width: 24,
+  height: 24,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  'stroke-width': 2,
+  'stroke-linecap': 'round',
+  'stroke-linejoin': 'round',
+};
+
 /** iris's semantic names mapped onto Vision's pinned Lucide set (§5, §7). */
 const ICON_NAMES = {
   brand: 'radar',
@@ -108,14 +127,13 @@ export function icon(name: IconName, options: IconOptions = {}): string {
 
   // Lucide's own node type carries SVGProps; the serialiser only needs tag,
   // attributes, and children, so the shape is narrowed here.
-  const node = (lucideIcons as unknown as Record<string, IconNode | undefined>)[
+  const children = (lucideIcons as unknown as Record<string, readonly IconNode[] | undefined>)[
     pascalCase(lucideName)
   ];
-  if (!node) {
+  if (!children) {
     throw new Error(`Lucide icon '${lucideName}' is not present in the installed package`);
   }
 
-  const [, rootAttributes, children] = node;
   const classes = ['lucide', `lucide-${lucideName}`, options.class]
     .filter((value): value is string => Boolean(value))
     .join(' ');
@@ -123,8 +141,8 @@ export function icon(name: IconName, options: IconOptions = {}): string {
     ? ` role="img" aria-label="${escapeAttribute(options.label)}"`
     : ' aria-hidden="true"';
 
-  const inner = (children ?? []).map(serializeNode).join('');
-  return `<svg${serializeAttributes(rootAttributes)} class="${classes}" focusable="false"${accessibility}>${inner}</svg>`;
+  const inner = children.map(serializeNode).join('');
+  return `<svg${serializeAttributes(ROOT_ATTRIBUTES)} class="${classes}" focusable="false"${accessibility}>${inner}</svg>`;
 }
 
 /** The typed icon for a work record type, falling back to the generic page icon. */

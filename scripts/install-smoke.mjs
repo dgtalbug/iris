@@ -10,14 +10,31 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 const packageJson = JSON.parse(readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
+/**
+ * The floor is read out of `engines.node` rather than written here, so this
+ * check cannot drift from the one the CLI performs: `src/lib/runtime.ts` holds
+ * the same value and a test pins it to `engines.node`.
+ */
 function assertSupportedNode() {
-  const [major, minor] = process.versions.node.split('.').map(Number);
-  if (major < 22 || (major === 22 && minor < 13)) {
-    throw new Error(
-      `Unsupported Node.js ${process.versions.node}; iris requires ${packageJson.engines.node}. ` +
-        'Install a supported Node.js release and retry.',
-    );
+  const segments = (version) => version.split('.').map((part) => Number.parseInt(part, 10));
+  const found = segments(process.versions.node);
+  const floor = segments(packageJson.engines.node.replace(/^>=/, ''));
+
+  let supported = true;
+  for (let index = 0; index < floor.length; index += 1) {
+    const segment = found[index] ?? 0;
+    if (segment > floor[index]) break;
+    if (segment < floor[index]) {
+      supported = false;
+      break;
+    }
   }
+  if (supported) return;
+
+  throw new Error(
+    `Unsupported Node.js ${process.versions.node}; iris requires ${packageJson.engines.node}. ` +
+      'Install a supported Node.js release and retry.',
+  );
 }
 
 function assertFile(filePath, description) {

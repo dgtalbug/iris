@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Dependency updates: ajv 8.20.0, lucide 1.33.0, eslint 10.8.1, vitest 4.1.11,
+  prettier 3.9.6, tsx 4.23.12, @types/node 26.2.0, typescript-eslint 8.67.0, and
+  the checkout, setup-node, and pnpm/action-setup actions.
+- Lucide 1.x ships each icon as its child nodes without the surrounding `svg`
+  node, so the root attributes are now declared in `src/templates/icons.ts`. The
+  emitted root element is unchanged; only icon geometry moves.
+- Added `vitest.config.ts` limiting the suite to `tests/`, because Vitest 4 would
+  otherwise also collect the compiled copies `tsc` emits under `dist/`.
+
 ## [0.3.0] - 2026-08-23
 
 First public release. Iris is installable from the npm registry through `npx`,
