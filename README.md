@@ -8,6 +8,8 @@
 
 Iris gives a repository a navigable offline workspace for features, bugs, plans, research, project architecture, and OpenSpec changes. It runs on your machine, writes plain files you own, and opens from `file://`—no hosted service, account, or always-on server required.
 
+![Iris dashboard overview](docs/screenshots/iris-dashboard-overview.png)
+
 ## What you get
 
 ```text

@@ -32,6 +32,7 @@
     "schemas",
     "templates/agents",
     "templates/project",
+    "docs/screenshots/iris-dashboard-overview.png",
     "README.md"
   ],
   "publishConfig": {
