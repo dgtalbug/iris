@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "allowlist": [
+    {
+      "path": "src/lib/openspec-workspace.ts",
+      "pattern": "openspec",
+      "justification": "Specs-integration detection module: it reads the on-disk openspec/ directory name. Detection code only, never user-facing copy."
+    },
+    {
+      "path": "src/**/*.ts",
+      "pattern": "openspec",
+      "linePattern": "openspec-workspace\\.js",
+      "justification": "Import specifier of the specs-integration detection module, whose name is allowlisted detection code."
+    },
+    {
+      "path": "src/**/*.ts",
+      "pattern": "openspec",
+      "linePattern": "\\bopenSpec\\b",
+      "justification": "Internal camelCase identifier for the specs-integration snapshot. Code, not user-facing copy."
+    },
+    {
+      "path": "src/lib/provenance.ts",
+      "justification": "The denylist itself: the names appear as scanner data with rewording suggestions, never as user-facing copy."
+    }
+  ]
+}

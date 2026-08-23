@@ -1,10 +1,11 @@
-import { renderDocument, type DocumentHeading } from '../../lib/markdown.js';
+import { type DocumentHeading } from '../../lib/markdown.js';
 import {
   researchDescription,
   researchEvidence,
   type ResearchItem,
   type ResearchWarning,
 } from '../../lib/research-workspace.js';
+import { renderElectricMarkdown } from './electric-markdown.js';
 import {
   recordIcon,
   escapeHtml,
@@ -90,7 +91,11 @@ export function withoutLeadingTitle(body: string): string {
 
 export function researchDocumentContent(item: ResearchItem): string {
   const body = withoutLeadingTitle(item.body);
-  const { html, headings } = renderDocument(
+  const {
+    html,
+    toc: headings,
+    meta,
+  } = renderElectricMarkdown(
     body.trim() === '' ? '_This research page has no content yet._' : body,
   );
   const toc = tableOfContents(headings);
@@ -98,6 +103,9 @@ export function researchDocumentContent(item: ResearchItem): string {
     item.tags.length === 0
       ? '<span>tags not set</span>'
       : `<span>tags ${item.tags.map((tag) => `<span class="badge b-muted">${escapeHtml(tag)}</span>`).join(' ')}</span>`;
+  const pipelineMeta = meta
+    .map((entry) => `<span>${escapeHtml(entry.label)} ${escapeHtml(entry.value)}</span>`)
+    .join('');
   const warnings =
     item.warnings.length === 0
       ? ''
@@ -116,6 +124,7 @@ export function researchDocumentContent(item: ResearchItem): string {
           <span>agent ${escapeHtml(item.agent)}</span>
           <span>updated ${escapeHtml(item.updated)}</span>
           ${tags}
+          ${pipelineMeta}
         </div>
       </div>
     </div>

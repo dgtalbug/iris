@@ -2,23 +2,138 @@ import { createHash, randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { lstat, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { IrisError } from './errors.js';
 import { ensureDir } from './fs.js';
 import { packageRoot, packageVersion } from './package-info.js';
 
 const MARKER_SCHEMA = 2;
 const START_PREFIX = '<!-- IRIS:MANAGED:START';
 const SKILL_TEMPLATE_ID = 'iris-workspace';
+const GUARD_TEMPLATE_ID = 'iris-guard';
 const COMMAND_TEMPLATE_ID = 'iris-command';
 
-const SKILL_TARGETS = [
-  '.agents/skills/iris-workspace/SKILL.md',
-  '.claude/skills/iris-workspace/SKILL.md',
-  '.github/skills/iris-workspace/SKILL.md',
-] as const;
+/**
+ * Wave-1 integration seam: the authoritative host table, `detectHosts(cwd)`,
+ * and `resolveAdapter(id)` live in `src/lib/host-adapters.ts` (owned by
+ * workstream A). Until that module lands, this file mirrors its public shape
+ * so surface generation is already adapter-driven: the type below is the
+ * contract, and the stand-in table keeps generation working. When the module
+ * exists, delete the stand-ins and import the real table instead — no other
+ * code here changes.
+ */
+export type HostCommandFormat = 'claude-markdown' | 'copilot-prompt';
+
+export type HostAdapter = {
+  /** Stable identifier used by tool selection and reports. */
+  id: string;
+  /** Human label for the picker and the completion card. */
+  displayName: string;
+  /** Filesystem signals detection reads; never written to user config. */
+  detectPaths: readonly string[];
+  /** Directory that receives skill directories; null for command-only hosts. */
+  skillsDir: string | null;
+  /** Directory that receives generated commands; null for skills-only hosts. */
+  commandsDir: string | null;
+  /** Command filename pattern; `<name>` is the action name. */
+  commandFile: string;
+  /** Front-matter dialect for generated commands. */
+  commandFormat: HostCommandFormat;
+};
+
+/**
+ * Stand-in rows pending workstream A's authoritative table. The claude,
+ * agents, and github rows reproduce the targets Iris has always written; the
+ * cursor, gemini, and codex rows are placeholders the real table replaces.
+ */
+const FALLBACK_HOST_ADAPTERS: readonly HostAdapter[] = [
+  {
+    id: 'claude',
+    displayName: 'Claude Code',
+    detectPaths: ['.claude'],
+    skillsDir: '.claude/skills',
+    commandsDir: '.claude/commands/iris',
+    commandFile: '<name>.md',
+    commandFormat: 'claude-markdown',
+  },
+  {
+    id: 'agents',
+    displayName: 'Agents',
+    detectPaths: ['.agents', 'AGENTS.md'],
+    skillsDir: '.agents/skills',
+    commandsDir: null,
+    commandFile: '<name>.md',
+    commandFormat: 'claude-markdown',
+  },
+  {
+    id: 'github',
+    displayName: 'GitHub Copilot',
+    detectPaths: ['.github/copilot-instructions.md', '.github/instructions'],
+    skillsDir: '.github/skills',
+    commandsDir: '.github/prompts',
+    commandFile: 'iris-<name>.prompt.md',
+    commandFormat: 'copilot-prompt',
+  },
+  {
+    id: 'cursor',
+    displayName: 'Cursor',
+    detectPaths: ['.cursor', '.cursorrules'],
+    skillsDir: '.cursor/skills',
+    commandsDir: '.cursor/commands',
+    commandFile: 'iris-<name>.md',
+    commandFormat: 'claude-markdown',
+  },
+  {
+    id: 'gemini',
+    displayName: 'Gemini',
+    detectPaths: ['.gemini', 'GEMINI.md'],
+    skillsDir: '.gemini/skills',
+    commandsDir: null,
+    commandFile: 'iris-<name>.md',
+    commandFormat: 'claude-markdown',
+  },
+  {
+    id: 'codex',
+    displayName: 'Codex',
+    detectPaths: ['.codex'],
+    skillsDir: '.codex/skills',
+    commandsDir: '.codex/prompts',
+    commandFile: 'iris-<name>.md',
+    commandFormat: 'claude-markdown',
+  },
+];
+
+/** The adapter table generation consumes; the workstream-A module's once it lands. */
+export function listHostAdapters(): readonly HostAdapter[] {
+  return FALLBACK_HOST_ADAPTERS;
+}
+
+export function resolveAdapter(id: string): HostAdapter | undefined {
+  return FALLBACK_HOST_ADAPTERS.find((adapter) => adapter.id === id);
+}
+
+/** Stand-in filesystem detection; workstream A owns the real heuristics. */
+export async function detectHosts(cwd: string): Promise<HostAdapter[]> {
+  const detected: HostAdapter[] = [];
+  for (const adapter of FALLBACK_HOST_ADAPTERS) {
+    if (adapter.detectPaths.some((signal) => existsSync(path.join(cwd, signal)))) {
+      detected.push(adapter);
+    }
+  }
+  return detected;
+}
 
 const SKILL_FRONTMATTER = `---
 name: iris-workspace
 description: Record finished agent work as local visual HTML — after fixing a bug, shipping a feature, planning, proposing an idea, researching a question, or wrapping a session. Run iris <type> <id>, fill the source, then iris render.
+license: MIT
+metadata:
+  author: iris
+---
+`;
+
+const GUARD_FRONTMATTER = `---
+name: iris-guard
+description: Keep every Iris workspace page in Iris's own voice — no external tool, framework, or design-system names; run the denylist self-check before iris render.
 license: MIT
 metadata:
   author: iris
@@ -43,6 +158,7 @@ metadata:
 ---
 `,
   ],
+  [GUARD_TEMPLATE_ID]: [],
   [COMMAND_TEMPLATE_ID]: [],
 };
 
@@ -65,6 +181,11 @@ export type CommandAction = {
   title: string;
   description: string;
   body: string;
+};
+
+/** Which hosts receive surfaces; defaults to every known adapter. */
+export type AgentSurfaceSelection = {
+  hosts?: readonly string[];
 };
 
 function digest(content: string): string {
@@ -230,21 +351,69 @@ description: "${action.description.replace(/"/g, "'")}"
 `;
 }
 
-export function commandSurfaceDescriptors(actions: CommandAction[]): SurfaceDescriptor[] {
-  return actions.flatMap((action) => [
+const COMMAND_FORMATS: Record<
+  HostCommandFormat,
+  { frontMatter: (action: CommandAction) => string }
+> = {
+  'claude-markdown': { frontMatter: claudeCommandFrontMatter },
+  'copilot-prompt': { frontMatter: copilotPromptFrontMatter },
+};
+
+/** One command file per content action for an adapter that takes commands. */
+export function commandSurfaceDescriptors(
+  adapter: HostAdapter,
+  actions: CommandAction[],
+): SurfaceDescriptor[] {
+  if (adapter.commandsDir === null) return [];
+  const format = COMMAND_FORMATS[adapter.commandFormat];
+  return actions.map((action) => ({
+    templateId: COMMAND_TEMPLATE_ID,
+    relativePath: `${adapter.commandsDir}/${adapter.commandFile.replace(/<name>/g, action.name)}`,
+    frontMatter: format.frontMatter(action),
+    body: action.body,
+  }));
+}
+
+type SkillTemplates = {
+  skill: string;
+  blueprint: string;
+  components: string;
+  guard: string;
+};
+
+/** The flagship skill directory plus the guard skill for one host. */
+function skillSurfaceDescriptors(
+  adapter: HostAdapter,
+  templates: SkillTemplates,
+): SurfaceDescriptor[] {
+  if (adapter.skillsDir === null) return [];
+  const skillRoot = `${adapter.skillsDir}/iris-workspace`;
+  return [
     {
-      templateId: COMMAND_TEMPLATE_ID,
-      relativePath: `.claude/commands/iris/${action.name}.md`,
-      frontMatter: claudeCommandFrontMatter(action),
-      body: action.body,
+      templateId: SKILL_TEMPLATE_ID,
+      relativePath: `${skillRoot}/SKILL.md`,
+      frontMatter: SKILL_FRONTMATTER,
+      body: templates.skill,
     },
     {
-      templateId: COMMAND_TEMPLATE_ID,
-      relativePath: `.github/prompts/iris-${action.name}.prompt.md`,
-      frontMatter: copilotPromptFrontMatter(action),
-      body: action.body,
+      templateId: SKILL_TEMPLATE_ID,
+      relativePath: `${skillRoot}/references/blueprint.md`,
+      frontMatter: '',
+      body: templates.blueprint,
     },
-  ]);
+    {
+      templateId: SKILL_TEMPLATE_ID,
+      relativePath: `${skillRoot}/references/components.md`,
+      frontMatter: '',
+      body: templates.components,
+    },
+    {
+      templateId: GUARD_TEMPLATE_ID,
+      relativePath: `${adapter.skillsDir}/iris-guard/SKILL.md`,
+      frontMatter: GUARD_FRONTMATTER,
+      body: templates.guard,
+    },
+  ];
 }
 
 async function installSurface(
@@ -277,28 +446,54 @@ async function installSurface(
   }
 }
 
-export async function loadSurfaceDescriptors(): Promise<SurfaceDescriptor[]> {
-  const root = packageRoot();
-  const [skillTemplate, commandTemplate] = await Promise.all([
-    readFile(path.join(root, 'templates', 'agents', 'iris-workspace.md'), 'utf8'),
-    readFile(path.join(root, 'templates', 'agents', 'iris-commands.md'), 'utf8'),
-  ]);
-  const skillBody = skillTemplate.endsWith('\n') ? skillTemplate : `${skillTemplate}\n`;
-
-  return [
-    ...SKILL_TARGETS.map((relativePath) => ({
-      templateId: SKILL_TEMPLATE_ID,
-      relativePath,
-      frontMatter: SKILL_FRONTMATTER,
-      body: skillBody,
-    })),
-    ...commandSurfaceDescriptors(parseCommandTemplate(commandTemplate)),
-  ];
+function selectedAdapters(hosts?: readonly string[]): HostAdapter[] {
+  if (hosts === undefined) return [...FALLBACK_HOST_ADAPTERS];
+  return hosts.map((id) => {
+    const adapter = resolveAdapter(id);
+    if (!adapter) {
+      const valid = FALLBACK_HOST_ADAPTERS.map((entry) => entry.id).join(', ');
+      throw new IrisError(1, `Unknown agent host '${id}'; valid hosts: ${valid}`);
+    }
+    return adapter;
+  });
 }
 
-export async function installAgentSurfaces(cwd: string): Promise<SkillInstallResult> {
+function asBody(template: string): string {
+  return template.endsWith('\n') ? template : `${template}\n`;
+}
+
+export async function loadSurfaceDescriptors(
+  hosts?: readonly string[],
+): Promise<SurfaceDescriptor[]> {
+  const root = packageRoot();
+  const agentsDir = path.join(root, 'templates', 'agents');
+  const [skill, blueprint, components, guard, commandTemplate] = await Promise.all([
+    readFile(path.join(agentsDir, 'iris-workspace', 'SKILL.md'), 'utf8'),
+    readFile(path.join(agentsDir, 'iris-workspace', 'references', 'blueprint.md'), 'utf8'),
+    readFile(path.join(agentsDir, 'iris-workspace', 'references', 'components.md'), 'utf8'),
+    readFile(path.join(agentsDir, 'iris-guard', 'SKILL.md'), 'utf8'),
+    readFile(path.join(agentsDir, 'iris-commands.md'), 'utf8'),
+  ]);
+  const templates: SkillTemplates = {
+    skill: asBody(skill),
+    blueprint: asBody(blueprint),
+    components: asBody(components),
+    guard: asBody(guard),
+  };
+  const actions = parseCommandTemplate(commandTemplate);
+
+  return selectedAdapters(hosts).flatMap((adapter) => [
+    ...skillSurfaceDescriptors(adapter, templates),
+    ...commandSurfaceDescriptors(adapter, actions),
+  ]);
+}
+
+export async function installAgentSurfaces(
+  cwd: string,
+  selection: AgentSurfaceSelection = {},
+): Promise<SkillInstallResult> {
   const version = packageVersion();
-  const descriptors = await loadSurfaceDescriptors();
+  const descriptors = await loadSurfaceDescriptors(selection.hosts);
   const result: SkillInstallResult = { created: [], updated: [], unchanged: [], conflicts: [] };
   for (const descriptor of descriptors) {
     await installSurface(cwd, descriptor, version, result);
@@ -306,7 +501,18 @@ export async function installAgentSurfaces(cwd: string): Promise<SkillInstallRes
   return result;
 }
 
-export const AGENT_SKILL_TARGETS = SKILL_TARGETS;
+function skillTargets(templateId: string, fileName: string): string[] {
+  return FALLBACK_HOST_ADAPTERS.filter((adapter) => adapter.skillsDir !== null).map(
+    (adapter) => `${adapter.skillsDir}/${templateId}/${fileName}`,
+  );
+}
+
+/** The flagship skill's SKILL.md path for every skills-capable host. */
+export const AGENT_SKILL_TARGETS: readonly string[] = skillTargets(SKILL_TEMPLATE_ID, 'SKILL.md');
+
+/** The provenance guard's SKILL.md path for every skills-capable host. */
+export const AGENT_GUARD_TARGETS: readonly string[] = skillTargets(GUARD_TEMPLATE_ID, 'SKILL.md');
+
 export { installAgentSurfaces as installAgentSkills };
 
 export type AgentSurfaceStatus = 'installed' | 'missing' | 'unmanaged';
@@ -322,8 +528,11 @@ export type AgentSurfaceReport = {
  * intended, so a file a user later took ownership of is reported as theirs
  * rather than as an Iris surface.
  */
-export async function inspectAgentSurfaces(cwd: string): Promise<AgentSurfaceReport[]> {
-  const descriptors = await loadSurfaceDescriptors();
+export async function inspectAgentSurfaces(
+  cwd: string,
+  selection: AgentSurfaceSelection = {},
+): Promise<AgentSurfaceReport[]> {
+  const descriptors = await loadSurfaceDescriptors(selection.hosts);
   const reports: AgentSurfaceReport[] = [];
   for (const descriptor of descriptors) {
     const target = path.resolve(cwd, descriptor.relativePath);

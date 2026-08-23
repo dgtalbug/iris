@@ -9,6 +9,8 @@ import {
   typeChip,
 } from '../common.js';
 import { renderShell, type NavCounts } from '../shell.js';
+import { renderBlueprint } from './blueprint.js';
+import { renderCharts } from './charts.js';
 
 export type WorkspaceContext = {
   projectName: string;
@@ -213,6 +215,8 @@ export function renderContractPage(
       const openItems = getText(sections.open_items);
       const promotable = getStringList(sections.promotable_as);
       const content = [
+        renderBlueprint(type, id, sections),
+        renderCharts(sections.charts),
         summary.length > 0
           ? renderSummaryBlock('Summary', summary.map((item) => `- ${item}`).join('\n'))
           : '',
@@ -245,10 +249,12 @@ export function renderContractPage(
         renderSummaryBlock('Goal', getText(sections.goal)),
       ].join('');
       const tasksHtml = renderTaskTable(Array.isArray(sections.tasks) ? sections.tasks : []);
+      const blueprintHtml = renderBlueprint(type, id, sections);
       const content =
         hld.trim() === '' && lld.trim() === ''
-          ? overview + tasksHtml
-          : `<div class="card">${tabGroup(`feature-${id}`, 'feature sections', [
+          ? blueprintHtml + overview + tasksHtml
+          : blueprintHtml +
+            `<div class="card">${tabGroup(`feature-${id}`, 'feature sections', [
               { id: 'overview', label: 'Overview', html: overview },
               { id: 'hld', label: 'HLD', html: renderSummaryBlock('HLD', hld) },
               { id: 'lld', label: 'LLD', html: renderSummaryBlock('LLD', lld) },
@@ -275,6 +281,7 @@ export function renderContractPage(
       const severity = typeof sections.severity === 'string' ? sections.severity : 'p2';
       const timelineEvents = asObject(sections.timeline).events;
       const content = [
+        renderBlueprint(type, id, sections),
         renderSummaryBlock('Symptom', getText(sections.symptom)),
         renderTimeline(Array.isArray(timelineEvents) ? timelineEvents : []),
       ].join('');
@@ -297,6 +304,7 @@ export function renderContractPage(
       const effort = typeof effortImpact.effort === 'number' ? String(effortImpact.effort) : 'n/a';
       const impact = typeof effortImpact.impact === 'number' ? String(effortImpact.impact) : 'n/a';
       const content = [
+        renderBlueprint(type, id, sections),
         renderSummaryBlock('Current state', getText(sections.current_state)),
         renderSummaryBlock('Proposed', getText(sections.proposed)),
       ].join('');
@@ -318,6 +326,7 @@ export function renderContractPage(
     case 'plan': {
       const steps = Array.isArray(sections.steps) ? sections.steps : [];
       const content = [
+        renderBlueprint(type, id, sections),
         renderSummaryBlock('Goal', getText(sections.goal)),
         renderStepsList(steps),
       ].join('');

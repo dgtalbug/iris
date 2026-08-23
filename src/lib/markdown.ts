@@ -1,4 +1,18 @@
 import MarkdownIt from 'markdown-it';
+import {
+  registerElectric,
+  type BlueprintSectionDef,
+  type BlueprintTocEntry,
+  type ElectricEnv,
+  type ElectricMetaEntry,
+} from './markdown-electric.js';
+
+export { registerElectric } from './markdown-electric.js';
+export type {
+  BlueprintSectionDef,
+  BlueprintTocEntry,
+  ElectricMetaEntry,
+} from './markdown-electric.js';
 
 function escapeHtml(value: string): string {
   return value
@@ -15,6 +29,8 @@ const markdown = new MarkdownIt({
   linkify: false,
   typographer: false,
 });
+
+registerElectric(markdown);
 
 const defaultFence = markdown.renderer.rules.fence;
 markdown.renderer.rules.fence = (tokens, index, options, environment, renderer) => {
@@ -143,4 +159,67 @@ export function renderDocument(
   } = { headingIds: true, idPrefix: options.idPrefix };
   const html = markdown.render(value, environment);
   return { html, headings: environment.headings ?? [] };
+}
+
+// The ten fixed blueprint headings, in canonical order. Aliases accept the
+// longer upstream titles so existing drafts still map onto the stable ids.
+export const BLUEPRINT_SECTIONS = [
+  { id: 'tldr', title: 'TL;DR' },
+  { id: 'question', title: 'Question & scope', aliases: ['Research question & scope'] },
+  { id: 'map', title: 'System map' },
+  { id: 'territory', title: 'Code territory' },
+  { id: 'findings', title: 'Findings' },
+  { id: 'numbers', title: 'Metrics', aliases: ['Metrics & measurements'] },
+  { id: 'paths', title: 'Key flows' },
+  { id: 'risks', title: 'Risks', aliases: ['Risks & unknowns'] },
+  { id: 'proposal', title: 'Proposed direction' },
+  { id: 'appendix', title: 'Appendix', aliases: ['Appendix & citations'] },
+] as const satisfies readonly BlueprintSectionDef[];
+
+export type BlueprintSectionId = (typeof BLUEPRINT_SECTIONS)[number]['id'];
+
+export type ElectricRenderResult = {
+  html: string;
+  toc: BlueprintTocEntry[];
+  meta: ElectricMetaEntry[];
+  headings: DocumentHeading[];
+  sections: BlueprintSectionId[];
+};
+
+export function renderElectricMarkdown(
+  source: string,
+  options: { idPrefix?: string } = {},
+): ElectricRenderResult {
+  const environment: ElectricEnv = {
+    idPrefix: options.idPrefix,
+    electricBlueprint: { sections: BLUEPRINT_SECTIONS },
+  };
+  const html = markdown.render(source, environment);
+  const result = environment.electricResult ?? {
+    toc: [],
+    headings: [],
+    presentSections: [],
+    words: 0,
+  };
+  const components = environment.electric?.components ?? 0;
+  const footnotes = environment.electric?.footnoteOrder.length ?? 0;
+  const meta: ElectricMetaEntry[] = [];
+  if (result.presentSections.length > 0 || result.words > 0) {
+    meta.push({ label: 'sections', value: String(result.presentSections.length) });
+    meta.push({ label: 'words', value: String(result.words) });
+  }
+  if (result.words > 0) {
+    meta.push({ label: 'reading', value: `${Math.max(1, Math.ceil(result.words / 200))} min` });
+  }
+  if (components > 0) meta.push({ label: 'components', value: String(components) });
+  if (footnotes > 0) meta.push({ label: 'footnotes', value: String(footnotes) });
+  return {
+    html,
+    toc: result.toc,
+    meta,
+    headings: result.headings.map(({ level, id, text }) => ({ level, id, text })),
+    sections: result.presentSections.filter((id): id is BlueprintSectionId =>
+      (BLUEPRINT_SECTIONS as readonly BlueprintSectionDef[]).some((section) => section.id === id),
+    ),
+  };
 }

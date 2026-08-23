@@ -25,6 +25,22 @@
             "effort": { "type": "integer", "minimum": 1, "maximum": 5 },
             "impact": { "type": "integer", "minimum": 1, "maximum": 5 }
           }
+        },
+        "blueprint": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tldr": { "type": "string" },
+            "question": { "type": "string" },
+            "map": { "type": "string" },
+            "territory": { "type": "string" },
+            "findings": { "type": "string" },
+            "numbers": { "type": "string" },
+            "paths": { "type": "string" },
+            "risks": { "type": "string" },
+            "proposal": { "type": "string" },
+            "appendix": { "type": "string" }
+          }
         }
       }
     }

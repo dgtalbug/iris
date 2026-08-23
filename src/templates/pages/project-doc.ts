@@ -1,7 +1,7 @@
-import { renderDocument } from '../../lib/markdown.js';
 import type { ProjectDocItem } from '../../lib/project-docs.js';
 import { escapeHtml, projectDocMeta, statusChip } from '../common.js';
 import { icon, type IconName } from '../icons.js';
+import { renderElectricMarkdown } from './electric-markdown.js';
 import { tableOfContents, withoutLeadingTitle } from './research.js';
 
 export function projectSiblingStrip(name: string, projectDocs: readonly string[]): string {
@@ -18,10 +18,15 @@ export function projectSiblingStrip(name: string, projectDocs: readonly string[]
 export function projectDocContent(item: ProjectDocItem, projectDocs: readonly string[]): string {
   const meta = projectDocMeta(item.name);
   const body = withoutLeadingTitle(item.body);
-  const { html, headings } = renderDocument(
-    body.trim() === '' ? '_This project doc has no content yet._' : body,
-  );
+  const {
+    html,
+    toc: headings,
+    meta: pipelineMeta,
+  } = renderElectricMarkdown(body.trim() === '' ? '_This project doc has no content yet._' : body);
   const toc = tableOfContents(headings);
+  const extraMeta = pipelineMeta
+    .map((entry) => `<span>${escapeHtml(entry.label)} ${escapeHtml(entry.value)}</span>`)
+    .join('');
   const warnings =
     item.warnings.length === 0
       ? ''
@@ -39,6 +44,7 @@ export function projectDocContent(item: ProjectDocItem, projectDocs: readonly st
           <span class="mono spec-path">${escapeHtml(item.path)}</span>
           <span>agent ${escapeHtml(item.agent)}</span>
           <span>updated ${escapeHtml(item.updated)}</span>
+          ${extraMeta}
         </div>
       </div>
       <div class="page-head-actions"><span class="mono">edit ${escapeHtml(item.path)} · iris render --all</span></div>
