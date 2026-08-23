@@ -40,7 +40,7 @@
         <div class="page-title-row">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale" focusable="false" aria-hidden="true"><path d="M12 3v18" /><path d="m19 8 3 8a5 5 0 0 1-6 0zV7" /><path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1" /><path d="m5 8 3 8a5 5 0 0 1-6 0zV7" /><path d="M7 21h10" /></svg>
           <span class="eyebrow">project doc</span>
-          <span class="badge b-muted">draft</span>
+          <span class="badge b-primary">active</span>
         </div>
         <h1>Decisions</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
@@ -54,7 +54,7 @@
 
     <div class="doc-single">
 
-      <article class="card doc-body"><p>The decision log of <code>iris</code>: what was chosen, when, and why the alternatives lost. Append one row per decision; keep reversed decisions and mark them superseded instead of deleting them.</p>
+      <article class="card doc-body"><p>The decision log of <code>iris</code>: what was chosen, when, and why the alternatives lost. Each row is traceable to an archived change under <code>openspec/changes/archive/</code>. Reversed decisions stay and are marked superseded.</p>
 <h2 id="decisions">Decisions</h2>
 <table>
 <thead>
@@ -67,9 +67,117 @@
 </thead>
 <tbody>
 <tr>
-<td>YYYY-MM-DD</td>
-<td>Replace me</td>
-<td>Replace me</td>
+<td>2026-08-18</td>
+<td>Node.js &gt;=22.13 with strict-ESM TypeScript and Ajv runtime validation</td>
+<td>Matches the pnpm 11 baseline; an invalid contract must fail loudly rather than render a partial page</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-18</td>
+<td>Centralise design tokens and base components under a generated <code>iris/design</code> scaffold</td>
+<td>Deterministic <code>file://</code> rendering with no CDN, and offline vendoring stays possible</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-18</td>
+<td>Enforce token literals with <code>token-lint</code> in CI</td>
+<td>A colour written outside the token block is style drift that review will not reliably catch</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-19</td>
+<td>Load base components as a classic deferred script, never a module</td>
+<td>Browsers CORS-block module scripts on <code>file://</code>, which would kill interactivity in the primary viewing mode</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-19</td>
+<td>Publish strips navigation chrome via <code>data-iris-nav</code></td>
+<td>Local HTML must be navigable; a published artifact must stand alone</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-19</td>
+<td>Enforce generated-link integrity with <code>html-check</code> in CI</td>
+<td>A broken reference inside generated HTML must fail the build, not the reader</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-21</td>
+<td>Make <code>iris init</code> the complete agent-first setup and upgrade operation</td>
+<td>Removes document ingestion and hidden lifecycle coupling; one canonical offline skill reaches three agent surfaces safely</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-21</td>
+<td>Read OpenSpec as bounded untrusted filesystem input, never via the OpenSpec CLI</td>
+<td>No runtime dependency, no server, no network; malformed input degrades to a per-path warning instead of failing the page</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-21</td>
+<td>Ship the Spec record detail as a hash-addressed classic-script data bundle</td>
+<td>The index, its counts, and every source path stay readable without JavaScript; only opening a record needs it</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-21</td>
+<td>Defer PNG/PDF export until a browser-pinning policy is approved</td>
+<td>System Chrome is not version-stable and Playwright adds a large pinned-browser lifecycle; the CLI refuses those modes rather than mislabel HTML</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Adopt Vision &quot;Electric&quot; v2.0 as the design system</td>
+<td>One oklch token block with an iris extension, validated for contrast in CI, replacing the earlier Aperture palette</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Enforce the supported Node floor inside the CLI itself</td>
+<td><code>engines</code> is advisory for both <code>npx</code> and <code>pnpm dlx</code>, so the package manager cannot be relied on to enforce it</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Record a front-matter digest in the managed marker and bump the marker schema to 2</td>
+<td>Without it a changed skill description never reaches an installed repository; ownership must be provable before anything is rewritten</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>One packaged-asset manifest shared by release verification and the install smoke test</td>
+<td>Two hand-written lists are how <code>templates/project</code> came to be required by one check and unverified by the other</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Document install as <code>npx</code>, <code>pnpm dlx</code>, and <code>pnpm add -g</code>; no <code>npm install -g</code></td>
+<td>The registry that hosts the artifact is named separately from the commands used to fetch it, so the docs stay honest without implying two channels</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Keep <code>npm publish --provenance</code> rather than switching to pnpm's native OIDC publish</td>
+<td>Changing the publish mechanism in the release that first exercises it leaves nothing known-good to compare against</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Ship no Homebrew formula until a published tarball URL and checksum exist</td>
+<td>A formula is a claim about an artifact; there is no artifact to claim yet, and <code>iris</code> is already taken in homebrew-cask so the tap must be qualified</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Hold TypeScript at 6.x</td>
+<td><code>typescript-eslint</code> runs against the TS 6 API but refuses TS 7.0, tracked in typescript-eslint#10940, so the lint gate cannot run on a TS 7 tree</td>
+<td>accepted</td>
+</tr>
+<tr>
+<td>2026-08-23</td>
+<td>Tab panels sit inside a <code>.card</code>, so panel padding is vertical only</td>
+<td>The generic panel assumed a padded container that the Spec and contract pages never provided, leaving artifact prose at 2px of side padding</td>
 <td>accepted</td>
 </tr>
 </tbody>

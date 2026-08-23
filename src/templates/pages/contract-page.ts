@@ -248,12 +248,12 @@ export function renderContractPage(
       const content =
         hld.trim() === '' && lld.trim() === ''
           ? overview + tasksHtml
-          : tabGroup(`feature-${id}`, 'feature sections', [
+          : `<div class="card">${tabGroup(`feature-${id}`, 'feature sections', [
               { id: 'overview', label: 'Overview', html: overview },
               { id: 'hld', label: 'HLD', html: renderSummaryBlock('HLD', hld) },
               { id: 'lld', label: 'LLD', html: renderSummaryBlock('LLD', lld) },
               { id: 'tasks', label: 'Tasks', html: tasksHtml },
-            ]);
+            ])}</div>`;
       return pageShell({
         id,
         title,

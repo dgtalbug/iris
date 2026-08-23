@@ -95,7 +95,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
 .c-danger strong.label, .c-danger > .lucide { color: var(--danger); }
 
 /* tabs */
-.tabs { margin: 14px 0; }
+.tabs { margin: var(--space-3) 0; }
 .tabs .tablist { display: flex; gap: 4px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
 .tabs .tab {
   all: unset; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
@@ -104,7 +104,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
 }
 .tabs .tab:hover { color: var(--foreground); }
 .tabs .tab[aria-selected='true'] { color: var(--primary); border-bottom-color: var(--primary); }
-.tabs .tabpanel { padding: 16px 2px; }
+.tabs .tabpanel { padding: var(--space-4) 0 0; }
 
 /* code blocks */
 pre.code {
@@ -414,7 +414,11 @@ a.stat:hover { border-color: color-mix(in oklch, var(--primary) 45%, var(--borde
 .spec-card-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
 .spec-artifact { display: grid; gap: var(--space-2); }
 .spec-source pre, .spec-source-details pre { max-height: 28rem; overflow: auto; }
-.spec-detail-region { display: grid; gap: var(--space-4); }
+.spec-detail-region { display: grid; gap: var(--space-5); }
+/* Record HTML is injected a level below .content, so its top-level blocks fall
+   outside that grid and would stack flush; this restores the same rhythm. */
+.spec-detail-region > [data-spec-detail-content] { display: grid; gap: var(--space-5); align-content: start; }
+.spec-detail-region > [data-spec-detail-content] > * { min-width: 0; }
 .change-row { display: grid; gap: var(--space-2); padding: var(--space-2) 0; }
 .change-row + .change-row { border-top: 1px solid color-mix(in oklch, var(--border) 55%, transparent); }
 .change-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }

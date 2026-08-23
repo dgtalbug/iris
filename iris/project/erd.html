@@ -40,7 +40,7 @@
         <div class="page-title-row">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database" focusable="false" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg>
           <span class="eyebrow">project doc</span>
-          <span class="badge b-muted">draft</span>
+          <span class="badge b-primary">active</span>
         </div>
         <h1>ERD</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
@@ -54,35 +54,127 @@
 
     <div class="layout">
       <aside class="toc" aria-label="On this page"><div class="toc-title">on this page</div><ol><li class="toc-2"><a href="#entities">Entities</a></li><li class="toc-2"><a href="#notes">Notes</a></li></ol></aside>
-      <article class="card doc-body"><p>The data model of <code>iris</code>: entities, their fields, and the relationships between them. Replace the placeholder entities with the real ones.</p>
+      <article class="card doc-body"><p>The data model of <code>iris</code>. Every entity here is a file on disk — there is no database, and nothing is stored outside the repository it describes.</p>
 <h2 id="entities">Entities</h2>
 <figure class="diagram mermaid-figure" data-mermaid-figure>
 <div class="mermaid-status" role="status" data-mermaid-status>Diagram source. Run <code>iris vendor</code> to enable the offline preview.</div>
 <div class="mermaid-host" data-mermaid-host aria-label="Mermaid diagram">erDiagram
-  ENTITY_A {
-    string id PK
-    string name
+  PROJECT_STATE {
+    int version &quot;always 2&quot;
+    map page_index &quot;id to registry entry&quot;
   }
-  ENTITY_B {
+  PAGE_REGISTRY_ENTRY {
     string id PK
-    string entity_a_id FK
+    string type
+    string title
+    string status &quot;active or archived&quot;
   }
-  ENTITY_A ||--o{ ENTITY_B : &quot;has&quot;
+  CONTRACT {
+    string iris PK &quot;contract version&quot;
+    string type &quot;report feature bug idea plan&quot;
+    string id
+    string title
+    string status &quot;draft active done archived&quot;
+    string agent &quot;claude-code codex copilot other&quot;
+    string created
+    string updated
+    string commit
+    array tags
+    object sections &quot;shape decided by type&quot;
+  }
+  RESEARCH_DOC {
+    string id PK &quot;directory name&quot;
+    string title &quot;front matter, falls back to first heading&quot;
+    string status &quot;front matter, falls back to draft&quot;
+    array tags
+    string agent
+    string updated
+  }
+  PROJECT_DOC {
+    string name PK &quot;overview hld lld erd decisions&quot;
+    string title
+    string status
+  }
+  SPEC_SNAPSHOT {
+    int version
+    array specs &quot;canonical capabilities&quot;
+    array changes &quot;active and archived&quot;
+    array warnings &quot;per path, isolated&quot;
+  }
+  RENDERED_PAGE {
+    string path PK
+    string source_kind &quot;contract markdown&quot;
+  }
+
+  PROJECT_STATE ||--o{ PAGE_REGISTRY_ENTRY : &quot;indexes&quot;
+  PAGE_REGISTRY_ENTRY ||--|| CONTRACT : &quot;points at&quot;
+  CONTRACT ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  RESEARCH_DOC ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  PROJECT_DOC ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  SPEC_SNAPSHOT ||--o{ RENDERED_PAGE : &quot;feeds&quot;
 </div>
 <pre class="mermaid-fallback" data-mermaid-fallback><code class="language-mermaid">erDiagram
-  ENTITY_A {
-    string id PK
-    string name
+  PROJECT_STATE {
+    int version &quot;always 2&quot;
+    map page_index &quot;id to registry entry&quot;
   }
-  ENTITY_B {
+  PAGE_REGISTRY_ENTRY {
     string id PK
-    string entity_a_id FK
+    string type
+    string title
+    string status &quot;active or archived&quot;
   }
-  ENTITY_A ||--o{ ENTITY_B : &quot;has&quot;
+  CONTRACT {
+    string iris PK &quot;contract version&quot;
+    string type &quot;report feature bug idea plan&quot;
+    string id
+    string title
+    string status &quot;draft active done archived&quot;
+    string agent &quot;claude-code codex copilot other&quot;
+    string created
+    string updated
+    string commit
+    array tags
+    object sections &quot;shape decided by type&quot;
+  }
+  RESEARCH_DOC {
+    string id PK &quot;directory name&quot;
+    string title &quot;front matter, falls back to first heading&quot;
+    string status &quot;front matter, falls back to draft&quot;
+    array tags
+    string agent
+    string updated
+  }
+  PROJECT_DOC {
+    string name PK &quot;overview hld lld erd decisions&quot;
+    string title
+    string status
+  }
+  SPEC_SNAPSHOT {
+    int version
+    array specs &quot;canonical capabilities&quot;
+    array changes &quot;active and archived&quot;
+    array warnings &quot;per path, isolated&quot;
+  }
+  RENDERED_PAGE {
+    string path PK
+    string source_kind &quot;contract markdown&quot;
+  }
+
+  PROJECT_STATE ||--o{ PAGE_REGISTRY_ENTRY : &quot;indexes&quot;
+  PAGE_REGISTRY_ENTRY ||--|| CONTRACT : &quot;points at&quot;
+  CONTRACT ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  RESEARCH_DOC ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  PROJECT_DOC ||--|| RENDERED_PAGE : &quot;renders to&quot;
+  SPEC_SNAPSHOT ||--o{ RENDERED_PAGE : &quot;feeds&quot;
 </code></pre>
 </figure>
 <h2 id="notes">Notes</h2>
-<p>Field meanings the name alone does not carry, constraints and keys, and the lifecycle of each record.</p>
+<p><strong>The envelope is the contract.</strong> <code>schemas/envelope.schema.json</code> requires all eleven fields on every record; <code>sections</code> is then validated against the per-type schema, so <code>bug</code> carries <code>symptom</code>/<code>severity</code>/<code>timeline</code>, <code>feature</code> carries <code>problem</code>/<code>goal</code>/<code>design</code>/<code>tasks</code>, <code>idea</code> carries <code>current_state</code>/<code>proposed</code>/<code>effort_impact</code>, <code>plan</code> carries <code>goal</code>/<code>steps</code>, and <code>report</code> carries <code>summary</code>/<code>open_items</code>/<code>promotable_as</code>. An invalid contract blocks rendering rather than producing a partial page.</p>
+<p><strong>Research is Markdown-first.</strong> <code>iris/research/&lt;id&gt;/index.md</code> is the editable source and <code>page.html</code> is generated output. Only five front-matter keys are read — <code>title</code>, <code>status</code>, <code>tags</code>, <code>agent</code>, <code>updated</code> — and each missing or malformed one degrades to a per-path warning rather than failing the render.</p>
+<p><strong>State is deliberately thin.</strong> <code>ProjectState</code> is version 2 and holds only the page registry needed for active/archive navigation. The version 1 shape carried <code>last_synced_sha</code>, <code>content_hashes</code>, a <code>stale</code> status, and per-entry source hashes; it is read only long enough to prove a legacy mirror is an unmodified Iris output before removing it, and every ambiguous record is preserved.</p>
+<p><strong>The spec snapshot is generated, not authored.</strong> <code>iris/spec.json</code> is a deterministic snapshot of the <code>openspec/</code> filesystem with no timestamp, replaced atomically by <code>iris init</code>, bare <code>iris render</code>, and <code>iris render --all</code>. Every other command reuses it, so there is no watcher.</p>
+<p><strong>Identity is the directory name.</strong> A page's <code>id</code> is its directory under <code>iris/pages/</code> or <code>iris/research/</code>; there is no separate key, which is why <code>iris &lt;type&gt; &lt;id&gt;</code> refuses a duplicate or malformed id up front.</p>
 </article>
     </div>
     <section class="card project-strip">

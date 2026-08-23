@@ -40,7 +40,7 @@
         <div class="page-title-row">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" focusable="false" aria-hidden="true"><path d="M12 5v16" /><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" /></svg>
           <span class="eyebrow">project doc</span>
-          <span class="badge b-muted">draft</span>
+          <span class="badge b-primary">active</span>
         </div>
         <h1>Overview</h1>
         <div class="doc-meta" style="margin-top: var(--space-2)">
@@ -54,11 +54,14 @@
 
     <div class="layout">
       <aside class="toc" aria-label="On this page"><div class="toc-title">on this page</div><ol><li class="toc-2"><a href="#what-this-is">What this is</a></li><li class="toc-2"><a href="#how-it-runs">How it runs</a></li><li class="toc-2"><a href="#where-things-live">Where things live</a></li></ol></aside>
-      <article class="card doc-body"><p>What <code>iris</code> is, who it is for, and what it deliberately is not. Replace every placeholder below; Iris never invents content.</p>
+      <article class="card doc-body"><p>What <code>iris</code> is, who it is for, and what it deliberately is not.</p>
 <h2 id="what-this-is">What this is</h2>
-<p>One paragraph: the problem this repository solves and for whom.</p>
+<p><code>iris</code> turns finished AI-coding work into local, versioned, visual HTML. An agent or a developer records a bug, feature, idea, plan, report, or research note as a validated JSON contract or a Markdown source, and <code>iris render</code> produces deterministic static pages that open straight from disk. It is for a developer who wants the output of agent sessions to accumulate somewhere readable instead of scrolling out of a terminal, and it is deliberately not a hosted service, a dashboard server, or a system that watches or ingests the repository on its own.</p>
+<p>Two rules shape everything: Iris never invents content, and a generated page never reaches the network. Every page is <code>file://</code>-safe with no runtime fetch, no CDN, and no telemetry.</p>
 <h2 id="how-it-runs">How it runs</h2>
-<p>How a change travels from source to the running system: build, test, deploy, or the equivalent.</p>
+<p><code>iris</code> is a plain Node.js CLI (<code>&gt;=22.13.0</code>, enforced by the CLI itself because <code>engines</code> is only advisory for <code>npx</code> and <code>pnpm dlx</code>). <code>src/index.ts</code> runs the runtime guard, then dynamically imports <code>src/cli.ts</code>, which parses arguments and dispatches to one command module per verb.</p>
+<p>A change travels: edit <code>src/**</code> → <code>pnpm build</code> (<code>tsc</code>) emits <code>dist/</code> → <code>pnpm release:check</code> runs lint, format, token-lint, typecheck, tests, an HTML reference check, and an install smoke test that packs the real tarball and runs <code>iris init</code> twice offline → a tagged GitHub Release triggers <code>release.yml</code>, which republishes the gate and publishes to npm with provenance through OIDC.</p>
+<p>Content travels: <code>iris &lt;type&gt; &lt;id&gt;</code> writes a source (<code>iris/pages/&lt;id&gt;/data.json</code> or <code>iris/research/&lt;id&gt;/index.md</code>) → the source is edited by hand or by an agent → <code>iris render</code> validates it against <code>schemas/</code> and writes <code>page.html</code> beside it, then refreshes the section pages.</p>
 <h2 id="where-things-live">Where things live</h2>
 <table>
 <thead>
@@ -69,8 +72,44 @@
 </thead>
 <tbody>
 <tr>
-<td><code>src/</code></td>
-<td>Replace with the real top-level directories and what each one owns.</td>
+<td><code>src/cli.ts</code></td>
+<td>Argument table, the version and help branches, and dispatch to every command</td>
+</tr>
+<tr>
+<td><code>src/commands/</code></td>
+<td>One module per verb: <code>init</code>, <code>render</code>, <code>draft</code>, <code>lifecycle</code> (archive/update), <code>publish</code>, <code>export</code>, <code>report</code>, <code>vendor</code>, <code>open</code></td>
+</tr>
+<tr>
+<td><code>src/lib/</code></td>
+<td>Non-rendering logic: the runtime floor, agent-surface ownership, OpenSpec parsing, project docs, state, schemas</td>
+</tr>
+<tr>
+<td><code>src/templates/</code></td>
+<td>HTML generation — design tokens, component CSS, the navigation shell, and one module per page under <code>pages/</code></td>
+</tr>
+<tr>
+<td><code>schemas/</code></td>
+<td>The JSON Schema contracts every rendered page is validated against</td>
+</tr>
+<tr>
+<td><code>templates/agents/</code></td>
+<td>The two packaged sources every generated skill and <code>/iris:*</code> command file is produced from</td>
+</tr>
+<tr>
+<td><code>templates/project/</code></td>
+<td>The Markdown skeletons <code>iris init</code> scaffolds into <code>iris/project/</code></td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>Release and quality gates: packaged-asset manifest, release verification, install smoke, token and HTML checks</td>
+</tr>
+<tr>
+<td><code>iris/</code></td>
+<td>This repository's own generated workspace — Iris dogfooding itself</td>
+</tr>
+<tr>
+<td><code>openspec/</code></td>
+<td>Canonical specs and the archived change history behind them</td>
 </tr>
 </tbody>
 </table>

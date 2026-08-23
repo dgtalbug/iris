@@ -215,12 +215,12 @@ export function changeDetailContent(change: OpenSpecChange): string {
 
     ${tasks ? `<div class="card">${progressBar(tasks.complete, tasks.total, `${change.name}: ${tasks.complete} of ${tasks.total} tasks complete`)}<p class="work-meta" style="margin: var(--space-2) 0 0">${tasks.complete}/${tasks.total} tasks complete · ${tasks.open} open</p></div>` : ''}
 
-    ${tabGroup(`change-${slugPrefix(change.name)}`, 'change artifacts', [
+    <div class="card">${tabGroup(`change-${slugPrefix(change.name)}`, 'change artifacts', [
       { id: 'proposal', label: 'Proposal', html: artifactPanel(proposal) },
       { id: 'design', label: 'Design', html: artifactPanel(design) },
       { id: 'tasks', label: 'Tasks', html: artifactPanel(taskDoc) },
       { id: 'specs', label: 'Specs', html: artifactPanel(specs) },
-    ])}`;
+    ])}</div>`;
 }
 
 export type SpecRecord = {
