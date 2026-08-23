@@ -2,10 +2,10 @@
 
 ## Stack decisions (pinned)
 
-- Node.js >=22.13.0 + TypeScript 5.9.2 strict ESM — modern runtime + deterministic tooling. The floor is duplicated in `src/lib/runtime.ts` and pinned to `engines.node` by a test, because `engines` is advisory for `npx` and `pnpm dlx` and the CLI has to enforce it itself.
+- Node.js >=22.13.0 + TypeScript 6.0.3 strict ESM — modern runtime + deterministic tooling. The floor is duplicated in `src/lib/runtime.ts` and pinned to `engines.node` by a test, because `engines` is advisory for `npx` and `pnpm dlx` and the CLI has to enforce it itself.
 - Ajv 8.20.0 — strict JSON Schema validation with explicit errors.
 - markdown-it 15.0.0 — generation-time Markdown rendering with embedded HTML disabled.
-- TypeScript stays on 5.9.2: `typescript-eslint` refuses TS 7.0 outright and tracks TS >=7.1 support in typescript-eslint#10940, so the lint gate cannot run until it lands.
+- TypeScript stops at 6.x: `typescript-eslint` runs against the TS 6 API but refuses TS 7.0 outright, tracking TS >=7.1 support in typescript-eslint#10940, so the lint gate cannot run on a TS 7 tree. `dependabot.yml` ignores `typescript >=7.0.0` until that lands.
 - Vitest 4.1.11 + ESLint 10.8.1 + Prettier 3.9.6 — test and quality baseline. `vitest.config.ts` pins the suite to `tests/`, because `tsc` also emits the compiled tests to `dist/` and Vitest 4 would otherwise collect them as a second, broken copy.
 - Mermaid 11.17.0 — pinned production dependency copied locally by `iris vendor`; never loaded from a CDN at view time.
 - Lucide 1.33.0 — pinned production dependency read only at generation time; icon geometry is serialised to inline SVG, so no icon script, font, or request reaches a generated page. 1.x ships each icon as its child nodes alone, so the root SVG attributes are declared in `src/templates/icons.ts` rather than read from the package; they are Lucide's own defaults, unchanged from 0.x.
