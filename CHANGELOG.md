@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Reworked the npm-facing README and package discovery metadata with a clearer
+  quick start, command reference, workspace map, security boundaries, and
+  contribution path.
+
 ## [0.4.0] - 2026-08-23
 
 First release published by the pipeline, and the first version served to
