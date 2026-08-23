@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Spec record detail views had no space between their top-level blocks. The record
+  HTML is injected one level below `.content`, so its page head, stat strip, and
+  cards fell outside that grid and stacked flush against each other. The injection
+  slot now carries the same grid and `--space-5` rhythm every static page gets.
+- Generated tab panels assumed a padded container that the Spec and feature contract
+  pages never provided, leaving artifact prose at 2px of horizontal padding. Panels
+  now sit on a card, and their own padding is vertical and on the spacing scale.
+
 ### Changed
 
 - Dependency updates: typescript 6.0.3, ajv 8.20.0, lucide 1.33.0, eslint 10.8.1,
