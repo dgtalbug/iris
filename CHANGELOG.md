@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.4.0-alpha.0] - 2026-08-23
+## [0.4.0] - 2026-08-23
 
-First release cut by the pipeline itself rather than by hand.
+First release published by the pipeline, and the first version served to
+ordinary installs: `latest` moves off the `0.3.0-rc.0` bootstrap.
 
 ### Added
 
@@ -79,6 +80,6 @@ First public release. Iris is installable from the npm registry through `npx`,
 
 - The stale `package-lock.json` from this pnpm project.
 
-[Unreleased]: https://github.com/dgtalbug/iris/compare/v0.4.0-alpha.0...HEAD
-[0.4.0-alpha.0]: https://github.com/dgtalbug/iris/releases/tag/v0.4.0-alpha.0
+[Unreleased]: https://github.com/dgtalbug/iris/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/dgtalbug/iris/releases/tag/v0.4.0
 [0.3.0]: https://github.com/dgtalbug/iris/releases/tag/v0.3.0
