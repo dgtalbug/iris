@@ -18,6 +18,12 @@
       "type": "idea",
       "title": "Report From Agent Sessions",
       "status": "active"
+    },
+    "release-readiness-audit": {
+      "id": "release-readiness-audit",
+      "type": "research",
+      "title": "Release readiness audit for v0.3.0",
+      "status": "active"
     }
   }
 }

@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Release readiness audit for v0.3.0 · iris</title>
+    <link rel="stylesheet" href="../../design/tokens.css" />
+    <link rel="stylesheet" href="../../design/components/base.css" />
+  </head>
+  <body>
+    <div class="app" data-dashboard-main>
+      <nav class="sidebar" data-iris-nav data-sidebar aria-label="Workspace sections">
+      <a class="sidebar-brand" href="../../index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-radar" focusable="false" role="img" aria-label="iris"><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" /><path d="M4 6h.01" /><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35" /><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67" /><path d="M12 18h.01" /><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67" /><circle cx="12" cy="12" r="2" /><path d="m13.41 10.59 5.66-5.66" /></svg>
+        <span><strong>iris</strong><small>iris</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <ul class="nav-list"><li><a class="nav-item" href="../../index.html" title="Overview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard" focusable="false" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../work.html" title="Work"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-kanban" focusable="false" aria-hidden="true"><path d="M6 5v11" /><path d="M12 5v6" /><path d="M18 5v14" /></svg><span>Work</span><em class="nav-count">4</em></a></li><li><a class="nav-item" href="../../spec.html" title="Spec"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text" focusable="false" aria-hidden="true"><path d="M15 12h-5" /><path d="M15 8h-5" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" /></svg><span>Spec</span><em class="nav-count">10</em></a></li><li><a class="nav-item" href="../../research.html" aria-current="page" title="Research"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical" focusable="false" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></svg><span>Research</span><em class="nav-count">2</em></a></li><li><a class="nav-item" href="../../commands.html" title="Commands"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal" focusable="false" aria-hidden="true"><polyline points="4 17 10 11 4 5" /><line x1="12" x2="20" y1="19" y2="19" /></svg><span>Commands</span><em class="nav-count">15</em></a></li></ul>
+        <div class="eyebrow nav-group">project docs</div><ul class="nav-list"><li><a class="nav-item" href="../../project/overview.html" title="Overview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" focusable="false" aria-hidden="true"><path d="M12 7v14" /><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" /></svg><span>Overview</span></a></li><li><a class="nav-item" href="../../project/hld.html" title="HLD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network" focusable="false" aria-hidden="true"><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" /><path d="M12 12V8" /></svg><span>HLD</span></a></li><li><a class="nav-item" href="../../project/lld.html" title="LLD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu" focusable="false" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2" /><rect width="6" height="6" x="9" y="9" rx="1" /><path d="M15 2v2" /><path d="M15 20v2" /><path d="M2 15h2" /><path d="M2 9h2" /><path d="M20 15h2" /><path d="M20 9h2" /><path d="M9 2v2" /><path d="M9 20v2" /></svg><span>LLD</span></a></li><li><a class="nav-item" href="../../project/erd.html" title="ERD"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database" focusable="false" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg><span>ERD</span></a></li><li><a class="nav-item" href="../../project/decisions.html" title="Decisions"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale" focusable="false" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" /></svg><span>Decisions</span></a></li></ul>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>
+      <div class="main">
+        <header class="topbar" data-iris-nav>
+          <button class="btn btn-ghost menu-button" type="button" data-menu-toggle aria-expanded="false" aria-label="Show workspace sections"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu" focusable="false" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg></button>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="../../index.html">iris</a><span aria-hidden="true">/</span><a href="../../research.html">Research</a><span aria-hidden="true">/</span><b data-spec-crumb>release-readiness-audit</b></nav>
+          <span class="topbar-spacer"></span>
+
+          <div class="mode-toggle" data-theme-toggle-group>
+            <button type="button" data-theme-set="dark" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon" focusable="false" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg> Dark</button>
+            <button type="button" data-theme-set="light" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg> Light</button>
+          </div>
+        </header>
+        <main class="content">
+<div class="page-head">
+      <div>
+        <div class="page-title-row">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical ic-primary" focusable="false" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></svg>
+          <span class="badge b-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical" focusable="false" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></svg>research</span>
+          <span class="badge b-primary">active</span>
+        </div>
+        <h1>Release readiness audit for v0.3.0</h1>
+        <div class="doc-meta" style="margin-top: var(--space-2)">
+          <span>id release-readiness-audit</span>
+          <span>agent claude-code</span>
+          <span>updated 2026-08-23</span>
+          <span>tags <span class="badge b-muted">release</span> <span class="badge b-muted">packaging</span> <span class="badge b-muted">distribution</span> <span class="badge b-muted">audit</span> <span class="badge b-muted">product-gaps</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="toc" aria-label="On this page"><div class="toc-title">on this page</div><ol><li class="toc-2"><a href="#question">Question</a></li><li class="toc-2"><a href="#findings">Findings</a></li><li class="toc-3"><a href="#headline">Headline</a></li><li class="toc-3"><a href="#a-release-gaps">A. Release gaps</a></li><li class="toc-3"><a href="#release-path">Release path</a></li><li class="toc-3"><a href="#homebrew-formula-draft-placeholders-until-the-tarball-exists">Homebrew formula draft (placeholders until the tarball exists)</a></li><li class="toc-3"><a href="#b-product-gaps-raised-by-the-owner">B. Product gaps raised by the owner</a></li><li class="toc-2"><a href="#evidence">Evidence</a></li><li class="toc-2"><a href="#next-steps">Next steps</a></li><li class="toc-3"><a href="#ordered-checklist-for-v0-3-0">Ordered checklist for v0.3.0</a></li><li class="toc-3"><a href="#proposed-openspec-grouping">Proposed OpenSpec grouping</a></li><li class="toc-3"><a href="#direct-answers">Direct answers</a></li></ol></aside>
+      <article class="card doc-body"><h2 id="question">Question</h2>
+<p>Is <code>@dgtalbug/iris</code> ready for its first public release with three user-facing install paths — <code>npx</code>, <code>pnpm</code>, and <code>brew</code> — and no <code>npm install -g</code> in user docs? What is missing, in what order should it be fixed, and which product gaps the owner raised should ride along or follow in their own OpenSpec change?</p>
+<p>Audited on 2026-08-23 on branch <code>feat/electric-design-system</code> (15 commits ahead of <code>main</code>, no PR), <code>package.json</code> 0.2.0, Node 26.7.0, pnpm 11.22.0, npm 11.19.0. Read-only: every claim below is backed by a command that was run (see Evidence). No file was edited during the audit.</p>
+<h2 id="findings">Findings</h2>
+<h3 id="headline">Headline</h3>
+<ul>
+<li>Nothing has ever been released: no git tag, no GitHub Release, <code>release.yml</code> has never run, <code>npm view @dgtalbug/iris</code> is 404.</li>
+<li>The release pipeline itself is sound (<code>pnpm release:check</code> passes end to end; publish job is correctly gated), but its manual prerequisites were never done: the npm package does not exist so a trusted publisher cannot be configured, and the GitHub <code>npm</code> environment does not exist.</li>
+<li><code>LICENSE</code> is missing while <code>package.json</code> declares MIT.</li>
+<li><code>iris --version</code> and every unknown flag crash with a raw Node stack trace; there is no runtime Node-version guard.</li>
+<li>Skill and command frontmatter never refreshes on re-<code>init</code>, so the improved trigger description never reaches early adopters.</li>
+<li>Homebrew: no core formula named <code>iris</code>, but a homebrew/cask <strong>cask</strong> <code>iris</code> exists, so docs must always say <code>brew install dgtalbug/tap/iris</code>. A tap is the only near-term path (repo has 0 stars/forks/watchers).</li>
+<li>pnpm needs nothing extra: publishing to npm <em>is</em> the pnpm release. <code>pnpm dlx</code> and <code>pnpm add -g</code> both work from the packed tarball.</li>
+</ul>
+<p>Severity: <strong>BLOCKER</strong> = cannot release · <strong>SHOULD</strong> = fix before v1.0 / brew · <strong>NICE</strong> = later. Effort: S under 1 h · M 1–3 h · L over 3 h.</p>
+<h3 id="a-release-gaps">A. Release gaps</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Sev</th>
+<th>Gap</th>
+<th>Evidence</th>
+<th>Proposed fix</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>BLOCKER</td>
+<td>Nothing released yet: no tag, no GitHub Release, <code>release.yml</code> never ran, package absent from npm.</td>
+<td><code>git tag</code> empty; <code>gh release list</code> empty; <code>gh run list --workflow release.yml</code> empty; <code>npm view @dgtalbug/iris</code> E404</td>
+<td>Execute the bootstrap sequence in Next steps.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>BLOCKER (manual)</td>
+<td>First publish cannot go through OIDC: npm trusted publishers are configured on the package settings page on npmjs.com, which only exists once the package is on the registry. <code>npm whoami</code> locally is E401. <code>README.md:104</code> only hints at this.</td>
+<td><code>npm view</code> E404; <code>npm whoami</code> E401; docs.npmjs.com/trusted-publishers</td>
+<td>One manual bootstrap publish (granular token + 2FA), then configure the trusted publisher (owner <code>dgtalbug</code>, repo <code>iris</code>, workflow <code>release.yml</code>, environment <code>npm</code>), then revoke the token. Recommended: publish <code>0.3.0-rc.1 --tag next</code> so the real <code>v0.3.0</code> is the first OIDC/provenance release.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>BLOCKER</td>
+<td>No <code>LICENSE</code> file while <code>package.json:38</code> says MIT; GitHub reports <code>license: null</code>; the packed tarball ships no license text.</td>
+<td><code>ls LICENSE*</code> none; <code>gh api repos/dgtalbug/iris</code> license null; tarball listing</td>
+<td>Add MIT <code>LICENSE</code> at root (npm auto-includes <code>LICENSE*</code>); required by the brew formula too.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A4</td>
+<td>BLOCKER (process)</td>
+<td>Release must be cut from <code>main</code>, but <code>main</code> == PR #11 merge (8b7bb92, pre-Electric); this branch is 15 commits ahead with no PR.</td>
+<td><code>git log origin/main..HEAD</code> = 15; <code>gh pr list --head feat/electric-design-system</code> none</td>
+<td>Open the PR, merge after CI; bump the version first (A5).</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A5</td>
+<td>SHOULD</td>
+<td>Version: <code>0.2.0</code> already labels the pre-Electric main (PR #11 &quot;(v0.2.0)&quot;, commit f9ebe9b) but was never tagged or published; this branch changes generated output (Electric tokens, project docs, HLD/LLD, spec tabs). No <code>CHANGELOG.md</code>; <code>release.yml</code> reads release notes from nowhere.</td>
+<td><code>package.json:3</code>; <code>git show --stat f9ebe9b</code></td>
+<td>First public version = 0.3.0. Add <code>CHANGELOG.md</code> (0.1 to 0.3 summary); <code>gh release create v0.3.0 --notes-file</code>. Optionally have <code>verify-release.mjs</code> assert a <code>## [0.3.0]</code> heading.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A6</td>
+<td>SHOULD</td>
+<td><code>iris --version</code>, <code>-v</code>, and any unknown flag die with a raw Node stack trace (<code>ERR_PARSE_ARGS_UNKNOWN_OPTION</code>, exit 1). <code>parseArgs</code> at <code>src/cli.ts:18</code> sits outside the <code>try</code> at <code>src/cli.ts:40</code>; no <code>version</code> option (<code>src/cli.ts:21-30</code>). Version is only visible as the first help line (<code>src/lib/command-catalog.ts:232</code>). Brew <code>test do</code> and the spec's &quot;predictable version&quot; (<code>openspec/specs/brew-formula-and-installability/spec.md:26-28</code>) want it.</td>
+<td><code>node dist/src/index.js --version</code> exit 1 with stack trace</td>
+<td>Add <code>version: {type:'boolean', short:'v'}</code> printing <code>packageVersion()</code> (already imported at <code>src/cli.ts:13</code>; works from the packed layout per <code>src/lib/package-info.ts:11-25</code>); move <code>parseArgs</code> inside the <code>try</code> and map parse errors to <code>IrisError(1, ...)</code>; extend the help footer (<code>command-catalog.ts:237</code>), not <code>COMMAND_GROUPS</code> (a flag is not a command card); document in <code>docs/cmds.md:5-11</code>; add <code>tests/cli-help.test.ts</code> cases; optionally assert <code>--version</code> in <code>scripts/install-smoke.mjs</code>. The help-parity check (<code>install-smoke.mjs:86</code>) compares installed vs repo help from the same build, so it keeps passing.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A7</td>
+<td>SHOULD</td>
+<td>No runtime Node-version guard; <code>engines</code> is only a warning for <code>npx</code> (EBADENGINE) and <code>pnpm dlx</code> (<code>engineStrict</code> default false). Spec requires a simple, actionable message (<code>brew-formula-and-installability/spec.md:15-17</code> and <code>:41-43</code>); exit-code contract says 2 = environment error (<code>docs/cmds.md:7</code>). The only guard lives in <code>scripts/install-smoke.mjs:12-20</code>.</td>
+<td><code>grep versions.node src/</code> empty; no Node below 22.13 on this machine to test empirically</td>
+<td>Pre-import guard in <code>src/index.ts</code>: compare <code>process.versions.node</code> to the floor, stderr message, <code>process.exit(2)</code>; factor <code>assertSupportedNode(version)</code> and unit-test it.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A8</td>
+<td>SHOULD</td>
+<td>Skill and command frontmatter never refreshes on re-<code>init</code>: the refresh path returns <code>existing.slice(0,start) + marker + body + existing.slice(end)</code> (<code>src/lib/agent-skills.ts:134</code>); <code>descriptor.frontMatter</code> is used only on create (<code>:200-206</code>); the digest covers the body only (<code>:54</code>). Locked in by <code>tests/agent-skills.test.ts:75-92</code>. Dogfood proof: <code>.claude/skills/iris-workspace/SKILL.md:3</code> still carries the 73-byte Aug-21-morning description although the file was rewritten Aug 22 19:40 with the new body hash. Skill triggering is description-driven, so the improved trigger text never reaches early adopters.</td>
+<td>Reproduced from the packed tarball: description-only change → <code>15 unchanged</code>; version bump → <code>15 updated</code> but description unchanged</td>
+<td>Record a frontmatter digest in the START marker (<code>fm=sha</code>); when the prefix before START matches it, replace it with the current frontmatter, else preserve and report. Update the test and <code>docs/cmds.md:195</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>A9</td>
+<td>SHOULD</td>
+<td>User docs violate the npx/pnpm/brew-only policy and contain pre-release placeholders: <code>npm install -g</code> at <code>README.md:12</code> and <code>:92</code>; &quot;not yet present in the public npm registry&quot; at <code>README.md:22</code>; &quot;protected <code>npm</code> environment&quot; at <code>README.md:104</code> (does not exist yet). <code>templates/agents/*.md</code> and <code>templates/project/*.md</code> contain no install commands.</td>
+<td>grep over README.md, docs/*.md, templates/</td>
+<td>README:12 → <code>npx @dgtalbug/iris init</code> / <code>pnpm dlx @dgtalbug/iris init</code>; persistent <code>pnpm add -g @dgtalbug/iris</code> (note <code>pnpm setup</code> / PNPM_HOME) and, once the tap exists, <code>brew install dgtalbug/tap/iris</code>; README:92 → <code>pnpm add -g @dgtalbug/iris@latest</code> or <code>npx @dgtalbug/iris@latest init</code>; keep one honest sentence &quot;published on the npm registry as <code>@dgtalbug/iris</code>&quot;; delete README:22 at release; mention that pnpm 11's <code>minimumReleaseAge</code> (24 h default) and Homebrew's release cooldown can delay a fresh release.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A10</td>
+<td>SHOULD</td>
+<td><code>release.yml</code> pins <code>node-version: 22.13.0</code> (<code>.github/workflows/release.yml:24</code>); npm's trusted-publishing docs state npm CLI 11.5.1+ and Node 22.14.0 or higher. Cheap to preempt a red first OIDC run.</td>
+<td>docs.npmjs.com/trusted-publishers</td>
+<td>Use <code>node-version: 24</code> (or <code>22</code>) in release.yml only; keep CI at the 22.13.0 floor and add a Node 24 matrix row. Optionally replace <code>npm install -g npm@11.19.0</code> + <code>npm publish</code> with <code>pnpm publish --access public --provenance --no-git-checks</code> (pnpm 11 has native OIDC publish); dry-run first.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A11</td>
+<td>SHOULD</td>
+<td>GitHub environment <code>npm</code> does not exist (only <code>copilot</code>); GitHub would auto-create it unprotected on first run, so there would be no approval gate despite README/status claiming &quot;protected&quot;.</td>
+<td><code>gh api repos/dgtalbug/iris/environments</code> → copilot only; <code>/environments/npm</code> 404</td>
+<td>Create env <code>npm</code> with required reviewer <code>dgtalbug</code> and deployment tags <code>v*</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A12</td>
+<td>SHOULD</td>
+<td>No branch protection or rulesets on <code>main</code>.</td>
+<td><code>gh api .../branches/main/protection</code> 404; <code>.../rulesets</code> <code>[]</code>; <code>docs/status.md:49</code></td>
+<td>Ruleset requiring a PR and the CI check <code>validate</code>; no force-push.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A13</td>
+<td>SHOULD</td>
+<td><code>scripts/verify-release.mjs:7</code> <code>requiredFiles</code> omits <code>templates/project</code> although <code>package.json:28</code> ships it and <code>scripts/install-smoke.mjs:50</code> requires <code>templates/project/hld.md</code>.</td>
+<td>file read</td>
+<td>Add <code>templates/project</code> and the five <code>templates/project/*.md</code> to the checks; extend <code>tests/release-packaging.test.ts</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A14</td>
+<td>SHOULD</td>
+<td>Stale <code>package-lock.json</code> tracked alongside <code>pnpm-lock.yaml</code> (<code>packageManager: pnpm@11.22.0</code>); the lock lacks <code>lucide</code> (added on this branch); nothing references it.</td>
+<td><code>git log -3 -- package-lock.json</code> last f9ebe9b; <code>grep -c '&quot;node_modules/lucide&quot;' package-lock.json</code> = 0</td>
+<td><code>git rm package-lock.json</code>; add to <code>.gitignore</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A15</td>
+<td>SHOULD</td>
+<td><code>prepack</code> is <code>npm run build</code> in a pnpm project (<code>package.json:47</code>); triggers a full tsc on every <code>npm pack</code>.</td>
+<td>file read</td>
+<td><code>&quot;prepack&quot;: &quot;tsc -p tsconfig.json&quot;</code> (manager-neutral).</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A16</td>
+<td>SHOULD</td>
+<td>OpenSpec change <code>electric-design-system</code> is complete (31 checked, 0 unchecked) but unarchived; canonical specs have no &quot;electric&quot; (capability still <code>aperture-design-system</code>); <code>docs/status.md:3</code> names branch <code>feat/project-docs-hld-lld</code> and &quot;one active change&quot;; <code>docs/status.md:45-46</code> risks are stale; <code>docs/tech.md:6-7</code> pins Ajv 8.17.1 / Vitest 3.2.4 vs package.json 8.18.0 / 3.2.6. Test count &quot;163&quot; is correct today.</td>
+<td>tasks.md counts; <code>grep -ri electric openspec/specs</code> empty</td>
+<td>Archive <code>electric-design-system</code> and sync deltas; rewrite status.md header and risks; fix tech.md pins.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A17</td>
+<td>SHOULD</td>
+<td>Homebrew: no core formula <code>iris</code>, but a homebrew/cask cask <code>iris</code> (blue-light filter 1.2.2) exists, so a bare <code>brew install iris</code> resolves to the cask even after tapping. Repo has 0 stars/forks/watchers, below core notability (75/30/30; 225/90/90 for self-submission). The spec forbids a placeholder formula until tarball URL + sha256 exist (<code>brew-formula-and-installability/spec.md:31-32</code>).</td>
+<td><code>brew info iris</code> → cask; formulae.brew.sh formula/iris.json 404; <code>gh api repos/dgtalbug/iris</code> 0/0/0</td>
+<td>After v0.3.0 is on npm: <code>brew tap-new dgtalbug/tap</code>; <code>brew create --node --tap dgtalbug/tap --set-name iris --set-license MIT https://registry.npmjs.org/@dgtalbug/iris/-/iris-0.3.0.tgz</code>; sha256 via <code>curl ... | shasum -a 256</code>; docs always say <code>brew install dgtalbug/tap/iris</code> (or name the formula <code>iris-cli</code>). Automate bumps with a <code>homebrew</code> job in release.yml (<code>needs: package</code>, poll <code>npm view ... dist.tarball</code>, then <code>mislav/bump-homebrew-formula-action</code>). Formula draft below.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>A18</td>
+<td>NICE</td>
+<td>Cold install footprint: 127 packages / 185 MB on disk, mermaid alone 83 MB (about 40 MB download), for a CLI that only copies <code>mermaid.min.js</code> in <code>iris vendor</code>. npx and pnpm dlx cache it after the first run.</td>
+<td>smoke log &quot;added 127 packages&quot;; <code>du -sh</code></td>
+<td>Acceptable for v0.3.0. Later: <code>optionalDependencies</code>, or <code>iris vendor</code> fetching the pinned tarball with checksum verification (conflicts with the offline philosophy — a deliberate decision, not a gate).</td>
+<td>M later</td>
+</tr>
+<tr>
+<td>A19</td>
+<td>NICE</td>
+<td><code>HELP_TEXT</code> is computed at import (<code>src/cli.ts:15</code>), so a broken package layout throws an uncaught stack trace instead of exit 2.</td>
+<td>file read</td>
+<td>Compute lazily inside <code>runCli</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A20</td>
+<td>NICE</td>
+<td>release.yml: the verify step is skipped on <code>workflow_dispatch</code> (<code>release.yml:29</code>), so dry runs never exercise <code>verify-release.mjs</code>; concurrency group keyed on <code>github.ref</code>; actions not SHA-pinned; no <code>dependabot.yml</code> (only security updates on); <code>pnpm format</code> not in CI or <code>release:check</code>. The publish guard itself is correct (<code>if: github.event_name == 'release'</code> on verify and publish, <code>id-token: write</code> job-scoped, no <code>NPM_TOKEN</code>).</td>
+<td>file reads; <code>gh api .../actions/permissions</code></td>
+<td>Fallback tag for dry runs; constant concurrency group; pin SHAs; add dependabot (npm + github-actions); add <code>pnpm format</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A21</td>
+<td>NICE</td>
+<td>Command/prompt frontmatter is minimal: Claude <code>name</code>/<code>description</code> only (<code>src/lib/agent-skills.ts:161-167</code>), no <code>argument-hint</code> although every action takes an id; Copilot only <code>description</code> (<code>:169-174</code>). Will not reach existing installs until A8 is fixed.</td>
+<td>file reads</td>
+<td>Add <code>argument-hint</code> and <code>mode: agent</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A22</td>
+<td>NICE</td>
+<td>install-smoke idempotency coverage is thin: asserts only exit 0 for both inits and file existence; no diff of run 1 vs run 2, no &quot;0 created, 0 updated, 15 unchanged&quot; assertion, no conflict path, no frontmatter check, no pnpm leg. Unit tests cover managed-region semantics well (<code>tests/agent-skills.test.ts:43-212</code>).</td>
+<td>file reads; covered manually in this audit</td>
+<td>Capture stdout of run 2 and assert the unchanged line; byte-compare SKILL.md across runs; optional pnpm leg.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A23</td>
+<td>NICE</td>
+<td>Tracked for a public repo: <code>iris/design/vendor/mermaid.min.js</code> (3.5 MB dogfood churn), <code>docs/superpowers/</code> planning files, <code>BACKLOG.md</code>; the project-docs/HLD/LLD work on this branch has no OpenSpec change. Missing CONTRIBUTING, SECURITY, CoC, CODEOWNERS, templates.</td>
+<td><code>git ls-files</code> counts</td>
+<td>Untrack <code>mermaid.min.js</code> (keep a <code>.gitkeep</code>); decide on <code>docs/superpowers</code>; add SECURITY.md and CONTRIBUTING.md as the minimum.</td>
+<td>S–M</td>
+</tr>
+<tr>
+<td>A24</td>
+<td>NICE</td>
+<td>Uncommitted <code>AGENTS.md</code> / <code>CLAUDE.md</code>: only the GitNexus stats line (2959/4585/206 → 3112/4837/222). GitNexus also warns that FTS indexes are missing.</td>
+<td><code>git diff</code></td>
+<td>Commit as <code>chore: refresh GitNexus index stats</code>; run <code>npx gitnexus analyze --force</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td>A25</td>
+<td>NICE</td>
+<td>Dependencies: <code>pnpm audit</code> reports 0 vulnerabilities. Outdated: ajv 8.18 → 8.20, lucide 0.469 → 1.33 (pinned to Vision per <code>docs/design-system.md:42</code>), TypeScript 5.9 → 7.0, vitest 3.2 → 4.1, eslint 9 → 10, prettier, tsx, @types/node, typescript-eslint.</td>
+<td><code>pnpm audit</code>, <code>pnpm outdated</code></td>
+<td>Not release-blocking; schedule majors post-release.</td>
+<td>M later</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Verified OK</td>
+<td>Tarball payload clean: 55 files, 74.5 kB packed / 296 kB unpacked — <code>dist/src</code>, <code>schemas</code>, <code>templates/agents</code>, <code>templates/project</code>, <code>README.md</code>, <code>package.json</code>; no tests, <code>iris/</code>, or <code>openspec/</code>. Shebang present; bin has no exec bit inside the tarball but npm and pnpm set it at link time (smoke and the simulations ran it). <code>--help</code> exit 0; no-args exit 0; unknown command → <code>Unknown command: X</code>, exit 1. SKILL.md frontmatter conforms to the Agent Skills spec (<code>name</code> 14 chars, <code>description</code> 222 chars, <code>license</code>, <code>metadata</code>). The skill body references only commands that exist in <code>COMMAND_GROUPS</code>; <code>docs/cmds.md</code> command set equals the catalog. <code>pnpm release:check</code> passes end to end.</td>
+<td>see Evidence</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="release-path">Release path</h3>
+<figure class="diagram mermaid-figure" data-mermaid-figure>
+<div class="mermaid-status" role="status" data-mermaid-status>Diagram source. Run <code>iris vendor</code> to enable the offline preview.</div>
+<div class="mermaid-host" data-mermaid-host aria-label="Mermaid diagram">flowchart LR
+  PR[&quot;PR merged to main&quot;] --&gt; Bump[&quot;package.json 0.3.0 + CHANGELOG&quot;]
+  Bump --&gt; Boot[&quot;one-time manual bootstrap publish&quot;]
+  Boot --&gt; TP[&quot;npm trusted publisher + GitHub npm environment&quot;]
+  TP --&gt; Rel[&quot;GitHub Release v0.3.0&quot;]
+  Rel --&gt; WF[&quot;release.yml runs release-check, verifies the tag, publishes with provenance&quot;]
+  WF --&gt; Reg[(&quot;registry.npmjs.org @dgtalbug/iris&quot;)]
+  Reg --&gt; NPX[&quot;npx @dgtalbug/iris&quot;]
+  Reg --&gt; PNPM[&quot;pnpm dlx / pnpm add -g&quot;]
+  Reg --&gt; Tap[&quot;dgtalbug/homebrew-tap Formula/iris.rb&quot;]
+  Tap --&gt; Brew[&quot;brew install dgtalbug/tap/iris&quot;]
+  classDef focus stroke:#8b5cf6,stroke-width:2.5px,fill:transparent,color:#8b5cf6;
+  classDef svc   stroke:#22d3ee,fill:transparent,color:#22d3ee;
+  classDef db    stroke:#fbbf24,fill:transparent,color:#fbbf24;
+  classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
+  class WF focus
+  class Reg db
+  class NPX,PNPM,Brew svc
+  class Boot,TP,Tap ext
+</div>
+<pre class="mermaid-fallback" data-mermaid-fallback><code class="language-mermaid">flowchart LR
+  PR[&quot;PR merged to main&quot;] --&gt; Bump[&quot;package.json 0.3.0 + CHANGELOG&quot;]
+  Bump --&gt; Boot[&quot;one-time manual bootstrap publish&quot;]
+  Boot --&gt; TP[&quot;npm trusted publisher + GitHub npm environment&quot;]
+  TP --&gt; Rel[&quot;GitHub Release v0.3.0&quot;]
+  Rel --&gt; WF[&quot;release.yml runs release-check, verifies the tag, publishes with provenance&quot;]
+  WF --&gt; Reg[(&quot;registry.npmjs.org @dgtalbug/iris&quot;)]
+  Reg --&gt; NPX[&quot;npx @dgtalbug/iris&quot;]
+  Reg --&gt; PNPM[&quot;pnpm dlx / pnpm add -g&quot;]
+  Reg --&gt; Tap[&quot;dgtalbug/homebrew-tap Formula/iris.rb&quot;]
+  Tap --&gt; Brew[&quot;brew install dgtalbug/tap/iris&quot;]
+  classDef focus stroke:#8b5cf6,stroke-width:2.5px,fill:transparent,color:#8b5cf6;
+  classDef svc   stroke:#22d3ee,fill:transparent,color:#22d3ee;
+  classDef db    stroke:#fbbf24,fill:transparent,color:#fbbf24;
+  classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
+  class WF focus
+  class Reg db
+  class NPX,PNPM,Brew svc
+  class Boot,TP,Tap ext
+</code></pre>
+</figure>
+<h3 id="homebrew-formula-draft-placeholders-until-the-tarball-exists">Homebrew formula draft (placeholders until the tarball exists)</h3>
+<pre><code class="language-ruby">class Iris &lt; Formula
+  desc &quot;Visual, versioned HTML docs for AI coding work&quot;
+  homepage &quot;https://github.com/dgtalbug/iris&quot;
+  url &quot;https://registry.npmjs.org/@dgtalbug/iris/-/iris-VERSION.tgz&quot;
+  sha256 &quot;SHA256_OF_THAT_TARBALL&quot;
+  license &quot;MIT&quot;
+  depends_on &quot;node&quot;
+  def install
+    system &quot;npm&quot;, &quot;install&quot;, *std_npm_args
+    bin.install_symlink libexec.glob(&quot;bin/*&quot;)
+  end
+  test do
+    assert_match &quot;iris v#{version}&quot;, shell_output(&quot;#{bin}/iris --help&quot;)
+    system bin/&quot;iris&quot;, &quot;init&quot;
+    assert_path_exists testpath/&quot;iris&quot;
+  end
+end
+</code></pre>
+<h3 id="b-product-gaps-raised-by-the-owner">B. Product gaps raised by the owner</h3>
+<p>These are not release blockers for v0.3.0 unless marked; each is sized and pointed at the spec it would change so they can become OpenSpec changes.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Sev</th>
+<th>Gap</th>
+<th>Evidence</th>
+<th>Proposed shape</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>SHOULD (UX)</td>
+<td>Dark/light theme switch needs a better design. Today it is a two-button &quot;Dark / Light&quot; segmented control in the sidebar with <code>aria-pressed</code>, persisted under <code>iris-theme</code>, plus the <code>t</code> shortcut; diagrams re-theme from an <code>iris:theme</code> event.</td>
+<td><code>src/templates/shell.ts:176-178</code>; <code>src/templates/script.ts:30-43</code>; footer hint <code>shell.ts:148</code></td>
+<td>One compact toggle in the top bar (sun/moon glyph, <code>aria-pressed</code>, visible focus ring), optional third &quot;System&quot; state following <code>prefers-color-scheme</code>, reduced-motion-safe transition, keyboard hint kept. Spec: MODIFIED scenario in the design-system capability (theme toggle) plus <code>markdown-diagram-rendering</code> &quot;theme is changed while diagrams are rendered&quot; stays green.</td>
+<td>S–M</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>SHOULD (decision)</td>
+<td>&quot;Exact source&quot; disclosures can be removed. Spec detail pages render <code>&lt;details class=&quot;spec-source-details&quot;&gt;&lt;summary&gt;Exact source&lt;/summary&gt;...</code> three times; README and cmds promise &quot;an exact escaped-source disclosure remains available&quot;. Three canonical specs require it, so removal is a spec change, not just a template edit. Open question: keep the separate Mermaid source fallback shown before <code>iris vendor</code>, without JavaScript, in print, and in standalone artifacts (a different feature, needed for <code>file://</code>).</td>
+<td><code>src/templates/pages/spec-detail.ts:67,132,163</code>; <code>README.md:66</code>; <code>docs/cmds.md:26</code>; <code>openspec/specs/{openspec-spec-browser,markdown-diagram-rendering,research-markdown-pages}/spec.md</code>; tests <code>tests/openspec-browser.test.ts</code>, <code>tests/workspace-shell.test.ts</code></td>
+<td>OpenSpec change with REMOVED/MODIFIED requirement deltas in the three specs, template removal, test updates, README/cmds/status wording. Recommend keeping the Mermaid pre-vendor fallback.</td>
+<td>S–M</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>SHOULD</td>
+<td>No clean way for Iris to remove itself from a workspace: the catalog has no <code>uninstall</code>/<code>clean</code>/<code>remove</code>, and <code>iris init</code> leaves files in <code>iris/</code>, <code>.agents/skills</code>, <code>.claude/skills</code>, <code>.claude/commands/iris</code>, <code>.github/skills</code>, <code>.github/prompts</code>, and a managed <code>.vscode/tasks.json</code> entry.</td>
+<td><code>src/lib/command-catalog.ts</code> (no such command); managed task at <code>src/commands/lifecycle.ts:92</code>; surface targets in <code>src/lib/agent-skills.ts</code></td>
+<td>New command <code>iris uninstall [--purge] [--json]</code>: remove only Iris-owned generated assets — agent surfaces whose markers and digest prove ownership (reuse the managed-region logic; preserve and report edited or unmarked files), generated <code>/iris:*</code> commands and prompts, the managed tasks.json entry, <code>iris/design/</code>, generated HTML and <code>spec.json</code>; <code>--purge</code> additionally deletes <code>iris/pages</code>, <code>iris/research</code>, <code>iris/archive</code>, <code>iris/project</code>, <code>config.yaml</code>, <code>state.json</code> and requires the flag explicitly. Spec: new capability (<code>workspace-uninstall</code>) or a requirement added to <code>project-lifecycle-automation</code>; docs/cmds.md, help, Commands page, skill body.</td>
+<td>M</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>SHOULD</td>
+<td>First run via an agent should populate all five project docs, not only HLD/LLD. The skill row &quot;initialized Iris&quot; lands in <code>hld.md + lld.md</code> only; the guidance paragraph asks for HLD/LLD placeholder replacement; <code>iris init</code> prints &quot;next: write iris/project/hld.md and iris/project/lld.md&quot;; there is no <code>/iris:init</code> or <code>/iris:project</code> command telling the agent to fill overview, HLD, LLD, ERD and decisions from the codebase.</td>
+<td><code>templates/agents/iris-workspace.md:11,25</code>; <code>src/commands/init.ts:86</code>; <code>templates/agents/iris-commands.md</code> (no init/project action)</td>
+<td>Extend the skill table and paragraph to all five docs; make <code>init</code> print all five paths (and list them in <code>--json</code>); add a generated <code>/iris:project</code> (or <code>/iris:init</code>) command: run <code>iris init</code>, fill each project doc from the codebase, <code>iris render --all</code>, report paths. Spec: MODIFIED requirement in <code>agent-first-initialization</code> (skill names every project doc) and a backfilled project-docs requirement (A23 notes none exists). Note: the skill body change propagates (managed), but the new command's description will be stuck for existing installs until A8.</td>
+<td>S–M</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>SHOULD (direction)</td>
+<td>The dashboard reads as a &quot;weird mix&quot; / Notion-like; the owner wants bright enterprise colours. Vision &quot;Electric&quot; v2.0 was adopted on this very branch days ago and is unmerged (A16); the token block in <code>tokens.ts</code> is the single source, and token-lint enforces contrast and control-boundary floors, so a re-theme is a token swap plus review.</td>
+<td><code>src/templates/tokens.ts</code>; <code>docs/design-system.md:1-3</code>; <code>docs/tech.md:91</code> (&quot;reduces a future restyle to a token-block swap&quot;); <code>scripts/token-lint.mjs</code>, <code>scripts/token-contract.mjs</code>, <code>tests/token-contract.test.mjs</code></td>
+<td>Do not re-theme inside the release PR. Open one OpenSpec change (<code>brand-and-palette</code>) for 0.4.0 bundling P1, P5, P6: define &quot;bright enterprise&quot; concretely (two or three reference products or screenshots, primary/accent chroma targets, light surfaces near-white, dark surfaces navy or slate), swap the token block, keep token-lint green, refresh <code>docs/design-system.md</code>. If the look is a release blocker for you, say so and the order flips.</td>
+<td>M–L</td>
+</tr>
+<tr>
+<td>P6</td>
+<td>SHOULD (direction)</td>
+<td>Branding: no logo or wordmark — the sidebar brand is the Lucide <code>radar</code> icon; fonts are system stacks; icons are Lucide 0.469 inlined as SVG. Generated pages must stay font-, script- and network-free, so a brand typeface has to be embedded (subset woff2 as a data URI, OFL-licensed, roughly 20–40 KB per weight) or stay system.</td>
+<td><code>src/templates/icons.ts:14</code> (<code>brand: 'radar'</code>); <code>src/templates/shell.ts:90-91</code>; <code>src/templates/tokens.ts:40-41</code>; README &quot;no font, script, or network request&quot;</td>
+<td>Inline SVG mark + wordmark in the shell and a data-URI favicon; one embedded display face for headings only (body stays system); keep Lucide for UI icons (a custom icon set is a separate, larger lift). Same <code>brand-and-palette</code> change as P5.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h2 id="evidence">Evidence</h2>
+<p>Commands run on 2026-08-23 (exit codes and trimmed output):</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Exit</th>
+<th>Output (trimmed)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>node --version; pnpm --version; npm --version</code></td>
+<td>0</td>
+<td>v26.7.0 / 11.22.0 / 11.19.0</td>
+</tr>
+<tr>
+<td><code>pnpm install --frozen-lockfile</code></td>
+<td>0</td>
+<td>Already up to date</td>
+</tr>
+<tr>
+<td><code>pnpm release:check</code></td>
+<td>0</td>
+<td>Test Files 26 passed, Tests 163 passed; html-check OK 13 files, 268 refs; smoke: added 127 packages, init#1 15 created, init#2 15 unchanged, vendored Mermaid 11.17.0, install smoke passed for @dgtalbug/iris@0.2.0 on Node.js 26.7.0</td>
+</tr>
+<tr>
+<td><code>npm pack --dry-run</code></td>
+<td>0</td>
+<td>55 files, 74.5 kB packed, 296.4 kB unpacked: README.md, package.json, dist/src (cli, index, commands/9, lib/13, templates/8, templates/pages/8), schemas/6, templates/agents/2, templates/project/5. No LICENSE, tests, iris/, openspec/.</td>
+</tr>
+<tr>
+<td><code>tar tvzf dgtalbug-iris-0.2.0.tgz</code>; <code>head -1 dist/src/index.js</code></td>
+<td>0</td>
+<td>all entries <code>-rw-r--r--</code>; <code>#!/usr/bin/env node</code></td>
+</tr>
+<tr>
+<td><code>npm install &lt;tarball&gt;</code> in a scratch dir</td>
+<td>0</td>
+<td>127 packages, 185 MB, mermaid 83 MB; <code>.bin/iris</code> symlink, target <code>-rwxr-xr-x</code></td>
+</tr>
+<tr>
+<td><code>npx iris --help</code>; <code>npx --yes --package=&lt;tarball&gt; iris --help</code></td>
+<td>0 / 0</td>
+<td><code>iris v0.2.0 / Usage: iris &lt;command&gt; [options]</code></td>
+</tr>
+<tr>
+<td><code>npx iris --version</code>; <code>-v</code>; <code>version</code>; <code>bogus</code>; no args</td>
+<td>1 / 1 / 1 / 1 / 0</td>
+<td>stack trace ERR_PARSE_ARGS_UNKNOWN_OPTION; same; Unknown command: version; Unknown command: bogus; help</td>
+</tr>
+<tr>
+<td><code>node dist/src/index.js</code> with <code>--help</code>, <code>-h</code>, <code>help</code>, <code>--version</code>, <code>-v</code>, <code>-V</code>, <code>version</code>, <code>bogus</code>, <code>--bogus</code>, none</td>
+<td>0,0,1,1,1,1,1,1,1,0</td>
+<td>as above; <code>--bogus</code> also stack-traces</td>
+</tr>
+<tr>
+<td><code>pnpm add &lt;tarball&gt;</code>; <code>pnpm exec iris --help</code>; <code>--version</code></td>
+<td>0 / 0 / 1</td>
+<td>129 pkgs, 185 MB; help; stack trace</td>
+</tr>
+<tr>
+<td><code>pnpm dlx &lt;tarball&gt; --help</code>; <code>pnpm dlx --package=&lt;tarball&gt; iris --help</code></td>
+<td>0 / 0</td>
+<td><code>iris v0.2.0 ...</code></td>
+</tr>
+<tr>
+<td>Frontmatter repro from the packed tarball: init#1, init#2, mutate description, init#3, bump version, init#4, change body, init#5, edit managed body, init#6</td>
+<td>0,0,0,0,0,1</td>
+<td>15 created; 15 unchanged (SKILL.md byte-identical); 15 unchanged, CHANGED-DESC absent in all 5 surfaces; 15 updated, marker version=0.2.1, description still old; 3 updated, body changed, description still old; &quot;Iris agent surface setup is incomplete; .claude/skills/iris-workspace/SKILL.md: managed markers or digest are invalid; preserved the file&quot;</td>
+</tr>
+<tr>
+<td><code>pnpm audit</code>; <code>pnpm audit --prod</code></td>
+<td>0</td>
+<td>No known vulnerabilities found</td>
+</tr>
+<tr>
+<td><code>pnpm outdated</code></td>
+<td>—</td>
+<td>ajv 8.20.0, lucide 1.33.0, typescript 7.0.2, vitest 4.1.11, eslint 10.9.0, prettier 3.9.6, tsx 4.23.12, @types/node 26.2.0, typescript-eslint 8.67.0</td>
+</tr>
+<tr>
+<td><code>npm view @dgtalbug/iris version</code>; <code>npm whoami</code></td>
+<td>E404 / E401</td>
+<td>not published; not logged in</td>
+</tr>
+<tr>
+<td><code>git tag</code>; <code>gh release list</code>; <code>gh run list --workflow release.yml</code></td>
+<td>0</td>
+<td>all empty</td>
+</tr>
+<tr>
+<td><code>gh run list --workflow ci.yml</code></td>
+<td>0</td>
+<td>latest push on feat/electric-design-system success (2026-08-23)</td>
+</tr>
+<tr>
+<td><code>gh api repos/dgtalbug/iris</code></td>
+<td>0</td>
+<td>public, default main, stars/forks/watchers 0/0/0, license null, topics []</td>
+</tr>
+<tr>
+<td><code>gh api .../environments</code>; <code>.../environments/npm</code>; <code>.../branches/main/protection</code>; <code>.../rulesets</code></td>
+<td>0 / 404 / 404 / 0</td>
+<td>only copilot; not found; Branch not protected; []</td>
+</tr>
+<tr>
+<td><code>gh pr list --state all</code></td>
+<td>0</td>
+<td>#11 MERGED &quot;(v0.2.0)&quot;; none for this branch; <code>git log origin/main..HEAD</code> = 15 commits</td>
+</tr>
+<tr>
+<td><code>brew info iris</code>; <code>curl formulae.brew.sh/api/formula/iris.json</code></td>
+<td>0 / 404</td>
+<td>cask iris 1.2.2 (blue-light filter); no core formula</td>
+</tr>
+<tr>
+<td><code>git ls-files</code> / <code>ls</code> governance</td>
+<td>0</td>
+<td>tracked: package-lock.json, pnpm-lock.yaml, iris/ (31 files, 5.4 MB incl. 3.5 MB mermaid.min.js), docs/superpowers/ (2); none of LICENSE, CHANGELOG, CONTRIBUTING, SECURITY, CoC, CODEOWNERS, dependabot.yml</td>
+</tr>
+<tr>
+<td><code>git diff AGENTS.md CLAUDE.md</code></td>
+<td>0</td>
+<td>one stats line each</td>
+</tr>
+<tr>
+<td>grep for <code>npm install</code>, <code>npx </code>, <code>pnpm add</code>, <code>pnpm dlx</code>, <code>brew </code> in README.md, docs/*.md, templates/</td>
+<td>0</td>
+<td>README:12, :19, :22, :92, :109; docs/status.md:48; docs/tech.md:53, :85; templates: none</td>
+</tr>
+<tr>
+<td>Node below 22.13 runtime check</td>
+<td>n/a</td>
+<td>not possible locally (only node@24/25/26 installed); A7 is static analysis</td>
+</tr>
+</tbody>
+</table>
+<p>Source lines cited in the tables were read directly: <code>src/cli.ts</code>, <code>src/index.ts</code>, <code>src/lib/command-catalog.ts</code>, <code>src/lib/package-info.ts</code>, <code>src/lib/agent-skills.ts</code>, <code>src/lib/errors.ts</code>, <code>src/commands/init.ts</code>, <code>src/commands/lifecycle.ts</code>, <code>src/templates/{shell,script,icons,tokens}.ts</code>, <code>src/templates/pages/spec-detail.ts</code>, <code>scripts/{verify-release,install-smoke,token-lint,token-contract}.mjs</code>, <code>.github/workflows/{ci,release}.yml</code>, <code>tests/{cli-help,agent-skills,release-packaging,openspec-browser,workspace-shell}.test.ts</code>, <code>templates/agents/*.md</code>, <code>openspec/specs/*/spec.md</code>, <code>docs/*.md</code>, <code>README.md</code>, <code>package.json</code>, <code>tsconfig.json</code>.</p>
+<h2 id="next-steps">Next steps</h2>
+<h3 id="ordered-checklist-for-v0-3-0">Ordered checklist for v0.3.0</h3>
+<p>&quot;You&quot; = manual action outside the repo. &quot;Agent&quot; = repo change (impact analysis before each symbol edit).</p>
+<ol>
+<li>Agent — Add <code>LICENSE</code> (MIT), <code>CHANGELOG.md</code> with <code>## [0.3.0]</code>, <code>SECURITY.md</code>, minimal <code>CONTRIBUTING.md</code>. (A3, A5, A23)</li>
+<li>Agent — CLI: <code>--version</code> / <code>-v</code>; <code>parseArgs</code> inside <code>try</code> with a clean exit-1 message; Node floor guard with exit 2; lazy <code>HELP_TEXT</code>; tests and docs/cmds.md. (A6, A7, A19)</li>
+<li>Agent — Frontmatter refresh via a frontmatter digest in the marker, tests, docs/cmds.md. (A8)</li>
+<li>Agent — Packaging hygiene: <code>prepack</code> → <code>tsc -p tsconfig.json</code>; remove <code>package-lock.json</code> and ignore it; <code>verify-release.mjs</code> and the packaging test cover <code>templates/project</code>. (A13–A15)</li>
+<li>Agent — release.yml: Node 24 for the publish job, unconditional verify with fallback tag, constant concurrency group; CI: Node 24 row and <code>pnpm format</code>; add <code>dependabot.yml</code>. (A10, A20)</li>
+<li>Agent — Docs: README install/upgrade rewritten to <code>npx</code> / <code>pnpm dlx</code> / <code>pnpm add -g</code> (with <code>pnpm setup</code> and 24 h <code>minimumReleaseAge</code> notes), remove &quot;not yet present&quot;, say &quot;hosted on the npm registry&quot;; brew line only after step 12; fix docs/status.md and docs/tech.md; archive <code>electric-design-system</code> and sync specs; commit the GitNexus stat-line change. (A9, A16, A24)</li>
+<li>Agent — Bump <code>package.json</code> to 0.3.0 (<code>chore: release 0.3.0</code>), run <code>pnpm release:check</code> and GitNexus change detection, open the PR. (A4, A5)</li>
+<li>You — Create GitHub environment <code>npm</code> (required reviewer, tags <code>v*</code>); add a <code>main</code> ruleset (PR + <code>validate</code> check). (A11, A12)</li>
+<li>You — Merge the PR to <code>main</code> after CI is green.</li>
+<li>You (one-time bootstrap) — <code>npm login</code> (granular token + 2FA); from a clean checkout of <code>main</code>, set version <code>0.3.0-rc.1</code> locally (uncommitted), <code>pnpm install &amp;&amp; pnpm build &amp;&amp; npm publish --access public --tag next</code>; verify <code>npm view @dgtalbug/iris versions</code>; on npmjs.com package Settings → Trusted Publisher: GitHub Actions, owner <code>dgtalbug</code>, repo <code>iris</code>, workflow <code>release.yml</code>, environment <code>npm</code>; enable &quot;require 2FA / disallow tokens&quot;; revoke the token. Alternative: bootstrap <code>0.3.0</code> directly and make <code>0.3.1</code> the first automated release. (A2)</li>
+<li>You — <code>gh release create v0.3.0 --target main --title v0.3.0 --notes-file</code> (CHANGELOG excerpt); approve the <code>npm</code> environment; confirm <code>release.yml</code> green; verify <code>npm view @dgtalbug/iris version</code> = 0.3.0 and <code>dist.attestations</code> present; <code>npx @dgtalbug/iris --version</code>; <code>pnpm dlx @dgtalbug/iris --help</code> (may need <code>--config.minimumReleaseAge=0</code> on day one).</li>
+<li>You — <code>brew tap-new dgtalbug/tap</code>; <code>brew create --node --tap dgtalbug/tap --set-name iris --set-license MIT https://registry.npmjs.org/@dgtalbug/iris/-/iris-0.3.0.tgz</code>; replace the <code>test do</code>; <code>brew install --build-from-source dgtalbug/tap/iris &amp;&amp; brew test dgtalbug/tap/iris &amp;&amp; brew audit --strict --new dgtalbug/tap/iris</code>; push. (A17)</li>
+<li>Agent — Add <code>brew install dgtalbug/tap/iris</code> to README; add the <code>homebrew</code> bump job to release.yml (you create the <code>COMMITTER_TOKEN</code> secret with repo + workflow scope); mark the brew channel available in the spec and status docs. Ship as 0.3.1 or fold into the next release.</li>
+</ol>
+<h3 id="proposed-openspec-grouping">Proposed OpenSpec grouping</h3>
+<ol>
+<li><code>release-readiness-0-3-0</code> — steps 1–7 above (A3, A5–A10, A13–A16, A19, A20, A23, A24) as one change against <code>brew-formula-and-installability</code> (install/version/Node-guard scenarios) and <code>agent-first-initialization</code> (frontmatter refresh).</li>
+<li><code>workspace-uninstall</code> — P3, new capability or <code>project-lifecycle-automation</code> requirement; small enough for 0.3.x.</li>
+<li><code>agent-first-project-docs</code> — P4 plus a backfilled project-docs requirement; could be merged into change 1 since it edits the same skill template.</li>
+<li><code>remove-source-disclosure</code> — P2; decide first whether the Mermaid pre-vendor fallback stays.</li>
+<li><code>brand-and-palette</code> — P1, P5, P6 together for 0.4.0; needs two or three reference points for &quot;bright enterprise&quot; before tokens are touched.</li>
+</ol>
+<h3 id="direct-answers">Direct answers</h3>
+<ol>
+<li>Is <code>iris-workspace</code> a proper skill, and releasable on its own? Yes, it conforms to the Agent Skills spec and Claude Code loads it; no, it is not releasable on its own today — no plugin manifest, no tracked <code>skills/</code> directory, and its body depends on the <code>iris</code> binary. Keep CLI-installed for 0.3.0; fix A8 first.</li>
+<li>Can we release via pnpm? Yes, automatically once the package is on npm; document <code>pnpm setup</code> and the 24 h <code>minimumReleaseAge</code> gotcha.</li>
+<li>Can we release via brew? Yes, via <code>dgtalbug/homebrew-tap</code> after the npm tarball exists; always <code>brew install dgtalbug/tap/iris</code> because a cask named <code>iris</code> already exists; automate formula bumps from release.yml.</li>
+<li>Can user-facing install be npx/pnpm/brew only, with no <code>npm install</code>? Yes — a docs change only; the package is still hosted on the npm registry and internal tooling may keep using npm.</li>
+</ol>
+</article>
+    </div>
+        </main>
+        <footer class="footer"><span>generated by iris · works offline from file://</span><span data-iris-nav>rendered from iris/research/release-readiness-audit/index.md · <kbd>t</kbd> theme · <kbd>b</kbd> sidebar</span></footer>
+      </div>
+    </div>
+
+    <script defer src="../../design/vendor/mermaid.min.js"></script>
+    <script defer src="../../design/components/base.js"></script>
+  </body>
+</html>
