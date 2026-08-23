@@ -6,6 +6,7 @@ import { runDraftCommand } from '../src/commands/draft.js';
 import { runInitCommand } from '../src/commands/init.js';
 import { ingestSessionSource, runReportFromSessionCommand } from '../src/commands/report.js';
 import { runCli } from '../src/cli.js';
+import { projectStatePath, resolveProjectIdentity } from '../src/lib/user-config.js';
 
 const tempDirs: string[] = [];
 
@@ -92,7 +93,8 @@ describe('session report ingestion', () => {
     });
     expect(data.sections.summary.join('\n')).toContain('Branch: feat/session-report');
 
-    const state = JSON.parse(await readFile(path.join(cwd, 'iris/state.json'), 'utf8'));
+    const identity = await resolveProjectIdentity(cwd);
+    const state = JSON.parse(await readFile(projectStatePath(identity.id), 'utf8'));
     expect(state.page_index['session-review']).toMatchObject({
       id: 'session-review',
       type: 'report',

@@ -12,7 +12,7 @@ import {
   type ResearchItem,
 } from '../lib/research-workspace.js';
 import { validateContract } from '../lib/schemas.js';
-import { loadProjectState, saveProjectState, statePath } from '../lib/project-state.js';
+import { loadProjectState, saveProjectState, type ProjectState } from '../lib/project-state.js';
 import { PROJECT_DOC_NAMES, type DashboardPage } from '../templates/common.js';
 import { renderContractPage } from '../templates/pages/contract-page.js';
 import { researchDashboardPage } from '../templates/pages/research.js';
@@ -168,7 +168,12 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
     pages.push(researchDashboardPage(item, `./research/${item.id}/page.html`));
   }
 
-  const state = existsSync(statePath(cwd)) ? await loadProjectState(cwd) : undefined;
+  let state: ProjectState | undefined;
+  try {
+    state = await loadProjectState(cwd);
+  } catch {
+    state = undefined;
+  }
   for (const [pageId, entry] of Object.entries(state?.page_index ?? {})) {
     if (entry.status !== 'archived') continue;
     if (!existsSync(path.join(irisRoot, 'archive', pageId, 'page.html'))) continue;
@@ -277,7 +282,7 @@ export async function runRenderCommand(
     ]);
   }
 
-  if (existsSync(statePath(cwd))) {
+  try {
     const state = await loadProjectState(cwd);
     const recorded = id
       ? model.contracts
@@ -310,6 +315,8 @@ export async function runRenderCommand(
       };
     }
     await saveProjectState(cwd, state);
+  } catch {
+    // Project not initialized; skip state recording.
   }
 
   await writeSectionPages(cwd, model);

@@ -10,6 +10,7 @@ export const PACKAGE_FILES_ENTRIES = [
   'schemas',
   'templates/agents',
   'templates/project',
+  'templates/research',
   'README.md',
 ];
 
@@ -25,7 +26,11 @@ export const SOURCE_ASSETS = [
   'schemas/plan.schema.json',
   'schemas/report.schema.json',
   'templates/agents/iris-commands.md',
-  'templates/agents/iris-workspace.md',
+  'templates/agents/iris-workspace/SKILL.md',
+  'templates/agents/iris-workspace/references/blueprint.md',
+  'templates/agents/iris-workspace/references/components.md',
+  'templates/agents/iris-guard/SKILL.md',
+  'templates/research/blueprint.md',
   'templates/project/decisions.md',
   'templates/project/erd.md',
   'templates/project/hld.md',

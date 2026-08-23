@@ -156,7 +156,7 @@ export function renderShell(options: ShellOptions): string {
     .join('');
 
   return `<!doctype html>
-<html lang="en" data-theme="${escapeHtml(options.theme)}">
+<html lang="en" data-theme="${escapeHtml(options.theme)}" data-ds="iris-electric">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

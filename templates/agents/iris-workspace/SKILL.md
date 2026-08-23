@@ -86,7 +86,7 @@ classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
 - `iris init` creates or safely upgrades the workspace, installs these agent surfaces, and renders every page. It never copies or monitors `README.md` or `docs/**/*.md`.
 - `iris vendor` installs the pinned diagram runtime locally so diagrams render offline.
 - `iris archive <id>` moves a page into history; `iris publish [<id>]` and `iris export <id> --single` write portable standalone HTML.
-- With an `openspec/` directory, the Spec page shows canonical specs, active changes, archives, and real task checkboxes, each change as Proposal / Design / Tasks / Specs tabs. `iris init` and `iris render --all` refresh that snapshot.
+- With a `specs/` directory, the Spec page shows canonical specs, active changes, archives, and real task checkboxes, each change as Proposal / Design / Tasks / Specs tabs. `iris init` and `iris render --all` refresh that snapshot.
 - The Commands page (`iris/commands.html`) lists every command with its real status.
 
 Preserve user-owned configuration, pages, archives, and unrelated agent or editor files.

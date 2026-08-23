@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from './errors.js';
-import { writeAlways } from './fs.js';
+import { ensureDir, writeAlways } from './fs.js';
+import { projectStatePath, resolveProjectIdentity } from './user-config.js';
 
 export type PageRegistryEntry = {
   id: string;
@@ -43,12 +44,13 @@ export function createProjectState(): ProjectState {
   return { version: 2, page_index: {} };
 }
 
-export function statePath(cwd: string): string {
-  return path.join(cwd, 'iris', 'state.json');
+async function resolveStatePath(cwd: string): Promise<string> {
+  const identity = await resolveProjectIdentity(cwd);
+  return projectStatePath(identity.id);
 }
 
 function invalidState(message: string): never {
-  throw new IrisError(1, `Invalid iris/state.json: ${message}`);
+  throw new IrisError(1, `Invalid project state: ${message}`);
 }
 
 function normalizeEntry(id: string, value: unknown): PageRegistryEntry {
@@ -106,7 +108,7 @@ function legacyIndex(value: unknown): Record<string, LegacyPageRegistryEntry> {
 }
 
 export async function loadProjectStateForMigration(cwd: string): Promise<LoadedProjectState> {
-  const filePath = statePath(cwd);
+  const filePath = await resolveStatePath(cwd);
   if (!existsSync(filePath)) {
     throw new IrisError(1, "iris is not initialized; run 'iris init' first");
   }
@@ -115,7 +117,7 @@ export async function loadProjectStateForMigration(cwd: string): Promise<LoadedP
   try {
     parsed = JSON.parse(await readFile(filePath, 'utf8'));
   } catch (error) {
-    throw new IrisError(1, `Invalid iris/state.json: ${(error as Error).message}`);
+    throw new IrisError(1, `Invalid project state: ${(error as Error).message}`);
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     return invalidState('expected a JSON object');
@@ -160,7 +162,9 @@ export async function loadProjectState(cwd: string): Promise<ProjectState> {
 }
 
 export async function saveProjectState(cwd: string, state: ProjectState): Promise<void> {
-  await writeAlways(statePath(cwd), `${JSON.stringify(state, null, 2)}\n`);
+  const target = await resolveStatePath(cwd);
+  await ensureDir(path.dirname(target));
+  await writeAlways(target, `${JSON.stringify(state, null, 2)}\n`);
 }
 
 export function hashContent(content: string): string {

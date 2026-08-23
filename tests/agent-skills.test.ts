@@ -472,8 +472,7 @@ describe('generated agent command surfaces', () => {
       const claude = path.join(cwd, '.claude', 'commands', 'iris', `${action}.md`);
       const copilot = path.join(cwd, '.github', 'prompts', `iris-${action}.prompt.md`);
       const cursor = path.join(cwd, '.cursor', 'commands', `iris-${action}.md`);
-      const codex = path.join(cwd, '.codex', 'prompts', `iris-${action}.md`);
-      for (const target of [claude, copilot, cursor, codex]) {
+      for (const target of [claude, copilot, cursor]) {
         expect(existsSync(target), `${target} exists`).toBe(true);
       }
       const content = await readFile(claude, 'utf8');
@@ -481,21 +480,24 @@ describe('generated agent command surfaces', () => {
       expect(content).toContain(`iris ${action} <id>`);
       expect(content).toContain(`name: "Iris: ${action}"`);
       const bodies = await Promise.all(
-        [copilot, cursor, codex].map(async (target) => managedBody(await readFile(target, 'utf8'))),
+        [copilot, cursor].map(async (target) => managedBody(await readFile(target, 'utf8'))),
       );
       for (const body of bodies) {
         expect(body).toBe(managedBody(content));
       }
     }
 
-    const skillsOnly = listHostAdapters().filter((adapter) => adapter.commandsDir === null);
+    const skillsOnly = listHostAdapters().filter(
+      (adapter): adapter is HostAdapter & { skillsDir: string } => adapter.commandsDir === null,
+    );
     expect(skillsOnly.length).toBeGreaterThan(0);
     for (const adapter of skillsOnly) {
-      const root = `.${adapter.id}`;
-      expect(existsSync(path.join(cwd, root, 'skills', 'iris-workspace', 'SKILL.md'))).toBe(true);
-      const created = result.created.filter((target) => target.startsWith(`${root}/`));
+      expect(existsSync(path.join(cwd, adapter.skillsDir, 'iris-workspace', 'SKILL.md'))).toBe(
+        true,
+      );
+      const created = result.created.filter((target) => target.startsWith(`${adapter.skillsDir}/`));
       expect(created.length).toBeGreaterThan(0);
-      expect(created.every((target) => target.startsWith(`${root}/skills/`))).toBe(true);
+      expect(created.every((target) => !target.includes('/commands/'))).toBe(true);
     }
   });
 

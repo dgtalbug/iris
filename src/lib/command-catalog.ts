@@ -31,8 +31,17 @@ export const COMMAND_GROUPS: CommandGroup[] = [
         commands: ['init'],
         usage: 'iris init',
         synopsis:
-          'Create or safely upgrade the workspace, agent surfaces, OpenSpec snapshot, and generated pages.',
+          'Create or safely upgrade the workspace, agent surfaces, the Specs snapshot, and generated pages.',
         flags: ['--json'],
+        status: 'implemented',
+      },
+      {
+        name: 'config',
+        commands: ['config'],
+        usage: 'iris config [<key> [<value>]] [--global]',
+        synopsis:
+          'Read or write user-global configuration. Reads with a key, writes with --global and a value.',
+        flags: ['--global', '--json'],
         status: 'implemented',
       },
       {
@@ -138,7 +147,7 @@ export const COMMAND_GROUPS: CommandGroup[] = [
         commands: ['render'],
         usage: 'iris render [<id>|--all]',
         synopsis:
-          'Render contracts and research to HTML and refresh every section page; a full render also refreshes the OpenSpec snapshot.',
+          'Render contracts and research to HTML and refresh every section page; a full render also refreshes the Specs snapshot.',
         flags: ['--all', '--json'],
         status: 'implemented',
         intent: 'You edited any source and want the workspace updated',

@@ -84,7 +84,7 @@ describe('markdown research pages', () => {
     expect(page).toContain('<h1>Cache notes</h1>');
     expect(page).toContain('agent claude-code');
     expect(page).toContain('updated 2026-08-21');
-    expect(page).toContain('<h2 id="question">Question</h2>');
+    expect(page).toContain('<h2 class="section" id="question">Question</h2>');
     expect(page).toContain('href="#cold-start"');
     expect(page).toContain('aria-label="On this page"');
     expect(page).toContain('data-mermaid-figure');

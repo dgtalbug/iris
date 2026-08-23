@@ -3,6 +3,12 @@ import { existsSync } from 'node:fs';
 import { lstat, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { IrisError } from './errors.js';
+import {
+  HOST_ADAPTERS,
+  commandFileName,
+  detectHosts as detectHostAdapters,
+  type HostAdapterId,
+} from './host-adapters.js';
 import { ensureDir } from './fs.js';
 import { packageRoot, packageVersion } from './package-info.js';
 
@@ -12,20 +18,11 @@ const SKILL_TEMPLATE_ID = 'iris-workspace';
 const GUARD_TEMPLATE_ID = 'iris-guard';
 const COMMAND_TEMPLATE_ID = 'iris-command';
 
-/**
- * Wave-1 integration seam: the authoritative host table, `detectHosts(cwd)`,
- * and `resolveAdapter(id)` live in `src/lib/host-adapters.ts` (owned by
- * workstream A). Until that module lands, this file mirrors its public shape
- * so surface generation is already adapter-driven: the type below is the
- * contract, and the stand-in table keeps generation working. When the module
- * exists, delete the stand-ins and import the real table instead — no other
- * code here changes.
- */
 export type HostCommandFormat = 'claude-markdown' | 'copilot-prompt';
 
 export type HostAdapter = {
   /** Stable identifier used by tool selection and reports. */
-  id: string;
+  id: HostAdapterId;
   /** Human label for the picker and the completion card. */
   displayName: string;
   /** Filesystem signals detection reads; never written to user config. */
@@ -34,92 +31,54 @@ export type HostAdapter = {
   skillsDir: string | null;
   /** Directory that receives generated commands; null for skills-only hosts. */
   commandsDir: string | null;
-  /** Command filename pattern; `<name>` is the action name. */
-  commandFile: string;
+  /** Command filename pattern; `<action>` is the action name. */
+  commandFile: string | null;
   /** Front-matter dialect for generated commands. */
   commandFormat: HostCommandFormat;
+  /** Human-facing note when the host only picks up new surfaces after a restart. */
+  requiresIdeRestart?: string;
 };
 
-/**
- * Stand-in rows pending workstream A's authoritative table. The claude,
- * agents, and github rows reproduce the targets Iris has always written; the
- * cursor, gemini, and codex rows are placeholders the real table replaces.
- */
-const FALLBACK_HOST_ADAPTERS: readonly HostAdapter[] = [
-  {
-    id: 'claude',
-    displayName: 'Claude Code',
-    detectPaths: ['.claude'],
-    skillsDir: '.claude/skills',
-    commandsDir: '.claude/commands/iris',
-    commandFile: '<name>.md',
-    commandFormat: 'claude-markdown',
-  },
-  {
-    id: 'agents',
-    displayName: 'Agents',
-    detectPaths: ['.agents', 'AGENTS.md'],
-    skillsDir: '.agents/skills',
-    commandsDir: null,
-    commandFile: '<name>.md',
-    commandFormat: 'claude-markdown',
-  },
-  {
-    id: 'github',
-    displayName: 'GitHub Copilot',
-    detectPaths: ['.github/copilot-instructions.md', '.github/instructions'],
-    skillsDir: '.github/skills',
-    commandsDir: '.github/prompts',
-    commandFile: 'iris-<name>.prompt.md',
-    commandFormat: 'copilot-prompt',
-  },
-  {
-    id: 'cursor',
-    displayName: 'Cursor',
-    detectPaths: ['.cursor', '.cursorrules'],
-    skillsDir: '.cursor/skills',
-    commandsDir: '.cursor/commands',
-    commandFile: 'iris-<name>.md',
-    commandFormat: 'claude-markdown',
-  },
-  {
-    id: 'gemini',
-    displayName: 'Gemini',
-    detectPaths: ['.gemini', 'GEMINI.md'],
-    skillsDir: '.gemini/skills',
-    commandsDir: null,
-    commandFile: 'iris-<name>.md',
-    commandFormat: 'claude-markdown',
-  },
-  {
-    id: 'codex',
-    displayName: 'Codex',
-    detectPaths: ['.codex'],
-    skillsDir: '.codex/skills',
-    commandsDir: '.codex/prompts',
-    commandFile: 'iris-<name>.md',
-    commandFormat: 'claude-markdown',
-  },
-];
+const COMMAND_FORMAT_BY_ID: Record<HostAdapterId, HostCommandFormat> = {
+  claude: 'claude-markdown',
+  agents: 'claude-markdown',
+  github: 'copilot-prompt',
+  cursor: 'claude-markdown',
+  gemini: 'claude-markdown',
+  codex: 'claude-markdown',
+};
 
-/** The adapter table generation consumes; the workstream-A module's once it lands. */
+function toHostAdapter(id: HostAdapterId): HostAdapter {
+  const adapter = HOST_ADAPTERS.find((entry) => entry.id === id);
+  if (!adapter) {
+    throw new IrisError(1, `Unknown host adapter: ${id}`);
+  }
+  return {
+    id: adapter.id,
+    displayName: adapter.displayName,
+    detectPaths: adapter.detect,
+    skillsDir: adapter.skillsDir,
+    commandsDir: adapter.commandsDir,
+    commandFile: adapter.commandFileFormat,
+    commandFormat: COMMAND_FORMAT_BY_ID[adapter.id],
+    ...(adapter.requiresIdeRestart ? { requiresIdeRestart: adapter.requiresIdeRestart } : {}),
+  };
+}
+
+const HOST_TABLE: readonly HostAdapter[] = HOST_ADAPTERS.map((entry) => toHostAdapter(entry.id));
+
+/** The adapter table generation consumes; the authoritative source is `host-adapters.ts`. */
 export function listHostAdapters(): readonly HostAdapter[] {
-  return FALLBACK_HOST_ADAPTERS;
+  return HOST_TABLE;
 }
 
 export function resolveAdapter(id: string): HostAdapter | undefined {
-  return FALLBACK_HOST_ADAPTERS.find((adapter) => adapter.id === id);
+  return HOST_TABLE.find((adapter) => adapter.id === id);
 }
 
-/** Stand-in filesystem detection; workstream A owns the real heuristics. */
-export async function detectHosts(cwd: string): Promise<HostAdapter[]> {
-  const detected: HostAdapter[] = [];
-  for (const adapter of FALLBACK_HOST_ADAPTERS) {
-    if (adapter.detectPaths.some((signal) => existsSync(path.join(cwd, signal)))) {
-      detected.push(adapter);
-    }
-  }
-  return detected;
+/** Filesystem-backed host detection; delegates to `host-adapters.ts`. */
+export function detectHosts(cwd: string): HostAdapter[] {
+  return detectHostAdapters(cwd).map((adapter) => toHostAdapter(adapter.id));
 }
 
 const SKILL_FRONTMATTER = `---
@@ -140,13 +99,6 @@ metadata:
 ---
 `;
 
-/**
- * Front matter earlier revisions of Iris generated, kept so a surface written
- * before the marker recorded ownership can still be attributed and refreshed.
- * The set is closed: no release preceded the one that records ownership, so
- * every surface that can exist was written by a revision listed here or by the
- * current one, and anything else is a human's edit.
- */
 const LEGACY_FRONT_MATTER: Record<string, readonly string[]> = {
   [SKILL_TEMPLATE_ID]: [
     `---
@@ -183,7 +135,6 @@ export type CommandAction = {
   body: string;
 };
 
-/** Which hosts receive surfaces; defaults to every known adapter. */
 export type AgentSurfaceSelection = {
   hosts?: readonly string[];
 };
@@ -249,11 +200,6 @@ const FRONT_MATTER_CONFLICT =
 
 type ManagedRewrite = { content: string } | { conflict: string };
 
-/**
- * A marker written before ownership was recorded proves only the body. Its
- * front matter is attributed by reconstruction instead: Iris owns it when it is
- * byte-for-byte what this release, or a revision listed above, generates.
- */
 function frontMatterIsOwned(
   frontMatter: string,
   descriptor: SurfaceDescriptor,
@@ -294,8 +240,6 @@ function updateManagedContent(
   );
   if (!marker) return unreadable;
   const recordedFrontMatter = marker[3];
-  // Only the schema that introduced the field may carry it, so a hand-mixed
-  // marker is rejected rather than half-trusted.
   if ((marker[1] === '2') !== (recordedFrontMatter !== undefined)) return unreadable;
 
   const bodyStart = start.index + start[0].length + 1;
@@ -312,10 +256,6 @@ function updateManagedContent(
   };
 }
 
-/**
- * Parses the packaged command template into one action per `## <name>` section.
- * The first line of a section is its description; the rest is the command body.
- */
 export function parseCommandTemplate(template: string): CommandAction[] {
   const actions: CommandAction[] = [];
   const sections = template.split(/^## /m).slice(1);
@@ -359,7 +299,11 @@ const COMMAND_FORMATS: Record<
   'copilot-prompt': { frontMatter: copilotPromptFrontMatter },
 };
 
-/** One command file per content action for an adapter that takes commands. */
+function actionFileName(adapter: HostAdapter, actionName: string): string | null {
+  if (!adapter.commandFile) return null;
+  return adapter.commandFile.replaceAll('<action>', actionName);
+}
+
 export function commandSurfaceDescriptors(
   adapter: HostAdapter,
   actions: CommandAction[],
@@ -368,7 +312,7 @@ export function commandSurfaceDescriptors(
   const format = COMMAND_FORMATS[adapter.commandFormat];
   return actions.map((action) => ({
     templateId: COMMAND_TEMPLATE_ID,
-    relativePath: `${adapter.commandsDir}/${adapter.commandFile.replace(/<name>/g, action.name)}`,
+    relativePath: `${adapter.commandsDir}/${actionFileName(adapter, action.name)}`,
     frontMatter: format.frontMatter(action),
     body: action.body,
   }));
@@ -381,7 +325,6 @@ type SkillTemplates = {
   guard: string;
 };
 
-/** The flagship skill directory plus the guard skill for one host. */
 function skillSurfaceDescriptors(
   adapter: HostAdapter,
   templates: SkillTemplates,
@@ -447,11 +390,11 @@ async function installSurface(
 }
 
 function selectedAdapters(hosts?: readonly string[]): HostAdapter[] {
-  if (hosts === undefined) return [...FALLBACK_HOST_ADAPTERS];
+  if (hosts === undefined) return [...HOST_TABLE];
   return hosts.map((id) => {
     const adapter = resolveAdapter(id);
     if (!adapter) {
-      const valid = FALLBACK_HOST_ADAPTERS.map((entry) => entry.id).join(', ');
+      const valid = HOST_TABLE.map((entry) => entry.id).join(', ');
       throw new IrisError(1, `Unknown agent host '${id}'; valid hosts: ${valid}`);
     }
     return adapter;
@@ -482,10 +425,18 @@ export async function loadSurfaceDescriptors(
   };
   const actions = parseCommandTemplate(commandTemplate);
 
-  return selectedAdapters(hosts).flatMap((adapter) => [
+  const descriptors = selectedAdapters(hosts).flatMap((adapter) => [
     ...skillSurfaceDescriptors(adapter, templates),
     ...commandSurfaceDescriptors(adapter, actions),
   ]);
+  // Codex shares the agents skills directory; emit each unique path once so a
+  // shared surface is installed (and reported) a single time.
+  const seen = new Set<string>();
+  return descriptors.filter((descriptor) => {
+    if (seen.has(descriptor.relativePath)) return false;
+    seen.add(descriptor.relativePath);
+    return true;
+  });
 }
 
 export async function installAgentSurfaces(
@@ -502,15 +453,20 @@ export async function installAgentSurfaces(
 }
 
 function skillTargets(templateId: string, fileName: string): string[] {
-  return FALLBACK_HOST_ADAPTERS.filter((adapter) => adapter.skillsDir !== null).map(
-    (adapter) => `${adapter.skillsDir}/${templateId}/${fileName}`,
-  );
+  const seen = new Set<string>();
+  const targets: string[] = [];
+  for (const adapter of HOST_TABLE) {
+    if (adapter.skillsDir === null) continue;
+    const target = `${adapter.skillsDir}/${templateId}/${fileName}`;
+    if (seen.has(target)) continue;
+    seen.add(target);
+    targets.push(target);
+  }
+  return targets;
 }
 
-/** The flagship skill's SKILL.md path for every skills-capable host. */
 export const AGENT_SKILL_TARGETS: readonly string[] = skillTargets(SKILL_TEMPLATE_ID, 'SKILL.md');
 
-/** The provenance guard's SKILL.md path for every skills-capable host. */
 export const AGENT_GUARD_TARGETS: readonly string[] = skillTargets(GUARD_TEMPLATE_ID, 'SKILL.md');
 
 export { installAgentSurfaces as installAgentSkills };
@@ -523,11 +479,6 @@ export type AgentSurfaceReport = {
   status: AgentSurfaceStatus;
 };
 
-/**
- * Reads the surfaces back off disk instead of reporting what installation
- * intended, so a file a user later took ownership of is reported as theirs
- * rather than as an Iris surface.
- */
 export async function inspectAgentSurfaces(
   cwd: string,
   selection: AgentSurfaceSelection = {},
@@ -555,3 +506,5 @@ export async function inspectAgentSurfaces(
   }
   return reports;
 }
+
+export { commandFileName } from './host-adapters.js';

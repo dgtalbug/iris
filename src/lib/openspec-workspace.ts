@@ -3,6 +3,7 @@ import { existsSync, type Dirent } from 'node:fs';
 import { lstat, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ensureDir } from './fs.js';
+import { projectSpecPath, resolveProjectIdentity } from './user-config.js';
 
 export const OPENSPEC_MAX_DEPTH = 16;
 export const OPENSPEC_MAX_FILES = 1_000;
@@ -589,13 +590,14 @@ export async function parseOpenSpecWorkspace(
   return snapshot;
 }
 
-export function openSpecSnapshotPath(cwd: string): string {
-  return path.join(cwd, 'iris', 'spec.json');
+export async function openSpecSnapshotPath(cwd: string): Promise<string> {
+  const identity = await resolveProjectIdentity(cwd);
+  return projectSpecPath(identity.id);
 }
 
 export async function writeOpenSpecSnapshot(cwd: string): Promise<OpenSpecSnapshot> {
   const snapshot = await parseOpenSpecWorkspace(cwd);
-  const target = openSpecSnapshotPath(cwd);
+  const target = await openSpecSnapshotPath(cwd);
   await ensureDir(path.dirname(target));
   const temporary = path.join(path.dirname(target), `.spec.json.${randomUUID()}.tmp`);
   try {
@@ -611,7 +613,7 @@ export async function writeOpenSpecSnapshot(cwd: string): Promise<OpenSpecSnapsh
 }
 
 export async function loadOpenSpecSnapshot(cwd: string): Promise<OpenSpecSnapshot> {
-  const target = openSpecSnapshotPath(cwd);
+  const target = await openSpecSnapshotPath(cwd);
   if (!existsSync(target)) return emptyOpenSpecSnapshot(false);
   try {
     const parsed = JSON.parse(await readFile(target, 'utf8')) as Partial<OpenSpecSnapshot>;

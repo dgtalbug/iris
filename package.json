@@ -32,6 +32,7 @@
     "schemas",
     "templates/agents",
     "templates/project",
+    "templates/research",
     "docs/screenshots/iris-dashboard-overview.png",
     "README.md"
   ],
@@ -53,7 +54,7 @@
     "html-check": "node ./scripts/html-check.mjs",
     "prepack": "tsc -p tsconfig.json",
     "smoke:install": "node ./scripts/install-smoke.mjs",
-    "release:check": "pnpm lint && pnpm format && pnpm token-lint && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
+    "release:check": "pnpm lint && pnpm format && pnpm token-lint && node ./scripts/provenance-lint.mjs && pnpm typecheck && pnpm test && pnpm html-check && pnpm smoke:install"
   },
   "runtimeDependencyRationale": {
     "@inquirer/checkbox": "Interactive multi-select picker (arrows, space, `a` for all) for the staged init tool picker",

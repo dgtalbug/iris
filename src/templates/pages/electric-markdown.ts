@@ -1,4 +1,4 @@
-import { renderDocument } from '../../lib/markdown.js';
+import { renderElectricMarkdown as renderElectric } from '../../lib/markdown.js';
 
 export type ElectricTocEntry = {
   level: number;
@@ -19,11 +19,12 @@ export type ElectricMarkdownResult = {
 
 /**
  * Consumption seam for the Electric Markdown pipeline
- * (`src/lib/markdown-electric.ts`, owned by WS-C). The signatures are
- * identical by contract; until that module lands this adapter delegates to
- * the base document renderer so pages compile and render unchanged.
+ * (`src/lib/markdown-electric.ts`, owned by WS-C). The pipeline returns
+ * `headings` (every heading) and `toc` (blueprint sections only); page
+ * templates render the page TOC from every heading, so this seam surfaces
+ * `headings` as `toc` and passes the meta-row through unchanged.
  */
 export function renderElectricMarkdown(source: string): ElectricMarkdownResult {
-  const { html, headings } = renderDocument(source);
-  return { html, toc: headings, meta: [] };
+  const { html, headings, meta } = renderElectric(source);
+  return { html, toc: headings, meta };
 }

@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { runCli } from '../src/cli.js';
+import { projectSpecPath, resolveProjectIdentity } from '../src/lib/user-config.js';
 
 /** Evaluates the generated bundle the way a browser would, with a fake global. */
 function loadSpecBundle(cwd: string): Record<string, { html: string }> {
@@ -36,7 +37,8 @@ async function tempProject(withFixture = true): Promise<string> {
 }
 
 async function snapshotRaw(cwd: string): Promise<string> {
-  return readFile(path.join(cwd, 'iris', 'spec.json'), 'utf8');
+  const identity = await resolveProjectIdentity(cwd);
+  return readFile(projectSpecPath(identity.id), 'utf8');
 }
 
 describe('OpenSpec Spec browser orchestration', () => {
@@ -240,14 +242,14 @@ describe('OpenSpec Spec browser orchestration', () => {
     const absent = await tempProject(false);
     expect(await runCli(['init'], absent)).toBe(0);
     expect(await readFile(path.join(absent, 'iris', 'spec.html'), 'utf8')).toContain(
-      'No OpenSpec workspace detected',
+      'No Specs workspace detected',
     );
 
     const empty = await tempProject(false);
     await mkdir(path.join(empty, 'openspec'));
     expect(await runCli(['init'], empty)).toBe(0);
     expect(await readFile(path.join(empty, 'iris', 'spec.html'), 'utf8')).toContain(
-      'OpenSpec workspace is empty',
+      'Specs workspace is empty',
     );
   });
 });

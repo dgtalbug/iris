@@ -54,11 +54,11 @@ export function recentPages(pages: DashboardPage[]): DashboardPage[] {
 function specMovement(changes: OpenSpecChange[], spec: SpecCounts): string {
   if (changes.length === 0) {
     if (spec.canonical + spec.archived === 0) {
-      return '<div class="empty-state">No OpenSpec records found. Add one under <code>openspec/</code>, then run <code>iris render --all</code>.</div>';
+      return '<div class="empty-state">No Specs records found. Add one under <code>specs/</code>, then run <code>iris render --all</code>.</div>';
     }
     return `<div class="spec-holdings">
         <p class="spec-holdings-line"><b>${spec.canonical}</b> canonical ${spec.canonical === 1 ? 'spec' : 'specs'} · <b>${spec.archived}</b> archived ${spec.archived === 1 ? 'change' : 'changes'} · <b>${spec.tasksComplete}</b> tasks complete</p>
-        <p class="work-meta">No change is active right now. Add one under <code>openspec/changes/</code>, then run <code>iris render --all</code>.</p>
+        <p class="work-meta">No change is active right now. Add one under <code>specs/changes/</code>, then run <code>iris render --all</code>.</p>
       </div>`;
   }
   return changes
@@ -151,7 +151,7 @@ export function overviewPageContent({
       </section>
       <section class="card" aria-labelledby="spec-movement-title">
         <div class="card-head">
-          <div><span class="eyebrow">openspec</span><h2 id="spec-movement-title">Spec movement</h2></div>
+          <div><span class="eyebrow">specs</span><h2 id="spec-movement-title">Spec movement</h2></div>
           <a href="./spec.html">Open Spec &rarr;</a>
         </div>
         <div class="card-body">${specMovement(activeChanges, spec)}</div>

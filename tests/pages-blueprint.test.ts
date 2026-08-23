@@ -296,9 +296,9 @@ describe('inline SVG charts', () => {
 describe('electric markdown seam and report chrome', () => {
   it('returns html, toc, and meta from the pipeline', () => {
     const { html, toc, meta } = renderElectricMarkdown('## Question\n\nWhy?');
-    expect(html).toContain('<h2 id="question">Question</h2>');
+    expect(html).toContain('<h2 class="section" id="question">Question</h2>');
     expect(toc).toEqual([{ level: 2, id: 'question', text: 'Question' }]);
-    expect(meta).toEqual([]);
+    expect(meta).toContainEqual({ label: 'words', value: '2' });
   });
 
   it('builds the research page TOC and meta-row from the pipeline result', () => {

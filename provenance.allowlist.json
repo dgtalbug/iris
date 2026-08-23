@@ -21,6 +21,49 @@
     {
       "path": "src/lib/provenance.ts",
       "justification": "The denylist itself: the names appear as scanner data with rewording suggestions, never as user-facing copy."
+    },
+    {
+      "path": "docs/superpowers/**/*.md",
+      "justification": "Internal superpowers planning/spec records that reference the upstream tool by name. Not user-facing copy; preserved verbatim."
+    },
+    {
+      "path": "docs/agent-handoffs/**/*.md",
+      "justification": "Internal agent handoff notes that reference the upstream tool by name. Not user-facing copy; preserved verbatim."
+    },
+    {
+      "path": "templates/agents/iris-guard/SKILL.md",
+      "justification": "The authoring-time guard skill embeds the denylist by design so agents can grep drafts against it. The names appear as scanner data, not as Iris voice."
+    },
+    {
+      "path": "docs/**/*.md",
+      "pattern": "openspec",
+      "linePattern": "openspec/",
+      "justification": "On-disk directory path reference (the openspec/ workspace). Code path, not prose; the directory name stays as-is."
+    },
+    {
+      "path": "README.md",
+      "pattern": "openspec",
+      "linePattern": "openspec/",
+      "justification": "On-disk directory path reference (the openspec/ workspace). Code path, not prose; the directory name stays as-is."
+    },
+    {
+      "path": "iris/**/*.html",
+      "justification": "Generated HTML mirror of source templates, user-authored research/project docs, and the Specs snapshot. The iris/ tree is gitignored build output; the brand scrub applies to source templates and docs, not this generated mirror."
+    },
+    {
+      "path": ".agents/skills/iris-workspace/**",
+      "pattern": "openspec",
+      "justification": "Managed block regenerated from the source template on init/update. The source template is clean; this local generated copy refreshes on the next clean init."
+    },
+    {
+      "path": ".claude/skills/iris-workspace/**",
+      "pattern": "openspec",
+      "justification": "Managed block regenerated from the source template on init/update. The source template is clean; this local generated copy refreshes on the next clean init."
+    },
+    {
+      "path": ".github/skills/iris-workspace/**",
+      "pattern": "openspec",
+      "justification": "Managed block regenerated from the source template on init/update. The source template is clean; this local generated copy refreshes on the next clean init."
     }
   ]
 }

@@ -80,7 +80,10 @@ async function refreshProjectDocs(cwd: string): Promise<ProjectDocRefresh> {
   return { scaffolded, userOwned, retired, preserved };
 }
 
-export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurfaceResult> {
+export async function updateManagedSurfaces(
+  cwd: string,
+  selection: { hosts?: readonly string[] } = {},
+): Promise<ManagedSurfaceResult> {
   await writeAlways(path.join(cwd, 'iris', 'design', 'tokens.css'), TOKENS_CSS);
   await writeAlways(
     path.join(cwd, 'iris', 'design', 'components', 'base.css'),
@@ -122,7 +125,7 @@ export async function updateManagedSurfaces(cwd: string): Promise<ManagedSurface
   );
 
   return {
-    skills: await installAgentSurfaces(cwd),
+    skills: await installAgentSurfaces(cwd, selection),
     scaffoldedProjectDocs: projectDocs.scaffolded,
     userOwnedProjectDocs: projectDocs.userOwned,
     retiredProjectDocs: projectDocs.retired,

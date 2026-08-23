@@ -10,6 +10,7 @@ import {
   loadProjectState,
   loadProjectStateForMigration,
 } from '../src/lib/project-state.js';
+import { projectStatePath, resolveProjectIdentity } from '../src/lib/user-config.js';
 
 const tempDirs: string[] = [];
 
@@ -23,6 +24,13 @@ async function tempProject(): Promise<string> {
   await mkdir(path.join(cwd, 'iris', 'pages'), { recursive: true });
   await mkdir(path.join(cwd, 'iris', 'archive'), { recursive: true });
   return cwd;
+}
+
+async function stateFilePath(cwd: string): Promise<string> {
+  const identity = await resolveProjectIdentity(cwd);
+  const target = projectStatePath(identity.id);
+  await mkdir(path.dirname(target), { recursive: true });
+  return target;
 }
 
 function adoptedData(id = 'doc-readme'): string {
@@ -61,16 +69,14 @@ async function writeLegacyProject(
 ): Promise<void> {
   await mkdir(path.join(cwd, 'iris', 'pages', id), { recursive: true });
   await writeFile(path.join(cwd, 'iris', 'pages', id, 'data.json'), raw);
-  await writeFile(path.join(cwd, 'iris', 'state.json'), `${JSON.stringify(state, null, 2)}\n`);
+  const stateFile = await stateFilePath(cwd);
+  await writeFile(stateFile, `${JSON.stringify(state, null, 2)}\n`);
 }
 
 describe('project state migration', () => {
   it('loads normalized version 2 state and accepts legacy state for migration', async () => {
     const cwd = await tempProject();
-    await writeFile(
-      path.join(cwd, 'iris', 'state.json'),
-      `${JSON.stringify(createProjectState(), null, 2)}\n`,
-    );
+    await writeFile(await stateFilePath(cwd), `${JSON.stringify(createProjectState(), null, 2)}\n`);
     expect(await loadProjectState(cwd)).toEqual({ version: 2, page_index: {} });
 
     const raw = adoptedData();
@@ -185,7 +191,7 @@ describe('project state migration', () => {
       await writeFile(path.join(outside, 'data.json'), raw);
       await symlink(outside, path.join(cwd, 'iris', 'pages', 'doc-readme'));
       await writeFile(
-        path.join(cwd, 'iris', 'state.json'),
+        await stateFilePath(cwd),
         `${JSON.stringify(legacyState('doc-readme', raw), null, 2)}\n`,
       );
 
@@ -197,7 +203,7 @@ describe('project state migration', () => {
 
   it('rejects unsupported state versions without rewriting the file', async () => {
     const cwd = await tempProject();
-    const stateFile = path.join(cwd, 'iris', 'state.json');
+    const stateFile = await stateFilePath(cwd);
     const raw = '{"version":99,"page_index":{}}\n';
     await writeFile(stateFile, raw);
     await expect(migrateProjectState(cwd)).rejects.toThrow(/expected version 1 or 2/);
