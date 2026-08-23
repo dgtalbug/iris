@@ -439,9 +439,9 @@ async function readStructuredChange(
 
   const requiredPresent = Boolean(
     proposal &&
-      design &&
-      tasks &&
-      (delta_specs.length > 0 || /(^|\n)\s*skip_specs:\s*true\s*($|\n)/.test(manifest?.raw ?? '')),
+    design &&
+    tasks &&
+    (delta_specs.length > 0 || /(^|\n)\s*skip_specs:\s*true\s*($|\n)/.test(manifest?.raw ?? '')),
   );
   const completeness = requiredPresent && tasks?.progress.open === 0 ? 'complete' : 'incomplete';
   const invalid = changeWarnings.some((item) => item.code === 'malformed-spec');
