@@ -22,7 +22,8 @@ package-lock.json
 /iris/state.json
 /iris/spec.json
 /iris/spec/
-/iris/design/
+/iris/design/components/
+/iris/design/vendor/
 /iris/pages/*/page.html
 /iris/research/*/page.html
 /iris/project/*.html
