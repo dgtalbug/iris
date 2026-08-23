@@ -52,7 +52,17 @@ change proposal.
 
 ## Releasing
 
-Maintainers only. Set the version in `package.json`, add the matching `CHANGELOG.md`
-section, tag `v<version>`, and publish a GitHub Release with `--notes-file CHANGELOG.md`.
-The release workflow verifies the tag against the package metadata and publishes to the
-npm registry with provenance through a trusted publisher.
+Maintainers only, and tag-driven: merging to `main` publishes nothing.
+
+Set the version in `package.json`, add the matching `CHANGELOG.md` section, merge, then
+push the tag:
+
+```bash
+git tag v<version> && git push origin v<version>
+```
+
+`release.yml` takes it from there — it reruns the gate, verifies the tag against the
+package metadata and changelog, creates the GitHub Release from that changelog section,
+and publishes with provenance through a trusted publisher. The npm dist-tag comes from
+the version, so a prerelease publishes under `alpha`/`beta`/`rc` and never claims
+`latest`.

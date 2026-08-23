@@ -1,6 +1,6 @@
 {
   "name": "@dgtalbug/iris",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "description": "Visual, versioned HTML docs for AI coding work.",
   "keywords": [
     "cli",
@@ -19,7 +19,7 @@
   "type": "module",
   "packageManager": "pnpm@11.22.0",
   "bin": {
-    "iris": "./dist/src/index.js"
+    "iris": "dist/src/index.js"
   },
   "files": [
     "dist/src",
