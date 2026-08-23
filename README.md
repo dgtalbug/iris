@@ -106,11 +106,21 @@ The package version controls the installed CLI version. Rerun `iris init` in eac
 
 ### Release maintainers
 
-1. Update `package.json` to the intended version, add the matching `CHANGELOG.md` section, and merge the fully verified change. Release verification fails when the version being released has no changelog section.
-2. Create a GitHub Release whose tag is exactly `v<package version>`, with `CHANGELOG.md` as the source of the release notes.
-3. The `release.yml` workflow repeats the full release gate, verifies tag/package alignment and the packaged initialization assets, inspects the tarball, and publishes the public package with provenance.
+Releases are driven by tags. Merging to `main` publishes nothing.
 
-The workflow uses npm trusted publishing through GitHub OIDC and the protected `npm` environment; it stores no long-lived publish token. Before the first automated release, the package owner must bootstrap `@dgtalbug/iris` on npm if necessary, configure `dgtalbug/iris` + `release.yml` as its trusted publisher, and approve the GitHub `npm` environment. A manual workflow run performs every step except publishing — including release verification, against the version in `package.json` — so the pipeline can be exercised end to end without cutting a release.
+1. Update `package.json` to the intended version and add the matching `CHANGELOG.md` section, then merge the fully verified change. Release verification fails when the version being released has no changelog section.
+2. Tag the merge commit and push it:
+
+```bash
+git tag v0.4.0-alpha.0
+git push origin v0.4.0-alpha.0
+```
+
+3. `release.yml` repeats the full release gate, verifies that the tag, `package.json`, and `CHANGELOG.md` agree, inspects the tarball, creates the GitHub Release from that changelog section, and publishes with provenance.
+
+The npm dist-tag is derived from the version, so a prerelease never claims `latest`: `v0.4.0-alpha.0` publishes under `alpha`, `v0.3.0-rc.1` under `rc`, and `v0.3.0` under `latest`. A prerelease tag also marks the GitHub Release as a pre-release. Install a prerelease explicitly with `npm i @dgtalbug/iris@alpha`.
+
+The workflow uses npm trusted publishing through GitHub OIDC and the protected `npm` environment; it stores no long-lived publish token. Before the first automated release, the package owner must bootstrap `@dgtalbug/iris` on npm if necessary, configure `dgtalbug/iris` + `release.yml` as its trusted publisher, and approve the GitHub `npm` environment. A manual workflow run performs every step except creating the Release and publishing — so the pipeline can be exercised end to end without cutting a release.
 
 ## Quickstart for contributors
 

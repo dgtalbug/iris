@@ -11,6 +11,7 @@ import {
   assetsMissingFromFilesField,
   assetsMissingFromPayload,
 } from '../scripts/packaged-assets.mjs';
+import { distTag, isPrerelease, releaseNotes } from '../scripts/release-identity.mjs';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const packageJson = JSON.parse(await readFile(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -136,25 +137,54 @@ describe('npm release packaging', () => {
     expect(onDisk.filter((asset) => !SOURCE_ASSETS.includes(asset))).toEqual([]);
   });
 
-  it('keeps manual runs dry and grants only the publish job OIDC access', async () => {
+  it('releases on a pushed tag and keeps manual runs dry', async () => {
     const workflow = await readFile(path.join(repoRoot, '.github/workflows/release.yml'), 'utf8');
+    expect(workflow).toContain("tags: ['v*']");
     expect(workflow).toContain('workflow_dispatch:');
     expect(workflow).toContain('id-token: write');
+    expect(workflow).toContain('contents: write');
     expect(workflow).not.toContain('NPM_TOKEN');
-    // Only publishing is gated on a real release; everything before it must run on a dispatch.
-    expect(workflow).toMatch(
-      /run: npm publish --access public --provenance\n\s+if: github\.event_name == 'release'\n/,
-    );
-    expect(workflow.match(/if: github\.event_name == 'release'/g)).toHaveLength(1);
+    // A merge publishes nothing: the only publishing trigger is a tag ref.
+    expect(workflow).not.toMatch(/^\s*branches:/m);
+    // Creating the Release and publishing are the only tag-gated steps.
+    expect(workflow.match(/if: github\.ref_type == 'tag'/g)).toHaveLength(2);
   });
 
-  it('verifies the payload on a manual dispatch using the package version', async () => {
+  it('publishes under the dist tag the version implies, never a bare latest', async () => {
     const workflow = await readFile(path.join(repoRoot, '.github/workflows/release.yml'), 'utf8');
-    expect(workflow).toContain('RELEASE_TAG: ${{ github.event.release.tag_name }}');
-    expect(workflow).toContain(
-      'TAG="${RELEASE_TAG:-v$(node -p "require(\'./package.json\').version")}"',
-    );
-    expect(workflow).toContain('node scripts/verify-release.mjs "$TAG"');
+    expect(workflow).toContain('--tag "${{ steps.release.outputs.dist_tag }}"');
+    expect(workflow).not.toMatch(/npm publish[^\n]*--provenance\s*$/m);
+  });
+
+  it('derives the dist tag from the version', () => {
+    expect(distTag('0.3.0')).toBe('latest');
+    expect(distTag('1.2.3')).toBe('latest');
+    expect(distTag('0.4.0-alpha.0')).toBe('alpha');
+    expect(distTag('0.3.0-rc.1')).toBe('rc');
+    expect(distTag('1.0.0-beta.12')).toBe('beta');
+  });
+
+  it('marks only prereleases as prereleases', () => {
+    expect(isPrerelease('0.3.0')).toBe(false);
+    expect(isPrerelease('0.4.0-alpha.0')).toBe(true);
+  });
+
+  it('extracts exactly the released version section from the changelog', async () => {
+    const changelog = await readFile(path.join(repoRoot, 'CHANGELOG.md'), 'utf8');
+    const notes = releaseNotes(changelog, packageVersion);
+    expect(notes).not.toBeNull();
+    expect(notes).toContain(packageVersion);
+    // Must stop at the next release heading rather than swallowing older ones.
+    expect((notes ?? '').match(/^## /gm)).toHaveLength(1);
+    expect(releaseNotes(changelog, '9.9.9')).toBeNull();
+  });
+
+  it('gives the release notes a unique group heading per change type', async () => {
+    const changelog = await readFile(path.join(repoRoot, 'CHANGELOG.md'), 'utf8');
+    const groups = [
+      ...(releaseNotes(changelog, packageVersion) ?? '').matchAll(/^### (.+)$/gm),
+    ].map((match) => match[1]);
+    expect(new Set(groups).size).toBe(groups.length);
   });
 
   it('serializes releases across tags and publishes on the Node version npm documents', async () => {

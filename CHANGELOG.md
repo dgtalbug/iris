@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-alpha.0] - 2026-08-23
+
+First release cut by the pipeline itself rather than by hand.
+
+### Added
+
+- Tag-driven releases. Pushing a `v*` tag runs the full gate, creates the GitHub
+  Release from this file's matching section, and publishes with provenance. The
+  npm dist-tag is derived from the version, so a prerelease publishes under its
+  own identifier (`alpha`, `beta`, `rc`) and never claims `latest`.
+
 ### Fixed
 
 - Spec record detail views had no space between their top-level blocks. The record
@@ -16,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generated tab panels assumed a padded container that the Spec and feature contract
   pages never provided, leaving artifact prose at 2px of horizontal padding. Panels
   now sit on a card, and their own padding is vertical and on the spacing scale.
+- `bin.iris` dropped its leading `./`, which npm rewrote on publish while warning
+  `"bin[iris]" scriptname ... was invalid and removed`. The path was always
+  correct; the warning is now gone from release logs.
 
 ### Changed
 
@@ -65,5 +79,6 @@ First public release. Iris is installable from the npm registry through `npx`,
 
 - The stale `package-lock.json` from this pnpm project.
 
-[Unreleased]: https://github.com/dgtalbug/iris/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/dgtalbug/iris/compare/v0.4.0-alpha.0...HEAD
+[0.4.0-alpha.0]: https://github.com/dgtalbug/iris/releases/tag/v0.4.0-alpha.0
 [0.3.0]: https://github.com/dgtalbug/iris/releases/tag/v0.3.0
