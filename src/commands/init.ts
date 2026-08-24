@@ -1,15 +1,16 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ensureDir, writeIfMissing } from '../lib/fs.js';
-import { writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
-import { migrateProjectState } from '../lib/project-migration.js';
-import { createProjectState, loadProjectState } from '../lib/project-state.js';
 import {
   HOST_ADAPTER_IDS,
   type HostAdapterId,
   detectHosts,
   resolveAdapter,
 } from '../lib/host-adapters.js';
+import { runProjectIndexing } from '../lib/indexing.js';
+import { writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
+import { migrateProjectState } from '../lib/project-migration.js';
+import { createProjectState, loadProjectState } from '../lib/project-state.js';
 import {
   ensureUserConfig,
   migrateMetaToHome,
@@ -44,6 +45,7 @@ export type InitResult = {
   metaMigration: { movedState: boolean; regeneratedSpec: boolean; copiedSpec: boolean };
   userConfigCreated: boolean;
   requiresIdeRestart: string[];
+  indexing: { enabled: boolean; symbols: number | null; flows: number | null } | null;
 };
 
 const ALL_HOST_IDS: readonly HostAdapterId[] = HOST_ADAPTER_IDS as readonly HostAdapterId[];
@@ -178,6 +180,12 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
     .map((id) => resolveAdapter(id))
     .flatMap((adapter) => (adapter.requiresIdeRestart ? [adapter.requiresIdeRestart] : []));
 
+  let indexing: InitResult['indexing'] = null;
+  if (options.index === true && options.noIndex !== true) {
+    const pointer = await runProjectIndexing(cwd, identity.id);
+    indexing = { enabled: true, symbols: pointer.symbols, flows: pointer.flows };
+  }
+
   const result: InitResult = {
     hosts: selectedHosts,
     surfaces,
@@ -185,6 +193,7 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
     metaMigration,
     userConfigCreated,
     requiresIdeRestart,
+    indexing,
   };
 
   if (options.json) {
@@ -206,6 +215,18 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
 
   if (metaMigration.movedState || metaMigration.regeneratedSpec || metaMigration.copiedSpec) {
     process.stdout.write(`moved machine state to ~/.iris/projects/${identity.id}/\n`);
+  }
+
+  if (indexing) {
+    const counts = [
+      indexing.symbols === null ? null : `${indexing.symbols} symbols`,
+      indexing.flows === null ? null : `${indexing.flows} flows`,
+    ]
+      .filter((part): part is string => part !== null)
+      .join(', ');
+    process.stdout.write(
+      `index: enabled${counts === '' ? '' : ` (${counts})`} · ~/.iris/projects/${identity.id}/index.json\n`,
+    );
   }
 
   process.stdout.write('iris initialized\n');
