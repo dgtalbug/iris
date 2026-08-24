@@ -150,7 +150,6 @@ type CollectedWorkspace = WorkspaceModel & {
   contracts: Array<{ id: string; payload: Record<string, unknown> }>;
 };
 
-
 async function loadIndexCardView(cwd: string): Promise<IndexCardView> {
   try {
     const identity = await resolveProjectIdentity(cwd);

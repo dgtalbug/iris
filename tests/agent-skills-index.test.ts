@@ -45,7 +45,11 @@ describe('index-aware iris-workspace skill', () => {
     await installAgentSurfaces(cwd);
     const descriptors = await loadSurfaceDescriptors();
     const skillPaths = descriptors
-      .filter((descriptor) => descriptor.templateId === 'iris-workspace' && descriptor.relativePath.endsWith('/SKILL.md'))
+      .filter(
+        (descriptor) =>
+          descriptor.templateId === 'iris-workspace' &&
+          descriptor.relativePath.endsWith('/SKILL.md'),
+      )
       .map((descriptor) => descriptor.relativePath);
 
     expect(skillPaths.length).toBeGreaterThan(0);

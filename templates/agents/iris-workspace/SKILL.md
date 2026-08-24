@@ -81,7 +81,6 @@ classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
 classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
 ```
 
-
 ## When the index is enabled
 
 When indexing is on (`iris init --index`):
