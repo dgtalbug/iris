@@ -7,7 +7,7 @@ import {
   detectHosts,
   resolveAdapter,
 } from '../lib/host-adapters.js';
-import { runProjectIndexing } from '../lib/indexing.js';
+import { resolveIndexer, runProjectIndexing } from '../lib/indexing.js';
 import { writeOpenSpecSnapshot } from '../lib/openspec-workspace.js';
 import { migrateProjectState } from '../lib/project-migration.js';
 import { createProjectState, loadProjectState } from '../lib/project-state.js';
@@ -97,6 +97,9 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
 
   if (interactive) process.stdout.write(`${welcomeCard(palette)}\n`);
 
+  const wantsIndex = options.index === true && options.noIndex !== true;
+  if (wantsIndex) await resolveIndexer();
+
   const irisRoot = path.join(cwd, 'iris');
   await ensureDir(irisRoot);
 
@@ -181,7 +184,7 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
     .flatMap((adapter) => (adapter.requiresIdeRestart ? [adapter.requiresIdeRestart] : []));
 
   let indexing: InitResult['indexing'] = null;
-  if (options.index === true && options.noIndex !== true) {
+  if (wantsIndex) {
     const pointer = await runProjectIndexing(cwd, identity.id);
     indexing = { enabled: true, symbols: pointer.symbols, flows: pointer.flows };
   }
