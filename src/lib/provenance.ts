@@ -243,3 +243,28 @@ export async function scan(
   findings.sort((left, right) => left.file.localeCompare(right.file) || left.line - right.line);
   return findings;
 }
+
+/** Runtime scan after init/update/render — warns on stderr, never exits non-zero. */
+export async function reportProvenanceWarnings(
+  cwd: string,
+  pathsOrGlobs: readonly string[] = DEFAULT_SCAN_TARGETS,
+): Promise<number> {
+  let findings: ProvenanceFinding[];
+  try {
+    findings = await scan(pathsOrGlobs, { cwd });
+  } catch (error) {
+    process.stderr.write(`provenance: ${(error as Error).message}\n`);
+    return 0;
+  }
+
+  for (const finding of findings) {
+    const managed = finding.managed ? ' [managed — regenerate the surface]' : '';
+    process.stderr.write(
+      `provenance: ${finding.file}:${finding.line}: '${finding.match}'${managed} — ${finding.suggestion}\n`,
+    );
+  }
+  if (findings.length > 0) {
+    process.stderr.write(`provenance: ${findings.length} finding(s)\n`);
+  }
+  return findings.length;
+}

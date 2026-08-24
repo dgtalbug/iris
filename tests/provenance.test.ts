@@ -7,6 +7,7 @@ import {
   DEFAULT_SCAN_TARGETS,
   PROVENANCE_DENYLIST,
   loadAllowlist,
+  reportProvenanceWarnings,
   scan,
 } from '../src/lib/provenance.js';
 
@@ -201,6 +202,26 @@ describe('provenance scanner', () => {
     expect(entries.length).toBeGreaterThan(0);
     for (const entry of entries) {
       expect(entry.justification.trim()).not.toBe('');
+    }
+  });
+
+  it('reportProvenanceWarnings writes findings to stderr without throwing', async () => {
+    const cwd = await tempRepo();
+    await write(cwd, 'docs/warn.md', 'mentions openspec here\n');
+    const stderr: string[] = [];
+    const original = process.stderr.write.bind(process.stderr);
+    process.stderr.write = ((chunk: string | Uint8Array) => {
+      stderr.push(String(chunk));
+      return true;
+    }) as typeof process.stderr.write;
+
+    try {
+      const count = await reportProvenanceWarnings(cwd, ['docs/**']);
+      expect(count).toBe(1);
+      expect(stderr.join('')).toMatch(/provenance: docs\/warn\.md:1/);
+      expect(stderr.join('')).toMatch(/1 finding\(s\)/);
+    } finally {
+      process.stderr.write = original;
     }
   });
 });

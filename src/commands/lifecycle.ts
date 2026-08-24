@@ -9,6 +9,7 @@ import {
   projectDocSkeleton,
   projectDocSourcePath,
 } from '../lib/project-docs.js';
+import { reportProvenanceWarnings } from '../lib/provenance.js';
 import { loadProjectState, saveProjectState } from '../lib/project-state.js';
 import {
   BASE_COMPONENTS_CSS,
@@ -198,6 +199,7 @@ export async function runUpdateCommand(cwd: string): Promise<void> {
   process.stdout.write(
     'updated managed iris surfaces and agent skills; preserved user-owned content\n',
   );
+  await reportProvenanceWarnings(cwd);
 }
 
 export { assertSkillInstallComplete };

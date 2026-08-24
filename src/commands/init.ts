@@ -18,6 +18,7 @@ import {
   resolveProjectIdentity,
   setUserConfigValue,
 } from '../lib/user-config.js';
+import { reportProvenanceWarnings } from '../lib/provenance.js';
 import { box, createPalette, isInteractive, multiSelect, type Palette } from '../lib/terminal.js';
 import { refreshDashboard } from './render.js';
 import {
@@ -215,6 +216,8 @@ export async function runInitCommand(cwd: string, options: InitOptions = {}): Pr
   process.stdout.write('open: iris open\n');
 
   if (interactive) process.stdout.write(`${completionCard(palette, result)}\n`);
+
+  await reportProvenanceWarnings(cwd);
 
   return 0;
 }

@@ -11,6 +11,7 @@ import {
   researchSourcePath,
   type ResearchItem,
 } from '../lib/research-workspace.js';
+import { reportProvenanceWarnings } from '../lib/provenance.js';
 import { validateContract } from '../lib/schemas.js';
 import { loadProjectState, saveProjectState, type ProjectState } from '../lib/project-state.js';
 import { PROJECT_DOC_NAMES, type DashboardPage } from '../templates/common.js';
@@ -324,7 +325,9 @@ export async function runRenderCommand(
   const rendered = id ? 1 : model.contracts.length + model.research.length;
   if (rendered === 0) {
     process.stdout.write('rendered iris/index.html\n');
-    return;
+  } else {
+    process.stdout.write(`rendered ${rendered} page(s)\n`);
   }
-  process.stdout.write(`rendered ${rendered} page(s)\n`);
+
+  if (!id) await reportProvenanceWarnings(cwd);
 }
