@@ -11,6 +11,7 @@ import {
 } from '../common.js';
 import { icon, typeIcon, type IconName } from '../icons.js';
 import { workListItem, workStatusCounts } from './work.js';
+import { indexCardSection, type IndexCardView } from './index-card.js';
 import type { SpecCounts } from './spec.js';
 
 const RECENT_LIMIT = 5;
@@ -82,6 +83,7 @@ export function overviewPageContent({
   researchCount,
   projectDocs,
   hldDiagram,
+  indexCard,
 }: {
   projectName: string;
   pages: DashboardPage[];
@@ -90,6 +92,7 @@ export function overviewPageContent({
   researchCount: number;
   projectDocs: readonly string[];
   hldDiagram: string;
+  indexCard: IndexCardView;
 }): string {
   const work = workStatusCounts(pages);
   const commands = statusCounts();
@@ -140,6 +143,8 @@ export function overviewPageContent({
       ${statTile({ value: researchCount, label: 'research', sub: 'markdown pages', href: './research.html' })}
       ${statTile({ value: commandTotal, label: 'commands', sub: `${commands.implemented} implemented · ${commands.partial} partial · ${commands.stubbed} stubbed`, href: './commands.html' })}
     </section>
+
+    ${indexCardSection(indexCard)}
 
     <div class="grid-2">
       <section class="card" aria-labelledby="recent-work-title">

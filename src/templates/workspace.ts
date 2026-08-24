@@ -23,6 +23,7 @@ import {
 import { researchDocumentContent, researchPageContent } from './pages/research.js';
 import { workFilterInput, workPageContent } from './pages/work.js';
 import type { WorkspaceContext } from './pages/contract-page.js';
+import type { IndexCardView } from './pages/index-card.js';
 
 export type WorkspaceModel = {
   projectName: string;
@@ -35,6 +36,7 @@ export type WorkspaceModel = {
   projectDocItems: ProjectDocItem[];
   projectDocWarnings: ProjectDocWarning[];
   agentSurfaces: AgentSurfaceReport[];
+  indexCard: IndexCardView;
 };
 
 export function emptyWorkspaceModel(projectName = 'iris project'): WorkspaceModel {
@@ -49,6 +51,7 @@ export function emptyWorkspaceModel(projectName = 'iris project'): WorkspaceMode
     projectDocItems: [],
     projectDocWarnings: [],
     agentSurfaces: [],
+    indexCard: { status: 'disabled' },
   };
 }
 
@@ -117,6 +120,7 @@ export function overviewHtml(model: WorkspaceModel): string {
       researchCount: model.research.length,
       projectDocs: model.projectDocs,
       hldDiagram,
+      indexCard: model.indexCard,
     }),
   });
 }
@@ -161,7 +165,7 @@ export function commandsHtml(model: WorkspaceModel): string {
     current: 'commands',
     title: 'Commands',
     crumbLabel: 'Commands',
-    content: commandsPageContent(model.agentSurfaces),
+    content: commandsPageContent(model.agentSurfaces, model.indexCard),
   });
 }
 

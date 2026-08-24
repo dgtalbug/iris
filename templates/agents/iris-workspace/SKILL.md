@@ -81,6 +81,18 @@ classDef ext   stroke:#f472b6,fill:transparent,color:#f472b6;
 classDef err   stroke:#f87171,fill:transparent,color:#f87171,stroke-dasharray:4;
 ```
 
+
+## When the index is enabled
+
+When indexing is on (`iris init --index`):
+
+- Run impact analysis before edits (`gitnexus_impact` / `gitnexus impact`); report blast radius and risk
+- Query the graph before exploring code (`gitnexus_query` / `gitnexus query`).
+- Warn on HIGH or CRITICAL impact before edits.
+- Without graph tools, use CLI equivalents.
+
+Skip if off
+
 ## Setup and the rest of the surface
 
 - `iris init` creates or safely upgrades the workspace, installs these agent surfaces, and renders every page. It never copies or monitors `README.md` or `docs/**/*.md`.
@@ -100,4 +112,4 @@ Before you report a page, verify every line:
 - [ ] Every diagram is valid — it rendered, and its colors follow the color law.
 - [ ] No stray color literals anywhere in the source; the `classDef` hexes above are the only permitted ones.
 - [ ] The page was actually opened or read back after render — never report a page you have not seen.
-- [ ] Run the iris-guard self-check before render: the draft names no external tool, framework, or design system — see the `iris-guard` skill.
+- [ ] Run the iris-guard self-check before render — see the `iris-guard` skill.

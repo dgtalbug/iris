@@ -88,6 +88,9 @@ export function projectSpecPath(id: string): string {
   return path.join(projectDir(id), 'spec.json');
 }
 
+/** Machine-local code index pointer: `{ enabled, lastIndexedSha, symbols, flows, indexedAt }`. */
+export { type IndexPointer, projectIndexPath } from './indexing.js';
+
 function sha256(data: string | Buffer): string {
   return createHash('sha256').update(data).digest('hex');
 }
