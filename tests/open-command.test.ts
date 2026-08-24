@@ -47,4 +47,31 @@ describe('open command', () => {
       }),
     ).rejects.toMatchObject({ code: 2 });
   });
+
+  it('opens the global dashboard with --global when it has been generated', async () => {
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    const { globalDashboardPath } = await import('../src/lib/global-registry.js');
+
+    const cwd = await createTempDir();
+    expect(await runCli(['init'], cwd)).toBe(0);
+    await mkdir(path.dirname(globalDashboardPath()), { recursive: true });
+    await writeFile(globalDashboardPath(), '<!doctype html><title>global</title>\n', 'utf8');
+
+    const invocations: string[] = [];
+    await runOpenCommand(
+      cwd,
+      async (command, args) => {
+        invocations.push([command, ...args].join(' '));
+      },
+      { global: true },
+    );
+
+    expect(invocations).toHaveLength(1);
+    expect(invocations[0]).toContain(globalDashboardPath());
+  });
+
+  it('fails when --global is set and the dashboard has not been generated', async () => {
+    const cwd = await createTempDir();
+    expect(await runCli(['open', '--global'], cwd)).toBe(1);
+  });
 });

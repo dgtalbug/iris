@@ -177,7 +177,7 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         return 0;
       }
       case 'open':
-        await runOpenCommand(cwd);
+        await runOpenCommand(cwd, undefined, { global: parsed.values.global === true });
         return 0;
       case 'vendor':
         await runVendorCommand(cwd);

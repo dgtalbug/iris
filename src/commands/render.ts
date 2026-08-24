@@ -13,6 +13,7 @@ import {
 } from '../lib/research-workspace.js';
 import { reportProvenanceWarnings } from '../lib/provenance.js';
 import { computeStaleness, readIndexPointer } from '../lib/indexing.js';
+import { refreshGlobalDashboard, shouldRefreshGlobalDashboard } from '../lib/global-registry.js';
 import { validateContract } from '../lib/schemas.js';
 import { loadProjectState, saveProjectState, type ProjectState } from '../lib/project-state.js';
 import { resolveProjectIdentity } from '../lib/user-config.js';
@@ -352,4 +353,14 @@ export async function runRenderCommand(
   }
 
   if (!id) await reportProvenanceWarnings(cwd);
+
+  if (!id) {
+    try {
+      if (await shouldRefreshGlobalDashboard()) await refreshGlobalDashboard();
+    } catch (error) {
+      process.stderr.write(
+        `warning: global dashboard refresh failed: ${(error as Error).message}\n`,
+      );
+    }
+  }
 }

@@ -64,9 +64,9 @@ export const COMMAND_GROUPS: CommandGroup[] = [
       {
         name: 'open',
         commands: ['open'],
-        usage: 'iris open',
+        usage: 'iris open [--global]',
         synopsis: 'Open the generated workspace in the default browser.',
-        flags: ['--json'],
+        flags: ['--global', '--json'],
         status: 'implemented',
       },
     ],
