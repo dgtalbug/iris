@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCli } from '../src/cli.js';
+import { projectSpecPath, resolveProjectIdentity } from '../src/lib/user-config.js';
 import { COMMAND_GROUPS, helpText } from '../src/lib/command-catalog.js';
 
 const tempDirs: string[] = [];
@@ -105,7 +106,7 @@ describe('workspace navigation shell', () => {
     const cwd = await createTempDir();
     expect(await runCli(['init'], cwd)).toBe(0);
     expect(await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8')).toContain(
-      '<html lang="en" data-theme="dark">',
+      '<html lang="en" data-theme="dark" data-ds="iris-electric">',
     );
 
     await writeFile(
@@ -115,7 +116,7 @@ describe('workspace navigation shell', () => {
     );
     expect(await runCli(['render', '--all'], cwd)).toBe(0);
     const html = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');
-    expect(html).toContain('<html lang="en" data-theme="light">');
+    expect(html).toContain('<html lang="en" data-theme="light" data-ds="iris-electric">');
 
     const script = await readFile(
       path.join(cwd, 'iris', 'design', 'components', 'base.js'),
@@ -217,7 +218,8 @@ describe('openspec signal', () => {
     );
     expect(await runCli(['init'], cwd)).toBe(0);
 
-    const spec = await readFile(path.join(cwd, 'iris', 'spec.json'), 'utf8');
+    const identity = await resolveProjectIdentity(cwd);
+    const spec = await readFile(projectSpecPath(identity.id), 'utf8');
     expect(JSON.parse(spec).active_changes).toHaveLength(0);
 
     const index = await readFile(path.join(cwd, 'iris', 'index.html'), 'utf8');

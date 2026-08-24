@@ -138,9 +138,9 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
     snapshot.archived_changes.length +
     snapshot.legacy_archives.length;
   const emptyState = !snapshot.detected
-    ? '<article class="empty-state"><h2>No OpenSpec workspace detected</h2><p>Add an <code>openspec/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
+    ? '<article class="empty-state"><h2>No Specs workspace detected</h2><p>Add a <code>specs/</code> workspace, then run <code>iris init</code> or <code>iris render --all</code>. General project documentation is not ingested.</p></article>'
     : supportedCount === 0
-      ? '<article class="empty-state"><h2>OpenSpec workspace is empty</h2><p>No supported canonical specs, active changes, or archive records were found. Refresh after adding OpenSpec artifacts with <code>iris render --all</code>.</p></article>'
+      ? '<article class="empty-state"><h2>Specs workspace is empty</h2><p>No supported canonical specs, active changes, or archive records were found. Refresh after adding Specs artifacts with <code>iris render --all</code>.</p></article>'
       : '';
   const contextDocuments = [snapshot.context.project, snapshot.context.config].filter(
     (document): document is OpenSpecSourceDocument => Boolean(document),
@@ -149,13 +149,13 @@ export function specPageContent(snapshot: OpenSpecSnapshot): string {
   return `<div data-spec-index>
     <div class="page-head">
       <div>
-        <span class="eyebrow">openspec filesystem snapshot</span>
+        <span class="eyebrow">specs filesystem snapshot</span>
         <h1>Spec</h1>
-        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">openspec/</code>. Selecting a record opens it here; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
+        <p>Canonical specs, active changes, archives, and real task checkboxes read directly from <code class="mono">specs/</code>. Selecting a record opens it here; this index carries no artifact bodies. Refreshed by <code class="mono">iris init</code> and <code class="mono">iris render --all</code>.</p>
       </div>
     </div>
 
-    <section class="strip" aria-label="OpenSpec overview">
+    <section class="strip" aria-label="Specs overview">
       ${statTile({ value: counts.canonical, label: 'canonical' })}
       ${statTile({ value: counts.active, label: 'active changes' })}
       ${statTile({ value: counts.archived, label: 'archived' })}

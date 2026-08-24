@@ -7,15 +7,35 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { COMMAND_GROUPS, commandEntry } from '../src/lib/command-catalog.js';
 import { packageVersion } from '../src/lib/package-info.js';
 import {
+  AGENT_GUARD_TARGETS,
   AGENT_SKILL_TARGETS,
+  inspectAgentSurfaces,
   installAgentSurfaces,
+  listHostAdapters,
   parseCommandTemplate,
+  type HostAdapter,
 } from '../src/lib/agent-skills.js';
 
 const installAgentSkills = installAgentSurfaces;
 
+function skillsCapableAdapters(): Array<HostAdapter & { skillsDir: string }> {
+  return listHostAdapters().filter(
+    (adapter): adapter is HostAdapter & { skillsDir: string } => adapter.skillsDir !== null,
+  );
+}
+
+function commandsCapableAdapters(): Array<HostAdapter & { commandsDir: string }> {
+  return listHostAdapters().filter(
+    (adapter): adapter is HostAdapter & { commandsDir: string } => adapter.commandsDir !== null,
+  );
+}
+
 function skillTargets(paths: string[]): string[] {
   return paths.filter((target) => (AGENT_SKILL_TARGETS as readonly string[]).includes(target));
+}
+
+function guardTargets(paths: string[]): string[] {
+  return paths.filter((target) => (AGENT_GUARD_TARGETS as readonly string[]).includes(target));
 }
 
 const tempDirs: string[] = [];
@@ -82,25 +102,52 @@ function asLegacyMarker(content: string): string {
   return `${frontMatter}${downgraded}${rest}`;
 }
 
+/** Swaps the managed body and reseals the digest, as an older release wrote it. */
+function withManagedBody(content: string, body: string): string {
+  const { frontMatter, marker, rest } = splitSurface(content);
+  const suffix = rest.slice(rest.indexOf('<!-- IRIS:MANAGED:END'));
+  const resealed = marker.replace(/sha256=[a-f0-9]{64}/, `sha256=${sha256(body)}`);
+  return `${frontMatter}${resealed}\n${body}${suffix}`;
+}
+
 describe('agent skill installation', () => {
-  it('installs three canonical skill surfaces and leaves siblings alone', async () => {
+  it('installs the skill directory for every skills-capable host and leaves siblings alone', async () => {
     const cwd = await tempProject();
     const sibling = path.join(cwd, '.agents', 'skills', 'user-skill', 'SKILL.md');
     await mkdir(path.dirname(sibling), { recursive: true });
     await writeFile(sibling, 'user-owned\n');
 
     const result = await installAgentSkills(cwd);
-    expect(skillTargets(result.created)).toEqual([...AGENT_SKILL_TARGETS]);
     expect(result.conflicts).toEqual([]);
+    expect(skillTargets(result.created)).toEqual([...AGENT_SKILL_TARGETS]);
+    expect(guardTargets(result.created)).toEqual([...AGENT_GUARD_TARGETS]);
     expect(await readFile(sibling, 'utf8')).toBe('user-owned\n');
+
+    for (const adapter of skillsCapableAdapters()) {
+      const skillRoot = path.join(cwd, adapter.skillsDir, 'iris-workspace');
+      const skill = await readFile(path.join(skillRoot, 'SKILL.md'), 'utf8');
+      expect(skill).toContain('name: iris-workspace');
+      expect(skill).toContain('IRIS:MANAGED:START template=iris-workspace schema=2');
+      expect(skill).not.toMatch(/iris (?:adopt|sync)/);
+
+      for (const reference of ['blueprint.md', 'components.md']) {
+        const content = await readFile(path.join(skillRoot, 'references', reference), 'utf8');
+        expect(content.startsWith('<!-- IRIS:MANAGED:START template=iris-workspace schema=2')).toBe(
+          true,
+        );
+        expect(content).toContain('<!-- IRIS:MANAGED:END template=iris-workspace -->');
+      }
+
+      const guard = await readFile(
+        path.join(cwd, adapter.skillsDir, 'iris-guard', 'SKILL.md'),
+        'utf8',
+      );
+      expect(guard).toContain('name: iris-guard');
+      expect(guard).toContain('IRIS:MANAGED:START template=iris-guard schema=2');
+    }
 
     const contents = await targetContents(cwd);
     expect(new Set(contents.map(managedBody)).size).toBe(1);
-    for (const content of contents) {
-      expect(content).toContain('name: iris-workspace');
-      expect(content).toContain('IRIS:MANAGED:START template=iris-workspace schema=2');
-      expect(content).not.toMatch(/iris (?:adopt|sync)/);
-    }
   });
 
   it('does not rewrite an unchanged rerun', async () => {
@@ -112,7 +159,34 @@ describe('agent skill installation', () => {
     expect(result.updated).toEqual([]);
     expect(result.conflicts).toEqual([]);
     expect(skillTargets(result.unchanged)).toEqual([...AGENT_SKILL_TARGETS]);
+    expect(guardTargets(result.unchanged)).toEqual([...AGENT_GUARD_TARGETS]);
     expect(await targetContents(cwd)).toEqual(before);
+  });
+
+  it('upgrades a single-file managed install in place and builds the directory around it', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
+    const legacy = withManagedBody(
+      await readFile(target, 'utf8'),
+      '# Iris workspace\n\nThe pre-directory single-file skill body.\n',
+    );
+    await writeFile(target, legacy);
+    await rm(path.join(cwd, '.claude', 'skills', 'iris-workspace', 'references'), {
+      recursive: true,
+      force: true,
+    });
+    await rm(path.join(cwd, '.claude', 'skills', 'iris-guard'), { recursive: true, force: true });
+
+    const result = await installAgentSkills(cwd);
+    expect(result.conflicts).toEqual([]);
+    expect(result.updated).toContain(AGENT_SKILL_TARGETS[0]);
+    const upgraded = await readFile(target, 'utf8');
+    expect(upgraded).toContain('## The craft loop');
+    expect(upgraded).not.toContain('single-file skill body');
+    expect(result.created).toContain('.claude/skills/iris-workspace/references/blueprint.md');
+    expect(result.created).toContain('.claude/skills/iris-workspace/references/components.md');
+    expect(result.created).toContain('.claude/skills/iris-guard/SKILL.md');
   });
 
   it('updates an intact managed marker and preserves bytes after the region', async () => {
@@ -172,6 +246,22 @@ describe('agent skill installation', () => {
     expect(await readFile(target, 'utf8')).toBe(changed);
   });
 
+  it('preserves a user-edited reference document', async () => {
+    const cwd = await tempProject();
+    await installAgentSkills(cwd);
+    const relativePath = '.claude/skills/iris-workspace/references/components.md';
+    const target = path.join(cwd, relativePath);
+    const edited = (await readFile(target, 'utf8')).replace(
+      '# Electric Markdown components',
+      '# My own notes',
+    );
+    await writeFile(target, edited);
+
+    const result = await installAgentSkills(cwd);
+    expect(result.conflicts.map((conflict) => conflict.path)).toContain(relativePath);
+    expect(await readFile(target, 'utf8')).toBe(edited);
+  });
+
   it('preserves an unmarked user-owned target', async () => {
     const cwd = await tempProject();
     const target = path.join(cwd, AGENT_SKILL_TARGETS[0]);
@@ -192,9 +282,15 @@ describe('agent skill installation', () => {
     await symlink(outside, path.join(cwd, '.agents', 'skills'));
 
     const result = await installAgentSkills(cwd);
-    expect(result.conflicts[0]).toMatchObject({ path: AGENT_SKILL_TARGETS[0] });
+    const agentsConflicts = result.conflicts.filter((conflict) =>
+      conflict.path.startsWith('.agents/'),
+    );
+    expect(agentsConflicts.length).toBeGreaterThan(0);
+    expect(agentsConflicts[0]).toMatchObject({ path: AGENT_SKILL_TARGETS[1] });
     expect(existsSync(path.join(outside, 'iris-workspace', 'SKILL.md'))).toBe(false);
-    expect(skillTargets(result.created)).toEqual(AGENT_SKILL_TARGETS.slice(1));
+    expect(skillTargets(result.created)).toEqual(
+      AGENT_SKILL_TARGETS.filter((target) => !target.startsWith('.agents/')),
+    );
   });
 
   it('isolates a failed surface and still creates independent targets', async () => {
@@ -202,9 +298,63 @@ describe('agent skill installation', () => {
     await writeFile(path.join(cwd, '.claude'), 'not-a-directory\n');
 
     const result = await installAgentSkills(cwd);
-    expect(skillTargets(result.created)).toEqual([AGENT_SKILL_TARGETS[0], AGENT_SKILL_TARGETS[2]]);
-    expect(result.conflicts.every((conflict) => conflict.path.startsWith('.claude/'))).toBe(true);
+    expect(skillTargets(result.created)).toEqual(
+      AGENT_SKILL_TARGETS.filter((target) => !target.startsWith('.claude/')),
+    );
+    expect(
+      result.conflicts.length > 0 &&
+        result.conflicts.every((conflict) => conflict.path.startsWith('.claude/')),
+    ).toBe(true);
     expect(await readFile(path.join(cwd, '.claude'), 'utf8')).toBe('not-a-directory\n');
+  });
+});
+
+describe('host selection', () => {
+  it('generates surfaces only for the selected hosts', async () => {
+    const cwd = await tempProject();
+    const result = await installAgentSurfaces(cwd, { hosts: ['claude'] });
+    expect(result.conflicts).toEqual([]);
+    expect(result.created.length).toBeGreaterThan(0);
+    expect(result.created.every((target) => target.startsWith('.claude/'))).toBe(true);
+
+    for (const file of ['SKILL.md', 'references/blueprint.md', 'references/components.md']) {
+      expect(existsSync(path.join(cwd, '.claude', 'skills', 'iris-workspace', file))).toBe(true);
+    }
+    expect(existsSync(path.join(cwd, '.claude', 'skills', 'iris-guard', 'SKILL.md'))).toBe(true);
+    expect(existsSync(path.join(cwd, '.claude', 'commands', 'iris', 'research.md'))).toBe(true);
+    expect(existsSync(path.join(cwd, '.github'))).toBe(false);
+  });
+
+  it('installs no commands for a skills-only host', async () => {
+    const cwd = await tempProject();
+    const result = await installAgentSurfaces(cwd, { hosts: ['agents'] });
+    expect(result.conflicts).toEqual([]);
+    expect(result.created.length).toBeGreaterThan(0);
+    expect(result.created.every((target) => target.startsWith('.agents/skills/'))).toBe(true);
+    expect(existsSync(path.join(cwd, '.agents', 'skills', 'iris-guard', 'SKILL.md'))).toBe(true);
+  });
+
+  it('rejects an unknown host with the list of valid identifiers', async () => {
+    const cwd = await tempProject();
+    await expect(installAgentSurfaces(cwd, { hosts: ['emacs'] })).rejects.toThrow(
+      /Unknown agent host 'emacs'; valid hosts: .*claude/,
+    );
+  });
+
+  it('reads the directory surfaces back off disk', async () => {
+    const cwd = await tempProject();
+    await installAgentSurfaces(cwd, { hosts: ['claude'] });
+    const reports = await inspectAgentSurfaces(cwd, { hosts: ['claude'] });
+    expect(reports.length).toBeGreaterThan(0);
+    expect(reports.every((report) => report.status === 'installed')).toBe(true);
+
+    const blueprint = '.claude/skills/iris-workspace/references/blueprint.md';
+    await writeFile(path.join(cwd, blueprint), 'user notes\n');
+    const after = await inspectAgentSurfaces(cwd, { hosts: ['claude'] });
+    expect(after.find((report) => report.relativePath === blueprint)?.status).toBe('unmanaged');
+    expect(after.find((report) => report.relativePath === AGENT_SKILL_TARGETS[0])?.status).toBe(
+      'installed',
+    );
   });
 });
 
@@ -313,7 +463,7 @@ describe('generated metadata ownership', () => {
 });
 
 describe('generated agent command surfaces', () => {
-  it('installs one command file per content action for Claude and Copilot', async () => {
+  it('installs one command file per content action for every commands-capable host', async () => {
     const cwd = await tempProject();
     const result = await installAgentSkills(cwd);
     expect(result.conflicts).toEqual([]);
@@ -321,12 +471,33 @@ describe('generated agent command surfaces', () => {
     for (const action of ['research', 'bug', 'feature', 'idea', 'plan', 'report']) {
       const claude = path.join(cwd, '.claude', 'commands', 'iris', `${action}.md`);
       const copilot = path.join(cwd, '.github', 'prompts', `iris-${action}.prompt.md`);
-      expect(existsSync(claude)).toBe(true);
-      expect(existsSync(copilot)).toBe(true);
+      const cursor = path.join(cwd, '.cursor', 'commands', `iris-${action}.md`);
+      for (const target of [claude, copilot, cursor]) {
+        expect(existsSync(target), `${target} exists`).toBe(true);
+      }
       const content = await readFile(claude, 'utf8');
       expect(content).toContain('IRIS:MANAGED:START template=iris-command schema=2');
       expect(content).toContain(`iris ${action} <id>`);
-      expect(managedBody(content)).toBe(managedBody(await readFile(copilot, 'utf8')));
+      expect(content).toContain(`name: "Iris: ${action}"`);
+      const bodies = await Promise.all(
+        [copilot, cursor].map(async (target) => managedBody(await readFile(target, 'utf8'))),
+      );
+      for (const body of bodies) {
+        expect(body).toBe(managedBody(content));
+      }
+    }
+
+    const skillsOnly = listHostAdapters().filter(
+      (adapter): adapter is HostAdapter & { skillsDir: string } => adapter.commandsDir === null,
+    );
+    expect(skillsOnly.length).toBeGreaterThan(0);
+    for (const adapter of skillsOnly) {
+      expect(existsSync(path.join(cwd, adapter.skillsDir, 'iris-workspace', 'SKILL.md'))).toBe(
+        true,
+      );
+      const created = result.created.filter((target) => target.startsWith(`${adapter.skillsDir}/`));
+      expect(created.length).toBeGreaterThan(0);
+      expect(created.every((target) => !target.includes('/commands/'))).toBe(true);
     }
   });
 
@@ -350,7 +521,7 @@ describe('generated agent command surfaces', () => {
 
   it('maps every content command to an intent in the skill and stays small', async () => {
     const skill = await readFile(
-      new URL('../templates/agents/iris-workspace.md', import.meta.url),
+      new URL('../templates/agents/iris-workspace/SKILL.md', import.meta.url),
       'utf8',
     );
     const contentGroup = COMMAND_GROUPS.find((group) => group.id === 'content');
@@ -361,11 +532,19 @@ describe('generated agent command surfaces', () => {
         expect(skill, `skill names where ${entry.name} lands`).toContain(entry.lands);
     }
     expect(skill).toContain('## When to use this');
-    expect(skill).toContain('## Project docs are Markdown');
+    expect(skill).toContain('## When not to use this');
+    expect(skill).toContain('## The craft loop');
+    expect(skill).toContain('## The color law for diagrams');
+    expect(skill).toContain('## Verification checklist');
     expect(skill).toContain('iris/project/hld.md');
     expect(skill).toContain('`design.lld`');
-    // The intent table only pays for itself if the whole skill stays cheap to read.
-    expect(Buffer.byteLength(skill, 'utf8')).toBeLessThan(4096);
+    // The checklist ends with the provenance self-check.
+    const checklist = skill.slice(skill.indexOf('## Verification checklist'));
+    const items = checklist.trimEnd().split('\n').filter(Boolean);
+    expect(items[items.length - 1]).toContain('iris-guard');
+    // The intent tables only pay for themselves if the skill stays cheap to read;
+    // the depth lives in references/.
+    expect(Buffer.byteLength(skill, 'utf8')).toBeLessThan(8192);
   });
 
   it('derives every generated command from an existing catalog command', async () => {

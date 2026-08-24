@@ -1,9 +1,9 @@
-import { existsSync } from 'node:fs';
 import { readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { IrisError } from '../lib/errors.js';
 import { ensureDir } from '../lib/fs.js';
+import { loadProjectState } from '../lib/project-state.js';
 
 export const MERMAID_VERSION = '11.17.0';
 
@@ -64,7 +64,9 @@ async function writeAtomic(filePath: string, content: Buffer): Promise<void> {
 
 export async function runVendorCommand(cwd: string): Promise<void> {
   const irisRoot = path.join(cwd, 'iris');
-  if (!existsSync(path.join(irisRoot, 'state.json'))) {
+  try {
+    await loadProjectState(cwd);
+  } catch {
     throw new IrisError(1, "Iris is not initialized; run 'iris init' before 'iris vendor'");
   }
 

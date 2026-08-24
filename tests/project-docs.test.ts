@@ -167,7 +167,7 @@ describe('project docs workspace', () => {
     const hld = await readFile(path.join(cwd, 'iris', 'project', 'hld.html'), 'utf8');
     expect(hld).toContain('<h1>HLD</h1>');
     expect(hld).toContain('data-mermaid-figure');
-    expect(hld).toContain('<h2 id="system-map">System map</h2>');
+    expect(hld).toContain('<h2 class="section" id="map">System map</h2>');
     expect(hld).toContain('aria-label="On this page"');
     expect(hld).toContain('href="./lld.html"');
     expect(hld).toContain('design/vendor/mermaid.min.js');

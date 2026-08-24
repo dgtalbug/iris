@@ -22,6 +22,8 @@ export type ShellOptions = {
   drawer?: boolean;
   footerHints?: string;
   extraScripts?: string[];
+  /** When set, the sidebar shows the global aggregation nav instead of workspace sections. */
+  mode?: 'workspace' | 'global';
 };
 
 const SECTIONS: Array<{ id: SectionId; label: string; file: string }> = [
@@ -58,6 +60,23 @@ function navItem({
 }
 
 export function renderSidebar(options: ShellOptions): string {
+  if (options.mode === 'global') {
+    const prefix = assetPrefix(options.depth);
+    return `<nav class="sidebar" data-iris-nav data-sidebar aria-label="Global dashboard">
+      <a class="sidebar-brand" href="${prefix}dashboard.html">
+        ${icon('brand', { label: 'iris' })}
+        <span><strong>iris</strong><small>all projects</small></span>
+      </a>
+      <div class="sidebar-scroll">
+        <p class="work-meta sidebar-global-note">Machine-local view across every registered project on this computer.</p>
+      </div>
+      <div class="sidebar-foot">
+        <span class="sidebar-version">works offline</span>
+        <button class="nav-collapse" type="button" data-nav-toggle aria-expanded="true" aria-label="Collapse sidebar" title="Toggle sidebar (b)">&#8249;</button>
+      </div>
+    </nav>`;
+  }
+
   const prefix = assetPrefix(options.depth);
   const sections = SECTIONS.map((section) =>
     navItem({
@@ -156,7 +175,7 @@ export function renderShell(options: ShellOptions): string {
     .join('');
 
   return `<!doctype html>
-<html lang="en" data-theme="${escapeHtml(options.theme)}">
+<html lang="en" data-theme="${escapeHtml(options.theme)}" data-ds="iris-electric">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

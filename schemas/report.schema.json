@@ -17,6 +17,47 @@
         "promotable_as": {
           "type": "array",
           "items": { "type": "string", "enum": ["feature", "bug", "idea"] }
+        },
+        "blueprint": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tldr": { "type": "string" },
+            "question": { "type": "string" },
+            "map": { "type": "string" },
+            "territory": { "type": "string" },
+            "findings": { "type": "string" },
+            "numbers": { "type": "string" },
+            "paths": { "type": "string" },
+            "risks": { "type": "string" },
+            "proposal": { "type": "string" },
+            "appendix": { "type": "string" }
+          }
+        },
+        "charts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "title", "labels", "series"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "enum": ["bar", "line", "doughnut"] },
+              "title": { "type": "string" },
+              "labels": { "type": "array", "items": { "type": "string" } },
+              "series": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "values"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": { "type": "string" },
+                    "values": { "type": "array", "items": { "type": "number" } }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

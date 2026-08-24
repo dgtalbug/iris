@@ -11,6 +11,7 @@ import { runVendorCommand } from './commands/vendor.js';
 import { helpText } from './lib/command-catalog.js';
 import { IrisError } from './lib/errors.js';
 import { packageVersion } from './lib/package-info.js';
+import { getUserConfigValue, setUserConfigValue, type UserConfig } from './lib/user-config.js';
 
 const CLI_OPTIONS = {
   help: { type: 'boolean', short: 'h' },
@@ -22,7 +23,61 @@ const CLI_OPTIONS = {
   single: { type: 'boolean' },
   png: { type: 'boolean' },
   pdf: { type: 'boolean' },
+  global: { type: 'boolean' },
+  tools: { type: 'string' },
+  yes: { type: 'boolean', short: 'y' },
+  interactive: { type: 'boolean' },
+  index: { type: 'boolean' },
+  'no-index': { type: 'boolean' },
 } as const;
+
+const CONFIG_KEYS = new Set<keyof UserConfig>(['theme', 'agent', 'tools', 'indexing', 'dashboard']);
+
+function parseConfigValue(key: keyof UserConfig, raw: string): unknown {
+  if (key === 'tools') {
+    return raw
+      .split(',')
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+  }
+  if (key === 'indexing') {
+    return { enabled: raw === 'true' || raw === 'on' || raw === '1' };
+  }
+  if (key === 'agent') {
+    return raw === '' || raw === 'null' ? null : raw;
+  }
+  if (key === 'dashboard') {
+    return { generated: raw === '' || raw === 'null' ? null : raw };
+  }
+  return raw;
+}
+
+async function runConfigCommand(args: string[], global: boolean): Promise<number> {
+  const [key, ...rest] = args;
+  if (!key || !CONFIG_KEYS.has(key as keyof UserConfig)) {
+    throw new IrisError(
+      1,
+      `Unknown config key '${key ?? ''}'. Valid keys: ${[...CONFIG_KEYS].join(', ')}.`,
+    );
+  }
+  const configKey = key as keyof UserConfig;
+  if (rest.length === 0) {
+    const value = await getUserConfigValue(configKey);
+    process.stdout.write(`${JSON.stringify(value)}\n`);
+    return 0;
+  }
+  if (!global) {
+    throw new IrisError(
+      1,
+      `Writing config requires --global. Run 'iris config --global ${key} <value>' to set it.`,
+    );
+  }
+  const raw = rest.join(' ');
+  const parsed = parseConfigValue(configKey, raw);
+  await setUserConfigValue(configKey, parsed as UserConfig[typeof configKey]);
+  process.stdout.write(`${key} = ${JSON.stringify(parsed)}\n`);
+  return 0;
+}
 
 /** Evaluated per call so a broken package layout exits through the error path
  * below instead of throwing while this module is being imported. */
@@ -67,7 +122,14 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
 
     switch (command) {
       case 'init':
-        await runInitCommand(cwd);
+        await runInitCommand(cwd, {
+          json: parsed.values.json === true,
+          yes: parsed.values.yes === true,
+          interactive: parsed.values.interactive === true,
+          tools: parsed.values.tools,
+          index: parsed.values.index === true,
+          noIndex: parsed.values['no-index'] === true,
+        });
         return 0;
       case 'render':
         if (parsed.values.all && id) {
@@ -115,7 +177,7 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
         return 0;
       }
       case 'open':
-        await runOpenCommand(cwd);
+        await runOpenCommand(cwd, undefined, { global: parsed.values.global === true });
         return 0;
       case 'vendor':
         await runVendorCommand(cwd);
@@ -128,6 +190,8 @@ export async function runCli(argv: string[], cwd = process.cwd()): Promise<numbe
       case 'update':
         await runUpdateCommand(cwd);
         return 0;
+      case 'config':
+        return await runConfigCommand(parsed.positionals.slice(1), parsed.values.global === true);
       default:
         throw new IrisError(1, `Unknown command: ${command}`);
     }

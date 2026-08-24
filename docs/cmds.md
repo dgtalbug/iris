@@ -11,14 +11,14 @@
 - Machine mode: all commands support `--json` (planned for full output parity in later milestones).
 - Agent surfaces: CLI `iris` plus the generated `iris-workspace` skill under `.agents/skills`, `.claude/skills`, and `.github/skills`.
 - Navigation contract: every generated page carries the same workspace shell — a sidebar listing Overview, Work, Spec, Research, Commands, and the project docs, plus a breadcrumb top bar. Contributors can verify all generated references with `pnpm html-check` (also enforced in CI).
-- Workspace contract: one page per section. `iris/index.html` is the Overview (briefing hero, section summary tiles, recent work, spec movement with task progress, architecture pane, project-docs strip) and links out rather than embedding each section. `iris/work.html` holds the dense List/Table/Kanban browser and the detail drawer, `iris/spec.html` the OpenSpec index plus a generated `iris/spec/data.js` bundle holding each record's detail, `iris/research.html` the Markdown research index, and `iris/commands.html` the generated command reference. `/` focuses the visible filter, `t` toggles theme, `b` collapses the sidebar, arrow keys move work items, and arrow/Home/End keys operate the layout tablist; all remain classic-script, `file://`-safe interactions. Theme and sidebar state persist per browser through local storage; the initial theme comes from `iris/config.yaml`.
+- Workspace contract: one page per section. `iris/index.html` is the Overview (briefing hero, section summary tiles, recent work, spec movement with task progress, architecture pane, project-docs strip) and links out rather than embedding each section. `iris/work.html` holds the dense List/Table/Kanban browser and the detail drawer, `iris/spec.html` the Specs index plus a generated `iris/spec/data.js` bundle holding each record's detail, `iris/research.html` the Markdown research index, and `iris/commands.html` the generated command reference. `/` focuses the visible filter, `t` toggles theme, `b` collapses the sidebar, arrow keys move work items, and arrow/Home/End keys operate the layout tablist; all remain classic-script, `file://`-safe interactions. Theme and sidebar state persist per browser through local storage; the initial theme comes from `iris/config.yaml`.
 
 ## `iris init`
 
 - Synopsis: create or safely upgrade the complete local Iris workspace and agent setup.
 - Flags: `--json`.
 - Inputs: current project directory.
-- Outputs: scaffolded or refreshed `iris/` tree, five Markdown project doc sources (`iris/project/{overview,hld,lld,erd,decisions}.md`, created only when missing, with Mermaid skeletons for HLD, LLD, and ERD) rendered to managed `iris/project/<name>.html` pages, the managed `.vscode/tasks.json` entry, three generated agent skills, generated `/iris:*` command surfaces for Claude and Copilot, a deterministic `iris/spec.json` OpenSpec snapshot, and every rendered section page.
+- Outputs: scaffolded or refreshed `iris/` tree, five Markdown project doc sources (`iris/project/{overview,hld,lld,erd,decisions}.md`, created only when missing, with Mermaid skeletons for HLD, LLD, and ERD) rendered to managed `iris/project/<name>.html` pages, the managed `.vscode/tasks.json` entry, three generated agent skills, generated `/iris:*` command surfaces for Claude and Copilot, a deterministic `iris/spec.json` Specs snapshot, and every rendered section page.
 - Exit codes: 0/1/2.
 - Example: `iris init`.
 - Surfaces: CLI + all generated skills.
@@ -26,11 +26,11 @@
 - Project docs: a `.md` source always wins; a managed HTML placeholder is superseded by a fresh source; a user-edited `iris/project/<name>.html` without a source is preserved, not scaffolded over, and reported with the path to move its content to.
 - Migration: legacy active document mirrors are removed only when state provenance, safe source path, page identity, generated tag, and stored/current data hashes all prove that the record is an unmodified Iris output. Ambiguous and archived records are preserved.
 - Boundary: initialization does not copy, hash, monitor, or create page records from `README.md` or `docs/**/*.md`.
-- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences get source-first diagram hosts, exact escaped document source remains available, and YAML remains literal. OpenSpec CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
+- Spec snapshot: if `openspec/` exists, initialization directly reads supported canonical, active, structured archive, and legacy archive layouts. Markdown becomes semantic HTML during generation with embedded HTML, unsafe destinations, and active images disabled; exact Mermaid fences get source-first diagram hosts, exact escaped document source remains available, and YAML remains literal. Specs CLI availability is irrelevant; unsafe or malformed inputs become path-specific warnings rather than executable content.
 
 ## `iris render [<id>|--all]`
 
-- Synopsis: render contract and research sources to page HTML and refresh every section page; full renders also refresh the OpenSpec filesystem snapshot.
+- Synopsis: render contract and research sources to page HTML and refresh every section page; full renders also refresh the Specs filesystem snapshot.
 - Flags: `--all`, `--json`.
 - Inputs: `iris/pages/<id>/data.json`, `iris/research/<id>/index.md`, or all sources.
 - Outputs: `page.html` artifacts and updated `iris/index.html`, `work.html`, `spec.html`, `research.html`, and `commands.html`; bare `iris render` and `--all` also atomically replace `iris/spec.json`, while `iris render <id>` reuses the prior snapshot, and `iris/project/<name>.html` for every project doc source, with front-matter warnings printed to stderr.
@@ -52,7 +52,7 @@
 
 The editable source is `iris/research/<id>/index.md`. Optional front matter supports `title`, `status` (`draft`, `active`, `done`, `archived`), `tags` (inline `[a, b]` or a block list), `agent`, and `updated` (ISO date). Missing values fall back to the first level-one heading or the id for the title, `draft` for status, and explicit `not set` labels elsewhere — never invented. Unsupported keys are ignored and malformed lines produce a path-specific warning shown on the Research page while the body still renders.
 
-Rendering is bounded and local: Iris reads only `iris/research/*/index.md`, sorted, refusing symlinks and path escapes, capping file size at 256 KB and directory count at 500. The body renders through the same safe Markdown pipeline as OpenSpec artifacts — embedded HTML, unsafe destinations, and active images disabled — plus generated heading ids and a table of contents when the body has two or more level-two or level-three headings. Exact `mermaid` fences become source-first diagram hosts.
+Rendering is bounded and local: Iris reads only `iris/research/*/index.md`, sorted, refusing symlinks and path escapes, capping file size at 256 KB and directory count at 500. The body renders through the same safe Markdown pipeline as Specs artifacts — embedded HTML, unsafe destinations, and active images disabled — plus generated heading ids and a table of contents when the body has two or more level-two or level-three headings. Exact `mermaid` fences become source-first diagram hosts.
 
 Research records join the Work browser as type `research` with status from front matter and priority reported as unavailable, and `iris archive`, `iris publish`, and `iris export --single` all accept a research id.
 
@@ -159,7 +159,7 @@ Renderer decision (2026-08-21): `puppeteer-core` is the preferred future candida
 - Surfaces: CLI + skills.
 - Behavior: idempotently refreshes the exact pinned bytes. Running before `iris init`, or from an incomplete package installation, fails with an actionable error rather than creating a partial workspace.
 
-Exact `mermaid` fences in contract Markdown and OpenSpec Markdown are rendered one at a time from `file://` using this local classic script. Strict security disables active HTML and clicks; configured text/edge bounds and per-diagram error handling keep invalid graphs isolated. Before vendoring, without JavaScript, during print, or in a standalone artifact, the escaped source fallback remains readable.
+Exact `mermaid` fences in contract Markdown and Specs Markdown are rendered one at a time from `file://` using this local classic script. Strict security disables active HTML and clicks; configured text/edge bounds and per-diagram error handling keep invalid graphs isolated. Before vendoring, without JavaScript, during print, or in a standalone artifact, the escaped source fallback remains readable.
 
 ## `iris open`
 

@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { runCli } from '../src/cli.js';
+import { projectStatePath, resolveProjectIdentity } from '../src/lib/user-config.js';
 
 const tempDirs: string[] = [];
 
@@ -34,7 +35,8 @@ describe('project lifecycle commands', () => {
     expect(await runCli(['init'], cwd)).toBe(0);
     expect(await runCli(['update'], cwd)).toBe(0);
 
-    const state = JSON.parse(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8'));
+    const identity = await resolveProjectIdentity(cwd);
+    const state = JSON.parse(await readFile(projectStatePath(identity.id), 'utf8'));
     const tasks = JSON.parse(await readFile(path.join(cwd, '.vscode', 'tasks.json'), 'utf8'));
     expect(state).toEqual({ version: 2, page_index: {} });
     expect(tasks.tasks.map((task: { label: string }) => task.label)).toEqual([
@@ -56,7 +58,8 @@ describe('project lifecycle commands', () => {
     expect(await runCli(['init'], cwd)).toBe(0);
     expect(await readFile(path.join(cwd, 'README.md'), 'utf8')).toBe('# User README\n');
     expect(await readFile(path.join(cwd, 'docs', 'guide.md'), 'utf8')).toBe('# User guide\n');
-    expect(await readFile(path.join(cwd, 'iris', 'state.json'), 'utf8')).not.toContain('README.md');
+    const identity = await resolveProjectIdentity(cwd);
+    expect(await readFile(projectStatePath(identity.id), 'utf8')).not.toContain('README.md');
     expect(existsSync(path.join(cwd, 'iris', 'pages', 'doc-readme'))).toBe(false);
   });
 

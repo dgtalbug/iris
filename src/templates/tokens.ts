@@ -1,9 +1,9 @@
 /**
- * Vision "Electric" v2.0 §2 token block, followed by the iris extension block
- * for what Vision does not define. Values are upstream's except where a measured
- * contrast floor required a lightness nudge; `docs/design-system.md` records each
- * one. Vision switches themes on `data-mode`; iris keeps `data-theme`, which the
- * config file, the stored preference, and the validator all already use.
+ * Iris Electric v2.0 token block — iris's native design system — followed by
+ * the workspace extension block for the surfaces the base system does not
+ * cover. A measured contrast floor moved a handful of lightness values;
+ * `docs/design-system.md` records each one. Themes switch on `data-theme`,
+ * which the config file, the stored preference, and the validator all use.
  */
 export const TOKENS_CSS = `:root {
   /* surfaces */

@@ -16,7 +16,7 @@ Non-goals (v1): no SaaS, no server, no auth, no telemetry, no MCP integration, n
 
 ## Ecosystem Position
 
-OpenSpec is lifecycle truth, GitNexus is code truth, iris is the renderer for both.
+Specs is lifecycle truth, GitNexus is code truth, iris is the renderer for both.
 
 ## Target Users
 

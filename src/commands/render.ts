@@ -11,8 +11,13 @@ import {
   researchSourcePath,
   type ResearchItem,
 } from '../lib/research-workspace.js';
+import { reportProvenanceWarnings } from '../lib/provenance.js';
+import { computeStaleness, readIndexPointer } from '../lib/indexing.js';
+import { refreshGlobalDashboard, shouldRefreshGlobalDashboard } from '../lib/global-registry.js';
 import { validateContract } from '../lib/schemas.js';
-import { loadProjectState, saveProjectState, statePath } from '../lib/project-state.js';
+import { loadProjectState, saveProjectState, type ProjectState } from '../lib/project-state.js';
+import { resolveProjectIdentity } from '../lib/user-config.js';
+import type { IndexCardView } from '../templates/pages/index-card.js';
 import { PROJECT_DOC_NAMES, type DashboardPage } from '../templates/common.js';
 import { renderContractPage } from '../templates/pages/contract-page.js';
 import { researchDashboardPage } from '../templates/pages/research.js';
@@ -146,6 +151,24 @@ type CollectedWorkspace = WorkspaceModel & {
   contracts: Array<{ id: string; payload: Record<string, unknown> }>;
 };
 
+async function loadIndexCardView(cwd: string): Promise<IndexCardView> {
+  try {
+    const identity = await resolveProjectIdentity(cwd);
+    const pointer = await readIndexPointer(identity.id);
+    if (!pointer?.enabled) return { status: 'disabled' };
+    const staleness = await computeStaleness(cwd, pointer);
+    return {
+      status: 'enabled',
+      symbols: pointer.symbols,
+      flows: pointer.flows,
+      lastIndexedSha: pointer.lastIndexedSha,
+      staleness,
+    };
+  } catch {
+    return { status: 'disabled' };
+  }
+}
+
 async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
   const irisRoot = path.join(cwd, 'iris');
   const pagesRoot = path.join(irisRoot, 'pages');
@@ -168,7 +191,12 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
     pages.push(researchDashboardPage(item, `./research/${item.id}/page.html`));
   }
 
-  const state = existsSync(statePath(cwd)) ? await loadProjectState(cwd) : undefined;
+  let state: ProjectState | undefined;
+  try {
+    state = await loadProjectState(cwd);
+  } catch {
+    state = undefined;
+  }
   for (const [pageId, entry] of Object.entries(state?.page_index ?? {})) {
     if (entry.status !== 'archived') continue;
     if (!existsSync(path.join(irisRoot, 'archive', pageId, 'page.html'))) continue;
@@ -204,6 +232,7 @@ async function collectWorkspace(cwd: string): Promise<CollectedWorkspace> {
         existsSync(path.join(irisRoot, 'project', `${name}.html`)),
     ),
     agentSurfaces: await inspectAgentSurfaces(cwd),
+    indexCard: await loadIndexCardView(cwd),
     contracts,
   };
 }
@@ -277,7 +306,7 @@ export async function runRenderCommand(
     ]);
   }
 
-  if (existsSync(statePath(cwd))) {
+  try {
     const state = await loadProjectState(cwd);
     const recorded = id
       ? model.contracts
@@ -310,6 +339,8 @@ export async function runRenderCommand(
       };
     }
     await saveProjectState(cwd, state);
+  } catch {
+    // Project not initialized; skip state recording.
   }
 
   await writeSectionPages(cwd, model);
@@ -317,7 +348,19 @@ export async function runRenderCommand(
   const rendered = id ? 1 : model.contracts.length + model.research.length;
   if (rendered === 0) {
     process.stdout.write('rendered iris/index.html\n');
-    return;
+  } else {
+    process.stdout.write(`rendered ${rendered} page(s)\n`);
   }
-  process.stdout.write(`rendered ${rendered} page(s)\n`);
+
+  if (!id) await reportProvenanceWarnings(cwd);
+
+  if (!id) {
+    try {
+      if (await shouldRefreshGlobalDashboard()) await refreshGlobalDashboard();
+    } catch (error) {
+      process.stderr.write(
+        `warning: global dashboard refresh failed: ${(error as Error).message}\n`,
+      );
+    }
+  }
 }

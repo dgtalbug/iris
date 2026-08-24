@@ -6,7 +6,7 @@
 
 **A local-first CLI that turns completed AI coding work into visual, versioned documentation.**
 
-Iris gives a repository a navigable offline workspace for features, bugs, plans, research, project architecture, and OpenSpec changes. It runs on your machine, writes plain files you own, and opens from `file://`—no hosted service, account, or always-on server required.
+Iris gives a repository a navigable offline workspace for features, bugs, plans, research, project architecture, and Specs changes. It runs on your machine, writes plain files you own, and opens from `file://`—no hosted service, account, or always-on server required.
 
 ![Iris dashboard overview](docs/screenshots/iris-dashboard-overview.png)
 
@@ -29,7 +29,7 @@ agent work or human notes
 ```
 
 - **Work browser** — List, Table, and Kanban views with filters and a detail drawer.
-- **OpenSpec visibility** — active changes, specifications, archives, and real task progress pulled directly from the filesystem.
+- **Specs visibility** — active changes, specifications, archives, and real task progress pulled directly from the filesystem.
 - **Markdown-first research and architecture** — write normal Markdown; Iris renders project docs and local Mermaid diagrams.
 - **Agent-ready setup** — `iris init` installs managed instructions for Codex, Claude Code, and GitHub Copilot while preserving user-owned content.
 - **Offline by default** — generated pages need no server, font download, or hosted Iris account.
@@ -65,15 +65,15 @@ If this is your first global pnpm package, run `pnpm setup` first. For a brand-n
 
 ## Common commands
 
-| Goal                                                  | Command                                                                                          |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Create or safely upgrade a workspace                  | `iris init`                                                                                      |
-| Create a feature, bug, idea, plan, or report          | `iris feature <id>` · `iris bug <id>` · `iris idea <id>` · `iris plan <id>` · `iris report <id>` |
-| Write an investigation in Markdown                    | `iris research <id>`                                                                             |
-| Render every source and refresh the OpenSpec snapshot | `iris render --all`                                                                              |
-| Add offline Mermaid rendering                         | `iris vendor`                                                                                    |
-| Archive or share a page                               | `iris archive <id>` · `iris publish <id>` · `iris export <id> --single`                          |
-| Open the workspace                                    | `iris open`                                                                                      |
+| Goal                                               | Command                                                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Create or safely upgrade a workspace               | `iris init`                                                                                      |
+| Create a feature, bug, idea, plan, or report       | `iris feature <id>` · `iris bug <id>` · `iris idea <id>` · `iris plan <id>` · `iris report <id>` |
+| Write an investigation in Markdown                 | `iris research <id>`                                                                             |
+| Render every source and refresh the Specs snapshot | `iris render --all`                                                                              |
+| Add offline Mermaid rendering                      | `iris vendor`                                                                                    |
+| Archive or share a page                            | `iris archive <id>` · `iris publish <id>` · `iris export <id> --single`                          |
+| Open the workspace                                 | `iris open`                                                                                      |
 
 Every command accepts `--json`. Run `iris --help` for the installed command list and [read the full command reference](docs/cmds.md) for inputs, outputs, preservation rules, and exit codes.
 
@@ -85,7 +85,7 @@ After `iris init`, the generated workspace lives in `iris/`:
 | --------------------- | ------------------------------------------------------------- |
 | `iris/index.html`     | Overview, recent work, progress, and project-doc highlights   |
 | `iris/work.html`      | Dense List, Table, and Kanban views over records              |
-| `iris/spec.html`      | OpenSpec specs, active changes, archives, and task counts     |
+| `iris/spec.html`      | Specs specs, active changes, archives, and task counts        |
 | `iris/research.html`  | Markdown research with status, tags, and warnings             |
 | `iris/commands.html`  | Generated command reference matching the installed CLI        |
 | `iris/project/*.html` | Overview, HLD, LLD, ERD, and decisions rendered from Markdown |
@@ -120,7 +120,7 @@ PNG and PDF export are intentionally unavailable until a deterministic browser-r
 
 ## Contributing
 
-Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md); behavioral changes use OpenSpec, and the full local gate is:
+Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md); behavioral changes use Specs, and the full local gate is:
 
 ```bash
 pnpm install

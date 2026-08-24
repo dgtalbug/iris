@@ -9,6 +9,7 @@ import {
   type OpenSpecParseLimits,
   type OpenSpecSnapshot,
 } from '../src/lib/openspec-workspace.js';
+import { projectSpecPath, resolveProjectIdentity } from '../src/lib/user-config.js';
 
 const tempDirs: string[] = [];
 const fixtureRoot = path.resolve(import.meta.dirname, 'fixtures', 'openspec-workspace');
@@ -164,9 +165,11 @@ describe('OpenSpec workspace parser', () => {
   it('writes deterministic snapshots atomically and degrades invalid generated state', async () => {
     const cwd = await fixtureProject('observed');
     const first = await writeOpenSpecSnapshot(cwd);
-    const firstRaw = await readFile(path.join(cwd, 'iris', 'spec.json'), 'utf8');
+    const identity = await resolveProjectIdentity(cwd);
+    const specFile = projectSpecPath(identity.id);
+    const firstRaw = await readFile(specFile, 'utf8');
     const second = await writeOpenSpecSnapshot(cwd);
-    const secondRaw = await readFile(path.join(cwd, 'iris', 'spec.json'), 'utf8');
+    const secondRaw = await readFile(specFile, 'utf8');
 
     expect(second).toEqual(first);
     expect(secondRaw).toBe(firstRaw);
@@ -174,10 +177,10 @@ describe('OpenSpec workspace parser', () => {
 
     const legacyShape = JSON.parse(firstRaw) as OpenSpecSnapshot;
     delete legacyShape.canonical_specs[0].document.format;
-    await writeFile(path.join(cwd, 'iris', 'spec.json'), `${JSON.stringify(legacyShape)}\n`);
+    await writeFile(specFile, `${JSON.stringify(legacyShape)}\n`);
     expect((await loadOpenSpecSnapshot(cwd)).canonical_specs[0].document.format).toBeUndefined();
 
-    await writeFile(path.join(cwd, 'iris', 'spec.json'), '{"version":99}\n');
+    await writeFile(specFile, '{"version":99}\n');
     expect(await loadOpenSpecSnapshot(cwd)).toMatchObject({
       detected: false,
       warnings: [expect.objectContaining({ code: 'snapshot-invalid' })],

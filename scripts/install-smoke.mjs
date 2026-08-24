@@ -119,6 +119,7 @@ try {
 
   const offlineRuntimeEnv = {
     ...process.env,
+    IRIS_HOME: path.join(tempDir, 'home'),
     HTTP_PROXY: 'http://127.0.0.1:1',
     HTTPS_PROXY: 'http://127.0.0.1:1',
     ALL_PROXY: 'http://127.0.0.1:1',
@@ -142,7 +143,12 @@ try {
   execFileSync(binaryPath, ['bug', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
   execFileSync(binaryPath, ['render', 'install-smoke'], { cwd: projectDir, stdio: 'inherit' });
 
-  assertFile(path.join(projectDir, 'iris', 'state.json'), 'the project state');
+  const irisHome = path.join(tempDir, 'home');
+  process.env.IRIS_HOME = irisHome;
+  const { resolveProjectIdentity, projectStatePath } =
+    await import('../dist/src/lib/user-config.js');
+  const smokeIdentity = await resolveProjectIdentity(projectDir);
+  assertFile(projectStatePath(smokeIdentity.id), 'the project state');
   assertFile(
     path.join(projectDir, 'iris', 'pages', 'install-smoke', 'data.json'),
     'the draft contract',

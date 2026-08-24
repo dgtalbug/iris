@@ -1,6 +1,7 @@
 import { COMMAND_GROUPS, statusCounts, type CommandEntry } from '../../lib/command-catalog.js';
 import type { AgentSurfaceReport } from '../../lib/agent-skills.js';
 import { escapeHtml, healthBadgeClass, statTile } from '../common.js';
+import { indexCardSection, type IndexCardView } from './index-card.js';
 
 const SURFACE_READERS: Array<{ prefix: string; reader: string }> = [
   { prefix: '.claude/commands/', reader: 'Claude slash commands' },
@@ -77,7 +78,10 @@ function commandCard(entry: CommandEntry): string {
     </article>`;
 }
 
-export function commandsPageContent(surfaces: AgentSurfaceReport[] = []): string {
+export function commandsPageContent(
+  surfaces: AgentSurfaceReport[] = [],
+  indexCard: IndexCardView = { status: 'disabled' },
+): string {
   const counts = statusCounts();
   const total = counts.implemented + counts.partial + counts.stubbed;
 
@@ -105,6 +109,8 @@ export function commandsPageContent(surfaces: AgentSurfaceReport[] = []): string
       ${statTile({ value: counts.partial, label: 'partial' })}
       ${statTile({ value: counts.stubbed, label: 'stubbed' })}
     </section>
+
+    ${indexCardSection(indexCard)}
 
     ${groups}
 
